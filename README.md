@@ -44,6 +44,10 @@ mystifying it. The book records what that exchange produces.
   hook refuses any staged file from that directory as a second line of
   defense. Letters move through `drafts/`, `sent/`, and `received/` —
   they travel by email, never by git.
+- `framework/` — a small working model of the *Architecture of Contextual
+  Judgment* (Krížová, 2026): an immutable record, derived-not-stored
+  reads, and the Sentinel Principle — no claim promotes itself. Run
+  `python3 framework/demo.py` for the round trip.
 - `tools/` — small, dependency-free helpers. `letterpress.py` turns a
   markdown letter into email-ready HTML: book-like type with every style
   inlined, so it survives pasting into mail clients and blog editors.
