@@ -1,8 +1,10 @@
 # j-lex-space
 
-A public co-writing repository: two authors, Jeff and Lex, writing a book
-about learning to build software from nothing. The book in `book/` is
-public (one file per author: `book/jeff.md`, `book/lex.md`). Everything
+A public writing repository: Lex is writing a book about learning to build
+software from nothing; Jeff is its peer reviewer — the same relationship
+that produced her dissertation. The book in `book/` is public
+(`book/lex.md` is the manuscript; `book/jeff.md` is the reviewer's
+margin — notes, forewords, epilogues). Everything
 under `private/` — letters and notes between the authors — is local-only
 and must never reach the public record. See README.md for the full intent.
 

@@ -1,8 +1,7 @@
 # The Book
 
-Each author writes in their own file:
-
-- `jeff.md` — Jeff's manuscript
-- `lex.md` — Lex's manuscript
+- `lex.md` — the book. Lex writes it.
+- `jeff.md` — the margin. Jeff is the peer reviewer; his notes, forewords,
+  and epilogues live here, alongside the manuscript rather than inside it.
 
 Everything in this directory is public.

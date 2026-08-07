@@ -1,8 +1,10 @@
 # j-lex-space
 
-Two authors — Jeff and Lex — writing a book together, in public, about
-learning to build software from nothing. This repository is both the book
-and the workshop it's being written in.
+An author and her peer reviewer — Lex and Jeff — making a book in public,
+about learning to build software from nothing. She writes it; he reviews
+it. This repository is both the book and the workshop it's being written
+in. It is the same relationship that produced her dissertation, continued
+into a new medium.
 
 ## The intent
 
@@ -27,8 +29,8 @@ mystifying it. The book records what that exchange produces.
 - **Start small.** First programs use in-memory databases — real tables,
   real queries, nothing to install, nothing to break. Persistence and
   bigger machinery arrive only when the work demands them.
-- **Different thinking partners, on purpose.** Each author pairs with a
-  different LLM. Two authors with two different assistants disagree in
+- **Different thinking partners, on purpose.** Each of us pairs with a
+  different LLM. Two people with two different assistants disagree in
   useful ways, and the disagreements show us things neither pairing would
   find alone.
 - **The book determines the workflow.** No methodology is assumed up
@@ -37,8 +39,9 @@ mystifying it. The book records what that exchange produces.
 
 ## Layout
 
-- `book/` — the manuscript. Public. Each author writes in their own file:
-  `book/jeff.md` and `book/lex.md`.
+- `book/` — the manuscript. Public. `book/lex.md` is the book — Lex's.
+  `book/jeff.md` is the margin: the reviewer's notes, forewords, and
+  epilogues that travel alongside it.
 - `private/` — letters and notes between the authors. **Never committed.**
   Everything under it except its README is gitignored, and a pre-commit
   hook refuses any staged file from that directory as a second line of
