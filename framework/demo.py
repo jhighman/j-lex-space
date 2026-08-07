@@ -42,6 +42,6 @@ case = Case.close(record, [seen, theory])
 print("lex as judge:              ", Case.judge(case, "lex")["reason"])
 
 # An independent judge sees the whole case, once.
-verdict = case.judge("alexandra")
+verdict = case.judge("reader")
 for step in verdict["steps"]:
     print(f"step {step['step']}: earned={step['earned']}  ({step['claim']})")
