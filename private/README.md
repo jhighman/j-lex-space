@@ -19,6 +19,9 @@ Letters move by email (or wherever people write to people), never by git.
 2. **Press** it into email-ready HTML:
    `python3 tools/letterpress.py private/letters/drafts/the-letter.md`
    — a browser page opens; Select All, Copy, paste into the email or post.
+   The more reliable path for email: after pressing, ask Claude to place
+   the pressed letter directly into a Gmail draft — browser copy-paste
+   can lose the formatting; the draft never does.
 3. **Send** it, then move the `.md` from `drafts/` to `sent/`.
 4. **Respond** — when a letter arrives, save its text as markdown in
    `received/`, and draft the reply in `drafts/`.
