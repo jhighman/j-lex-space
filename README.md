@@ -42,7 +42,12 @@ mystifying it. The book records what that exchange produces.
 - `private/` — letters and notes between the authors. **Never committed.**
   Everything under it except its README is gitignored, and a pre-commit
   hook refuses any staged file from that directory as a second line of
-  defense.
+  defense. Letters move through `drafts/`, `sent/`, and `received/` —
+  they travel by email, never by git.
+- `tools/` — small, dependency-free helpers. `letterpress.py` turns a
+  markdown letter into email-ready HTML: book-like type with every style
+  inlined, so it survives pasting into mail clients and blog editors.
+  Letters are written person to person, and they should look it.
 
 ## The boundary
 
@@ -55,7 +60,7 @@ too, and are held to the same rule.
 
 ```bash
 git config core.hooksPath .githooks
-mkdir -p private/letters private/notes
+mkdir -p private/letters/drafts private/letters/sent private/letters/received private/notes
 ```
 
 The first command arms the guard hook. The second recreates the private
