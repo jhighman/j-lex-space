@@ -89,11 +89,15 @@ def inline(text):
 
     text = re.sub(r"`([^`]+)`", keep, text)
 
-    text = re.sub(
-        r"\[([^\]]+)\]\(([^)\s]+)\)",
-        lambda m: f'<a style="{STYLE["a"]}" href="{m.group(2)}">{m.group(1)}</a>',
-        text,
-    )
+    # Links are stashed too: smarten() must never curl the quotes inside
+    # a tag the press itself wrote, or the href stops being a URL.
+    def keep_link(match):
+        stash.append(
+            f'<a style="{STYLE["a"]}" href="{match.group(2)}">{smarten(match.group(1))}</a>'
+        )
+        return f"\x00{len(stash) - 1}\x00"
+
+    text = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", keep_link, text)
     text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
     text = re.sub(r"\*([^*]+)\*", r"<em>\1</em>", text)
     text = smarten(text)
