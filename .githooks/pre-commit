@@ -1,0 +1,14 @@
+#!/bin/sh
+# Guard: refuse to commit anything under private/ except its README.
+# The .gitignore already excludes these; this catches `git add -f`.
+
+staged=$(git diff --cached --name-only | grep '^private/' | grep -v '^private/README\.md$')
+
+if [ -n "$staged" ]; then
+    echo "COMMIT BLOCKED: files under private/ must never be committed:" >&2
+    echo "$staged" | sed 's/^/  /' >&2
+    echo "Unstage them with: git restore --staged <file>" >&2
+    exit 1
+fi
+
+exit 0

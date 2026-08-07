@@ -1,19 +1,7 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-dist/
-build/
-
-# Environments
-.venv/
-venv/
-.env
-
-# Tooling caches
-.pytest_cache/
-.ruff_cache/
-.mypy_cache/
+# The private layer: letters and notes never leave the author's machine.
+# Only private/README.md (which documents the boundary) is tracked.
+private/**
+!private/README.md
 
 # OS / editor
 .DS_Store
