@@ -19,6 +19,11 @@ the ground up — git, Python, the round trip from an idea to running code
 in someone else's hands. The other is learning how to teach it without
 mystifying it. The book records what that exchange produces.
 
+This is a personal project, maintained as one. Nothing here represents
+professional work or any employer. It exists for three reasons:
+cross-discipline ideation, shared understanding, and giving something
+back to humanity.
+
 ## How we work
 
 - **Straight on `main`.** No branches, no pull requests, no ceremony. If
