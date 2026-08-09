@@ -54,6 +54,11 @@ STYLE = {
     ),
     "a": "color:#7a5c2e;",
     "divider": "text-align:center; margin:1.8em 0; color:#a89f8d; font-size:1.1em;",
+    "table": "border-collapse:collapse; width:100%; margin:0 0 1.3em; font-size:0.92em;",
+    "th": ("text-align:left; padding:0.45em 0.7em; "
+           "border-bottom:2px solid #cfc8ba; font-weight:bold;"),
+    "td": ("text-align:left; padding:0.45em 0.7em; vertical-align:top; "
+           "border-bottom:1px solid #e5e0d5;"),
 }
 
 
@@ -107,6 +112,26 @@ def inline(text):
     return text
 
 
+def table(rows):
+    """A markdown table, set with the rule above the body and none around
+    it — the way a table is set in a book rather than in a spreadsheet."""
+    def cells(row):
+        return [c.strip() for c in row.strip().strip("|").split("|")]
+
+    # The |---|---| line under the header is scaffolding, not content.
+    rows = [r for r in rows if not re.fullmatch(r"[\s|:-]+", r)]
+    if not rows:
+        return ""
+
+    head = "".join(tag("th", inline(c), "th") for c in cells(rows[0]))
+    body = "".join(
+        "<tr>" + "".join(tag("td", inline(c), "td") for c in cells(r)) + "</tr>"
+        for r in rows[1:]
+    )
+    return (f'<table style="{STYLE["table"]}"><thead><tr>{head}</tr></thead>'
+            f"<tbody>{body}</tbody></table>")
+
+
 # ------------------------------------------------------------ blocks
 
 def render(markdown):
@@ -147,6 +172,13 @@ def render(markdown):
             quoted = tag("p", inline(" ".join(body)), "p")
             out.append(tag("blockquote", quoted, "blockquote"))
 
+        elif stripped.startswith("|"):
+            rows = []
+            while i < len(lines) and lines[i].strip().startswith("|"):
+                rows.append(lines[i].strip())
+                i += 1
+            out.append(table(rows))
+
         elif stripped.startswith("- "):
             items = []
             while i < len(lines) and lines[i].strip().startswith("- "):
@@ -157,7 +189,7 @@ def render(markdown):
         else:  # a paragraph: consecutive plain lines joined into one flow
             body = []
             while i < len(lines) and lines[i].strip() and not re.match(
-                r"^(```|---$|\*\*\*$|#|>|- )", lines[i].strip()
+                r"^(```|---$|\*\*\*$|#|>|- |\|)", lines[i].strip()
             ):
                 body.append(lines[i].strip())
                 i += 1
