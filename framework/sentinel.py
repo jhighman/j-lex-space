@@ -26,6 +26,12 @@ import sqlite3
 # The epistemic chain. Each state may only be reached from the one before.
 CHAIN = ["observation", "interpretation", "belief", "action"]
 
+# What a promotion costs, in independent acceptance. The price rises with
+# what the claim licenses: a claim that will be acted on must clear a
+# higher bar than one that will only be thought. Consequence sets the
+# price of proof.
+PRICE = {"observation": 0, "interpretation": 1, "belief": 2, "action": 3}
+
 
 class Record:
     """The append-only record. There is no update and no delete —
@@ -76,16 +82,24 @@ class Record:
         return None
 
     def earned(self, claim_id):
-        """Has this claim's promotion been earned? Only if someone other
-        than its author accepted it. This is the Sentinel Principle as a
-        query: the author's own accepts are simply not counted."""
+        """Has this claim's promotion been earned? Only by acceptance from
+        someone other than its author — the Sentinel Principle as a query,
+        with the author's own accepts simply not counted — and only as much
+        of it as the claim's consequence demands.
+
+        A claim whose kind is unknown cannot be earned: if the system does
+        not know what a statement does, it cannot know what the statement's
+        promotion costs, and an unknown price cannot be paid."""
+        kind = self.category(claim_id)
+        if kind is None:
+            return False
         author = self.read(claim_id)["author"]
         n = self.db.execute(
             "SELECT COUNT(*) FROM assertions"
             " WHERE act='accept' AND about=? AND author != ?",
             (claim_id, author),
         ).fetchone()[0]
-        return n > 0
+        return n >= PRICE[kind]
 
 
 def claim(record, author, category, body, basis=None):

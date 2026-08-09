@@ -29,6 +29,16 @@ print("earned after jeff's accept:", record.earned(theory))   # True
 # The claim's category is derived from the record at read time.
 print("category of the theory:    ", record.category(theory))
 
+# What a claim licenses sets the price of its promotion. A belief costs
+# more independent acceptance than an interpretation, because more follows
+# from it. One accept is no longer enough.
+hunch = claim(record, "lex", "belief",
+              "the history was rewritten deliberately", basis=theory)
+accept(record, "jeff", hunch, note="plausible")
+print("belief on one accept:      ", record.earned(hunch))    # False
+accept(record, "reader", hunch, note="the reflog agrees")
+print("belief on two accepts:     ", record.earned(hunch))    # True
+
 # Judgment needs a case, and an unclosed case does not exist.
 try:
     Case(record, [seen, theory])
