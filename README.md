@@ -6,6 +6,46 @@ it. This repository is both the book and the workshop it's being written
 in. It is the same relationship that produced her dissertation, continued
 into a new medium.
 
+## The instrument, and what it is not
+
+This repository contains a working model of the *Architecture of
+Contextual Judgment* (Krížová, 2026) in `framework/`, and a bench of
+experiments that try to break it in `experiments/`.
+
+**It is not a product.** It is not a production engine, not a database,
+not a library to depend on, and emphatically not a truth detector. It is a
+**reference instrument**: it exists so that structural claims about
+epistemic governance can be exposed, measured, and *falsified* by anyone
+who wants to try. Its database is in memory and evaporates when the
+process ends — which disqualifies it for any other use, and is exactly
+right for this one.
+
+The reason the code is here rather than a specification alone is the
+framework's own discipline. A framework claiming to prevent inference from
+becoming evidence cannot ask to be taken on trust. "Provably blind to
+status" means nothing unless you can run the file. So:
+
+```bash
+git clone https://github.com/jhighman/j-lex-space
+cd j-lex-space
+python3 framework/demo.py        # the ideas, running
+python3 experiments/check.py     # every boundary, checked
+python3 experiments/forgery.py   # attack the ledger directly
+```
+
+No dependencies. Standard library only. Written to be read top to bottom.
+
+**Please try to break it.** The guards are written to fail loudly and exit
+non-zero. If you find a route past one, that is the most valuable thing
+anyone can contribute here — open an issue with the failing case.
+
+**[FINDINGS.md](FINDINGS.md) carries the failures**, including the
+framework's largest negative result — the value layer does not work, and
+is therefore not in this repository — and every boundary this code failed
+to hold before it held. The probe keeps what was *rediscovered* separate
+from what was *built*, permanently, because a scoreboard that counts
+construction as discovery is inference promoting itself to evidence.
+
 ## The intent
 
 This is a private-public partnership. The book is written in the open; the

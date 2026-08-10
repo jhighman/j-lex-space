@@ -1,5 +1,10 @@
 # framework/
 
+**A reference instrument, not a product.** Built to expose, measure and
+falsify structural claims — not to be depended on. The database is in
+memory and evaporates with the process. See
+[FINDINGS.md](../FINDINGS.md) for what it has failed to establish.
+
 A small working model of the *Architecture of Contextual Judgment*
 (Alexandra Krížová, "Governed Epistemic Transitions," first edition 2026;
 dissertation peer reviewer Jeff Highman). Not the dissertation's reference
