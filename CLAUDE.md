@@ -36,6 +36,18 @@ authority.
   new definition needs to speak of delegation, add it to that file's
   RESERVED map with a reason, or rewrite the code so it doesn't.
 
+A second distinction of the same kind, which is easy to lose:
+**authorisation is not reputation.** What a person deliberately handed
+over may be consulted when deciding what a promotion cost. Who has been
+right before may never be — that is pedigree, and keeping it out of
+warrant is what the entrance boundary is for.
+
+## After any change to framework/
+
+Run `python3 experiments/check.py`. It runs every boundary guard and exits
+non-zero if one has moved. Do not report a change to the framework as
+done without it.
+
 ## How we work (honor these in all suggestions)
 
 - **Straight on `main`.** No branches, no pull requests, no ceremony.

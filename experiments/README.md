@@ -2,6 +2,17 @@
 
 The lab bench.
 
+## Checking the boundaries
+
+```bash
+python3 experiments/check.py
+```
+
+Runs every guard and exits non-zero the moment one has moved. Run it
+after any change to `framework/`. A boundary does not announce that it
+has gone: it stays in the prose, in the README, and in everyone's memory
+of the design, and is simply no longer true of the code.
+
 ## What is on it
 
 - **`axiom_zero.py`** — which structural invariants does a system hold
@@ -26,6 +37,12 @@ The lab bench.
   verdicts must match, and `earned()` must be unable to reach the door
   even by mistake. Run it after any change to the framework; it is
   written to fail loudly.
+- **`forgery.py`** — what can be bought by writing directly into the
+  ledger? A hostile actor with full write access attempts to mint a
+  person to authorise itself, accept past a price, reclassify an action
+  as an observation, stuff the ballot, and rewrite what a claim met at
+  the door. Every row is stored; no verdict moves. The ledger is
+  append-only and therefore full of lies, and simply not credulous.
 - **`template.py`** — the skeleton to copy for a new question.
 
 ## The discipline

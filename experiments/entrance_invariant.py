@@ -88,6 +88,7 @@ print(f"earned() can reach the door   : {reaches}")
 print()
 if differ or reaches:
     print("REFUTED. Plausibility moved warrant; the invariant does not hold.")
+    sys.exit(1)
 else:
     print("The invariant holds. The record measured a large difference in how")
     print("these two claims were received, reported it, and let none of it")

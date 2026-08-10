@@ -34,6 +34,8 @@ FRAMEWORK = Path(__file__).resolve().parent.parent / "framework" / "sentinel.py"
 # it carefully — there is no sentence there for anyone to quote later.
 RESERVED = {
     "Record.delegated": "reads standing grants back against the roster",
+    "Record.standing": "asks whether an actor may judge — authorisation, "
+                       "never reputation",
     "Record.governed": "says when the invariant cannot be enforced at all",
     "Delegation.__init__": "refuses construction; a grant is not a constructor",
     "Delegation.grant": "the sovereign act itself",

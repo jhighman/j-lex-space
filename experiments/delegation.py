@@ -104,6 +104,7 @@ if refutations:
     print("REFUTED:")
     for r in refutations:
         print(f"  - {r}")
+    sys.exit(1)
 else:
     print("No route to unearned authority was found. Authority here is not a")
     print("rule the system follows but a shape it has: the grant refuses any")

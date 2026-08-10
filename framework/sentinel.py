@@ -52,6 +52,15 @@ CURIOSITY_FLOOR = 1
 # it decides who may hand out judgment that happens with nobody present.
 PERSON, SYSTEM = "person", "system"
 
+# The author of the founding roster: not an actor in the system, but the
+# name the record gives to what it was told from outside. Every chain of
+# enrollment terminates here or it terminates in nothing.
+FOUNDING = "founding"
+
+# The system speaking as itself, at the door. Only it may record what a
+# claim met on the way in.
+SENTINEL = "sentinel"
+
 
 class Record:
     """The append-only record. There is no update and no delete —
@@ -74,7 +83,7 @@ class Record:
         # that judgment has no seat inside the machine — so it is asserted
         # from outside and recorded as having come from outside.
         for name in persons:
-            self.write("founding", "enroll", PERSON, actor=name)
+            self.write(FOUNDING, "enroll", PERSON, actor=name)
 
     def write(self, author, act, body, about=None, basis=None, actor=None):
         cur = self.db.execute(
@@ -101,15 +110,49 @@ class Record:
             "SELECT COUNT(*) FROM assertions WHERE act='enroll'"
         ).fetchone()[0] > 0
 
-    def kind(self, name):
-        """Person or system — as first enrolled. Identity is not
-        reassignable: a later enrollment cannot relabel an agent a person,
-        because only the first one is read."""
-        row = self.db.execute(
-            "SELECT body FROM assertions WHERE act='enroll' AND actor=?"
-            " ORDER BY id LIMIT 1", (name,),
-        ).fetchone()
-        return row[0] if row else None
+    def kind(self, name, _asking=frozenset()):
+        """Person or system — as first validly enrolled.
+
+        An enrollment is read back along the chain that produced it. A row
+        written by someone who could not enroll is not an enrollment; it
+        is a sentence about one. The chain terminates at the founding
+        roster, which came from outside the system, or it terminates in
+        nothing at all.
+
+        This is what stops the shortest attack on the whole design: an
+        agent writing itself a person and then having that person grant it
+        authority. The invented person is enrolled by an agent, so it is
+        not a person, so its grants are not grants. A cycle authorises
+        nothing, which is checked rather than assumed."""
+        if name in _asking:
+            return None
+        asking = _asking | {name}
+        for author, body in self.db.execute(
+            "SELECT author, body FROM assertions WHERE act='enroll' AND actor=?"
+            " ORDER BY id", (name,),
+        ):
+            if author == FOUNDING or self.kind(author, asking) == PERSON:
+                return body
+        return None
+
+    def standing(self, actor, judgment):
+        """May this actor judge claims of this kind, at all?
+
+        A person may. A system may exactly where a person has granted it.
+        Anyone else may not, and being unknown is not a neutral state.
+
+        Note what this consults and what it refuses to: it reads
+        *authorisation* — what a person deliberately handed over — and
+        never *reputation*, the record of who has been right before. The
+        first is a sovereign act; the second is the pedigree that the
+        entrance boundary exists to keep out of decisions. They look alike
+        and they are not, and keeping them apart is the whole job."""
+        kind = self.kind(actor)
+        if kind == PERSON:
+            return True
+        if kind == SYSTEM:
+            return self.delegated(actor, judgment)
+        return False
 
     def enroll(self, by, name, kind):
         """Add an actor to the roster. Only a person may do this — an
@@ -126,29 +169,54 @@ class Record:
 
         Re-checked against the roster at read time: a delegation row does
         not become authority merely by sitting in the table. If its author
-        is not an enrolled person, it authorizes nothing."""
-        return self.db.execute(
-            "SELECT COUNT(*) FROM assertions d"
-            " WHERE d.act='delegate' AND d.actor=? AND d.body=?"
-            "   AND EXISTS (SELECT 1 FROM assertions e WHERE e.act='enroll'"
-            "               AND e.actor = d.author AND e.body=?)",
-            (actor, judgment, PERSON),
-        ).fetchone()[0] > 0
+        is not an enrolled person, it authorizes nothing.
+
+        The grantor is validated through kind(), which walks the chain of
+        enrollment back to the founding roster. Asking the table directly
+        whether a row calls someone a person is not the same question, and
+        the difference is a way in: an agent writes 'puppet is a person',
+        has the puppet write a grant, and a check that reads rows instead
+        of chains believes both."""
+        for row in self.db.execute(
+            "SELECT DISTINCT author FROM assertions"
+            " WHERE act='delegate' AND actor=? AND body=?",
+            (actor, judgment),
+        ):
+            if self.kind(row[0]) == PERSON:
+                return True
+        return False
 
     # -- everything below is derived at read time, never stored --
 
     def category(self, claim_id):
         """What kind of claim is this? Whatever a strict majority of the
         classify-acts about it said. No majority means: the system does
-        not know — and says so, rather than guessing."""
-        votes = self.db.execute(
-            "SELECT body, COUNT(*) FROM assertions"
-            " WHERE act='classify' AND about=? GROUP BY body",
+        not know — and says so, rather than guessing.
+
+        Saying what kind of claim something is *is* a judgment, and the
+        cheapest attack on the whole ledger is arithmetic: flood a claim
+        with classifications until an action looks like an observation,
+        and the price of promoting it falls from three accepts to none.
+
+        So in a governed record a classification counts only from the
+        claim's own author — who is entitled to say what they meant — or
+        from an actor with standing to judge the very category it is
+        voting for. Overruling someone about what they said takes the
+        authority the new label would carry."""
+        author = self.read(claim_id)["author"]
+        rows = self.db.execute(
+            "SELECT author, body FROM assertions WHERE act='classify' AND about=?",
             (claim_id,),
         ).fetchall()
-        total = sum(n for _, n in votes)
-        for body, n in votes:
-            if n * 2 > total:
+        if self.governed():
+            rows = [row for row in rows
+                    if row[0] == author or self.standing(row[0], row[1])]
+        tally = {}
+        for _, body in rows:
+            tally[body] = tally.get(body, 0) + 1
+        total = sum(tally.values())
+        for body, count in tally.items():
+            if count * 2 > total:
                 return body
         return None
 
@@ -242,21 +310,25 @@ class Record:
         challenge is attributable to the system, blocks nothing, and is
         answerable by anyone. A mirror, not a gate."""
         resistance = self.friction(claim_id)["resistance"]
-        self.write("sentinel", "admit", str(resistance), about=claim_id)
+        self.write(SENTINEL, "admit", str(resistance), about=claim_id)
         if resistance >= CURIOSITY_FLOOR:
             return None
         return self.write(
-            "sentinel", "challenge",
+            SENTINEL, "challenge",
             "entered without resistance — what would show this false?",
             about=claim_id,
         )
 
     def door(self, claim_id):
         """The resistance this claim met at admission, read back from the
-        record rather than recomputed — the past does not move."""
+        record rather than recomputed — the past does not move.
+
+        Only the Sentinel's own reading counts, and only its first: the
+        door is a moment, and a later row claiming otherwise is somebody's
+        account of the door rather than the door."""
         row = self.db.execute(
-            "SELECT body FROM assertions WHERE act='admit' AND about=?",
-            (claim_id,),
+            "SELECT body FROM assertions WHERE act='admit' AND about=? AND author=?"
+            " ORDER BY id LIMIT 1", (claim_id, SENTINEL),
         ).fetchone()
         return int(row[0]) if row else None
 
@@ -268,25 +340,35 @@ class Record:
         with the author's own accepts simply not counted — and only as much
         of it as the claim's consequence demands.
 
-        Read what this method touches: the claim's kind, the accepts about
-        it, and the price of that kind. It does not call friction(), does
-        not call plausible(), and has no way to learn how easily the claim
-        got in. That separation is the entrance invariant, and it is kept
-        by construction rather than by resolve.
+        Read what this method touches: the claim's kind, who accepted it,
+        whether those actors could judge at all, and the price of that
+        kind. It has no way to learn how easily the claim got in. That
+        separation is the entrance invariant, kept by construction rather
+        than by resolve.
 
         A claim whose kind is unknown cannot be earned: if the system does
         not know what a statement does, it cannot know what the statement's
-        promotion costs, and an unknown price cannot be paid."""
+        promotion costs, and an unknown price cannot be paid.
+
+        Two things are counted carefully. Acceptance is counted by *actor*
+        and not by row: saying yes twice is one actor agreeing with itself,
+        and a price of two independent accepts means two, not one
+        enthusiastic voice. And in a governed record the accepters are
+        re-checked for standing at read time, so an accept written straight
+        into the ledger by something with no authority to judge is a row in
+        a table and not a step toward warrant."""
         kind = self.category(claim_id)
         if kind is None:
             return False
         author = self.read(claim_id)["author"]
-        n = self.db.execute(
-            "SELECT COUNT(*) FROM assertions"
+        accepters = {row[0] for row in self.db.execute(
+            "SELECT DISTINCT author FROM assertions"
             " WHERE act='accept' AND about=? AND author != ?",
             (claim_id, author),
-        ).fetchone()[0]
-        return n >= PRICE[kind]
+        )}
+        if self.governed():
+            accepters = {a for a in accepters if self.standing(a, kind)}
+        return len(accepters) >= PRICE[kind]
 
 
 def claim(record, author, category, body, basis=None):
@@ -342,6 +424,11 @@ def assign(record, by, to, work):
     should get to make — that because a system was handed something, it
     was handed the right to decide."""
     return record.write(by, "assign", work, actor=to)
+
+
+def assigned_to(record, task):
+    """The executor this unit of work was handed to."""
+    return record.read(task)["actor"]
 
 
 def assigned(record, executor):
