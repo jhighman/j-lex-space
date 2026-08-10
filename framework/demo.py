@@ -39,6 +39,23 @@ print("belief on one accept:      ", record.earned(hunch))    # False
 accept(record, "reader", hunch, note="the reflog agrees")
 print("belief on two accepts:     ", record.earned(hunch))    # True
 
+# The other boundary: the entrance. Lex now has accepted claims behind
+# her, so her next familiar-sounding assertion meets no resistance at all
+# — which is exactly the condition worth worrying about.
+easy = claim(record, "lex", "interpretation",
+             "the commit message appears twice in the log", basis=seen)
+door = record.friction(easy)
+print("resistance at the door:    ", door["resistance"], "- nothing pushed back")
+print("examined anyway:           ", door["examined"], "- the Sentinel asked itself")
+print("the question it asked:     ", record.read(record.db.execute(
+    "SELECT id FROM assertions WHERE act='challenge' AND about=?",
+    (easy,)).fetchone()[0])["body"])
+
+# And the invariant: how easily it entered changes nothing about what it
+# must pay to be promoted.
+accept(record, "jeff", easy)
+print("earned, regardless:        ", record.earned(easy))
+
 # Judgment needs a case, and an unclosed case does not exist.
 try:
     Case(record, [seen, theory])

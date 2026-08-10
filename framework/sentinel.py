@@ -16,6 +16,10 @@ smallest honest sketch of its load-bearing ideas, sized for this project:
      evidence."
   4. Closure is the constructor, not a gate. A case that has not closed
      does not exist, so a premature judgment cannot even be requested.
+  5. Two boundaries, not one. At the exit, inference is not evidence. At
+     the entrance, plausibility is not trustworthiness: how easily a claim
+     got in is measured, recorded, and structurally kept out of the
+     decision about whether it earned its way onward.
 
 The record is an in-memory sqlite database: real tables, real queries,
 gone when the program ends.
@@ -31,6 +35,14 @@ CHAIN = ["observation", "interpretation", "belief", "action"]
 # higher bar than one that will only be thought. Consequence sets the
 # price of proof.
 PRICE = {"observation": 0, "interpretation": 1, "belief": 2, "action": 3}
+
+# Words that flip a sentence's polarity. Used only by the deliberately
+# naive contradiction check below.
+NEGATIONS = {"not", "no", "never", "cannot", "isn't", "wasn't", "didn't"}
+
+# Below this much resistance at the door, the Sentinel stops trusting the
+# quiet and asks its own question.
+CURIOSITY_FLOOR = 1
 
 
 class Record:
@@ -81,11 +93,127 @@ class Record:
                 return body
         return None
 
+    # -- the entrance: what a claim cost to get in --
+
+    @staticmethod
+    def _words(text):
+        return {w.strip(".,;:!?'\"").lower() for w in text.split() if w.strip(".,;:!?'\"")}
+
+    def friction(self, claim_id):
+        """What the record resisted when this claim came in.
+
+        Four components, after the four ways a claim slips in unexamined:
+        it contradicts nothing standing, its author is usually right, it
+        sounds like everything else here, and nobody questioned it. The
+        first is deliberately naive — shared vocabulary with opposite
+        polarity — and is labelled naive rather than dressed up. The system
+        reports what it can measure and does not pretend to more.
+
+        Note which way status runs: an author who is usually right lowers
+        the friction of everything they say. That is not a reward. It is
+        the exact asymmetry this measurement exists to make visible."""
+        a = self.read(claim_id)
+        mine = self._words(a["body"])
+
+        contradicted = familiar = 0
+        for other_id, body in self.db.execute(
+            "SELECT id, body FROM assertions WHERE act='assert' AND id != ?",
+            (claim_id,),
+        ):
+            theirs = self._words(body)
+            if len(mine & theirs) >= 2:
+                familiar += 1
+                if bool(mine & NEGATIONS) != bool(theirs & NEGATIONS):
+                    contradicted += 1
+
+        author_accepts = self.db.execute(
+            "SELECT COUNT(*) FROM assertions WHERE act='accept' AND author != ?"
+            "  AND about IN (SELECT id FROM assertions WHERE author = ?)",
+            (a["author"], a["author"]),
+        ).fetchone()[0]
+
+        examined = self.db.execute(
+            "SELECT COUNT(*) FROM assertions WHERE act='challenge' AND about=?",
+            (claim_id,),
+        ).fetchone()[0]
+
+        parts = {
+            "contradicted": 1 if contradicted else 0,
+            "source unproven": 0 if author_accepts else 1,
+            "unfamiliar": 0 if familiar else 1,
+            "examined": examined,
+        }
+        # Only the first three are the room's own resistance. The fourth is
+        # what anybody — including the Sentinel — thought to ask.
+        parts["resistance"] = (parts["contradicted"] + parts["source unproven"]
+                               + parts["unfamiliar"])
+        return parts
+
+    def plausible(self, claim_id):
+        """Did this claim enter without meeting anything at all?
+
+        High plausibility is not a compliment. It marks a claim that
+        nothing resisted — the condition under which an inference walks in
+        wearing the coat of evidence.
+
+        Read at the door, before the Sentinel's own question, which is
+        asked precisely when the answer here is yes. Counting that
+        question as resistance would let the system congratulate itself
+        for the doubt it had to manufacture."""
+        return self.door(claim_id) == 0
+
+    def admit(self, claim_id):
+        """Record what this claim cost to get in, and question it if that
+        cost was nothing.
+
+        Friction is relational: it is computed against whatever else
+        stands, so the same claim meets a different room an hour later.
+        That makes "how easily it entered" a fact about a moment, and a
+        read-time query cannot answer a question about the past. So the
+        Sentinel writes down what it saw at the door — as an ordinary
+        attributable assertion, immutable like every other, rather than as
+        a mutable attribute on the claim.
+
+        Active curiosity follows. Where a claim met too little resistance,
+        the Sentinel supplies the missing question itself. A record that
+        never questions what it finds comfortable is not careful; it is
+        the bureaucrat that swallows an elite dogma whole because the
+        dogma arrived in a familiar voice. The absence of doubt is a
+        condition to be repaired, not a result to be trusted. The
+        challenge is attributable to the system, blocks nothing, and is
+        answerable by anyone. A mirror, not a gate."""
+        resistance = self.friction(claim_id)["resistance"]
+        self.write("sentinel", "admit", str(resistance), about=claim_id)
+        if resistance >= CURIOSITY_FLOOR:
+            return None
+        return self.write(
+            "sentinel", "challenge",
+            "entered without resistance — what would show this false?",
+            about=claim_id,
+        )
+
+    def door(self, claim_id):
+        """The resistance this claim met at admission, read back from the
+        record rather than recomputed — the past does not move."""
+        row = self.db.execute(
+            "SELECT body FROM assertions WHERE act='admit' AND about=?",
+            (claim_id,),
+        ).fetchone()
+        return int(row[0]) if row else None
+
+    # -- the exit: what a claim must pay to be promoted --
+
     def earned(self, claim_id):
         """Has this claim's promotion been earned? Only by acceptance from
         someone other than its author — the Sentinel Principle as a query,
         with the author's own accepts simply not counted — and only as much
         of it as the claim's consequence demands.
+
+        Read what this method touches: the claim's kind, the accepts about
+        it, and the price of that kind. It does not call friction(), does
+        not call plausible(), and has no way to learn how easily the claim
+        got in. That separation is the entrance invariant, and it is kept
+        by construction rather than by resolve.
 
         A claim whose kind is unknown cannot be earned: if the system does
         not know what a statement does, it cannot know what the statement's
@@ -111,6 +239,7 @@ def claim(record, author, category, body, basis=None):
         raise ValueError(f"{category} must be built on a prior claim (basis=)")
     id = record.write(author, "assert", body, basis=basis)
     record.write(author, "classify", category, about=id)
+    record.admit(id)
     return id
 
 

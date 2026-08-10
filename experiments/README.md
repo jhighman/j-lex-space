@@ -1,7 +1,20 @@
 # experiments/
 
-The lab bench. Empty on purpose — experiments land here when a question
-does.
+The lab bench.
+
+## What is on it
+
+- **`axiom_zero.py`** — which structural invariants does a system hold
+  that was never told them? A sentinel built from the exit axiom alone
+  is probed for each pillar and both boundaries. It rediscovered the
+  exit and never invented the entrance, which is the finding: the
+  entrance boundary is prior, not derivable.
+- **`entrance_invariant.py`** — the standing check. Two claims identical
+  in kind and acceptance, maximally different in plausibility: their
+  verdicts must match, and `earned()` must be unable to reach the door
+  even by mistake. Run it after any change to the framework; it is
+  written to fail loudly.
+- **`template.py`** — the skeleton to copy for a new question.
 
 ## The discipline
 
