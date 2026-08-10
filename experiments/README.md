@@ -9,6 +9,11 @@ The lab bench.
   is probed for each pillar and both boundaries. It rediscovered the
   exit and never invented the entrance, which is the finding: the
   entrance boundary is prior, not derivable.
+- **`vocabulary.py`** — does the codebase keep the two meanings of
+  "delegation" apart? Parses the framework and checks that only the
+  definitions permitted to speak of delegation do. A semantic bug cannot
+  be caught by testing behaviour, so the guard sits on the vocabulary
+  where the mistake would first be made. Exits non-zero on drift.
 - **`delegation.py`** — can an agent widen its own authority? Every route
   a system might take to authority nobody granted it — granting to
   itself, enrolling an accomplice, judging undelegated, forging the

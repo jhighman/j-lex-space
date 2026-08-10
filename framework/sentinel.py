@@ -329,6 +329,29 @@ def accept(record, author, claim_id, note="reviewed"):
     return record.write(author, "accept", note, about=claim_id)
 
 
+def assign(record, by, to, work):
+    """Hand a unit of work to an executor.
+
+    Work is *assigned*. The other word is not available for this, and the
+    vocabulary is part of the guarantee rather than a note about it:
+    anyone may assign work to a system, because assigning confers nothing.
+    The executor gains a job and not a scrap of authority, and no quantity
+    of work adds up to permission to judge.
+
+    Reserving one word for one act is what stops the argument nobody
+    should get to make — that because a system was handed something, it
+    was handed the right to decide."""
+    return record.write(by, "assign", work, actor=to)
+
+
+def assigned(record, executor):
+    """The work this executor has been handed. A list of jobs, and no
+    part of an answer to what it may decide."""
+    return [row[0] for row in record.db.execute(
+        "SELECT body FROM assertions WHERE act='assign' AND actor=?", (executor,)
+    )]
+
+
 class Delegation:
     """Epistemic delegation: the record of a person granting a system the
     authority to make a class of judgment with nobody present.

@@ -7,7 +7,8 @@ counted; the derived category comes from the record, not from a stored
 field; and judgment is only possible on a case that has closed.
 """
 
-from sentinel import Record, Case, Delegation, SYSTEM, claim, accept
+from sentinel import (Record, Case, Delegation, SYSTEM,
+                      assign, assigned, claim, accept)
 
 record = Record()
 
@@ -62,6 +63,7 @@ print("earned, regardless:        ", record.earned(easy))
 governed = Record(persons=["lex"])
 governed.enroll("lex", "assistant", SYSTEM)
 watched = claim(governed, "lex", "observation", "the disk filled overnight")
+why = claim(governed, "lex", "interpretation", "a log rotation failed", basis=watched)
 try:
     accept(governed, "assistant", watched)
 except PermissionError as refusal:
@@ -69,6 +71,16 @@ except PermissionError as refusal:
 Delegation.grant(governed, "lex", "assistant", "observation")
 accept(governed, "assistant", watched)
 print("after lex delegates:        the assistant may judge observations")
+
+# Work is assigned; authority is delegated. They are different words here
+# because they are different acts, and no pile of the first becomes the
+# second.
+for job in ("scan the logs", "summarise the diff", "measure the friction"):
+    assign(governed, "lex", "assistant", job)
+try:
+    accept(governed, "assistant", why)
+except PermissionError as refusal:
+    print(f"after {len(assigned(governed, 'assistant'))} tasks assigned:  ", refusal)
 
 # Judgment needs a case, and an unclosed case does not exist.
 try:

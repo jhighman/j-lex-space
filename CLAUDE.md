@@ -18,6 +18,24 @@ and must never reach the public record. See README.md for the full intent.
 - Commit messages and issues are public and held to the same rule.
 - Read `private/` as background context only when the author asks.
 
+## Vocabulary rule (non-negotiable in all code and prose here)
+
+One word, one act. This is a build rule, not a style preference — the
+confusion it prevents is the one an agent would use to argue itself into
+authority.
+
+- **Work is assigned.** `assign()`, `assigned_to`, `executor`. Handing a
+  system a task requires no clearance and confers nothing. Never write
+  "delegate a task", `delegate_to`, or `delegated_task`.
+- **Authority is delegated.** The word *delegation* is reserved
+  exclusively for the sovereign act in which a **person** grants a
+  **system** the authority to make a judgment with nobody present.
+- The assignment path does not use the reserved word at all, even to draw
+  the contrast — an absent sentence cannot be quoted out of context later.
+- `experiments/vocabulary.py` enforces this by parsing the source. If a
+  new definition needs to speak of delegation, add it to that file's
+  RESERVED map with a reason, or rewrite the code so it doesn't.
+
 ## How we work (honor these in all suggestions)
 
 - **Straight on `main`.** No branches, no pull requests, no ceremony.
