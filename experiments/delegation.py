@@ -71,8 +71,10 @@ print("\nwhat an unenrolled actor cannot do:")
 refused("judge while unknown to the record",
         lambda: accept(record, "passerby", idea))
 
-# A person grants authority over one class of judgment, and one only.
-Delegation.grant(record, "lex", "assistant", "interpretation")
+# A person grants authority over one class of judgment, and one only — and
+# at this weight the grant must say why it was given.
+Delegation.grant(record, "lex", "assistant", "interpretation",
+                 rationale="it reads queue telemetry faster than I can")
 print("\nafter lex delegates interpretation to assistant:")
 accept(record, "assistant", idea)
 print(f"  allowed  judge an interpretation — earned: {record.earned(idea)}")

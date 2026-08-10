@@ -36,6 +36,10 @@ RESERVED = {
     "Record.delegated": "reads standing grants back against the roster",
     "Record.standing": "asks whether an actor may judge — authorisation, "
                        "never reputation",
+    "Record.fault": "the one place that decides whether a grant stands",
+    "Record.covering": "enumerates what confers authority, so that revoking "
+                       "one grant is not mistaken for revoking the authority",
+    "Record.void_grants": "shows the rows that look like grants and are not",
     "Record.governed": "says when the invariant cannot be enforced at all",
     "Delegation.__init__": "refuses construction; a grant is not a constructor",
     "Delegation.grant": "the sovereign act itself",

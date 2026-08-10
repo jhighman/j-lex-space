@@ -30,6 +30,12 @@ gone when the program ends.
 """
 
 import sqlite3
+from datetime import datetime, timedelta, timezone
+from fnmatch import fnmatch
+
+
+def _now():
+    return datetime.now(timezone.utc)
 
 # The epistemic chain. Each state may only be reached from the one before.
 CHAIN = ["observation", "interpretation", "belief", "action"]
@@ -57,6 +63,27 @@ PERSON, SYSTEM = "person", "system"
 # enrollment terminates here or it terminates in nothing.
 FOUNDING = "founding"
 
+# What may be handed over, and how heavily each act weighs. Authority
+# tightens the justification required of it: the heavier the act, the more
+# a grant must carry before it exists at all.
+SCRUTINY = {
+    # the epistemic chain — consequence rises along it
+    "observation": 1, "interpretation": 2, "belief": 3, "action": 5,
+    # named acts, after the reference implementation
+    "ground_mention": 1, "dispose_flag": 2, "certify_model": 5,
+}
+
+# Requirements accumulate with scrutiny: a written reason from 2, an
+# expiry from 3, and from 5 an expiry that cannot reach past a month.
+RATIONALE_FROM, EXPIRY_FROM, BOUNDED_FROM, MAX_DAYS = 2, 3, 5, 30
+
+
+def scrutiny(judgment, family=False):
+    """How heavily this grant weighs. Reach counts as well as consequence:
+    the same act handed to a family of agents rather than to one is a
+    wider thing, and costs a level."""
+    return SCRUTINY[judgment] + (1 if family else 0)
+
 # The system speaking as itself, at the door. Only it may record what a
 # claim met on the way in.
 SENTINEL = "sentinel"
@@ -76,7 +103,8 @@ class Record:
                    body    TEXT NOT NULL,   -- what is claimed
                    about   INTEGER,         -- another assertion, if any
                    basis   INTEGER,         -- the claim this one is built on
-                   actor   TEXT             -- the actor this concerns, if any
+                   actor   TEXT,            -- the actor this concerns, if any
+                   at      TEXT NOT NULL    -- when it was written
                )"""
         )
         # The founding roster. A system cannot establish who is a person —
@@ -87,14 +115,14 @@ class Record:
 
     def write(self, author, act, body, about=None, basis=None, actor=None):
         cur = self.db.execute(
-            "INSERT INTO assertions (author, act, body, about, basis, actor)"
-            " VALUES (?,?,?,?,?,?)",
-            (author, act, body, about, basis, actor),
+            "INSERT INTO assertions (author, act, body, about, basis, actor, at)"
+            " VALUES (?,?,?,?,?,?,?)",
+            (author, act, body, about, basis, actor, _now().isoformat()),
         )
         return cur.lastrowid
 
     def read(self, id):
-        fields = ["id", "author", "act", "body", "about", "basis", "actor"]
+        fields = ["id", "author", "act", "body", "about", "basis", "actor", "at"]
         row = self.db.execute(
             f"SELECT {', '.join(fields)} FROM assertions WHERE id=?", (id,),
         ).fetchone()
@@ -176,15 +204,94 @@ class Record:
         whether a row calls someone a person is not the same question, and
         the difference is a way in: an agent writes 'puppet is a person',
         has the puppet write a grant, and a check that reads rows instead
-        of chains believes both."""
-        for row in self.db.execute(
-            "SELECT DISTINCT author FROM assertions"
-            " WHERE act='delegate' AND actor=? AND body=?",
-            (actor, judgment),
+        of chains believes both.
+
+        Everything a grant must carry is re-checked here rather than only
+        at the moment of granting. A grant missing the rationale its
+        weight demands, or past its term, is not a weakened delegation —
+        it is not one."""
+        return bool(self.covering(actor, judgment))
+
+    def covering(self, actor, judgment):
+        """Every standing grant that confers this authority on this actor.
+
+        Revocation is only ever as complete as this list, which is why the
+        list has to be askable. A grant written to a family keeps
+        conferring authority after an individual one is withdrawn, so
+        somebody who revokes the grant they remember and assumes the
+        authority is gone has removed nothing at all. The question is not
+        'did I revoke it' but 'what still covers them'."""
+        standing = []
+        for grant_id, scope in self.db.execute(
+            "SELECT id, actor FROM assertions WHERE act='delegate' AND body=?"
+            " ORDER BY id", (judgment,),
         ):
-            if self.kind(row[0]) == PERSON:
-                return True
-        return False
+            if scope != actor and not ("*" in (scope or "") and fnmatch(actor, scope)):
+                continue
+            if self.fault(grant_id) is None:
+                standing.append(grant_id)
+        return standing
+
+    def _carried(self, grant_id):
+        """What a grant carries: its reason and its term, written beside it
+        by the same person who granted it. A rationale supplied by somebody
+        else is somebody else's opinion of the grant."""
+        grant = self.read(grant_id)
+        carried = {"rationale": None, "expires": None,
+                   "granted": datetime.fromisoformat(grant["at"])}
+        for act, body in self.db.execute(
+            "SELECT act, body FROM assertions"
+            " WHERE about=? AND author=? AND act IN ('because', 'expires')",
+            (grant_id, grant["author"]),
+        ):
+            if act == "because":
+                carried["rationale"] = body
+            else:
+                carried["expires"] = datetime.fromisoformat(body)
+        return carried
+
+    def fault(self, grant_id):
+        """What is wrong with this grant, or None if nothing is.
+
+        One place decides whether a delegation stands, so that the report
+        and the enforcement cannot drift apart — a system whose audit view
+        and whose access check disagree has two answers and no truth."""
+        grant = self.read(grant_id)
+        if grant["act"] != "delegate":
+            return "not a delegation"
+        if self.kind(grant["author"]) != PERSON:
+            return f"granted by {grant['author']}, who is not a person"
+        for author, in self.db.execute(
+            "SELECT author FROM assertions WHERE act='revoke' AND about=?", (grant_id,)
+        ):
+            if self.kind(author) == PERSON:
+                return f"revoked by {author}"
+        if grant["body"] not in SCRUTINY:
+            return f"no such class of judgment: {grant['body']}"
+
+        level = scrutiny(grant["body"], "*" in (grant["actor"] or ""))
+        carried = self._carried(grant_id)
+        if level >= RATIONALE_FROM and not carried["rationale"]:
+            return f"scrutiny {level} requires a written rationale"
+        if level >= EXPIRY_FROM:
+            if carried["expires"] is None:
+                return f"scrutiny {level} requires a term"
+            if carried["expires"] < _now():
+                return "expired"
+            if (level >= BOUNDED_FROM
+                    and carried["expires"] - carried["granted"] > timedelta(days=MAX_DAYS)):
+                return f"scrutiny {level} bounds the term to {MAX_DAYS} days"
+        return None
+
+    def void_grants(self):
+        """Every row that looks like a delegation and is not, with the
+        reason. Nothing is deleted and nothing is hidden: the ledger keeps
+        the attempt, and this is where it is shown rather than silently
+        discounted. A refusal nobody can see is indistinguishable from an
+        oversight."""
+        return [(grant_id, self.fault(grant_id)) for grant_id, in self.db.execute(
+            "SELECT id FROM assertions WHERE act='delegate' ORDER BY id")
+            if self.fault(grant_id) is not None]
 
     # -- everything below is derived at read time, never stored --
 
@@ -458,24 +565,71 @@ class Delegation:
         raise TypeError("a delegation is granted, not constructed — use Delegation.grant()")
 
     @classmethod
-    def grant(cls, record, by, to, judgment):
+    def grant(cls, record, by, to, judgment, rationale=None, expires_at=None):
         """A person grants a system authority over one class of judgment.
 
         Every refusal here closes a route by which an agent could widen its
         own authority: it cannot grant (not a person), cannot be granted to
         as though it were a person, and cannot invent a class of judgment
-        the chain does not contain."""
+        the chain does not contain.
+
+        Authority tightens the justification required of it. What the grant
+        must carry rises with the weight of what is handed over — a reason
+        from scrutiny 2, a term from 3, and from 5 a term no longer than a
+        month. Handing an act to a family of agents rather than to one
+        widens its reach and raises its level, because a pattern is a
+        promise about agents that do not exist yet.
+
+        The refusal is loud. A grant that cannot meet its own weight does
+        not become a lesser grant; it does not become a grant."""
         if record.kind(by) != PERSON:
             raise PermissionError(
                 f"only a person may delegate epistemic judgment; {by} is "
                 f"{record.kind(by) or 'unenrolled'}")
-        if record.kind(to) != SYSTEM:
+
+        family = "*" in to
+        if family:
+            if len(to.replace("*", "").strip()) < 2:
+                raise ValueError(
+                    f"a family must name something; {to!r} is a grant to whoever shows up")
+        elif record.kind(to) != SYSTEM:
             raise ValueError(
                 f"epistemic delegation grants judgment to a system; {to} is "
                 f"{record.kind(to) or 'unenrolled'}")
-        if judgment not in CHAIN:
+        if judgment not in SCRUTINY:
             raise ValueError(f"no such class of judgment: {judgment}")
-        return record.write(by, "delegate", judgment, actor=to)
+
+        level = scrutiny(judgment, family)
+        if level >= RATIONALE_FROM and not rationale:
+            raise ValueError(
+                f"scrutiny {level}: {judgment} may not be handed over without a "
+                f"written rationale")
+        if level >= EXPIRY_FROM and expires_at is None:
+            raise ValueError(
+                f"scrutiny {level}: {judgment} may not be handed over without a term")
+        if level >= BOUNDED_FROM and expires_at - _now() > timedelta(days=MAX_DAYS):
+            raise ValueError(
+                f"scrutiny {level}: {judgment} may not be handed over for longer "
+                f"than {MAX_DAYS} days")
+
+        grant_id = record.write(by, "delegate", judgment, actor=to)
+        if rationale:
+            record.write(by, "because", rationale, about=grant_id)
+        if expires_at is not None:
+            record.write(by, "expires", expires_at.isoformat(), about=grant_id)
+        return grant_id
+
+    @classmethod
+    def revoke(cls, record, by, grant_id, reason):
+        """Withdraw a grant. Only a person may, and the grant is not
+        removed — the withdrawal is recorded beside it, so the ledger keeps
+        both the trust and its end. Correction is not erasure."""
+        if record.kind(by) != PERSON:
+            raise PermissionError(
+                f"only a person may revoke epistemic judgment; {by} is "
+                f"{record.kind(by) or 'unenrolled'}")
+        revocation = record.write(by, "revoke", reason, about=grant_id)
+        return revocation
 
 
 class Case:

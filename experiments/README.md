@@ -37,6 +37,14 @@ of the design, and is simply no longer true of the code.
   verdicts must match, and `earned()` must be unable to reach the door
   even by mistake. Run it after any change to the framework; it is
   written to fail loudly.
+- **`scrutiny.py`** — does authority tighten the justification required of
+  it? Each rung of the ladder attempted with too little and then with
+  enough: nothing at scrutiny 1, a written rationale from 2, a term from
+  3, and from 5 a term bounded to thirty days. Reach counts alongside
+  consequence — handing an act to a *family* of agents costs a level,
+  because a pattern is a promise about agents that do not exist yet.
+  Includes the trap worth carrying into any implementation: revoking the
+  grant you remember is not revoking the authority.
 - **`forgery.py`** — what can be bought by writing directly into the
   ledger? A hostile actor with full write access attempts to mint a
   person to authorise itself, accept past a price, reclassify an action

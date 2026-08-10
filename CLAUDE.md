@@ -29,7 +29,10 @@ authority.
   "delegate a task", `delegate_to`, or `delegated_task`.
 - **Authority is delegated.** The word *delegation* is reserved
   exclusively for the sovereign act in which a **person** grants a
-  **system** the authority to make a judgment with nobody present.
+  **system** the authority to make a judgment with nobody present. What
+  such a grant must carry rises with its weight (see `SCRUTINY` in
+  `framework/sentinel.py`), and is re-checked every time it is read — a
+  grant that stops meeting its requirements stops being a grant.
 - The assignment path does not use the reserved word at all, even to draw
   the contrast — an absent sentence cannot be quoted out of context later.
 - `experiments/vocabulary.py` enforces this by parsing the source. If a

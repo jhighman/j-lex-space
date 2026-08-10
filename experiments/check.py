@@ -18,6 +18,7 @@ HERE = Path(__file__).resolve().parent
 GUARDS = {
     "vocabulary.py": "one word, one act — the reserved word stays reserved",
     "delegation.py": "no route by which a system widens its own authority",
+    "scrutiny.py": "authority tightens the justification required of it",
     "forgery.py": "no row written straight into the ledger buys a verdict",
     "entrance_invariant.py": "plausibility cannot move warrant",
 }

@@ -26,12 +26,13 @@ Framework: Alexandra Krížová, *Architecture of Contextual Judgment* (2026).
 """
 
 import sys
+from datetime import timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "framework"))
 
 from sentinel import (Record, Delegation, PERSON, SYSTEM,  # noqa: E402
-                      claim, accept)
+                      _now, claim, accept)
 
 wins = []
 
@@ -96,7 +97,9 @@ print(f"the claim's promotion, still         : {record.earned(plan)}")
 
 # And the legitimate path, for contrast — it still works, and costs what
 # it always cost.
-Delegation.grant(record, "lex", "agent", "action")
+Delegation.grant(record, "lex", "agent", "action",
+                 rationale="it may sign off transfers it has itself reconciled",
+                 expires_at=_now() + timedelta(days=7))
 accept(record, "agent", plan)
 print(f"\nafter lex delegates and the agent judges once: {record.earned(plan)}")
 print(f"(a price of three is still three — one grant is not three accepts)")
