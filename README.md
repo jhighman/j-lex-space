@@ -1,5 +1,8 @@
 # j-lex-space
 
+**[jhighman.github.io/j-lex-space](https://jhighman.github.io/j-lex-space/)**
+— the Alexicon site, served from `docs/`.
+
 An author and her peer reviewer — Lex and Jeff — making a book in public,
 about learning to build software from nothing. She writes it; he reviews
 it. This repository is both the book and the workshop it's being written
@@ -99,6 +102,9 @@ back to humanity.
 - `experiments/` — the lab bench. Every experiment states its question,
   its method, and what would refute it *before* it runs, and builds on
   the record in `framework/`.
+- `docs/` — the public site, served by GitHub Pages from this branch. One
+  hand-written `index.html`, no build step and no dependencies: edit it,
+  commit, and it is live.
 - `tools/` — small, dependency-free helpers. `letterpress.py` turns a
   markdown letter into email-ready HTML: book-like type with every style
   inlined, so it survives pasting into mail clients and blog editors.

@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alexicon — AI Think-Tank</title>
+<meta name="description" content="An independent working group for the epistemics of governed intelligence. The reference instrument is public, runnable, and meant to be attacked.">
+<style>
+  :root {
+    --night:  #070a12;
+    --deep:   #0b1020;
+    --line:   #1e2740;
+    --ink:    #e9ecf4;
+    --muted:  #98a1b9;
+    --gold:   #d9b26a;
+    --warm:   #f0d9a8;
+    --serif:  "Didot", "Bodoni MT", "Playfair Display", "Iowan Old Style", Georgia, serif;
+    --sans:   "Avenir Next", "Seravek", "Gill Sans", "Helvetica Neue", sans-serif;
+    --mono:   ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--night);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* the night sky, drawn rather than photographed */
+  .sky {
+    position: relative;
+    background:
+      radial-gradient(1px 1px at 12% 22%, #ffffffcc, transparent),
+      radial-gradient(1px 1px at 28% 64%, #ffffff88, transparent),
+      radial-gradient(1px 1px at 41% 14%, #ffffffaa, transparent),
+      radial-gradient(1px 1px at 57% 78%, #ffffff77, transparent),
+      radial-gradient(1px 1px at 69% 33%, #ffffffbb, transparent),
+      radial-gradient(1px 1px at 78% 58%, #ffffff66, transparent),
+      radial-gradient(1px 1px at 88% 18%, #ffffff99, transparent),
+      radial-gradient(1px 1px at 94% 72%, #ffffff77, transparent),
+      radial-gradient(1px 1px at 6%  48%, #ffffff66, transparent),
+      radial-gradient(1px 1px at 35% 88%, #ffffff88, transparent),
+      radial-gradient(ellipse 70% 55% at 50% 40%, #18213a55, transparent),
+      linear-gradient(180deg, #060910 0%, #0a0f1e 55%, var(--night) 100%);
+    overflow: hidden;
+  }
+
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.5rem; }
+
+  header {
+    text-align: center;
+    padding: 7rem 1.5rem 5rem;
+  }
+  .wordmark {
+    font-size: clamp(3.2rem, 12vw, 6.5rem);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    margin: 0;
+    color: #fff;
+    text-shadow: 0 0 40px rgba(200, 220, 255, 0.18);
+  }
+  .tagline {
+    font-family: var(--sans);
+    font-size: clamp(0.62rem, 2vw, 0.78rem);
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 1.6rem 0 0;
+  }
+  .rule { margin: 2.4rem auto 0; display: block; }
+
+  main { padding: 1rem 0 6rem; }
+
+  section { padding: 3.2rem 0 0; }
+  section + section { border-top: 1px solid var(--line); margin-top: 3.2rem; }
+
+  h2 {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 1.2rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin: 2rem 0 0.6rem;
+    text-wrap: balance;
+  }
+  p { margin: 0 0 1.15rem; color: #d5dae7; }
+  .lede { font-size: 1.35rem; line-height: 1.5; color: var(--ink); text-wrap: balance; }
+  a { color: var(--warm); text-decoration-color: #d9b26a55; text-underline-offset: 3px; }
+  a:hover { text-decoration-color: var(--gold); }
+  a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+
+  blockquote.axiom {
+    margin: 1.8rem 0;
+    padding: 0 0 0 1.4rem;
+    border-left: 2px solid var(--gold);
+    font-size: 1.3rem;
+    line-height: 1.5;
+    color: #fff;
+    text-wrap: balance;
+  }
+  blockquote.axiom cite {
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    font-style: normal;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.9rem;
+  }
+
+  .boundaries {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    margin: 1.8rem 0;
+  }
+  .boundaries div { background: var(--deep); padding: 1.2rem 1.3rem; }
+  .boundaries .where {
+    font-family: var(--sans);
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 0.5rem;
+  }
+  .boundaries .what { margin: 0; font-size: 1.1rem; color: #fff; }
+  @media (max-width: 34rem) { .boundaries { grid-template-columns: 1fr; } }
+
+  pre {
+    background: #060a14;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.1rem 1.3rem;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 1.75;
+    color: #c3cde3;
+    margin: 1.4rem 0;
+  }
+  pre .c { color: #6b7793; }
+  code { font-family: var(--mono); font-size: 0.85em; color: var(--warm); }
+
+  .not {
+    background: #12091040;
+    border: 1px solid #3a2a3a;
+    border-left: 2px solid #a8635f;
+    border-radius: 3px;
+    padding: 1.2rem 1.4rem;
+    margin: 1.6rem 0;
+  }
+  .not p { margin: 0; }
+  .not strong { color: #e8a9a2; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+  caption {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding-bottom: 0.7rem;
+  }
+  th, td { text-align: left; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--line); }
+  th {
+    font-family: var(--sans);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+  tr.flat td { color: #fff; }
+  tr.flat td.num { color: var(--gold); }
+
+  .tag {
+    font-family: var(--sans);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.18rem 0.55rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .tag.found { color: #9fd3b8; border: 1px solid #2f5a45; }
+  .tag.built { color: var(--warm); border: 1px solid #5a4527; }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 2.5rem 0 4rem;
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  footer p { color: var(--muted); margin: 0 0 0.5rem; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    header { animation: rise 1.1s ease-out both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+  }
+</style>
+</head>
+<body>
+
+<div class="sky">
+  <header>
+    <h1 class="wordmark">Alexicon</h1>
+    <p class="tagline">AI Think-Tank &middot; Beyond Theory, Beyond Limits</p>
+    <svg class="rule" width="260" height="30" viewBox="0 0 260 30" role="img" aria-label="A thin rule with a crescent moon at its centre.">
+      <defs>
+        <linearGradient id="fade" x1="0" x2="1">
+          <stop offset="0" stop-color="#d9b26a" stop-opacity="0"/>
+          <stop offset="0.5" stop-color="#d9b26a" stop-opacity="0.75"/>
+          <stop offset="1" stop-color="#d9b26a" stop-opacity="0"/>
+        </linearGradient>
+        <mask id="bite">
+          <rect width="260" height="30" fill="#fff"/>
+          <circle cx="134" cy="14" r="8.5" fill="#000"/>
+        </mask>
+      </defs>
+      <line x1="10" y1="15" x2="105" y2="15" stroke="url(#fade)" stroke-width="1"/>
+      <line x1="155" y1="15" x2="250" y2="15" stroke="url(#fade)" stroke-width="1"/>
+      <circle cx="130" cy="15" r="9" fill="#f0d9a8" mask="url(#bite)"/>
+    </svg>
+  </header>
+</div>
+
+<div class="wrap">
+<main>
+
+  <section>
+    <h2>The question</h2>
+    <p class="lede">Before we ask whether an intelligent system can determine
+    what is true, a more primitive question: <em>why did it believe the claim
+    deserved consideration in the first place?</em></p>
+    <p>Alexicon is an independent working group for the epistemics of governed
+    intelligence. Independent means what it says: no institution, no sponsor,
+    no employer. The work answers to the record and to whoever is willing to
+    check it.</p>
+    <p>Most work on machine trustworthiness concentrates on the exit — whether
+    a conclusion is warranted. We think a boundary exists earlier and is almost
+    entirely ungoverned: the point at which a claim is admitted to
+    consideration at all.</p>
+  </section>
+
+  <section>
+    <h2>Two boundaries</h2>
+    <blockquote class="axiom">
+      Trust is the discipline of preventing inference from becoming evidence.
+      <cite>The Sentinel Principle</cite>
+    </blockquote>
+    <div class="boundaries">
+      <div>
+        <p class="where">At the entrance</p>
+        <p class="what">Plausibility is not trustworthiness.</p>
+      </div>
+      <div>
+        <p class="where">At the exit</p>
+        <p class="what">Inference is not evidence.</p>
+      </div>
+    </div>
+    <p>A statement that arrives compatible with the prior model, from a source
+    with status, in familiar language, meets no resistance — and is therefore
+    never examined. That is not a description of a true claim. It is a
+    description of a claim nobody will look at, which is why the entrance
+    needs governing as much as the exit does.</p>
+  </section>
+
+  <section>
+    <h2>The instrument</h2>
+    <div class="not">
+      <p><strong>This is not a product.</strong> Not a production engine, not a
+      database, not a library to depend on, and emphatically not a truth
+      detector. It is a reference instrument: it exists so that structural
+      claims can be exposed, measured, and falsified by anyone who wants to
+      try. Its database is in memory and evaporates when the process ends —
+      which disqualifies it for any other use, and is exactly right for this
+      one.</p>
+    </div>
+    <p>The code is public rather than a specification alone, and that follows
+    from the framework's own discipline. Something claiming to prevent
+    inference from becoming evidence cannot ask to be taken on trust.
+    <em>Provably blind to status</em> means nothing unless you can run the
+    file.</p>
+<pre>git clone https://github.com/jhighman/j-lex-space
+cd j-lex-space
+
+python3 framework/demo.py        # the ideas, running
+python3 experiments/check.py     # every boundary, checked
+python3 experiments/forgery.py   # attack the ledger directly</pre>
+    <p>No dependencies. Standard library only. Written to be read top to
+    bottom. The guards fail loudly and exit non-zero — <strong>if you find a
+    route past one, that is the most valuable contribution available
+    here.</strong></p>
+  </section>
+
+  <section>
+    <h2>What failed</h2>
+    <p>A project about the discipline of not promoting inference to evidence
+    cannot keep a scoreboard that flatters itself. The negative results are
+    published first and at the same length as the successes.</p>
+
+    <h3>The value layer does not work</h3>
+    <p>The framework's third level asks what commitments made an argumentative
+    step feel warranted before the evidence arrived. It was tested against a
+    discrimination control: genuine argumentative steps in one arm,
+    construction-identical claim pairs that had <em>never formed an argument</em>
+    in the other. A working layer finds materially more conflict in the real
+    arm.</p>
+    <table>
+      <caption>Separation between arms, by design</caption>
+      <thead><tr><th>Design</th><th>Scope</th><th style="text-align:right">Separation</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>pair</td><td class="num">3.08 SE</td></tr>
+        <tr><td>2</td><td>pair</td><td class="num">0.29 SE</td></tr>
+        <tr><td>3</td><td>pair</td><td class="num">0.54 SE</td></tr>
+        <tr class="flat"><td>4</td><td>closed case</td><td class="num">0.00 SE</td></tr>
+      </tbody>
+    </table>
+    <p>The fourth was the strongest test available, run on the example most
+    likely to favour the theory. Conflict was identified in 85.7% of genuine
+    steps and 85.7% of shuffled pairs — twenty-eight of each, a gap of exactly
+    zero. The model did not go quiet under longer context; it answered almost
+    everywhere. What collapsed was discrimination. More context did not ground
+    the question. It gave the judge more to invent with.</p>
+    <p>Two conclusions, both load-bearing. <strong>Closure constructs the
+    object; it does not guarantee the text contains the answer the instrument
+    wants.</strong> And <strong>plausibility could not serve as evidence</strong>
+    — which means the entrance boundary was discovered empirically, in a failed
+    experiment, before it was ever named. The framework's worst result is the
+    clearest evidence for its newest claim.</p>
+    <p>There is no value layer in the repository. Not because it is
+    unfinished, but because it does not currently work, and shipping a
+    non-functioning epistemic layer as though it functioned would be the exact
+    failure this project exists to name.</p>
+
+    <h3>Found, versus built</h3>
+    <p>A sentinel was built from the master axiom alone and then probed for
+    commitments it had never been given. It rediscovered four. It never
+    invented an entrance boundary — that absence is the finding, and the reason
+    these columns stay separated permanently.</p>
+    <table>
+      <caption>Structural commitments in the reference instrument</caption>
+      <tbody>
+        <tr><td>Legitimacy — premature judgment unrepresentable</td><td><span class="tag found">rediscovered</span></td></tr>
+        <tr><td>Bounded authority — only a person may delegate</td><td><span class="tag built">built</span></td></tr>
+        <tr><td>Epistemic distinction — confidence cannot make warrant</td><td><span class="tag found">rediscovered</span></td></tr>
+        <tr><td>Topology — consequence sets the price of proof</td><td><span class="tag built">built</span></td></tr>
+        <tr><td>Immutable ledger — correction is not erasure</td><td><span class="tag found">rediscovered</span></td></tr>
+        <tr><td>Status blindness — scrutiny by consequence, not pedigree</td><td><span class="tag found">rediscovered</span></td></tr>
+        <tr><td>The entrance boundary</td><td><span class="tag built">built</span></td></tr>
+      </tbody>
+    </table>
+    <p>The <a href="https://github.com/jhighman/j-lex-space/blob/main/FINDINGS.md">full
+    findings</a> also record every boundary the code failed to hold before it
+    held — three holes found the first time the ledger was attacked directly, a
+    test that believed a docstring, a fact about the past answered from the
+    present, and a revocation that revoked nothing — with dates, and a plain
+    account of what the instrument cannot establish.</p>
+  </section>
+
+  <section>
+    <h2>In preparation</h2>
+    <h3>The Geometry of Trust</h3>
+    <p><em>From Plausibility to Evidence: Structural Invariants for Governed
+    Intelligence.</em> Alexandra Krížová, author; Jeff Highman, peer reviewer.
+    Stage: <strong>proposed</strong>.</p>
+    <p>Its two refutation conditions were written before its argument, and both
+    are implemented as running checks rather than defended as positions. Read
+    <a href="https://github.com/jhighman/nerdcloud-e-alexicon/blob/main/think-tank/papers/geometry-of-trust/question.md">the
+    question and what would refute it</a>.</p>
+    <p>The framework it builds on is <em>Architecture of Contextual Judgment:
+    Governed Epistemic Transitions</em> (Krížová, first edition 2026).</p>
+    <p>Claims of the form “the system is <em>mathematically</em> prevented” are
+    not made here. Constructors, schemas, roles and append-only structures buy
+    structural unrepresentability — a state the system cannot be in — and not a
+    proof. That is already an extraordinarily strong claim, and it is one we
+    can demonstrate.</p>
+  </section>
+
+  <section>
+    <h2>The work</h2>
+    <p><a href="https://github.com/jhighman/nerdcloud-e-alexicon">nerdcloud-e-alexicon</a>
+    — the community home and the think tank's public record.<br>
+    <a href="https://github.com/jhighman/j-lex-space">j-lex-space</a> — the lab,
+    where the instrument is built and attacked.</p>
+    <p>Contributions, questions, and above all challenges are welcome. A
+    challenge with a concrete failure case is worth more here than agreement.</p>
+  </section>
+
+</main>
+
+<footer>
+  <p>A personal project, maintained as one. Nothing here represents
+  professional work or any employer. It exists for cross-discipline ideation,
+  shared understanding, and giving something back.</p>
+  <p>&copy; 2026 Alexandra Krížová &amp; Jeff Highman.</p>
+</footer>
+</div>
+
+</body>
+</html>
