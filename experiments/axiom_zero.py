@@ -31,7 +31,7 @@ from pathlib import Path
 FRAMEWORK = Path(__file__).resolve().parent.parent / "framework"
 sys.path.insert(0, str(FRAMEWORK))
 
-from sentinel import Record, Case, claim, accept  # noqa: E402
+from sentinel import Record, Case, Delegation, SYSTEM, claim, accept  # noqa: E402
 
 SOURCE = (FRAMEWORK / "sentinel.py").read_text()
 
@@ -50,9 +50,17 @@ except TypeError:
            "unrepresentable rather than merely forbidden")
 
 # Pillar II — Bounded authority: delegation cannot expand itself.
-report("Pillar II", "ABSENT" if "delegat" not in SOURCE.lower() else "PARTIAL",
-       "no delegation machinery exists, so nothing constrains its expansion "
-       "— the pillar has nothing here to be true of yet")
+r2 = Record(persons=["person"])
+r2.enroll("person", "agent", SYSTEM)
+try:
+    Delegation.grant(r2, "agent", "agent", "interpretation")
+    verdict = "ABSENT"
+except PermissionError:
+    verdict = "BUILT"
+report("Pillar II", verdict,
+       "a system cannot grant itself judgment, enrol a peer, or make a "
+       "forged delegation row count. Installed 2026-08-10 after this probe "
+       "found the machinery missing entirely — see delegation.py")
 
 # Pillar III — Epistemic distinction: confidence cannot manufacture warrant.
 r = Record()

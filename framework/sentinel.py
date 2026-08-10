@@ -20,6 +20,10 @@ smallest honest sketch of its load-bearing ideas, sized for this project:
      the entrance, plausibility is not trustworthiness: how easily a claim
      got in is measured, recorded, and structurally kept out of the
      decision about whether it earned its way onward.
+  6. Only a person may delegate. Running a computation is task execution
+     and needs no clearance; granting a system the authority to judge with
+     nobody present is epistemic delegation and only a person may write
+     one. An agent can execute, and cannot widen its own authority.
 
 The record is an in-memory sqlite database: real tables, real queries,
 gone when the program ends.
@@ -44,12 +48,16 @@ NEGATIONS = {"not", "no", "never", "cannot", "isn't", "wasn't", "didn't"}
 # quiet and asks its own question.
 CURIOSITY_FLOOR = 1
 
+# Two kinds of actor. The distinction is load-bearing, not descriptive:
+# it decides who may hand out judgment that happens with nobody present.
+PERSON, SYSTEM = "person", "system"
+
 
 class Record:
     """The append-only record. There is no update and no delete —
     immutability here is not a rule we follow but a method we never wrote."""
 
-    def __init__(self):
+    def __init__(self, persons=()):
         self.db = sqlite3.connect(":memory:")
         self.db.execute(
             """CREATE TABLE assertions (
@@ -58,23 +66,74 @@ class Record:
                    act     TEXT NOT NULL,   -- assert / classify / accept / ...
                    body    TEXT NOT NULL,   -- what is claimed
                    about   INTEGER,         -- another assertion, if any
-                   basis   INTEGER          -- the claim this one is built on
+                   basis   INTEGER,         -- the claim this one is built on
+                   actor   TEXT             -- the actor this concerns, if any
                )"""
         )
+        # The founding roster. A system cannot establish who is a person —
+        # that judgment has no seat inside the machine — so it is asserted
+        # from outside and recorded as having come from outside.
+        for name in persons:
+            self.write("founding", "enroll", PERSON, actor=name)
 
-    def write(self, author, act, body, about=None, basis=None):
+    def write(self, author, act, body, about=None, basis=None, actor=None):
         cur = self.db.execute(
-            "INSERT INTO assertions (author, act, body, about, basis) VALUES (?,?,?,?,?)",
-            (author, act, body, about, basis),
+            "INSERT INTO assertions (author, act, body, about, basis, actor)"
+            " VALUES (?,?,?,?,?,?)",
+            (author, act, body, about, basis, actor),
         )
         return cur.lastrowid
 
     def read(self, id):
+        fields = ["id", "author", "act", "body", "about", "basis", "actor"]
         row = self.db.execute(
-            "SELECT id, author, act, body, about, basis FROM assertions WHERE id=?",
-            (id,),
+            f"SELECT {', '.join(fields)} FROM assertions WHERE id=?", (id,),
         ).fetchone()
-        return dict(zip(["id", "author", "act", "body", "about", "basis"], row))
+        return dict(zip(fields, row))
+
+    # -- who is who, and who may hand out judgment --
+
+    def governed(self):
+        """Does this record know who anyone is? A record with no roster
+        cannot enforce the delegation invariant, and says so rather than
+        pretending to."""
+        return self.db.execute(
+            "SELECT COUNT(*) FROM assertions WHERE act='enroll'"
+        ).fetchone()[0] > 0
+
+    def kind(self, name):
+        """Person or system — as first enrolled. Identity is not
+        reassignable: a later enrollment cannot relabel an agent a person,
+        because only the first one is read."""
+        row = self.db.execute(
+            "SELECT body FROM assertions WHERE act='enroll' AND actor=?"
+            " ORDER BY id LIMIT 1", (name,),
+        ).fetchone()
+        return row[0] if row else None
+
+    def enroll(self, by, name, kind):
+        """Add an actor to the roster. Only a person may do this — an
+        agent that could enroll could mint the person who authorizes it."""
+        if self.kind(by) != PERSON:
+            raise PermissionError(f"only a person may enroll; {by} is not one")
+        if self.kind(name) is not None:
+            raise ValueError(f"{name} is already enrolled; identity is not reassignable")
+        return self.write(by, "enroll", kind, actor=name)
+
+    def delegated(self, actor, judgment):
+        """Is there a standing grant from a person authorizing this system
+        to judge this class of claim with nobody present?
+
+        Re-checked against the roster at read time: a delegation row does
+        not become authority merely by sitting in the table. If its author
+        is not an enrolled person, it authorizes nothing."""
+        return self.db.execute(
+            "SELECT COUNT(*) FROM assertions d"
+            " WHERE d.act='delegate' AND d.actor=? AND d.body=?"
+            "   AND EXISTS (SELECT 1 FROM assertions e WHERE e.act='enroll'"
+            "               AND e.actor = d.author AND e.body=?)",
+            (actor, judgment, PERSON),
+        ).fetchone()[0] > 0
 
     # -- everything below is derived at read time, never stored --
 
@@ -246,8 +305,67 @@ def claim(record, author, category, body, basis=None):
 def accept(record, author, claim_id, note="reviewed"):
     """Accept a claim's promotion — as yourself, on the record. If you are
     its author, this is written down and then never counted: a mirror,
-    not a gate. The record shows the attempt; the derived verdict ignores it."""
+    not a gate. The record shows the attempt; the derived verdict ignores it.
+
+    Accepting is judgment, and in a governed record a system may only
+    judge where a person has delegated that class of judgment to it. An
+    actor nobody has enrolled has no standing to judge at all — being
+    unknown is not a neutral state.
+
+    Note what is *not* restricted here: computation. The Sentinel measures
+    friction, derives categories and raises its own challenges with no
+    delegation whatsoever, because none of that is judgment. Doing work is
+    not deciding."""
+    if record.governed():
+        kind = record.kind(author)
+        if kind is None:
+            raise PermissionError(
+                f"{author} is not enrolled; an unknown actor has no standing to judge")
+        if kind == SYSTEM:
+            judgment = record.category(claim_id)
+            if not record.delegated(author, judgment):
+                raise PermissionError(
+                    f"{author} holds no delegation to judge {judgment} claims")
     return record.write(author, "accept", note, about=claim_id)
+
+
+class Delegation:
+    """Epistemic delegation: the record of a person granting a system the
+    authority to make a class of judgment with nobody present.
+
+    This is deliberately *not* the other thing the word usually means. A
+    system running a computation is task execution and needs no clearance
+    at all; it is work, not authority. Conflating the two is how an agent
+    talks its way into judging: it does a task it was permitted to do,
+    calls that permission 'delegation', and then treats the word as a
+    licence to decide.
+
+    So the two are kept apart by construction. There is no constructor for
+    a delegation, only a grant, and the grant refuses anyone who is not a
+    person."""
+
+    def __init__(self, *args, **kwargs):
+        raise TypeError("a delegation is granted, not constructed — use Delegation.grant()")
+
+    @classmethod
+    def grant(cls, record, by, to, judgment):
+        """A person grants a system authority over one class of judgment.
+
+        Every refusal here closes a route by which an agent could widen its
+        own authority: it cannot grant (not a person), cannot be granted to
+        as though it were a person, and cannot invent a class of judgment
+        the chain does not contain."""
+        if record.kind(by) != PERSON:
+            raise PermissionError(
+                f"only a person may delegate epistemic judgment; {by} is "
+                f"{record.kind(by) or 'unenrolled'}")
+        if record.kind(to) != SYSTEM:
+            raise ValueError(
+                f"epistemic delegation grants judgment to a system; {to} is "
+                f"{record.kind(to) or 'unenrolled'}")
+        if judgment not in CHAIN:
+            raise ValueError(f"no such class of judgment: {judgment}")
+        return record.write(by, "delegate", judgment, actor=to)
 
 
 class Case:

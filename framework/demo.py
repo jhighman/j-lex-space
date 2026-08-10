@@ -7,7 +7,7 @@ counted; the derived category comes from the record, not from a stored
 field; and judgment is only possible on a case that has closed.
 """
 
-from sentinel import Record, Case, claim, accept
+from sentinel import Record, Case, Delegation, SYSTEM, claim, accept
 
 record = Record()
 
@@ -55,6 +55,20 @@ print("the question it asked:     ", record.read(record.db.execute(
 # must pay to be promoted.
 accept(record, "jeff", easy)
 print("earned, regardless:        ", record.earned(easy))
+
+# Who may judge with nobody present. In a record that knows who anyone is,
+# a system may compute all it likes — but judging is not computing, and it
+# may only judge where a person has handed it that judgment.
+governed = Record(persons=["lex"])
+governed.enroll("lex", "assistant", SYSTEM)
+watched = claim(governed, "lex", "observation", "the disk filled overnight")
+try:
+    accept(governed, "assistant", watched)
+except PermissionError as refusal:
+    print("the agent, judging alone:  ", refusal)
+Delegation.grant(governed, "lex", "assistant", "observation")
+accept(governed, "assistant", watched)
+print("after lex delegates:        the assistant may judge observations")
 
 # Judgment needs a case, and an unclosed case does not exist.
 try:

@@ -9,6 +9,13 @@ The lab bench.
   is probed for each pillar and both boundaries. It rediscovered the
   exit and never invented the entrance, which is the finding: the
   entrance boundary is prior, not derivable.
+- **`delegation.py`** — can an agent widen its own authority? Every route
+  a system might take to authority nobody granted it — granting to
+  itself, enrolling an accomplice, judging undelegated, forging the
+  delegation row straight into the ledger — attempted and refused. Rests
+  on the distinction between *task execution* (computation, needing no
+  clearance) and *epistemic delegation* (a person granting a system the
+  authority to judge with nobody present).
 - **`entrance_invariant.py`** — the standing check. Two claims identical
   in kind and acceptance, maximally different in plausibility: their
   verdicts must match, and `earned()` must be unable to reach the door
