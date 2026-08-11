@@ -124,7 +124,7 @@
 
   .boundaries {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
     gap: 1px;
     background: var(--line);
     border: 1px solid var(--line);
@@ -141,7 +141,7 @@
     margin: 0 0 0.5rem;
   }
   .boundaries .what { margin: 0; font-size: 1.1rem; color: #fff; }
-  @media (max-width: 34rem) { .boundaries { grid-template-columns: 1fr; } }
+  @media (max-width: 46rem) { .boundaries { grid-template-columns: 1fr; } }
 
   pre {
     background: #060a14;
@@ -264,7 +264,7 @@
   </section>
 
   <section>
-    <h2>Two boundaries</h2>
+    <h2>Three boundaries</h2>
     <blockquote class="axiom">
       Trust is the discipline of preventing inference from becoming evidence.
       <cite>The Sentinel Principle</cite>
@@ -275,8 +275,12 @@
         <p class="what">Plausibility is not trustworthiness.</p>
       </div>
       <div>
-        <p class="where">At the exit</p>
+        <p class="where">At promotion</p>
         <p class="what">Inference is not evidence.</p>
+      </div>
+      <div>
+        <p class="where">At the exit</p>
+        <p class="what">Feeling done is a cost.</p>
       </div>
     </div>
     <p>A statement that arrives compatible with the prior model, from a source
@@ -284,6 +288,50 @@
     never examined. That is not a description of a true claim. It is a
     description of a claim nobody will look at, which is why the entrance
     needs governing as much as the exit does.</p>
+  </section>
+
+  <section>
+    <h2>The third rung: earned closure</h2>
+    <p>If the first boundary governs entrance and the second governs
+    promotion, the third governs the exit — the moment a case is allowed to
+    close.</p>
+    <p>A closure here is not a claim that the conclusion holds from now on.
+    It is smaller and it is durable: <em>this episode stopped here, under
+    these named premises, having survived these questions.</em> That sentence
+    stays true afterwards, including after the conclusion is overturned —
+    which is why closure does not silence the past. It preserves,
+    permanently, who decided, under what premises, and what those decisions
+    had to survive.</p>
+    <p>To keep Goodhart's Law from consuming active curiosity, closure is not
+    authorised by a fixed threshold of answered questions. A visible
+    threshold is a thing to run at, and curiosity becomes what a system
+    performs on the way to it. Instead, epistemic satisfaction is made a
+    price rather than a permission: <strong>feeling done is a cost.</strong></p>
+    <div class="boundaries">
+      <div>
+        <p class="where">A comfortable case</p>
+        <p class="what">Entered silently, met no resistance, performed no
+        cognitive work — its exit toll is high, structurally requiring 5
+        independent answers to close.</p>
+      </div>
+      <div>
+        <p class="where">A contested case</p>
+        <p class="what">Metabolised significant friction and has paid its
+        dues — its exit toll is low, requiring only 1 independent answer to
+        close.</p>
+      </div>
+    </div>
+    <p>Closure is a constructor, not a gate. A case that has not closed does
+    not exist as an object, so a premature judgment on an open, sentence-
+    scoped fragment is not something the system refuses — it is something
+    nobody can ask for. And no case closes itself in a single motion:
+    proposing closure is what draws the Sentinel's questions, and a question
+    and its answer in the same voice is a soliloquy, which the ledger
+    declines to count.</p>
+    <blockquote class="axiom">
+      Assertions may enter; only derivations may conclude.
+      <cite>The core asymmetry</cite>
+    </blockquote>
   </section>
 
   <section>
@@ -307,7 +355,8 @@ cd j-lex-space
 
 python3 framework/demo.py        # the ideas, running
 python3 experiments/check.py     # every boundary, checked
-python3 experiments/forgery.py   # attack the ledger directly</pre>
+python3 experiments/forgery.py   # attack the ledger directly
+python3 experiments/premature.py # attack the close directly</pre>
     <p>No dependencies. Standard library only. Written to be read top to
     bottom. The guards fail loudly and exit non-zero — <strong>if you find a
     route past one, that is the most valuable contribution available
