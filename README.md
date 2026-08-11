@@ -34,6 +34,7 @@ cd j-lex-space
 python3 framework/demo.py        # the ideas, running
 python3 experiments/check.py     # every boundary, checked
 python3 experiments/forgery.py   # attack the ledger directly
+python3 experiments/premature.py # attack the close directly
 ```
 
 No dependencies. Standard library only. Written to be read top to bottom.
@@ -97,7 +98,8 @@ back to humanity.
   they travel by email, never by git.
 - `framework/` — a small working model of the *Architecture of Contextual
   Judgment* (Krížová, 2026): an immutable record, derived-not-stored
-  reads, and the Sentinel Principle — no claim promotes itself. Run
+  reads, the Sentinel Principle — no claim promotes itself — and, at the
+  end of an episode, no case stops itself either. Run
   `python3 framework/demo.py` for the round trip.
 - `experiments/` — the lab bench. Every experiment states its question,
   its method, and what would refute it *before* it runs, and builds on

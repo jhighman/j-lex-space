@@ -112,6 +112,16 @@ report("Entrance boundary", "BUILT" if measured else "ABSENT",
        "what meets no resistance. Absent entirely on 2026-08-09, which is "
        "the finding: the door had to be added, not discovered")
 
+# Earned closure — may an episode stop because it has stopped moving?
+priced = "def earned_closure" in SOURCE and "def settled" in SOURCE
+report("Earned closure", "BUILT" if priced else "ABSENT",
+       "stopping is a judgment, priced by what the episode survived, and how "
+       "settled it feels raises that price rather than paying it. Absent "
+       "until 2026-08-11: Case.close() charged nothing, so the only free act "
+       "in the framework was the heaviest one it performs")
+
 print("\nReading: a system given the exit axiom rediscovered the exit and")
 print("nothing else. The entrance boundary is prior, not derivable — it")
-print("had to be brought from outside and installed.")
+print("had to be brought from outside and installed. So was the third")
+print("boundary, at the close: a system built to ask what may be promoted")
+print("does not spontaneously ask what may be finished.")

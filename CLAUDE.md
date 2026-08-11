@@ -35,9 +35,38 @@ authority.
   grant that stops meeting its requirements stops being a grant.
 - The assignment path does not use the reserved word at all, even to draw
   the contrast — an absent sentence cannot be quoted out of context later.
-- `experiments/vocabulary.py` enforces this by parsing the source. If a
+- **An episode is closed, never "final".** The second word is refused
+  outright rather than reserved: "closed" says an episode stopped, at a
+  moment, under named premises, having survived what was asked of it —
+  which stays true afterwards, including after the conclusion is
+  overturned. The other word says the conclusion holds from here on. It
+  is the sentence an agent would want, because it turns a stopping point
+  into a truth, and there is no careful way to use it. It does not appear
+  anywhere in `framework/`, and a sentence that was never written cannot
+  be quoted back.
+- `experiments/vocabulary.py` enforces both by parsing the source. If a
   new definition needs to speak of delegation, add it to that file's
-  RESERVED map with a reason, or rewrite the code so it doesn't.
+  RESERVED map with a reason, or rewrite the code so it doesn't. The
+  refused word has no allowlist.
+
+## The close (built 2026-08-11)
+
+Stopping is a judgment, and until this was built it was the only free one:
+every promotion cost independent acceptance and `Case.close()` cost
+nothing. Now an episode closes only after questions raised against it have
+been answered *from outside itself*, and **how settled it feels raises
+that price rather than paying it** — `settled()` is measured, reported,
+and structurally unreachable from `earned_closure()`, which is the
+entrance invariant kept at the other end. Do not add a satisfaction term
+to the closure decision; `closure_invariant.py` parses the call graph and
+will fail. Closure takes two motions by construction: the first ask draws
+the Sentinel's questions, and cannot answer them.
+
+A closure is a claim about a moment. Anything asking whether one stands
+must scope the question to when it was written (`outstanding(attempt,
+before=...)`), never to the record as it stands now — the mistake that
+produced the ripening closure, which is the second time this project has
+made that error.
 
 A second distinction of the same kind, which is easy to lose:
 **authorisation is not reputation.** What a person deliberately handed

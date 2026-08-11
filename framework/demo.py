@@ -2,13 +2,14 @@
 
     python3 framework/demo.py
 
-Watch for three things: the author's own accept is recorded but never
+Watch for four things: the author's own accept is recorded but never
 counted; the derived category comes from the record, not from a stored
-field; and judgment is only possible on a case that has closed.
+field; judgment is only possible on a case that has closed; and closing
+is itself judgment, priced by how little the episode met on its way here.
 """
 
-from sentinel import (Record, Case, Delegation, SYSTEM,
-                      assign, assigned, claim, accept)
+from sentinel import (Record, Case, Delegation, Premature, Premise, SYSTEM,
+                      answer, assign, assigned, claim, accept)
 
 record = Record()
 
@@ -88,8 +89,39 @@ try:
 except TypeError as refusal:
     print("asking early:              ", refusal)
 
-# Close the episode; now — and only now — is there something to judge.
-case = Case.close(record, [seen, theory])
+# Stopping is a judgment too, and it closes under named premises: a
+# conclusion that will not say what it assumed cannot be argued with later.
+frame = Premise.name(record, "lex", "history-integrity",
+                     "the reflog is trustworthy and the clock is not lying")
+
+# How settled the episode is. Not a compliment — this is the measure of how
+# little it met, and it is about to make stopping more expensive, not less.
+quiet = record.settled([seen, theory])
+print()
+print("entered quietly:           ", quiet["entered quietly"])
+print("questioned by nobody:      ", quiet["questioned by nobody"])
+
+# The first ask never closes. It opens the Sentinel's file and draws its
+# questions, and a question asked in this breath cannot already be answered.
+try:
+    Case.close(record, "lex", [seen, theory], frame)
+except Premature as refusal:
+    print("first ask:                 ", refusal)
+    for question in refusal.questions:
+        print("   the Sentinel asks:      ", question)
+
+# Lex cannot answer them: an author of the case answering the case is the
+# episode settling its own questions. The record keeps her attempt anyway.
+attempt = record.considering([seen, theory], frame)
+for question in record.outstanding(attempt):
+    answer(record, "lex", question, "I've thought about it and I'm satisfied")
+print("after lex answers her own: ", len(record.outstanding(attempt)), "still standing")
+
+# Someone outside the episode answers. Now it may stop.
+for question in record.outstanding(attempt):
+    answer(record, "reader", question, "checked the reflog independently")
+case = Case.close(record, "lex", [seen, theory], frame)
+print("closed under premises:     ", f"{case.frame} v{case.version}")
 
 # Lex authored claims in this case, so she cannot be its judge.
 print("lex as judge:              ", Case.judge(case, "lex")["reason"])
@@ -98,3 +130,10 @@ print("lex as judge:              ", Case.judge(case, "lex")["reason"])
 verdict = case.judge("reader")
 for step in verdict["steps"]:
     print(f"step {step['step']}: earned={step['earned']}  ({step['claim']})")
+
+# The premises move. What was concluded under the old ones does not: the
+# earlier closure is superseded, never edited, and still says what it said.
+Premise.name(record, "lex", "history-integrity",
+             "the reflog is trustworthy; the clock may have drifted")
+print("this case still reads as:  ", f"{case.frame} v{case.version}",
+      "- superseded, not corrected")

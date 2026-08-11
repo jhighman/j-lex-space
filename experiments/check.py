@@ -21,6 +21,9 @@ GUARDS = {
     "scrutiny.py": "authority tightens the justification required of it",
     "forgery.py": "no row written straight into the ledger buys a verdict",
     "entrance_invariant.py": "plausibility cannot move warrant",
+    "closure.py": "stopping is priced by what an episode survived",
+    "closure_invariant.py": "comfort cannot buy an ending",
+    "premature.py": "no row written straight into the ledger buys an ending",
 }
 
 SURVEYS = {

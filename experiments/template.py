@@ -14,7 +14,7 @@ from pathlib import Path
 # The bench builds on the framework's record rather than new machinery.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "framework"))
 
-from sentinel import Record, Case, claim, accept  # noqa: E402
+from sentinel import Record, Case, Premise, answer, claim, accept  # noqa: E402
 
 record = Record()
 
@@ -33,6 +33,13 @@ accept(record, "author_b", idea)
 print("claims on the record:", 2)
 print("category of idea:    ", record.category(idea))
 print("promotion earned:    ", record.earned(idea))
-verdict = Case.close(record, [seen, idea]).judge("reader")
+
+# Closing is a judgment: it happens under named premises, and only after
+# the Sentinel's questions have been answered from outside the episode.
+frame = Premise.name(record, "author_a", "bench", "the bench itself is sound")
+attempt = record.considering([seen, idea], frame)
+for question in record.outstanding(attempt):
+    answer(record, "author_c", question, "checked")
+verdict = Case.close(record, "author_a", [seen, idea], frame).judge("reader")
 print("case verdict:        ", verdict["verdict"],
       "-", verdict["steps"][0]["step"])

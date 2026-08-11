@@ -98,6 +98,16 @@ Current standing:
 | Pillar V — immutable ledger | rediscovered |
 | Status blindness | rediscovered |
 | Entrance boundary | **built** 2026-08-10 |
+| Earned closure | **built** 2026-08-11 |
+
+The same absence showed up a second time, at the other end of the episode.
+A system built to govern what may be *promoted* never asked what may be
+*finished*. `Case.close()` had no price at all: every other promotion in
+the framework cost independent acceptance, and the heaviest judgment an
+episode makes — the one that says it is over — was free. The class
+docstring described an invariant, and the invariant was real, but it
+guarded the wrong half: it made a premature *judgment* unrepresentable
+while leaving premature *closure* available to anyone who asked for it.
 
 ---
 
@@ -140,6 +150,42 @@ covered the same actor. It looked exactly like a successful revocation.
 `covering()` now enumerates everything that confers an authority, because
 the question is not "did I revoke it" but "what still covers them".
 
+**Four holes in the close, found the day it was built**
+(`experiments/premature.py`, 2026-08-11). The close was written with the
+entrance boundary's lesson already in hand, guarded by two checks that
+passed, and then attacked at the table rather than through the API.
+
+- **A cheaper ending, bought with questions nobody answered.** Being
+  questioned lowers what an episode must survive in order to stop, and
+  writing a question costs nothing. Two rows in the table and an episode
+  looked examined, dropping its bill by two independent answers. An
+  examination now counts only where it happened *between parties* — one
+  who asked, another who answered, neither of them the author being asked
+  about. A question and its answer in the same voice is a soliloquy.
+- **A forged last word.** Anything holding the database could write a row
+  saying `closed`, under premises it named itself, and a standing closure
+  would read as *superseded*. The episode never reopened; the record
+  simply reported that somebody else had had the last word. `flaw()` now
+  re-derives whether a closure stands every time it is read, and only a
+  closure that stands can supersede one.
+- **A closure that ripened.** This one was found by the *positive
+  control*, not by an attack, which is the part worth keeping. A closure
+  row written before its questions were answered sat correctly refused —
+  and then quietly became sound the moment somebody else answered them,
+  because soundness was being re-derived from the present. The row now
+  claimed something that was false when it was written.
+- **And its mirror: a closure unmade by a late question.** Same cause. One
+  new question written against a year-old file would void a closure that
+  had stood.
+
+The last two are the *same error the door taught*, arriving from the
+opposite direction and not recognised until it had been made again. A
+closure is a claim about a moment — *this stopped here, having survived
+these questions* — and a question about a moment cannot be answered from a
+room that has since changed. `outstanding()` now takes the moment it is
+being asked about. Derivation still governs the present, and the past is
+read as it stood.
+
 ---
 
 ## What this instrument cannot establish
@@ -159,6 +205,30 @@ the question is not "did I revoke it" but "what still covers them".
   system that depends on it.
 - **Contradiction detection is deliberately naive** — shared vocabulary
   with opposite polarity. It is labelled naive rather than dressed up.
+- **Earned closure moves the regress outward; it does not end it.** An
+  episode may stop when questions raised against it have been answered
+  from outside itself. That is a real boundary and it is not a foundation:
+  the answers are trusted because of who wrote them, and who they are
+  comes from the founding roster, which came from outside the system. The
+  architecture is asymmetric on purpose — *assertions may enter, only
+  derivations may conclude* — and the entry point is an assertion. This is
+  Polanyi's problem, kept visible rather than solved: something must be
+  trusted before anything can be examined at all.
+- **An episode nobody will answer cannot stop.** The price of closing is
+  paid in attention from outside, so a case that no one else will look at
+  stays open indefinitely. That is the honest consequence of refusing
+  self-certification, and it is a real cost rather than an oversight: the
+  alternative is a system that can finish alone, which is the thing being
+  refused. What the instrument does *not* have is any account of when an
+  unanswerable episode should be abandoned rather than closed.
+- **The bill for a very quiet, very long episode is large and unbounded.**
+  Comfort raises what must be survived, and nothing caps it — deliberately,
+  since a cap is a ceiling and a visible ceiling is a thing to aim at. The
+  cost is that settlement scales with length as well as with quiet, and
+  those are not the same property.
+- **Settlement is measured crudely.** Two components — claims that met no
+  resistance at the door, and claims never examined between parties. It is
+  a proxy for "this episode stopped moving", not a measurement of it.
 - **Case boundaries are given, not derived.** In the full architecture
   they come from document structure marked at ingest; here they are passed
   in.
