@@ -186,6 +186,54 @@ room that has since changed. `outstanding()` now takes the moment it is
 being asked about. Derivation still governs the present, and the past is
 read as it stood.
 
+**Three holes about identity, found while every guard reported that it
+held** (`experiments/narrowing.py`, 2026-08-11). The previous attacks asked
+whether a judgment could be forged. These asked a question nobody had put
+to the code: whether the record agrees with itself about *which thing* a
+judgment is about. All three were open at a commit where `check.py` printed
+`Every boundary holds` for eight guards.
+
+- **An episode named by its last claim, and priced by all of them.**
+  `considering()` found the Sentinel's open file by the episode's terminal
+  claim and its premises, then priced it over the whole list it was handed.
+  Two episodes ending at the same claim therefore shared one file, and
+  whichever asked first set the price for both. A one-claim ask opened the
+  file cheaply and a six-claim episode inherited it: seven answers owed,
+  two paid, closed — and `flaw()` read it as standing. No database handle
+  was needed. `Case.close()` alone did it, because the `Premature` refusal
+  is itself what opens the file. An episode is a *set* of claims now, named
+  canonically by all of them (`episode()`), so a different episode is a
+  different name.
+- **And therefore a small episode standing in front of a large one.**
+  `superseded()` matched closures by that same terminal claim, so an actor
+  holding the lightest grant in the chain could have the last word over a
+  judgment reaching the heaviest — by honestly closing the one-claim
+  episode the large one happened to end on. Nothing was forged: the agent
+  had genuine standing over the small episode it really closed, and
+  `flaw()` was right to say so. It was the record that could not tell the
+  two apart. A closure supersedes only a closure of the same episode now.
+- **A price decided by counting rows.** `earned()` was taught in the same
+  week to count accepting *actors* rather than accept rows. `category()`,
+  which decides what a promotion costs in the first place, was fixed on a
+  different axis — restricting *who* may classify — and still counted rows.
+  So one voice holding an `observation` grant, the lightest and most
+  readily given authority in the chain, said "observation" twice about an
+  action and dropped its price from three independent accepts to none:
+  `earned()` returned True with nobody having accepted anything, and the
+  claim still read *delete the oldest archives now*. `forgery.py` appeared
+  to cover this and did not — its ballot-stuffing attack ran with an agent
+  holding no delegation at all, so the rows were discarded before the tally
+  and the test passed for a reason unrelated to repetition. The guard that
+  looked like the strongest evidence was the reason nobody looked again.
+
+The shared lesson is narrower than "attack the table" and worth stating on
+its own: **every one of these was a correct answer to a question about the
+wrong object.** Nothing derived falsely. `flaw()`, `superseded()` and
+`category()` each reported accurately about the episode or the ballot they
+were shown, and each was shown something other than the one that ran. A
+price is only as sound as the identity of the thing being priced, and until
+now nothing in this framework had been asked to say what an episode *is*.
+
 ---
 
 ## What this instrument cannot establish
@@ -236,5 +284,11 @@ read as it stood.
   is in memory and evaporates when the process ends. That is a feature of
   an instrument and a disqualification for anything else.
 - **A check that has not failed is only a check that has not failed.**
-  None of the guards here have fired since being written. That is a
-  result, not a proof, and it is worth exactly what it is worth.
+  This was written when none of the guards had ever fired, as a caution
+  about what that was worth. On 2026-08-11 it stopped being a caution:
+  `narrowing.py` was written against a tree where all eight existing
+  guards reported `holds`, and found three boundaries already gone. A
+  passing suite is evidence about the questions someone thought to ask,
+  and about nothing else. The guards that hold are still worth what they
+  were worth; what changed is that we now have a measurement of what they
+  were silent about, and it was not zero.

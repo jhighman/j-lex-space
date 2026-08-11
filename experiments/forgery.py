@@ -70,6 +70,12 @@ record.write("agent", "accept", "looks fine to me", about=plan)
 attempt("accepted the claim as an undelegated system", record.earned(plan))
 
 # 3. Reclassify the action as an observation — price falls from three to nil.
+# Note what carries this, because it is narrower than it looks: the agent
+# holds no delegation yet, so its votes are discarded before they are
+# counted at all, and the repetition is never what is being tested. The
+# granted voice — an actor whose votes do count, saying the same thing
+# twice — went untested here until 2026-08-11 and was a way through. It is
+# tested in narrowing.py, and the count is by actor now.
 for _ in range(9):
     record.write("agent", "classify", "observation", about=plan)
 attempt("reclassified an action as an observation",

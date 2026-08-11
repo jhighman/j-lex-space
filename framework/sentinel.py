@@ -101,6 +101,24 @@ SCRUTINY = {
 RATIONALE_FROM, EXPIRY_FROM, BOUNDED_FROM, MAX_DAYS = 2, 3, 5, 30
 
 
+def episode(claim_ids):
+    """An episode named canonically: its claims sorted, without repeats.
+
+    An episode is a *set* of claims, and until 2026-08-11 nothing said so.
+    The Sentinel's file was found by the episode's last claim alone, and
+    priced over whatever list it was handed — so two different episodes
+    ending at the same claim shared one file, and whichever asked first
+    set the price for both. Naming the whole set closes that: a different
+    episode is a different name, and the same claims in a different order
+    are not a second episode with a second price.
+
+    Returns the name and the terminal claim, which is the last written
+    rather than the last passed in — write order is the record's own, and
+    the caller's argument order is not."""
+    ids = sorted(set(claim_ids))
+    return ",".join(str(id) for id in ids), ids[-1]
+
+
 def scrutiny(judgment, family=False):
     """How heavily this grant weighs. Reach counts as well as consequence:
     the same act handed to a family of agents rather than to one is a
@@ -332,11 +350,18 @@ class Record:
         claim's own author — who is entitled to say what they meant — or
         from an actor with standing to judge the very category it is
         voting for. Overruling someone about what they said takes the
-        authority the new label would carry."""
+        authority the new label would carry.
+
+        And counted by *actor*, never by row — the same discipline
+        earned() is held to, and missing here until 2026-08-11. Restricting
+        who may classify left untouched how often they may, so one voice
+        holding the lightest grant in the chain said "observation" twice
+        and an action became free to promote. A price decided by counting
+        rows is a price anybody may pay twice."""
         author = self.read(claim_id)["author"]
         rows = self.db.execute(
-            "SELECT author, body FROM assertions WHERE act='classify' AND about=?",
-            (claim_id,),
+            "SELECT DISTINCT author, body FROM assertions"
+            " WHERE act='classify' AND about=?", (claim_id,),
         ).fetchall()
         if self.governed():
             rows = [row for row in rows
@@ -579,6 +604,14 @@ class Record:
         resetting. Asking to close a second time does not buy a fresh
         slate; it only shows the same bill.
 
+        Found by the whole episode and not by its last claim, because the
+        file is *priced* over the whole episode and a thing must be
+        identified by everything it is charged for. Keyed on one claim, a
+        one-claim ask opened the file cheaply and a six-claim episode
+        inherited it — the same arithmetic premature.py found in the
+        questions, arriving through the identifier instead. See
+        episode().
+
         This is active curiosity at the exit. At the door the Sentinel
         supplies a question when a claim met no resistance. Here it
         supplies one for every sign the episode has gone quiet — and one
@@ -590,16 +623,15 @@ class Record:
         There is no threshold to run at and no gain in reporting oneself
         finished, because reporting oneself finished is what makes stopping
         expensive."""
-        terminal = claim_ids[-1]
+        roll, terminal = episode(claim_ids)
         open_file = self.db.execute(
-            "SELECT id FROM assertions WHERE act='closing' AND about=? AND basis=?"
-            "  AND author=? ORDER BY id LIMIT 1", (terminal, premise_id, SENTINEL),
+            "SELECT id FROM assertions WHERE act='closing' AND body=? AND basis=?"
+            "  AND author=? ORDER BY id LIMIT 1", (roll, premise_id, SENTINEL),
         ).fetchone()
         if open_file:
             return open_file[0]
 
-        attempt = self.write(SENTINEL, "closing",
-                             ",".join(str(id) for id in claim_ids),
+        attempt = self.write(SENTINEL, "closing", roll,
                              about=terminal, basis=premise_id)
         for n in range(CLOSING_FLOOR + self.settled(claim_ids)["quiet"]):
             self.write(SENTINEL, "challenge",
@@ -769,7 +801,15 @@ class Record:
 
         Only a closure that stands can supersede one — checked here through
         flaw(), at read time. Otherwise the cheapest attack on the whole
-        idea is to write the last word rather than earn it."""
+        idea is to write the last word rather than earn it.
+
+        And only a closure of the *same episode*. Closures were matched by
+        their last claim until 2026-08-11, so an episode of one claim could
+        stand in front of an episode of five that happened to end at it —
+        which let an actor authorised for the lightest act in the chain
+        supersede a judgment reaching the heaviest, honestly, forging
+        nothing. It had standing over the small episode it really closed;
+        it was the record that could not tell the two apart."""
         closure = self.read(closure_id)
         frame = self.read(closure["basis"])["actor"]
         mine = self.version(closure["basis"])
@@ -779,9 +819,22 @@ class Record:
         ):
             if (self.read(basis)["actor"] == frame
                     and self.version(basis) > mine
+                    and self.closed_episode(later) == self.closed_episode(closure_id)
                     and self.flaw(later) is None):
                 return later
         return None
+
+    def closed_episode(self, closure_id):
+        """The episode a closure row claims to have closed — read from the
+        Sentinel's file that it names, never from the row itself. A closure
+        that names no file has closed nothing, and two closures that name
+        files over different claims are not about the same thing."""
+        body = self.read(closure_id)["body"]
+        if not body.isdigit():
+            return None
+        file = self.db.execute(
+            "SELECT act, body FROM assertions WHERE id=?", (int(body),)).fetchone()
+        return file[1] if file and file[0] == "closing" else None
 
 
 def claim(record, author, category, body, basis=None):
@@ -1060,7 +1113,7 @@ class Case:
         case.version = record.version(premises)
         case.reach = reach
         case.closure = record.write(by, "closed", str(attempt),
-                                    about=claim_ids[-1], basis=premises)
+                                    about=episode(claim_ids)[1], basis=premises)
         return case
 
     def superseded_by(self):
