@@ -234,3 +234,199 @@ I am responsible for faithfulness, not sovereignty over the outcome. This is the
 divine irony. Sovereignty is granted by God, not claimed by acts. All that is
 given will be taken away. Knowing the purpose in this inverts the fear of
 judgment, but instead the joy of it.
+
+---
+
+## What a Closure Owes
+
+*12 August 2026. A note on praxeology: epistemology prices what a claim may
+become; praxeology prices what a closure now owes.*
+
+The instrument in `framework/` governs one thing: the conditions under which
+a claim may become another kind of claim. It does that job thoroughly — no
+claim promotes itself, consequence sets the price of proof, comfort raises
+the cost of stopping. But a companion experiment (in preparation) held one
+body of autobiographical fact fixed, varied the rules of warrant six ways,
+and ran off the end of the road the instrument is built on. The corpus
+contained an unsent letter. Six epistemologies, an architecture, and an
+instrument for detecting when interpretation exceeds its evidence — and none
+of it sends the letter. Understanding is not action, and the record as built
+cannot even represent the difference.
+
+The gap is visible in the schema. `CHAIN` ends at `action`, but an `action`
+row is a claim *about* an action: "delete the oldest archives now" is a
+sentence in a table. Philosophy of action has a name for what is missing.
+Anscombe and Searle distinguish two **directions of fit**: an assertion is
+satisfied when it matches the world, an intention is satisfied when the
+world is brought to match it. Every row in the ledger runs the first
+direction. The unsent letter is not an ungoverned claim — it is an
+ungoverned commitment, and the ledger has no row type for it.
+
+### Three traditions that predicted this
+
+**Knowing-how is not knowing-that.** Ryle and Polanyi argued that a whole
+class of knowledge exists only in performance and cannot be exhaustively
+propositionalized; Aristotle's *phronesis* is the strong form — practical
+wisdom resists rule-capture in principle, because it is the capacity to act
+rightly in particulars. This repository's largest negative result is
+evidence for the thesis. The value layer failed its discrimination control
+completely — 0.00 standard errors of separation — because a plausible
+value-reading could be constructed from any pair of propositions. The
+phronesis tradition says that is not an implementation failure: values do
+not live in propositions. They live in conduct. The failure was predicted
+by a tradition the project had not yet consulted.
+
+**The pragmatist inversion.** Dewey attacked the "spectator theory of
+knowledge" — knowledge as beholding rather than doing. This ledger is a
+spectator theory *on purpose*: derived-not-stored, judgment with nobody
+present. Dewey names the cost of that design: warrant that never terminates
+in consequences is incomplete. Peirce's maxim makes meaning itself
+practical — a conception's content is its conceivable practical effects.
+Under that reading, an episode whose closure never touches conduct has not
+yet finished meaning anything.
+
+**Bonhoeffer, whom the companion experiment already deployed.** The central
+circle of *Discipleship* — only the believer is obedient, and only the
+obedient believe — is a praxeological epistemology: belief warranted by
+practice, practice grounded in belief, neither prior. The framework can now
+represent the first half. A frame may declare that its warrant descends;
+the commitment goes on credit and the episode settles at the exit, where
+everything reasoned down from the commitment must have been examined
+between parties before it may stop. But examination is still epistemic.
+Bonhoeffer's settlement is obedience — conduct. That is the rung above the
+one just built, and the difference between them is the difference the
+experiment kept finding: grace that costs a shirt, against grace that costs
+a life.
+
+### A word about the word
+
+"Praxeology" names at least three programs, and they should not be run
+together. Mises made it the a priori science of action and the foundation
+of Austrian economics. Kotarbiński's Polish school built a theory of
+efficient action. The philosophy-of-action tradition — Anscombe, Davidson —
+analyses intention itself. The use here is closest to Kotarbiński joined to
+the practice tradition of MacIntyre and Schön: analysis terminates in a
+verb, and the gap between what is understood and what is done is itself a
+finding.
+
+### What the next layer would be
+
+A commitment ledger beside the assertion ledger. Arendt argued that action
+is irreversible and unpredictable, and that humans possess exactly two
+faculties that make it bearable: promising and forgiving. The ledger
+already has both shapes. Revocation is promise-machinery — trust extended
+on terms, withdrawable on the record. Supersession-without-erasure is
+forgiveness-shaped: an action cannot be undone, only answered, which is
+what "correction is not erasure" has meant here all along. What is missing
+is the promissory row itself.
+
+The shape it would take, in this framework's own idiom: a closure that
+reached `action` does not merely close — it opens an obligation, and only
+two things settle one. Conduct, attested by someone other than the actor —
+the examined-between-parties rule, transposed. Or explicit renunciation,
+which is itself a verb, recorded and priced, never a quiet lapse. The
+unsent letter becomes an open obligation the record keeps derivable. Not
+nagging — visible. The rule against invisible refusals generalizes: an
+intention nobody can see expiring is indistinguishable from a decision.
+
+The empirical anchor exists. The intention–behavior gap is a measured
+phenomenon — intentions explain roughly a quarter of the variance in
+behavior (Sheeran 2002). Gollwitzer's implementation intentions — if-then
+plans binding a concrete cue to a concrete act — close that gap with
+medium-to-large effects (d ≈ .65 in the 2006 meta-analysis). Translated
+into this framework's terms: a vague intention is to praxeology what a
+basis-less belief is to the entrance — either unrepresentable, or priced.
+
+### Implications for human-centered AI
+
+**From claims to commitments.** Winograd and Flores built exactly this in
+1986 — computers as coordinators of *conversations for action*, tracking
+requests, promises, and declarations rather than propositions — and the
+current era has quietly forgotten it. An assistant that tracks what a
+conversation obligated, rather than what it asserted, is the direct
+descendant. This framework is well placed for the revival, because the
+load-bearing distinction was in its vocabulary before it was in any schema:
+work is assigned, authority is delegated. That is governance of acts, not
+propositions.
+
+**Governed intention for agents.** The lineage runs Bratman, to Cohen and
+Levesque's "intention is choice with commitment," to the BDI architectures:
+intention as a persistent commitment with an explicit reconsideration
+policy. Current language-model agents have no governed intention
+persistence — they re-derive their plans every context window. The scrutiny
+ladder here governs who may act. A praxeological layer governs what an
+undertaken act still owes. Both are missing from today's agent stacks, and
+the second is nearly missing from the literature.
+
+**Behavioral evaluation over self-report.** If values live in conduct, then
+evaluating AI systems by their stated values is the value-layer mistake at
+industrial scale. Alignment work is already moving toward behavioral
+evaluation under pressure, and Gabriel frames why: alignment is to
+values-in-practice, not values-as-text. The Chapter-10-shaped result in
+FINDINGS.md is a pre-registered instance of stated-value extraction failing
+a discrimination control.
+
+**The subsidized substitution.** The sharpest implication comes from the
+companion experiment's confession. Confronted with people he could not
+help, the subject of the corpus converted them into people he could
+understand — and, on learning this, commissioned another analysis. AI drops
+the marginal cost of another analysis to nearly zero, which subsidizes
+exactly that substitution. A human-centered system should make the open
+verb cheaper than the next synthesis: surface the unsettled obligation, not
+the offer to analyze it again. The human keeps the verb. The machine keeps
+the ledger of verbs unperformed.
+
+**Scope humility as a safety property.** Suchman showed that plans are
+resources for situated action, not determinants of it — an instrument that
+treats its model as exhaustive of the situation will misgovern at the
+edges. The direction-of-warrant correction is the architectural form of the
+lesson: a governance mechanism must govern the applicability of its own
+rules, or the hidden assumption simply moves one level up.
+
+### The one-sentence version
+
+Epistemology prices what a claim may become; praxeology prices what a
+closure now owes — and the framework that learned to refuse cheap grace at
+the exit has one rung left to build: settlement by conduct, attested,
+between parties.
+
+### References
+
+- Anscombe, G.E.M. (1957). *Intention*. Blackwell.
+- Arendt, H. (1958). *The Human Condition*. University of Chicago Press.
+- Aristotle. *Nicomachean Ethics*, Book VI.
+- Austin, J.L. (1962). *How to Do Things with Words*. Oxford.
+- Bonhoeffer, D. (1937). *Nachfolge* (*Discipleship*).
+- Bratman, M. (1987). *Intention, Plans, and Practical Reason*. Harvard.
+- Cohen, P. & Levesque, H. (1990). "Intention is choice with commitment."
+  *Artificial Intelligence*, 42(2–3), 213–261.
+- Dewey, J. (1929). *The Quest for Certainty*. Minton, Balch.
+- Dreyfus, H. & Dreyfus, S. (1986). *Mind over Machine*. Free Press.
+- Gabriel, I. (2020). "Artificial Intelligence, Values, and Alignment."
+  *Minds and Machines*, 30, 411–437.
+- Gollwitzer, P. (1999). "Implementation intentions: Strong effects of
+  simple plans." *American Psychologist*, 54(7), 493–503.
+- Gollwitzer, P. & Sheeran, P. (2006). "Implementation intentions and goal
+  achievement: A meta-analysis." *Advances in Experimental Social
+  Psychology*, 38, 69–119.
+- Graham, I. et al. (2006). "Lost in knowledge translation: Time for a
+  map?" *Journal of Continuing Education in the Health Professions*, 26(1).
+- Kotarbiński, T. (1965). *Praxiology: An Introduction to the Sciences of
+  Efficient Action*. Pergamon.
+- MacIntyre, A. (1981). *After Virtue*. University of Notre Dame Press.
+- Mises, L. von (1949). *Human Action*. Yale. (Cited to distinguish, not
+  to claim.)
+- Peirce, C.S. (1878). "How to Make Our Ideas Clear." *Popular Science
+  Monthly*, 12.
+- Polanyi, M. (1958). *Personal Knowledge*; (1966) *The Tacit Dimension*.
+- Rao, A. & Georgeff, M. (1995). "BDI agents: From theory to practice."
+  *ICMAS-95*.
+- Ryle, G. (1949). *The Concept of Mind*. Hutchinson.
+- Schön, D. (1983). *The Reflective Practitioner*. Basic Books.
+- Searle, J. (1983). *Intentionality*. Cambridge.
+- Sheeran, P. (2002). "Intention–behavior relations." *European Review of
+  Social Psychology*, 12(1), 1–36.
+- Shneiderman, B. (2022). *Human-Centered AI*. Oxford.
+- Suchman, L. (1987). *Plans and Situated Actions*. Cambridge.
+- Winograd, T. & Flores, F. (1986). *Understanding Computers and
+  Cognition*. Ablex.
