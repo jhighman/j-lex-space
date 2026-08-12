@@ -3,6 +3,15 @@
 private/**
 !private/README.md
 
+# Manuscripts are not source. The book's own PDF stays out of the tree;
+# where it appears is a publication decision, not a side effect of an
+# experiment. Stimulus corpora written for the bench are a different thing
+# and are committed in full — see experiments/preregistration-taxonomy.md.
+*.pdf
+*.doc
+*.docx
+*.epub
+
 # OS / editor
 .DS_Store
 .vscode/

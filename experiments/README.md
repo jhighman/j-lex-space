@@ -51,6 +51,31 @@ of the design, and is simply no longer true of the code.
   as an observation, stuff the ballot, and rewrite what a claim met at
   the door. Every row is stored; no verdict moves. The ledger is
   append-only and therefore full of lies, and simply not credulous.
+- **`narrowing.py`** — can an episode be made to look smaller than it is?
+  Three attacks on identity rather than on judgment: open the Sentinel's
+  closing file over a one-claim episode and let a six-claim one inherit
+  the price, have a small episode stand in front of a large one that ends
+  on the same claim, and relabel an action with one granted voice speaking
+  twice. All three were open while every other guard reported that it
+  held, which is the finding worth carrying.
+- **`direction.py`** — can a system escape the price by declaring which way
+  it reasons? The framework assumed warrant travels upward and never said
+  so, and fired continuously against the one epistemology that reasons
+  down from commitment. Direction is declared on the frame by a person now,
+  with a reason, re-derived at read time — and attacked here from every
+  side, because a boundary worth something is a boundary worth forging.
+  Descent is not an exemption but a different schedule: the commitment goes
+  on credit and settles at the exit.
+- **`preregistration-taxonomy.md`** — a protocol, not a script, and not
+  yet frozen. Can two independent readers apply the book's own taxonomy to
+  the same claims, does attribution change the class they assign, and does
+  judging a claim invalid change it? Written before any classification,
+  because the classification step is the experiment and everything after it
+  is arithmetic.
+- **`corpus-v3.md`** — the sixty stimuli that protocol runs on, committed
+  in full with their provenance, the rebuild of the well-earned arm, and
+  the leak measurements taken before freezing. No labels: the key is held
+  private and its hash is published here.
 - **`template.py`** — the skeleton to copy for a new question.
 
 ## The discipline
