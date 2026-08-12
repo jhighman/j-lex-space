@@ -60,6 +60,22 @@ twice. It is reported rather than chased, because a lexicon tuned against
 items by the person who wrote them will eventually separate anything, and
 at that point the gate is measuring the tuner.
 
+## A larger disclosure, which outranks everything above
+
+The lexical measurements guard against a reader inferring labels from
+style. Both designated readers have a shorter route. This corpus was
+**built in full view of one of them**, who read the source dataset's
+labelled categories and watched the well-earned arm being written; the
+other likely holds the v2 source document, whose item numbering *is* its
+labels. On the validity axis, neither reader is blind and no measurement
+above repairs that.
+
+The pre-registration is amended accordingly: validity judgments are
+exploratory, and the primary endpoints are the two with no key to leak —
+agreement on the book's own evidence-class taxonomy, which no generator
+ever assigned, and the randomised-attribution comparison. See
+`preregistration-taxonomy.md` and FINDINGS.md.
+
 ---
 
 

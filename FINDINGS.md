@@ -99,6 +99,7 @@ Current standing:
 | Status blindness | rediscovered |
 | Entrance boundary | **built** 2026-08-10 |
 | Earned closure | **built** 2026-08-11 |
+| Direction of warrant | **built** 2026-08-12 |
 
 The same absence showed up a second time, at the other end of the episode.
 A system built to govern what may be *promoted* never asked what may be
@@ -273,6 +274,83 @@ author — so the check on *whether that author is a person* never executed,
 and an agent that writes its own premise row was untested. Two independent
 defences, one of them exercised by nothing. Both are covered now, each
 verified by weakening the other.
+
+One qualification on the experiment that found this, recorded so the paper
+cannot outrun its evidence. The Six Epistemologies write-up reports that
+all six readings converged on a single interpretation of the corpus's
+subject. Checked lexically against the six documents, the convergent
+sentence appears explicitly in **two** of them (the Lewis and Bonhoeffer
+renditions) and not in the other four. A lexical test cannot rule out the
+pattern being carried in other words — recurrence and conduct could hold it
+without the phrase — but "each identified essentially the same pattern" is
+stronger than what the texts show, and all six readings came from one
+model in one session, so later readings are not independent of earlier
+ones. The paper says this itself and then understates it. The proposed
+fix is the right one: an independent human reader who has not seen the six.
+
+**Four routes through the day-old direction machinery, found by review**
+(`experiments/direction.py`, `experiments/closure.py`, 2026-08-12 — the
+same day it was built). The pattern of finding them is the finding: code
+written *with* the forgery lesson, the narrowing lesson, and the
+actor-counting lesson in hand reproduced versions of all three within a
+day, and every guard was green while it did.
+
+- **The descent toll was one hop deep.** `unexamined_descent()` charged
+  claims whose basis was directly a profession and let a chain
+  `profession → A → B` discharge its debt by examining A alone. Cheap
+  grace at one remove. The toll now walks the whole basis chain.
+- **A forged profession row exempted a derived claim** — anything with a
+  database handle could write one row and lift the toll off a claim it
+  wanted unexamined. `professed()` now re-derives: the row must be written
+  by the claim's own author, under a frame that really declares descent,
+  by an author the roster knows as a person. A row saying professed is a
+  sentence about a profession.
+- **Anyone could profess.** Declaring the frame took a person; entering
+  professions under it took nobody in particular, so an agent took an
+  *action* as given under a frame somebody else signed — through the API,
+  forging nothing. Professing is the heavier act: it enters a claim with
+  nothing beneath it. It now takes a person, everywhere the record knows
+  who anyone is.
+- **And one route older than all of it: the exit bill was paid in rows.**
+  Answered questions denominate the closing price, and one willing
+  outsider can write any number of answers — an action-reaching episode
+  stopped on a single voice where the same action's *promotion* had cost
+  three distinct actors. The entrance refused that arithmetic on its
+  first day (`earned()` counts actors); the exit never had. `settlers()`
+  now counts the voices that paid, and stopping takes as many of them as
+  the episode's heaviest act would cost to promote.
+
+The rename rides with the fix: the fiduciary act was briefly `commit()`,
+and this workshop says "commit" fifty times a day about the repository. A
+reserved word that shares a spelling with the commonest verb in the room
+is a reservation nobody can keep, so the act is **professed** — Polanyi's
+register — and `vocabulary.py` now holds that reservation alongside
+delegation's, with the borrowed identifier refused outright.
+
+**A blinding failure in the taxonomy pre-registration, disclosed before
+anyone signed** (2026-08-12). `corpus-v3.md` was built to be classified
+blind, and it was built in full view of one of its two designated readers:
+Jeff directed the construction, read the source dataset's labelled
+categories, and watched the well-earned arm being written — he can identify
+every rebuilt item by topic alone. The other reader is likely unblinded
+too: the v2 source dataset came from her side, and anyone holding it can
+match the forty-five unaltered stimuli to their numbered categories,
+leaving the fifteen non-matching items identifiable as the rebuilt arm.
+The corpus's disclosed 77% lexical residual was noise next to this.
+
+What survives is exactly the original research question. No generator ever
+assigned the stimuli an evidence class, so there is no key to leak on that
+axis: reader agreement on the book's taxonomy, and the randomised
+attribution manipulation, are uncontaminated. The pre-registration has
+been amended accordingly, before signature: transition-validity judgments
+are demoted to exploratory with the unblinding stated, and the primary
+endpoints are the ones with nothing to leak.
+
+This is the fourth instance in six days of one pattern — V3, the dataset's
+labels, the six-readings convergence, and now a corpus built in front of
+its reader — and the pattern has a name that is now a build rule in
+CLAUDE.md: **nothing is evaluated by the process that produced it.** It is
+what the value layer died of, and one sentence would have caught all four.
 
 The shared lesson is narrower than "attack the table" and worth stating on
 its own: **every one of these was a correct answer to a question about the

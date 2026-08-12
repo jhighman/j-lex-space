@@ -30,19 +30,28 @@ bookkeeping over what the readers produced.
 2. **Status-blindness fails on its own authors** if items attributed to the
    book are classified differently from the same items attributed to a
    critic, beyond the same 0.20 margin.
-3. **Perceived validity sets the price** if the evidence class a reader
-   assigns depends on whether they judged the claim well-earned, beyond the
-   same margin. Category determines cost in `PRICE`
-   (`framework/sentinel.py:53`), so this would mean the toll is set by
-   whether the reader agrees — the entrance boundary failing inside the
-   taxonomy itself.
-4. **The bookkeeping is theatre** if `sentinel.py` returns the same
+3. **The bookkeeping is theatre** if `sentinel.py` returns the same
    promotion verdicts under any plausible classification of the same claims.
    A mechanism whose output does not depend on its input measures nothing.
 
-Any one is a real result and gets published. The fourth would be the most
+Any one is a real result and gets published. The third would be the most
 damaging and is the one we would least like to find, which is why it is in
 the file rather than in anybody's head.
+
+**Demoted before signature — the validity axis (amendment, 2026-08-12).**
+An earlier draft carried a fourth condition: *perceived validity sets the
+price*, tested through each reader's well-earned/defective judgments. It
+is demoted to exploratory, and the reason is stated rather than buried:
+**both designated readers are unblinded on that axis.** One directed the
+corpus's construction and watched the well-earned arm being written; the
+other likely holds the v2 source dataset, whose numbering is its labels,
+so forty-five stimuli can be matched to their categories and the
+remaining fifteen identified by elimination. Validity judgments will
+still be collected and reported, labelled exploratory, because
+disagreement between two unblinded readers is still informative — but
+nothing is concluded from their agreement with a key either could
+reconstruct. The evidence-class axis is unaffected: no key for it exists,
+so there is nothing to have leaked. The full account is in FINDINGS.md.
 
 ---
 

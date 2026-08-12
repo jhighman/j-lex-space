@@ -35,6 +35,14 @@ authority.
   grant that stops meeting its requirements stops being a grant.
 - The assignment path does not use the reserved word at all, even to draw
   the contrast — an absent sentence cannot be quoted out of context later.
+- **A claim is professed, never "committed."** Under a frame that has
+  declared descending warrant, a person may take a claim as given —
+  `profess()` — and the identifier `commit` is refused in `framework/`
+  outright, because this workshop says "commit" fifty times a day about
+  the repository and a reserved word that collides with the commonest
+  verb in the room is a reservation nobody can keep. Prose may speak of
+  commitment (the philosophy needs the noun); no function, act string, or
+  row wears the word. `experiments/vocabulary.py` enforces both sides.
 - **An episode is closed, never "final".** The second word is refused
   outright rather than reserved: "closed" says an episode stopped, at a
   moment, under named premises, having survived what was asked of it —
@@ -73,6 +81,43 @@ A second distinction of the same kind, which is easy to lose:
 over may be consulted when deciding what a promotion cost. Who has been
 right before may never be — that is pedigree, and keeping it out of
 warrant is what the entrance boundary is for.
+
+## Episode identity and direction (built 2026-08-11/12)
+
+An episode is a *set* of claims, named canonically by all of them
+(`episode()` in `framework/sentinel.py`) — never by its last claim. Three
+holes opened under a green suite because the record identified an episode
+by less than it priced it on; a thing must be identified by everything it
+is charged for. Do not key any lookup, supersession, or price on a single
+claim of an episode.
+
+Direction of warrant is declared **on the frame, by a person, with a
+written reason** (`Premise.name(direction=DESCENDING, rationale=...)`) and
+re-derived at read time. It is never a property a claim asserts about
+itself — that would be a one-word exemption from every price in the file.
+Descent is a different payment schedule, not an exemption: professions go
+on credit and the episode settles at the exit, where everything reasoned
+down from them (at any depth) must have been examined between parties.
+Where the instrument has no applicable test it reports OUT OF SCOPE, which
+is a different sentence from FAIL.
+
+Stopping is also priced in voices, not only in answers: an episode's close
+takes answers from as many distinct outside voices as its heaviest act
+would cost to promote (`settlers()`, `attention_price()`). One willing
+voice writing many rows pays nothing extra.
+
+## Two standing rules from the failure record
+
+- **Nothing is evaluated by the process that produced it.** Four times in
+  six days the generator and the judge were the same process (see
+  FINDINGS.md), and it is what killed the value layer. If an artifact is
+  to be measured, classified, or verified, the measuring may not be done
+  by whoever or whatever generated it — including the assistant that
+  drafted it.
+- **Never open `private/notes/corpus-v3-key.md`** (or any withheld answer
+  key) while a classification under a pre-registration is pending, and
+  never quote its contents anywhere. The key is released only after all
+  readers have submitted.
 
 ## After any change to framework/
 
