@@ -55,6 +55,30 @@ RESERVED = {
 FORBIDDEN = ("delegate_task", "delegated_task", "delegate_to", "task.delegat",
              "delegate_work", "delegating work", "delegated the task")
 
+# The second reserved word, added 2026-08-12 with the descending frames. A
+# claim *promotes* when it rises by paying independent acceptance; a claim
+# is *professed* when a declared-descending frame takes it as given. The
+# verb was very nearly "commit", and the collision was the hazard: this
+# workshop says "commit" fifty times a day about the repository, and a
+# reserved word that shares a spelling with the commonest verb in the room
+# is a reservation nobody can keep. So the fiduciary act is professed —
+# Polanyi's own register — and the identifier "commit" is refused in the
+# framework outright, the way the other refused word is: not used
+# carefully, not used at all.
+PROFESS_RESERVED = {
+    "profess": "the fiduciary entry itself — a person takes a claim as given",
+    "Record.professed": "re-derives which professions stand, off the roster "
+                        "and never off the rows",
+    "Record.unexamined_descent": "prices at the exit what a profession "
+                                 "licensed",
+    "Case.judge": "reports professed steps as out of scope, not as failures",
+}
+
+# The identifier the fiduciary act must never borrow. Prose may speak of
+# commitment — the philosophy requires the noun — but no function, act
+# string, or row in the framework may wear the word.
+COMMIT_SHAPES = ("def commit", "'commit'", '"commit"')
+
 # The refused word. Not reserved for one act — refused for all of them.
 #
 # "Closed" says an episode stopped, at a moment, under premises it names,
@@ -93,6 +117,12 @@ silent = sorted(set(RESERVED) - speaks_of)
 misused = [pattern for pattern in FORBIDDEN if pattern in source.lower()]
 refused = sorted(set(REFUSED.findall(source)))
 
+professes = {name for name, node in definitions(tree)
+             if "profess" in ast.unparse(node).lower()}
+profess_unreserved = sorted(professes - set(PROFESS_RESERVED))
+profess_silent = sorted(set(PROFESS_RESERVED) - professes)
+borrowed = [shape for shape in COMMIT_SHAPES if shape in source]
+
 print("definitions permitted to speak of delegation:")
 for name, why in sorted(RESERVED.items()):
     held = "  " if name in speaks_of else "? "
@@ -111,8 +141,16 @@ has_closure = all(word in source for word in ("def close", "premise"))
 print(f"the refused word, anywhere in the framework      : {refused or 'none'}")
 print(f"a vocabulary for stopping that does not need it  : {has_closure}")
 
+print("\ndefinitions permitted to speak of professing:")
+for name, why in sorted(PROFESS_RESERVED.items()):
+    held = "  " if name in professes else "? "
+    print(f"{held}{name:<28} {why}")
+print(f"definitions professing without reservation       : {profess_unreserved or 'none'}")
+print(f"the borrowed identifier, anywhere in the framework: {borrowed or 'none'}")
+
 print()
-if unreserved or misused or refused or not has_assignment or not has_closure:
+if (unreserved or misused or refused or not has_assignment or not has_closure
+        or profess_unreserved or borrowed):
     print("REFUTED. The word has drifted:")
     for name in unreserved:
         print(f"  - {name} speaks of delegation without being permitted to")
@@ -120,6 +158,11 @@ if unreserved or misused or refused or not has_assignment or not has_closure:
         print(f"  - {pattern!r} appears in the source")
     for word in refused:
         print(f"  - {word!r} appears in the source; an episode is closed, not that")
+    for name in profess_unreserved:
+        print(f"  - {name} speaks of professing without being permitted to")
+    for shape in borrowed:
+        print(f"  - {shape!r} appears in the source; the fiduciary act is "
+              f"professed, and the repository's verb stays the repository's")
     if not has_assignment:
         print("  - no distinct vocabulary exists for assigning work")
     if not has_closure:

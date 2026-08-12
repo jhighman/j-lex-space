@@ -31,7 +31,8 @@ from pathlib import Path
 FRAMEWORK = Path(__file__).resolve().parent.parent / "framework"
 sys.path.insert(0, str(FRAMEWORK))
 
-from sentinel import Record, Case, Delegation, SYSTEM, claim, accept  # noqa: E402
+from sentinel import (Record, Case, Delegation, Premise, SYSTEM,  # noqa: E402
+                      DESCENDING, claim, accept)
 
 SOURCE = (FRAMEWORK / "sentinel.py").read_text()
 
@@ -120,8 +121,25 @@ report("Earned closure", "BUILT" if priced else "ABSENT",
        "until 2026-08-11: Case.close() charged nothing, so the only free act "
        "in the framework was the heaviest one it performs")
 
+# Direction of warrant — did the system know which way it assumes?
+r6 = Record(persons=["person"])
+r6.enroll("person", "agent", SYSTEM)
+try:
+    Premise.name(r6, "agent", "faith", "the commitment is given",
+                 direction=DESCENDING, rationale="I reason downward")
+    directed = False
+except PermissionError:
+    directed = "def direction" in SOURCE
+report("Direction of warrant", "BUILT" if directed else "ABSENT",
+       "the chain runs upward and the file had assumed, silently, that all "
+       "warrant does. Found 2026-08-12 by reading one corpus under six "
+       "epistemologies: a frame may now declare descent — by a person, with "
+       "a reason — and what its professions license is priced at the exit")
+
 print("\nReading: a system given the exit axiom rediscovered the exit and")
 print("nothing else. The entrance boundary is prior, not derivable — it")
 print("had to be brought from outside and installed. So was the third")
 print("boundary, at the close: a system built to ask what may be promoted")
-print("does not spontaneously ask what may be finished.")
+print("does not spontaneously ask what may be finished. And the direction")
+print("of its own warrant it did not know it was assuming — the instrument")
+print("held one epistemology with a constructor and never said so.")

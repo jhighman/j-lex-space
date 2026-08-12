@@ -709,6 +709,50 @@ class Record:
                 standing.append(challenge_id)
         return standing
 
+    def settlers(self, attempt, before=None):
+        """The distinct voices whose answers paid this closing file's bill
+        — outside the episode, other than the Sentinel, and holding
+        standing over what the episode reached where the record knows who
+        anyone is.
+
+        Counted for the same reason earned() counts accepting actors: a
+        bill denominated in answered questions is paid in rows, and one
+        willing voice can write any number of rows. An episode that
+        reached an action asks for the attention of as many independent
+        voices as the action's own promotion would have cost. Consequence
+        sets the price of proof at the exit as it does everywhere else —
+        found by review on 2026-08-12, the entrance having refused this
+        arithmetic from its first day.
+
+        `before` scopes the question to a moment, for the same reason
+        outstanding() takes it: a closure is a claim about when it was
+        written."""
+        open_file = self.read(attempt)
+        claim_ids = [int(id) for id in open_file["body"].split(",")]
+        authors = {self.read(id)["author"] for id in claim_ids}
+        reach = self.consequence(claim_ids)
+
+        paid = set()
+        for challenge_id, in self.db.execute(
+            "SELECT id FROM assertions WHERE act='challenge' AND about=?"
+            "  AND (? IS NULL OR id < ?) ORDER BY id", (attempt, before, before),
+        ):
+            answered_by = {row[0] for row in self.db.execute(
+                "SELECT DISTINCT author FROM assertions WHERE act='answer' AND about=?"
+                "  AND (? IS NULL OR id < ?)", (challenge_id, before, before),
+            )} - authors - {SENTINEL}
+            if self.governed():
+                answered_by = {a for a in answered_by if self.standing(a, reach)}
+            paid |= answered_by
+        return paid
+
+    def attention_price(self, claim_ids):
+        """How many distinct outside voices this episode's stopping takes:
+        as many as its heaviest act would have cost to promote, and never
+        fewer than one — no case stops entirely unattended."""
+        reach = self.consequence(claim_ids)
+        return max(1, PRICE.get(reach, 0))
+
     def earned_closure(self, attempt):
         """Has this episode earned the right to stop?
 
@@ -729,8 +773,15 @@ class Record:
         earn the right to conclude. Which is why the answer comes from
         outside: not because the system's sense of completion is worthless,
         but because it is exactly as available to a system that has
-        finished as to one that has stopped looking."""
-        return not self.outstanding(attempt)
+        finished as to one that has stopped looking.
+
+        Two conditions, both from outside. Nothing raised still stands,
+        and the answering was done by enough distinct voices for what the
+        episode reached — see settlers(), and the promotion price it
+        mirrors."""
+        claim_ids = [int(id) for id in self.read(attempt)["body"].split(",")]
+        return (not self.outstanding(attempt)
+                and len(self.settlers(attempt)) >= self.attention_price(claim_ids))
 
     # -- premises: what a judgment closed under, and what supersedes it --
 
@@ -770,36 +821,66 @@ class Record:
                 return DESCENDING
         return ASCENDING
 
-    def committed(self, premise_id):
-        """The claims entered as commitments under this frame — the ones
-        that were given rather than earned, and which everything below them
-        is derived from."""
-        return [id for id, in self.db.execute(
-            "SELECT about FROM assertions WHERE act='commit' AND basis=?"
-            " ORDER BY id", (premise_id,))]
+    def professed(self, premise_id):
+        """The claims validly taken as given under this frame — re-derived,
+        never read off the rows.
+
+        A row saying a claim was professed is somebody's sentence about a
+        profession, and the ledger is full of sentences. A profession
+        stands only where the row was written by the claim's own author,
+        the frame it names really declares descent, and — where the record
+        knows who anyone is — that author is a person. Anything else is
+        a row in a table, stored and not counted: the same discipline
+        fault() holds grants to and flaw() holds closures to, found
+        necessary the same way each time."""
+        if self.direction(premise_id) != DESCENDING:
+            return []
+        standing = []
+        for claim_id, by in self.db.execute(
+            "SELECT about, author FROM assertions WHERE act='profess'"
+            "  AND basis=? ORDER BY id", (premise_id,),
+        ):
+            if by != self.read(claim_id)["author"]:
+                continue
+            if self.governed() and self.kind(by) != PERSON:
+                continue
+            standing.append(claim_id)
+        return standing
+
+    def descends(self, claim_id, given):
+        """Does this claim rest, at any depth, on something taken as
+        given? Walked back along the basis chain rather than checked one
+        hop deep, because a debt one hop deep is a debt an extra step
+        discharges — cheap grace at one remove."""
+        seen = set()
+        id = claim_id
+        while id is not None and id not in seen:
+            seen.add(id)
+            if id in given:
+                return True
+            id = self.read(id)["basis"]
+        return False
 
     def unexamined_descent(self, claim_ids, premise_id):
         """What a descending frame still owes at the exit.
 
-        The commitment itself is taken on credit — that is what descending
+        The profession itself is taken on credit — that is what descending
         means, and refusing it would be refusing the epistemology rather
         than governing it. What is not free is everything reasoned *down*
-        from it: each such claim must have been examined between parties,
-        by examined()'s own standard, before the episode may stop.
+        from it, at any depth: each such claim must have been examined
+        between parties, by examined()'s own standard, before the episode
+        may stop.
 
         This is where the price moved to. An ascending claim pays at the
         moment it rises; a descending frame pays here, at the close, for
-        everything its commitment licensed. A descent that pays nothing at
+        everything its profession licensed. A descent that pays nothing at
         either end is cheap grace, and the whole point of naming it is that
         it is a failure and not a shortcut."""
-        given = set(self.committed(premise_id))
-        owed = []
-        for id in claim_ids:
-            if id in given:
-                continue
-            if self.read(id)["basis"] in given and not self.examined(id):
-                owed.append(id)
-        return owed
+        given = set(self.professed(premise_id))
+        return [id for id in claim_ids
+                if id not in given
+                and self.descends(id, given)
+                and not self.examined(id)]
 
     def premises(self, frame):
         """The standing version of a named frame: the latest named. Older
@@ -855,6 +936,11 @@ class Record:
 
         claim_ids = [int(id) for id in self.read(attempt)["body"].split(",")]
         reach = self.consequence(claim_ids)
+        need = self.attention_price(claim_ids)
+        paid = self.settlers(attempt, before=closure_id)
+        if len(paid) < need:
+            return (f"closed on the attention of {len(paid)} voice(s); "
+                    f"reaching {reach} takes {need}")
         if self.governed() and not self.standing(closure["author"], reach):
             return f"closed by {closure['author']}, who has no standing over {reach}"
         return None
@@ -1137,37 +1223,47 @@ class Premise:
         return premise_id
 
 
-def commit(record, author, category, body, premises):
-    """Enter a claim as a commitment, under a frame that reasons downward.
+def profess(record, author, category, body, premises):
+    """Take a claim as given, under a frame that reasons downward.
 
     One word, one act, the same discipline the reserved word already
     keeps. A claim *promotes* when it rises through the chain by paying
-    independent acceptance. A claim *commits* when a frame that has
+    independent acceptance. A claim is *professed* when a frame that has
     declared descent takes it as given and reasons from it. The two are
     not the same motion and do not share a verb, so no later argument can
-    run "it was committed, therefore it was earned."
+    run "it was professed, therefore it was earned." The verb is
+    Polanyi's own register — a profession of commitment — and it is
+    deliberately not the word this workshop uses fifty times a day for
+    putting code in a repository, because a reserved word that collides
+    with the commonest verb in the room is a reservation nobody can keep.
 
     What this refuses is the whole of its value. It refuses any frame that
-    has not declared descent, and the declaration is a person's act on the
-    frame — so an agent cannot commit its way past a price by asserting
-    that its own reasoning is fiduciary. Without that refusal, one word
-    would buy exemption from every toll in this file.
+    has not declared descent, and it refuses any professor who is not a
+    person where the record knows who anyone is. Declaring the frame is a
+    person's signature; professing under it is no lighter — it enters a
+    claim at the door with nothing beneath it, which is the heaviest
+    entrance this file has. An agent can execute, and cannot take a claim
+    as given.
 
-    A commitment names no basis, because having one is precisely what it
+    A profession names no basis, because having one is precisely what it
     does not claim. It is not thereby free: see unexamined_descent(),
     which prices it at the exit."""
     if category not in CHAIN:
         raise ValueError(f"unknown epistemic state: {category}")
     if record.read(premises)["act"] != "premise":
-        raise ValueError("a commitment is made under named premises")
+        raise ValueError("a profession is made under named premises")
     if record.direction(premises) != DESCENDING:
         raise PermissionError(
             "this frame has not declared that it reasons downward; a claim "
             "above observation must be built on a prior claim — see "
             "Premise.name(direction=DESCENDING)")
+    if record.governed() and record.kind(author) != PERSON:
+        raise PermissionError(
+            f"taking a claim as given is a person's act; {author} is "
+            f"{record.kind(author) or 'unenrolled'}")
     id = record.write(author, "assert", body)
     record.write(author, "classify", category, about=id)
-    record.write(author, "commit", category, about=id, basis=premises)
+    record.write(author, "profess", category, about=id, basis=premises)
     record.admit(id)
     return id
 
@@ -1258,6 +1354,14 @@ class Case:
                 f"{len(standing)} question(s) still standing against this closure",
                 [record.read(id)["body"] for id in standing])
 
+        need = record.attention_price(claim_ids)
+        paid = record.settlers(attempt)
+        if len(paid) < need:
+            raise Premature(
+                f"closing an episode reaching {reach} takes answers from "
+                f"{need} distinct voice(s) outside it; {len(paid)} answered",
+                [])
+
         case = object.__new__(cls)
         case.record = record
         case.claims = claim_ids
@@ -1295,7 +1399,7 @@ class Case:
                 return {"verdict": "refused",
                         "reason": f"{judge_author} authored claims in this case"}
         descending = self.record.direction(self.premises) == DESCENDING
-        given = set(self.record.committed(self.premises))
+        given = set(self.record.professed(self.premises))
         steps = []
         for id in self.claims:
             a = self.record.read(id)
@@ -1304,10 +1408,10 @@ class Case:
                     "step": f"given -> {self.record.category(id)}",
                     "claim": a["body"],
                     "earned": None,
-                    "scope": "out of scope — taken as commitment, not promoted",
+                    "scope": "out of scope — professed, not promoted",
                 })
             elif a["basis"] is not None:
-                out = descending and a["basis"] in given
+                out = descending and self.record.descends(id, given)
                 steps.append({
                     "step": f"{self.record.category(a['basis'])} -> "
                             f"{self.record.category(id)}",

@@ -125,7 +125,7 @@ attack("an episode that pays its whole bill still closes",
 # forging nothing, closing only what it really did have standing over.
 
 print()
-governed = Record(persons=["lex", "jeff", "auditor"])
+governed = Record(persons=["lex", "jeff", "auditor", "dana", "erin"])
 governed.enroll("lex", "agent", SYSTEM)
 
 seen = claim(governed, "lex", "observation", "the disk filled overnight")
@@ -140,9 +140,13 @@ disk = Premise.name(governed, "lex", "disk", "the volume is the one we think")
 Delegation.grant(governed, "lex", "agent", "observation",
                  rationale="it reads the disk directly")
 
-# lex closes the whole episode, paying its bill in full from outside it.
-for question in list(governed.outstanding(governed.considering(whole, disk))):
-    answer(governed, "auditor", question, "checked the rotation config")
+# lex closes the whole episode, paying its bill in full from outside it —
+# and, since it reached an action, from three distinct voices, the action's
+# own promotion price mirrored at the exit.
+voices = ["auditor", "dana", "erin"]
+for n, question in enumerate(
+        list(governed.outstanding(governed.considering(whole, disk)))):
+    answer(governed, voices[n % len(voices)], question, "checked the rotation config")
 case = Case.close(governed, "lex", whole, disk)
 
 refused = None
@@ -172,8 +176,9 @@ attack("a one-claim episode supersedes a five-claim one",
 # The positive control. A closure of the *same* episode, under a later
 # version of the frame, by someone with standing, must still supersede —
 # otherwise the above passes in a record that never supersedes anything.
-for question in list(governed.outstanding(governed.considering(whole, remounted))):
-    answer(governed, "auditor", question, "checked the mount table")
+for n, question in enumerate(
+        list(governed.outstanding(governed.considering(whole, remounted)))):
+    answer(governed, voices[n % len(voices)], question, "checked the mount table")
 proper = Case.close(governed, "lex", whole, remounted)
 attack("a closure of the same episode still supersedes, as it must",
        case.superseded_by() == proper.closure,

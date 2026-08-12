@@ -37,7 +37,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "framework"))
 
 from sentinel import (ASCENDING, DESCENDING, SYSTEM, Case,  # noqa: E402
-                      Premature, Premise, Record, answer, claim, commit)
+                      Premature, Premise, Record, answer, claim, profess)
 
 broken = []
 
@@ -110,7 +110,7 @@ attack("descent declared with no reason given",
 ascending = Premise.name(record, "lex", "ledger", "the rows are what happened")
 blocked = None
 try:
-    commit(record, "lex", "belief", "the practice is sound", ascending)
+    profess(record, "lex", "belief", "the practice is sound", ascending)
 except PermissionError as why:
     blocked = str(why)
 attack("a commitment under an ascending frame",
@@ -136,7 +136,7 @@ faith = Record(persons=["lex", "jeff", "auditor"])
 frame = Premise.name(faith, "lex", "faith", "the commitment is given",
                      direction=DESCENDING,
                      rationale="Polanyi: nisi crediteritis, non intelligitis")
-given = commit(faith, "lex", "belief", "the other is owed my attention", frame)
+given = profess(faith, "lex", "belief", "the other is owed my attention", frame)
 down = claim(faith, "lex", "interpretation",
              "his silence was not indifference", basis=given)
 
@@ -158,7 +158,7 @@ chain = Record(persons=["lex", "jeff", "auditor"])
 cframe = Premise.name(chain, "lex", "faith", "the commitment is given",
                       direction=DESCENDING,
                       rationale="Polanyi: nisi crediteritis, non intelligitis")
-cgiven = commit(chain, "lex", "belief", "the other is owed my attention", cframe)
+cgiven = profess(chain, "lex", "belief", "the other is owed my attention", cframe)
 hop1 = claim(chain, "lex", "interpretation",
              "his silence was not indifference", basis=cgiven)
 hop2 = claim(chain, "lex", "interpretation",
@@ -183,11 +183,11 @@ forge.enroll("lex", "agent", SYSTEM)
 fframe = Premise.name(forge, "lex", "faith", "the commitment is given",
                       direction=DESCENDING,
                       rationale="Polanyi: nisi crediteritis, non intelligitis")
-fgiven = commit(forge, "lex", "belief", "the other is owed my attention", fframe)
+fgiven = profess(forge, "lex", "belief", "the other is owed my attention", fframe)
 fder = claim(forge, "lex", "interpretation",
              "his silence was not indifference", basis=fgiven)
 honest_owed = len(forge.unexamined_descent([fgiven, fder], fframe))
-forge.write("agent", "commit", "interpretation", about=fder, basis=fframe)
+forge.write("agent", "profess", "interpretation", about=fder, basis=fframe)
 attack("a forged commitment row exempts a derived claim",
        len(forge.unexamined_descent([fgiven, fder], fframe)) == honest_owed,
        f"{honest_owed} owed honestly; after the agent's row, "
@@ -206,15 +206,15 @@ wframe = Premise.name(who, "lex", "faith", "the commitment is given",
                       rationale="Polanyi: nisi crediteritis, non intelligitis")
 professed_by_agent = None
 try:
-    professed_by_agent = commit(who, "agent", "action",
-                                "delete the oldest archives now", wframe)
+    professed_by_agent = profess(who, "agent", "action",
+                                    "delete the oldest archives now", wframe)
 except PermissionError as why:
     pass
 attack("a system takes an action as given",
        professed_by_agent is None,
        "refused: taking a claim as given is a person's act"
        if professed_by_agent is None else
-       f"the agent committed an action (claim {professed_by_agent}) under "
+       f"the agent professed an action (claim {professed_by_agent}) under "
        f"lex's frame, through the front door")
 
 # --- the positive controls ----------------------------------------------
@@ -227,8 +227,13 @@ attack("an examined descent may then be asked to stop",
        not faith.unexamined_descent([given, down], frame),
        "once one party asked and another answered, the descent owes nothing")
 
-for question in list(faith.outstanding(faith.considering([given, down], frame))):
-    answer(faith, "auditor", question, "checked against the record")
+# The episode professes a belief, so stopping takes as many distinct
+# voices as a belief's own promotion would have — two, not one, however
+# many rows the one writes.
+outside = ["jeff", "auditor"]
+for n, question in enumerate(
+        list(faith.outstanding(faith.considering([given, down], frame)))):
+    answer(faith, outside[n % len(outside)], question, "checked against the record")
 closed = Case.close(faith, "lex", [given, down], frame)
 verdict = closed.judge("auditor")
 attack("a descending case closes and reports out of scope, not failure",
