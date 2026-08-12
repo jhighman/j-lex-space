@@ -226,6 +226,54 @@ judgment is about. All three were open at a commit where `check.py` printed
   and the test passed for a reason unrelated to repetition. The guard that
   looked like the strongest evidence was the reason nobody looked again.
 
+**An assumption about which way warrant travels, undeclared since the file
+was written** (`experiments/direction.py`, 2026-08-12). Found by the Six
+Epistemologies experiment: one fixed autobiographical corpus read under six
+different warrants — conduct, provenance, falsifiable experience, narrative
+pattern, recurrence, and commitment. The observational floor held; the
+interpretations diverged. Then the Sentinel was turned on the six.
+
+It had almost nothing to say about Steinbeck's conduct. It found Lewis
+performing its own function unprompted, refusing promotions that would have
+exceeded their warrant. And it fired continuously against Bonhoeffer —
+which was not a defect in Bonhoeffer.
+
+`CHAIN` runs upward and `PRICE` rises along it, so a claim earns its place
+by paying independent acceptance. Polanyi's fiduciary entry and
+Bonhoeffer's discipleship run the other way: commitment first, understanding
+after. Judged upward, such reasoning reads as unsupported at every step —
+the instrument describing itself rather than the reasoning. Worse than
+misjudging it, the record could not **represent** it: `claim()` refuses any
+category above `observation` without a basis beneath it, so a commitment
+had to be entered as a lie about its own grounds or not at all. The
+framework enforced one epistemology with a constructor, which is its
+strongest device, and had never said so.
+
+The correction is not weaker governance. Direction is now declared on the
+frame by a person (`Premise.name(direction=...)`), carries a written reason
+because declaring descent changes what counts as a defect, and is re-derived
+at read time from an author the record still recognises as a person. It is
+never a property a claim asserts about itself: a claim that could name its
+own direction would exempt itself from every price in the file by writing
+one word, which would be the cheapest bypass here by a wide margin.
+
+And descent is not exempt from paying. It is a different schedule, named by
+the material that exposed it: **grace that costs a shirt, against grace that
+costs a life.** The commitment goes on credit; the episode settles at the
+exit, where everything reasoned down from that commitment must have been
+examined between parties before it may stop. Cheap grace is precisely a
+descent that paid at neither end, and it is now a state the record refuses
+rather than a phrase in a letter. Where no applicable test exists the
+instrument reports **out of scope**, which is a different sentence from
+*unearned*, and prints it rather than passing over it.
+
+The guard found one hole in itself on its first run. Its forged-row attacks
+were refused because the rows came from somebody other than the frame's
+author — so the check on *whether that author is a person* never executed,
+and an agent that writes its own premise row was untested. Two independent
+defences, one of them exercised by nothing. Both are covered now, each
+verified by weakening the other.
+
 The shared lesson is narrower than "attack the table" and worth stating on
 its own: **every one of these was a correct answer to a question about the
 wrong object.** Nothing derived falsely. `flaw()`, `superseded()` and

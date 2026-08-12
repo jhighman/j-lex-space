@@ -25,6 +25,7 @@ GUARDS = {
     "closure_invariant.py": "comfort cannot buy an ending",
     "premature.py": "no row written straight into the ledger buys an ending",
     "narrowing.py": "an episode cannot be made to look smaller than it is",
+    "direction.py": "only a person says which way a frame reasons",
 }
 
 SURVEYS = {

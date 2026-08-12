@@ -77,8 +77,33 @@ CLOSING_QUESTIONS = [
     "what does this conclusion look like if the premises are wrong?",
 ]
 
-# Two kinds of actor. The distinction is load-bearing, not descriptive:
-# it decides who may hand out judgment that happens with nobody present.
+# Which way warrant travels in a frame. The chain above runs upward —
+# evidence is gathered, and a claim rises through it by paying independent
+# acceptance. That is one epistemology and the framework had assumed it was
+# the only one, silently, since the file was written.
+#
+# Some reasoning runs the other way. Polanyi's fiduciary entry (nisi
+# crediteritis, non intelligitis) and Bonhoeffer's discipleship begin from a
+# commitment and reason *down* toward understanding. Judged by the upward
+# test, such reasoning does not read as mistaken; it reads as unsupported at
+# every step, which is the instrument reporting that it was pointed at
+# something it was not built for. An instrument that fires continuously
+# against a system it cannot evaluate is not strict. It is misconfigured.
+#
+# So direction is declared, on the frame, by a person — never asserted by a
+# claim about itself. A claim that could name its own direction could exempt
+# itself from every price in this file by writing one word, which would be
+# the cheapest bypass here by a wide margin.
+ASCENDING, DESCENDING = "ascending", "descending"
+
+# Descending warrant is not an exemption from paying. It is a different
+# payment schedule. Ascending claims pay before they rise; a descending
+# frame takes its commitment on credit and settles at the exit, where
+# everything derived from that commitment must have been examined between
+# parties before the episode may stop. The distinction is Bonhoeffer's own:
+# grace that costs a shirt, against grace that costs a life. Cheap grace is
+# precisely a descent that never paid, and it is the failure mode this
+# constant exists to make representable.
 PERSON, SYSTEM = "person", "system"
 
 # The author of the founding roster: not an actor in the system, but the
@@ -719,6 +744,63 @@ class Record:
             (frame, premise_id),
         ).fetchone()[0]
 
+    def direction(self, premise_id):
+        """Which way warrant runs in this frame — re-derived, never stored.
+
+        Read back the way a grant is: a row saying a frame reasons downward
+        is not a declaration merely by sitting in the table. It counts only
+        from the person who named the frame, and only where the record
+        knows that they are a person. Anything else is somebody's opinion
+        about the frame.
+
+        Absent any valid declaration the answer is ascending, because that
+        is what every claim in this file was already being judged by. The
+        default is not neutral and is not pretending to be: it is the
+        assumption the framework held silently until 2026-08-12, now
+        written down where it can be disagreed with."""
+        premise = self.read(premise_id)
+        if premise["act"] != "premise":
+            return None
+        for body, in self.db.execute(
+            "SELECT body FROM assertions WHERE act='direction' AND about=?"
+            "  AND author=? ORDER BY id LIMIT 1", (premise_id, premise["author"]),
+        ):
+            if body == DESCENDING and (
+                    not self.governed() or self.kind(premise["author"]) == PERSON):
+                return DESCENDING
+        return ASCENDING
+
+    def committed(self, premise_id):
+        """The claims entered as commitments under this frame — the ones
+        that were given rather than earned, and which everything below them
+        is derived from."""
+        return [id for id, in self.db.execute(
+            "SELECT about FROM assertions WHERE act='commit' AND basis=?"
+            " ORDER BY id", (premise_id,))]
+
+    def unexamined_descent(self, claim_ids, premise_id):
+        """What a descending frame still owes at the exit.
+
+        The commitment itself is taken on credit — that is what descending
+        means, and refusing it would be refusing the epistemology rather
+        than governing it. What is not free is everything reasoned *down*
+        from it: each such claim must have been examined between parties,
+        by examined()'s own standard, before the episode may stop.
+
+        This is where the price moved to. An ascending claim pays at the
+        moment it rises; a descending frame pays here, at the close, for
+        everything its commitment licensed. A descent that pays nothing at
+        either end is cheap grace, and the whole point of naming it is that
+        it is a failure and not a shortcut."""
+        given = set(self.committed(premise_id))
+        owed = []
+        for id in claim_ids:
+            if id in given:
+                continue
+            if self.read(id)["basis"] in given and not self.examined(id):
+                owed.append(id)
+        return owed
+
     def premises(self, frame):
         """The standing version of a named frame: the latest named. Older
         versions are not gone, and cases closed under them are not wrong —
@@ -1023,12 +1105,71 @@ class Premise:
         raise TypeError("premises are named, not constructed — use Premise.name()")
 
     @classmethod
-    def name(cls, record, by, frame, body):
+    def name(cls, record, by, frame, body, direction=ASCENDING, rationale=None):
+        """Name a frame, and say which way warrant runs inside it.
+
+        Direction belongs here and nowhere else. A frame is already the
+        place a judgment declares what had to hold for it to follow at all,
+        it is already named by a person, and it is already versioned and
+        immutable — so a declaration made here is one somebody signed, at a
+        moment, and can be disagreed with later without being erased.
+
+        Declaring descent requires a written reason, on the same principle
+        that governs the scrutiny ladder: the heavier the thing handed
+        over, the more the handing must carry. Descent changes what counts
+        as a defect, which is heavy, and a frame that cannot say why it
+        reasons downward has not declared an epistemology. It has declined
+        a test."""
         if record.governed() and record.kind(by) != PERSON:
             raise PermissionError(
                 f"only a person may name the premises a judgment closes under; "
                 f"{by} is {record.kind(by) or 'unenrolled'}")
-        return record.write(by, "premise", body, actor=frame)
+        if direction not in (ASCENDING, DESCENDING):
+            raise ValueError(f"no such direction of warrant: {direction}")
+        if direction == DESCENDING and not rationale:
+            raise ValueError(
+                "a frame that reasons downward from commitment must say why "
+                "in writing; descent changes what counts as a defect")
+        premise_id = record.write(by, "premise", body, actor=frame)
+        if direction == DESCENDING:
+            record.write(by, "direction", DESCENDING, about=premise_id)
+            record.write(by, "because", rationale, about=premise_id)
+        return premise_id
+
+
+def commit(record, author, category, body, premises):
+    """Enter a claim as a commitment, under a frame that reasons downward.
+
+    One word, one act, the same discipline the reserved word already
+    keeps. A claim *promotes* when it rises through the chain by paying
+    independent acceptance. A claim *commits* when a frame that has
+    declared descent takes it as given and reasons from it. The two are
+    not the same motion and do not share a verb, so no later argument can
+    run "it was committed, therefore it was earned."
+
+    What this refuses is the whole of its value. It refuses any frame that
+    has not declared descent, and the declaration is a person's act on the
+    frame — so an agent cannot commit its way past a price by asserting
+    that its own reasoning is fiduciary. Without that refusal, one word
+    would buy exemption from every toll in this file.
+
+    A commitment names no basis, because having one is precisely what it
+    does not claim. It is not thereby free: see unexamined_descent(),
+    which prices it at the exit."""
+    if category not in CHAIN:
+        raise ValueError(f"unknown epistemic state: {category}")
+    if record.read(premises)["act"] != "premise":
+        raise ValueError("a commitment is made under named premises")
+    if record.direction(premises) != DESCENDING:
+        raise PermissionError(
+            "this frame has not declared that it reasons downward; a claim "
+            "above observation must be built on a prior claim — see "
+            "Premise.name(direction=DESCENDING)")
+    id = record.write(author, "assert", body)
+    record.write(author, "classify", category, about=id)
+    record.write(author, "commit", category, about=id, basis=premises)
+    record.admit(id)
+    return id
 
 
 class Premature(Exception):
@@ -1098,6 +1239,18 @@ class Case:
             raise PermissionError(
                 f"{by} has no standing to close a case reaching {reach}")
 
+        # A descending frame settles here for what its commitment licensed.
+        # Refusing the commitment itself would be refusing the epistemology;
+        # letting the episode stop with nothing derived from it examined
+        # would be cheap grace with a schema.
+        if record.direction(premises) == DESCENDING:
+            owed = record.unexamined_descent(claim_ids, premises)
+            if owed:
+                raise Premature(
+                    f"{len(owed)} claim(s) reasoned down from this commitment "
+                    f"have not been examined between parties",
+                    [record.read(id)["body"] for id in owed])
+
         attempt = record.considering(claim_ids, premises)
         standing = record.outstanding(attempt)
         if standing:
@@ -1123,20 +1276,45 @@ class Case:
         return self.record.superseded(self.closure)
 
     def judge(self, judge_author):
-        """One judgment, of the whole case, after closure. Walks every
-        step in the episode and reports whether each promotion was earned.
-        The judge must be independent of every claim in the case."""
+        """One judgment, of the whole case, after closure. Walks every step
+        in the episode and reports whether each promotion was earned. The
+        judge must be independent of every claim in the case.
+
+        Under a frame that has declared descent, the upward test is not
+        applied and not silently failed. It is reported **out of scope**,
+        which is a different sentence from *unearned* and the entire point
+        of the distinction: an instrument reporting FAIL where it has no
+        applicable test is not being strict, it is describing itself.
+
+        Out of scope is derived here from the frame's declaration and is
+        never a claim's own word about itself, and it is printed rather
+        than passed over — a refusal nobody can see is indistinguishable
+        from an oversight, which is the rule void_grants() already keeps."""
         for id in self.claims:
             if self.record.read(id)["author"] == judge_author:
                 return {"verdict": "refused",
                         "reason": f"{judge_author} authored claims in this case"}
+        descending = self.record.direction(self.premises) == DESCENDING
+        given = set(self.record.committed(self.premises))
         steps = []
         for id in self.claims:
             a = self.record.read(id)
-            if a["basis"] is not None:
+            if id in given:
                 steps.append({
-                    "step": f"{self.record.category(a['basis'])} -> {self.record.category(id)}",
+                    "step": f"given -> {self.record.category(id)}",
                     "claim": a["body"],
-                    "earned": self.record.earned(id),
+                    "earned": None,
+                    "scope": "out of scope — taken as commitment, not promoted",
                 })
-        return {"verdict": "judged", "steps": steps}
+            elif a["basis"] is not None:
+                out = descending and a["basis"] in given
+                steps.append({
+                    "step": f"{self.record.category(a['basis'])} -> "
+                            f"{self.record.category(id)}",
+                    "claim": a["body"],
+                    "earned": None if out else self.record.earned(id),
+                    "scope": ("out of scope — reasoned down from a commitment"
+                              if out else "in scope"),
+                })
+        return {"verdict": "judged", "direction": self.record.direction(self.premises),
+                "steps": steps}
