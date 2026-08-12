@@ -103,15 +103,59 @@ for question in record.outstanding(loud_file):
     answer(record, "reviewer", question, "checked against the upstream log")
 closed = Case.close(record, "reviewer", [cold_seen, cold_step], frame)
 
+# The bill is denominated in answered questions — and one willing voice can
+# write any number of answers. Promotion already refuses that arithmetic:
+# a price of three accepts means three actors, not one voice three times.
+# Does the exit? An episode that reached an action asks to stop on the
+# attention of a single outsider.
+heavy = Record(persons=["lex", "jeff", "auditor", "dana", "erin"])
+h_seen = claim(heavy, "lex", "observation", "the disk filled overnight")
+h_why = claim(heavy, "lex", "interpretation", "a rotation failed", basis=h_seen)
+h_bel = claim(heavy, "lex", "belief", "the rotation config is wrong", basis=h_why)
+h_act = claim(heavy, "lex", "action", "delete the oldest archives now", basis=h_bel)
+h_episode = [h_seen, h_why, h_bel, h_act]
+h_frame = Premise.name(heavy, "jeff", "disk", "the volume is the one we think")
+
+for question in heavy.outstanding(heavy.considering(h_episode, h_frame)):
+    answer(heavy, "auditor", question, "I looked at each of these")
+one_voice_closed = None
+try:
+    one_voice_closed = Case.close(heavy, "lex", h_episode, h_frame)
+except Premature:
+    pass
+
+# And the control: the same episode, its answers spread across as many
+# voices as the action's own promotion price — this must close, or the
+# record has stopped refusing arithmetic and started refusing everything.
+spread = Record(persons=["lex", "jeff", "auditor", "dana", "erin"])
+s_seen = claim(spread, "lex", "observation", "the disk filled overnight")
+s_why = claim(spread, "lex", "interpretation", "a rotation failed", basis=s_seen)
+s_bel = claim(spread, "lex", "belief", "the rotation config is wrong", basis=s_why)
+s_act = claim(spread, "lex", "action", "delete the oldest archives now", basis=s_bel)
+s_episode = [s_seen, s_why, s_bel, s_act]
+s_frame = Premise.name(spread, "jeff", "disk", "the volume is the one we think")
+voices = ["auditor", "dana", "erin"]
+for n, question in enumerate(
+        spread.outstanding(spread.considering(s_episode, s_frame))):
+    answer(spread, voices[n % len(voices)], question, "checked this one")
+many_voices_closed = None
+try:
+    many_voices_closed = Case.close(spread, "lex", s_episode, s_frame)
+except Premature:
+    pass
+
 print()
 print(f"bill rises with settlement    : {quiet_bill > loud_bill}")
 print(f"no episode stops unasked      : {floor_held}")
 print(f"closure possible in one motion: {one_motion}")
 print(f"a case can settle itself      : {self_settled}")
 print(f"the contested case closed as  : {closed.frame} v{closed.version}")
+print(f"one voice pays an action's bill: {one_voice_closed is not None}")
+print(f"spread voices still close     : {many_voices_closed is not None}")
 
 print()
-if quiet_bill <= loud_bill or not floor_held or one_motion or self_settled:
+if (quiet_bill <= loud_bill or not floor_held or one_motion or self_settled
+        or one_voice_closed is not None or many_voices_closed is None):
     print("REFUTED. Stopping is not priced by what the episode survived.")
     if quiet_bill <= loud_bill:
         print("  - the settled episode was asked for no more than the contested one")
@@ -121,6 +165,11 @@ if quiet_bill <= loud_bill or not floor_held or one_motion or self_settled:
         print("  - a case closed by the same act that proposed closing it")
     if self_settled:
         print("  - the episode answered its own questions and they stopped standing")
+    if one_voice_closed is not None:
+        print("  - an action-reaching episode stopped on one outsider's attention;")
+        print("    the promotion price is counted in actors, and the exit was not")
+    if many_voices_closed is None:
+        print("  - an episode answered by enough distinct voices could not stop")
     sys.exit(1)
 else:
     print("Closure is earned, not reached. The episode that met nothing was")

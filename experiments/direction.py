@@ -149,6 +149,74 @@ attack("a descending episode stops with nothing examined",
        cheap is not None,
        cheap or "the episode closed having examined nothing it reasoned down to")
 
+# --- 4. cheap grace at one remove ----------------------------------------
+# The toll charges what was reasoned down from the commitment. If it only
+# looks one hop deep, a chain commitment -> A -> B pays for A and lets B
+# ride: examined once, closed free, and B was never asked anything.
+
+chain = Record(persons=["lex", "jeff", "auditor"])
+cframe = Premise.name(chain, "lex", "faith", "the commitment is given",
+                      direction=DESCENDING,
+                      rationale="Polanyi: nisi crediteritis, non intelligitis")
+cgiven = commit(chain, "lex", "belief", "the other is owed my attention", cframe)
+hop1 = claim(chain, "lex", "interpretation",
+             "his silence was not indifference", basis=cgiven)
+hop2 = claim(chain, "lex", "interpretation",
+             "so the letter would be welcome", basis=hop1)
+
+asked1 = chain.write("jeff", "challenge", "on what basis?", about=hop1)
+answer(chain, "auditor", asked1, "traced it against the letters")
+still_owed = chain.unexamined_descent([cgiven, hop1, hop2], cframe)
+attack("a two-hop descent escapes the toll",
+       hop2 in still_owed,
+       f"hop one examined, hop two never was; the descent reports "
+       f"{len(still_owed)} claim(s) owed — a debt one hop deep is a debt "
+       f"an extra step discharges")
+
+# --- 5. a forged commitment row ------------------------------------------
+# A row saying a claim was committed is not a commitment. If the toll
+# trusts the table, anything with a handle exempts a derived claim by
+# writing one row about it.
+
+forge = Record(persons=["lex", "jeff", "auditor"])
+forge.enroll("lex", "agent", SYSTEM)
+fframe = Premise.name(forge, "lex", "faith", "the commitment is given",
+                      direction=DESCENDING,
+                      rationale="Polanyi: nisi crediteritis, non intelligitis")
+fgiven = commit(forge, "lex", "belief", "the other is owed my attention", fframe)
+fder = claim(forge, "lex", "interpretation",
+             "his silence was not indifference", basis=fgiven)
+honest_owed = len(forge.unexamined_descent([fgiven, fder], fframe))
+forge.write("agent", "commit", "interpretation", about=fder, basis=fframe)
+attack("a forged commitment row exempts a derived claim",
+       len(forge.unexamined_descent([fgiven, fder], fframe)) == honest_owed,
+       f"{honest_owed} owed honestly; after the agent's row, "
+       f"{len(forge.unexamined_descent([fgiven, fder], fframe))} — a "
+       f"commitment must be re-derived, not read off a row")
+
+# --- 6. who may take a claim as given ------------------------------------
+# Declaring the frame takes a person. If entering commitments under it does
+# not, an agent professes an action as given — zero at the door, no basis
+# asked — under a frame somebody else signed.
+
+who = Record(persons=["lex"])
+who.enroll("lex", "agent", SYSTEM)
+wframe = Premise.name(who, "lex", "faith", "the commitment is given",
+                      direction=DESCENDING,
+                      rationale="Polanyi: nisi crediteritis, non intelligitis")
+professed_by_agent = None
+try:
+    professed_by_agent = commit(who, "agent", "action",
+                                "delete the oldest archives now", wframe)
+except PermissionError as why:
+    pass
+attack("a system takes an action as given",
+       professed_by_agent is None,
+       "refused: taking a claim as given is a person's act"
+       if professed_by_agent is None else
+       f"the agent committed an action (claim {professed_by_agent}) under "
+       f"lex's frame, through the front door")
+
 # --- the positive controls ----------------------------------------------
 # Without these the whole file passes in a record that refuses everything.
 
