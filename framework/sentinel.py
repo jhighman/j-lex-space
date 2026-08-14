@@ -954,6 +954,96 @@ class Record:
             "SELECT id FROM assertions WHERE act='closed' ORDER BY id")
             if self.flaw(id) is not None]
 
+    # -- the obligation: what a concluded deed still owes --
+
+    def attested(self, claim_id):
+        """Has this deed been witnessed — by somebody other than its
+        author, on the record?
+
+        An action row is a sentence about a deed, and the two are
+        satisfied in opposite directions: an assertion is satisfied when
+        it matches the world, an intention only when the world is brought
+        to match it. The record cannot see the world. What it can hold is
+        an attestation — an accountable claim that the deed occurred — and
+        what it can refuse is the soliloquy: the doer's own word that the
+        deed is done settles nothing, for the same reason a claim may not
+        accept itself.
+
+        Attesting is witnessing, which is observation. Where the record
+        knows who anyone is, an attestation counts only from an actor with
+        standing to observe on the record's behalf — a person, or a system
+        a person has granted that much. An unknown voice is a row, stored
+        and not counted."""
+        author = self.read(claim_id)["author"]
+        for witness, in self.db.execute(
+            "SELECT DISTINCT author FROM assertions WHERE act='attest' AND about=?",
+            (claim_id,),
+        ):
+            if witness in (author, SENTINEL):
+                continue
+            if self.governed() and not self.standing(witness, "observation"):
+                continue
+            return True
+        return False
+
+    def renounced(self, claim_id):
+        """Has this deed been laid down — explicitly, on the record, with
+        a reason?
+
+        The other way an obligation settles, and the only honest
+        alternative to conduct. A renunciation is a judgment about a deed,
+        so where the record knows who anyone is, only a person's counts —
+        and the Sentinel's never does, because a system that may lay down
+        the deeds it concluded has built itself a quiet exit from every
+        one of them.
+
+        What does not exist is the third way: expiry. Nothing here decays.
+        An intention nobody can see expiring is indistinguishable from a
+        decision, so the lapse is not representable — a deed is done, laid
+        down, or owed."""
+        for author, in self.db.execute(
+            "SELECT DISTINCT author FROM assertions WHERE act='renounce' AND about=?",
+            (claim_id,),
+        ):
+            if author == SENTINEL:
+                continue
+            if self.governed() and self.kind(author) != PERSON:
+                continue
+            return True
+        return False
+
+    def obligations(self):
+        """Every deed the record still owes: an action inside a standing
+        closure, neither attested nor renounced.
+
+        A closure that reached an action does not merely stop — it opens
+        an obligation, because the episode concluded that something be
+        done and the record now carries a sentence the world has not yet
+        satisfied. Understanding is not action, and an instrument that
+        can say only what may be believed would let every concluded deed
+        dissolve into further analysis. Another analysis is not the verb.
+
+        Derived at read time from the standing closures, never stored, so
+        the list cannot be quietly edited — and always askable, which is
+        the point. The rule against invisible refusals generalizes: the
+        machine keeps the ledger of verbs unperformed."""
+        owed, seen = [], set()
+        for closure_id, in self.db.execute(
+            "SELECT id FROM assertions WHERE act='closed' ORDER BY id",
+        ):
+            if self.flaw(closure_id) is not None:
+                continue
+            attempt = int(self.read(closure_id)["body"])
+            for claim_id in [int(id) for id in self.read(attempt)["body"].split(",")]:
+                if claim_id in seen:
+                    continue
+                seen.add(claim_id)
+                if (self.category(claim_id) == "action"
+                        and not self.attested(claim_id)
+                        and not self.renounced(claim_id)):
+                    owed.append(claim_id)
+        return owed
+
     def superseded(self, closure_id):
         """The closure standing in this one's place, or None.
 
@@ -1056,6 +1146,35 @@ def answer(record, author, challenge_id, body):
     the ones that would let an episode settle its own questions. A mirror,
     not a gate — the same shape as accepting one's own claim."""
     return record.write(author, "answer", body, about=challenge_id)
+
+
+def attest(record, author, claim_id, body):
+    """Witness a deed — as yourself, on the record.
+
+    Anyone may write one, because witnessing is work and work is never
+    gated here. Whether an attestation *counts* is derived afterwards
+    from who wrote it — never the deed's own author, and in a governed
+    record only a voice with standing to observe. A mirror, not a gate,
+    the same shape as answering."""
+    return record.write(author, "attest", body, about=claim_id)
+
+
+def renounce(record, by, claim_id, reason):
+    """Lay down a deed — explicitly, with a reason, on the record.
+
+    One word, one act, kept apart from its neighbour: a grant is
+    *revoked*, a deed is *renounced*. Where the record knows who anyone
+    is, only a person may renounce, because laying down a concluded deed
+    is the heaviest judgment available about it short of doing it. The
+    row stays either way; the verdict ignores what cannot account for
+    itself."""
+    if record.governed() and record.kind(by) != PERSON:
+        raise PermissionError(
+            f"only a person may lay down a deed; {by} is "
+            f"{record.kind(by) or 'unenrolled'}")
+    if not reason:
+        raise ValueError("a deed is not laid down without a written reason")
+    return record.write(by, "renounce", reason, about=claim_id)
 
 
 def assign(record, by, to, work):

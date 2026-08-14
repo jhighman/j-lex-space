@@ -136,6 +136,22 @@ report("Direction of warrant", "BUILT" if directed else "ABSENT",
        "epistemologies: a frame may now declare descent — by a person, with "
        "a reason — and what its professions license is priced at the exit")
 
+# Settlement by conduct — does a concluded deed owe anything?
+r7 = Record(persons=["person"])
+r7.enroll("person", "agent", SYSTEM)
+try:
+    from sentinel import renounce
+    renounce(r7, "agent", 1, "no longer necessary")
+    settled = False
+except PermissionError:
+    settled = "def obligations" in SOURCE and "def attested" in SOURCE
+report("Settlement by conduct", "BUILT" if settled else "ABSENT",
+       "an episode that closes on an action opens an obligation the record "
+       "keeps derivable until the world pays it — witnessed conduct, or a "
+       "person laying the deed down in writing. Installed 2026-08-14 from "
+       "the praxeology note: the instrument governed what may be believed "
+       "and had never asked what a closure owes")
+
 print("\nReading: a system given the exit axiom rediscovered the exit and")
 print("nothing else. The entrance boundary is prior, not derivable — it")
 print("had to be brought from outside and installed. So was the third")

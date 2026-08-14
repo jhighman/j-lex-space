@@ -66,6 +66,13 @@ of the design, and is simply no longer true of the code.
   side, because a boundary worth something is a boundary worth forging.
   Descent is not an exemption but a different schedule: the commitment goes
   on credit and settles at the exit.
+- **`conduct.py`** — can a concluded deed dissolve into further analysis?
+  An episode that closes on an action opens an obligation the record keeps
+  derivable until the world pays it: conduct witnessed by a voice other
+  than the doer, or a person laying the deed down in writing. The doer's
+  own word is stored and not counted, systems may witness only where
+  granted and may lay down nothing, and a hundred further answers settle
+  nothing — another analysis is not the verb.
 - **`preregistration-taxonomy.md`** — a protocol, not a script, and not
   yet frozen. Can two independent readers apply the book's own taxonomy to
   the same claims, does attribution change the class they assign, and does

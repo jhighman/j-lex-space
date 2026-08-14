@@ -52,6 +52,12 @@ authority.
   into a truth, and there is no careful way to use it. It does not appear
   anywhere in `framework/`, and a sentence that was never written cannot
   be quoted back.
+- **A deed is attested, and may be renounced.** Two acts at the
+  praxeological rung, kept apart from their neighbours: a claim is
+  *accepted* (judgment about warrant), a deed is *attested* (witnessed
+  conduct, never counted from the doer); a grant is *revoked*, a deed is
+  *renounced* (laid down by a person, in writing, with a reason — never
+  by a system, never by lapse).
 - `experiments/vocabulary.py` enforces both by parsing the source. If a
   new definition needs to speak of delegation, add it to that file's
   RESERVED map with a reason, or rewrite the code so it doesn't. The
@@ -105,6 +111,18 @@ Stopping is also priced in voices, not only in answers: an episode's close
 takes answers from as many distinct outside voices as its heaviest act
 would cost to promote (`settlers()`, `attention_price()`). One willing
 voice writing many rows pays nothing extra.
+
+## The obligation (built 2026-08-14)
+
+A closure that reached an action opens an obligation, derived at read time
+from the standing closures (`obligations()` in `framework/sentinel.py`).
+It settles two ways only: conduct, attested by a voice other than the doer
+with standing to observe (`attest()` writes, `attested()` counts), or a
+person laying the deed down in writing (`renounce()`). Nothing expires —
+an intention nobody can see expiring is indistinguishable from a decision
+— and no quantity of further analysis settles a deed. Do not add a third
+settlement path, a decay, or any route by which the Sentinel or a system
+lays down a deed; `conduct.py` attacks all of these.
 
 ## Two standing rules from the failure record
 

@@ -100,6 +100,7 @@ Current standing:
 | Entrance boundary | **built** 2026-08-10 |
 | Earned closure | **built** 2026-08-11 |
 | Direction of warrant | **built** 2026-08-12 |
+| Settlement by conduct | **built** 2026-08-14 |
 
 The same absence showed up a second time, at the other end of the episode.
 A system built to govern what may be *promoted* never asked what may be
@@ -352,6 +353,34 @@ its reader — and the pattern has a name that is now a build rule in
 CLAUDE.md: **nothing is evaluated by the process that produced it.** It is
 what the value layer died of, and one sentence would have caught all four.
 
+**A closure that reached an action now opens an obligation**
+(`experiments/conduct.py`, built 2026-08-14, from the margin note of
+2026-08-12). Every mechanism in this instrument governed what may be
+believed; none of it asked what a closure *owes*. An action row and the
+deed it names are satisfied in opposite directions — the row when it
+matches the world, the deed only when the world is brought to match it —
+and a record that cannot tell them apart lets every concluded deed
+dissolve into the next round of interpretation, which the margin note
+named as the failure the whole exercise kept performing: another analysis
+is not the verb.
+
+So the record keeps a ledger of verbs unperformed. `obligations()` derives,
+at read time and from the standing closures only, every action neither
+*attested* — witnessed by a voice other than the doer, holding standing to
+observe where the record knows who anyone is — nor *renounced*, laid down
+by a person, in writing, with a reason. There is no third way out: nothing
+expires, because an intention nobody can see expiring is indistinguishable
+from a decision. The doer's own attestation is stored and not counted (the
+soliloquy, transposed); a system may witness exactly where a person granted
+it observation and may lay down nothing, ever, because a system that may
+renounce the deeds it concluded has built a quiet exit from every one of
+them. The guard attacks all of it — including a hundred further answers
+written against the deed, which settle nothing.
+
+Two words joined the vocabulary with the machinery, kept apart from their
+neighbours by the one-word-one-act rule: a grant is *revoked*, a deed is
+*renounced*; a claim is *accepted*, a deed is *attested*.
+
 The shared lesson is narrower than "attack the table" and worth stating on
 its own: **every one of these was a correct answer to a question about the
 wrong object.** Nothing derived falsely. `flaw()`, `superseded()` and
@@ -409,6 +438,11 @@ now nothing in this framework had been asked to say what an episode *is*.
 - **No concurrency, no adversarial timing, no persistence.** The database
   is in memory and evaporates when the process ends. That is a feature of
   an instrument and a disqualification for anything else.
+- **An attestation is a sentence about conduct, not conduct.** The record
+  still cannot see the world; what it refuses is smaller and real — it will
+  not confuse silence with settlement, and it knows who said a deed was
+  done. Whether the deed was done is beyond any ledger, which is exactly
+  why the witness is accountable by name.
 - **A check that has not failed is only a check that has not failed.**
   This was written when none of the guards had ever fired, as a caution
   about what that was worth. On 2026-08-11 it stopped being a caution:
