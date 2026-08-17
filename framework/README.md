@@ -12,8 +12,10 @@ implementation — the smallest honest sketch of its load-bearing ideas,
 sized for this project's start-small agreement: standard library only,
 in-memory sqlite, written to be read top to bottom.
 
-- `sentinel.py` — the framework: one immutable record type, derived-not-
-  stored reads, and the Sentinel Principle (no claim promotes itself),
+- `sentinel.py` — the framework: one append-only record type whose
+  immutability the storage layer enforces rather than our manners,
+  derived-not-stored reads, and the Sentinel Principle (no claim promotes
+  itself),
   held at three boundaries. At the entrance, how easily a claim got in is
   measured and kept out of what its promotion costs. At promotion,
   acceptance is counted in independent actors and priced by consequence.

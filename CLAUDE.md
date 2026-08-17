@@ -124,6 +124,22 @@ an intention nobody can see expiring is indistinguishable from a decision
 settlement path, a decay, or any route by which the Sentinel or a system
 lays down a deed; `conduct.py` attacks all of these.
 
+## The ledger refuses (built 2026-08-17)
+
+Immutability is enforced by the table, not by our abstaining from writing
+the method — the `no_erasure` and `no_deletion` triggers abort any UPDATE
+or DELETE on `assertions`, and `about`/`basis` are foreign keys, which
+needs `PRAGMA foreign_keys = ON` (off by default, per connection). Never
+add an update or delete path: correction here is a new row that a
+derivation prefers, and `immutable.py` attacks every route.
+
+The vocabulary of acts is **surfaced, not gated**. `Record.ACTS` lists
+them and `void_acts()` reports rows outside it, beside `void_grants()` and
+`void_closures()`. Do not add a `CHECK` on `act` — refusing the row would
+keep less than the attempt, and this ledger's character is to keep what it
+was handed and decline to be persuaded. Add new acts to `ACTS` when you
+add them to the framework, or they go unreported.
+
 ## Two standing rules from the failure record
 
 - **Nothing is evaluated by the process that produced it.** Four times in

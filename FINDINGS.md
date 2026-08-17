@@ -95,7 +95,7 @@ Current standing:
 | Pillar II — bounded authority | **built** 2026-08-10 |
 | Pillar III — epistemic distinction | rediscovered |
 | Pillar IV — topology / consequence | **built** 2026-08-09 |
-| Pillar V — immutable ledger | rediscovered |
+| Pillar V — immutable ledger | rediscovered; **enforced** 2026-08-17 |
 | Status blindness | rediscovered |
 | Entrance boundary | **built** 2026-08-10 |
 | Earned closure | **built** 2026-08-11 |
@@ -352,6 +352,56 @@ labels, the six-readings convergence, and now a corpus built in front of
 its reader — and the pattern has a name that is now a build rule in
 CLAUDE.md: **nothing is evaluated by the process that produced it.** It is
 what the value layer died of, and one sentence would have caught all four.
+
+**Pillar V was never held** (`experiments/immutable.py`, 2026-08-17). The
+gravest entry in this file, because it is not a boundary that moved — it is
+one that was reported standing, by this project, for eight days, and had
+never been there.
+
+`Record`'s docstring said immutability here was not a rule we follow but a
+method we never wrote. That was the whole of the guarantee: no `UPDATE` and
+no `DELETE` appeared in our code. The framework's own threat model, stated
+in `forgery.py`, is an attacker holding the database connection who does
+not call the functions — and against that attacker a single `UPDATE`
+rewrote a claim's body from *"a rotation failed"* to *"a rotation
+succeeded"*, a `DELETE` of the accept rows moved `earned()` from True to
+False, deleting one enrolment turned a person into nobody, and the door was
+rewritten in place. That last one is the sharpest: `forgery.py` attacks the
+door by *appending* a second admit row, and `door()` defends by reading only
+the Sentinel's first — a defence an `UPDATE` walks straight past.
+
+Two things make this worse than a missing constraint.
+
+- **The probe was measuring our manners and calling it the ledger.**
+  `axiom_zero.py` reported Pillar V REDISCOVERED by grepping our own source
+  for the strings `UPDATE` and `DELETE`. It answered a question about the
+  authors' discipline and printed it as a property of the record — the same
+  error as the test that believed a docstring (2026-08-09), one level up.
+  It now attempts both mutations and reports how many the table refused.
+- **Every derivation in the file rests on this.** `fault()`, `flaw()`,
+  `professed()`, `category()`, `earned()`, `obligations()` all re-derive
+  from stored rows, and re-derivation from a table anybody may rewrite is
+  arithmetic performed on sand. `forgery.py`'s conclusion — *the record is
+  append-only and therefore full of lies; it is simply not credulous* —
+  assumed the one property none of its five attacks tested.
+
+The fix is Lex's principle, not her mechanism, and the distinction is worth
+keeping: **a constraint in the application layer is a policy; a constraint
+in the storage layer is an invariant.** Foreign keys on `about` and `basis`
+(with `PRAGMA foreign_keys = ON`, which is off by default and per
+connection), and two triggers aborting any update or delete. `INSERT` is
+untouched — the only motion this design ever needed, since supersession,
+revocation and renunciation all work by writing a new row.
+
+Her proposed mechanism was a Three-Step Consistency Rule: denormalise a
+parent property onto the child, composite-key it back, and check the local
+implication. It is a real technique, correctly described, and it does not
+fit here for two reasons that are worth stating because they are the
+architecture's own: its power comes from the composite key blocking or
+cascading *when the parent changes*, and in an append-only ledger parents
+never change; and its first step stores a derived property on a row, which
+is what "derived, never stored" refuses and what every hole found this
+month has been — a row saying X is not X.
 
 **A closure that reached an action now opens an obligation**
 (`experiments/conduct.py`, built 2026-08-14, from the margin note of
