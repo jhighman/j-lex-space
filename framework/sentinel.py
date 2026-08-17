@@ -156,23 +156,65 @@ SENTINEL = "sentinel"
 
 
 class Record:
-    """The append-only record. There is no update and no delete —
-    immutability here is not a rule we follow but a method we never wrote."""
+    """The append-only record — enforced by the storage layer, not by our
+    manners.
+
+    Until 2026-08-17 this docstring said immutability here was not a rule
+    we follow but a method we never wrote, and that was the whole of the
+    guarantee. It was a promise about the authors. Anything holding this
+    connection could UPDATE a claim's body, DELETE the acceptance that
+    earned a promotion, or remove an enrolment from the founding roster,
+    and every derivation in this file re-derives from these rows — so the
+    ledger's honesty rested on nobody having written the method yet.
+
+    A constraint that lives in the application layer is a policy; a
+    constraint that lives in the storage layer is an invariant. So the
+    table refuses now: two triggers that abort any update or delete, and
+    foreign keys so a row cannot be about an assertion nobody wrote.
+    Appending is untouched, which is the only motion this design ever
+    needed — supersession, revocation and renunciation all work by writing
+    a new row and letting the derivation prefer it."""
+
+    # Every act the framework writes. Nothing here refuses an unknown one:
+    # the ledger's character is to keep what it was given and decline to be
+    # persuaded by it, and a schema that rejected the row would be keeping
+    # less than the attempt. See void_acts(), which makes the difference
+    # visible rather than silent.
+    ACTS = frozenset({
+        "enroll", "assert", "classify", "accept", "challenge", "answer",
+        "admit", "delegate", "because", "expires", "revoke", "assign",
+        "premise", "direction", "profess", "closing", "closed", "attest",
+        "renounce",
+    })
 
     def __init__(self, persons=()):
         self.db = sqlite3.connect(":memory:")
+        # Off by default in sqlite3, and per connection. Without this line
+        # the REFERENCES clauses below are documentation.
+        self.db.execute("PRAGMA foreign_keys = ON")
         self.db.execute(
             """CREATE TABLE assertions (
                    id      INTEGER PRIMARY KEY,
                    author  TEXT NOT NULL,   -- who is accountable for this
                    act     TEXT NOT NULL,   -- assert / classify / accept / ...
                    body    TEXT NOT NULL,   -- what is claimed
-                   about   INTEGER,         -- another assertion, if any
-                   basis   INTEGER,         -- the claim this one is built on
+                   about   INTEGER REFERENCES assertions(id),  -- another assertion
+                   basis   INTEGER REFERENCES assertions(id),  -- what it is built on
                    actor   TEXT,            -- the actor this concerns, if any
                    at      TEXT NOT NULL    -- when it was written
                )"""
         )
+        # Pillar V, moved out of our discipline and into the table. NULL
+        # about/basis stays legal — most rows carry neither — but a row
+        # naming an assertion that was never written is refused, because a
+        # reference to nothing is not a reference.
+        for name, verb in (("no_erasure", "UPDATE"), ("no_deletion", "DELETE")):
+            self.db.execute(
+                f"""CREATE TRIGGER {name} BEFORE {verb} ON assertions BEGIN
+                        SELECT RAISE(ABORT,
+                            'the ledger is append-only: correction is not erasure');
+                    END"""
+            )
         # The founding roster. A system cannot establish who is a person —
         # that judgment has no seat inside the machine — so it is asserted
         # from outside and recorded as having come from outside.
@@ -358,6 +400,29 @@ class Record:
         return [(grant_id, self.fault(grant_id)) for grant_id, in self.db.execute(
             "SELECT id FROM assertions WHERE act='delegate' ORDER BY id")
             if self.fault(grant_id) is not None]
+
+    def void_acts(self):
+        """Every row whose act this framework does not recognise, with the
+        word it used. Nothing is refused and nothing is hidden.
+
+        The third reader of this kind, beside void_grants() and
+        void_closures(), and here for the same reason: a refusal nobody can
+        see is indistinguishable from an oversight. An act outside ACTS is
+        inert — no derivation looks for it — and until this existed it was
+        inert *and invisible*, which is how a misspelling becomes a silent
+        no-op rather than a caught mistake. The hazard is not theoretical:
+        the fiduciary act was briefly called something that collided with
+        the commonest verb in this workshop, and a missed call site would
+        have written rows nothing counted and nothing reported.
+
+        The schema deliberately does not enforce this. A CHECK constraint
+        would make the storage refuse the row, and refusing is the one
+        thing this ledger does not do with what it is handed — it keeps the
+        attempt and declines to be persuaded. So the vocabulary is
+        surfaced, not gated."""
+        return [(id, act) for id, act in self.db.execute(
+            "SELECT id, act FROM assertions ORDER BY id")
+            if act not in self.ACTS]
 
     # -- everything below is derived at read time, never stored --
 

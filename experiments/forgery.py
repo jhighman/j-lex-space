@@ -22,6 +22,18 @@ asked, and rows that cannot justify themselves are read and discarded.
 The ledger is honest about containing them. It simply declines to be
 persuaded.
 
+Note the load that rests on "append-only", and what this file does not
+test. Every attack below is an INSERT. Not one edits a row and not one
+removes one — so the property the whole conclusion depends on was assumed
+here for eight days while nothing enforced it, and anything holding the
+connection could rewrite a claim's body or delete the acceptance that
+earned its promotion. Attack 5 is the sharpest case: it rewrites the door
+by *appending* a second admit row, which door() defends against by reading
+only the Sentinel's first — and an UPDATE walks straight past that defence.
+Mutation is attacked in immutable.py, and the table refuses it now. A guard
+that assumes the premise it argues from is the shape of mistake this bench
+exists to catch.
+
 Framework: Alexandra Krížová, *Architecture of Contextual Judgment* (2026).
 """
 

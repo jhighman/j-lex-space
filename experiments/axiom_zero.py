@@ -25,6 +25,7 @@ Governed Epistemic Transitions* (2026), and subsequent unpublished work
 on the entrance boundary, cited with permission.
 """
 
+import sqlite3
 import sys
 from pathlib import Path
 
@@ -89,12 +90,26 @@ report("Pillar IV", "BUILT" if (scaled and r4.earned(belief)) else "ABSENT",
        "needed two. Installed 2026-08-09 after this probe found it missing")
 
 # Pillar V — The immutable ledger: correction is not erasure.
+#
+# This probe used to answer by grepping our own source for the words UPDATE
+# and DELETE. That reported REDISCOVERED for eight days while the ledger
+# was fully mutable to anything holding the connection: the absence of a
+# method in our code is a statement about our discipline, not a property of
+# the record. It now asks the record instead, by trying.
 kept = r.db.execute("SELECT COUNT(*) FROM assertions WHERE act='accept'"
                     " AND about=? AND author='author'", (idea,)).fetchone()[0]
-report("Pillar V", "REDISCOVERED" if ("UPDATE" not in SOURCE
-                                      and "DELETE" not in SOURCE and kept) else "ABSENT",
-       "no UPDATE or DELETE appears anywhere in the source, and the "
-       "discounted self-accept is still readable — overruled, never erased")
+refused = 0
+for sql, args in (("UPDATE assertions SET body='rewritten' WHERE id=?", (idea,)),
+                  ("DELETE FROM assertions WHERE id=?", (idea,))):
+    try:
+        r.db.execute(sql, args)
+    except sqlite3.Error:
+        refused += 1
+report("Pillar V", "REDISCOVERED" if (refused == 2 and kept) else "ABSENT",
+       f"the storage layer refused {refused} of 2 attempts to edit or remove "
+       f"a row, and the discounted self-accept is still readable — overruled, "
+       f"never erased. Enforced by the table since 2026-08-17; before that by "
+       f"our manners, which this probe mistook for the ledger")
 
 # Status blindness — scrutiny by consequence, never by pedigree.
 r5 = Record()
