@@ -168,11 +168,16 @@ Two consequences worth stating before anyone writes an affective layer:
   entrance: a refusal nobody can see is indistinguishable from an
   oversight.
 
-Reserve the vocabulary before it drifts. `obligations()` means deeds owed
-after a closure that reached an action. It does not mean action verbs
-spotted in an input — those are prospective and have no case, no closure
-and no standing behind them, so any ingest-side measure needs its own word.
-One word, one act applies to measures as much as to verbs.
+Reserve the vocabulary before it drifts, settled with Lex on 2026-08-18.
+`obligations()` means deeds owed after a closure that reached an action.
+An act named in a text that no case has closed over is a **latent verb** —
+latent rather than prospective, because the force is already present in the
+words and is waiting for structural closure to reveal it, not projected
+forward. Latent verbs are measured at ingest (`SemanticMass` in alexicon,
+which holds the pipeline); obligations exist only after a closure. One word,
+one act applies to measures as much as to verbs, and these two must never
+merge: the first is a reading of text, the second is a debt with a case
+behind it.
 
 ## Two standing rules from the failure record
 
