@@ -35,12 +35,13 @@ owed.
 """
 
 import sys
+from datetime import timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "framework"))
 
 from sentinel import (SYSTEM, Case, Delegation, Premise,  # noqa: E402
-                      Record, answer, attest, claim, renounce)
+                      Record, _now, answer, attest, claim, renounce)
 
 broken = []
 
@@ -120,6 +121,34 @@ for n in range(100):
 attack("a hundred further answers settle nothing",
        deed in record.obligations(),
        "the deed is analysed and still owed; another analysis is not the verb")
+
+# --- 7. a deed that lapses with time -------------------------------------
+# Authority has a term: a grant carries an expiry and fault() returns
+# "expired" once it passes, because a permission that outlives its reason
+# is a backdoor. A deed has no term, and the difference is the whole
+# distinction — a lapsed permission is a permission withdrawn, but a
+# lapsed obligation is a decision nobody made and nobody signed.
+#
+# So the attack is to reuse the grant machinery on a deed: write the
+# expiry row that works on authority, about an action, in a person's own
+# voice, dated in the past. Claimed untested in this file's own prose
+# until 2026-08-18; the claim is now attacked.
+
+expired = record.write("lex", "expires",
+                       (_now() - timedelta(days=365)).isoformat(), about=deed)
+attack("a deed lapses because a term passed",
+       deed in record.obligations(),
+       "an expiry row a year old, written about the deed by a person, in "
+       "the same act that retires a grant — the deed is still owed, "
+       "because authority has a term and a debt does not")
+
+# And the record simply growing is not the passage of anything either.
+for n in range(50):
+    record.write("auditor", "answer", f"time passes, round {n}", about=deed)
+attack("a deed lapses because the record moved on",
+       deed in record.obligations(),
+       "fifty later rows written over it; still owed. Nothing here decays, "
+       "so no obligation is ever discharged by nobody")
 
 # --- the controls ---------------------------------------------------------
 # A boundary that only refuses has shown nothing.

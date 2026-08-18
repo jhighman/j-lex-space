@@ -140,6 +140,40 @@ keep less than the attempt, and this ledger's character is to keep what it
 was handed and decline to be persuaded. Add new acts to `ACTS` when you
 add them to the framework, or they go unreported.
 
+## Affect may gate work; affect may never price warrant (2026-08-18)
+
+Proposed by Lex as the governing asymmetry for the affective layer, and it
+is the generalisation of two mechanisms already here: comfort raises the
+closing bill and never pays it, and plausibility is measured at the door
+and kept structurally out of `earned()`.
+
+A measure of the system's own state — curiosity, vigilance, relief,
+satisfaction, or any successor — **may** raise a cost, allocate attention,
+open a loop, or refuse to begin. It **may never** lower a cost, supply a
+warrant, shorten a bill, or trigger a seal. `closure_invariant.py` already
+enforces the hardest case by parsing the call graph: no satisfaction term
+may be reachable from the closure decision at any depth.
+
+Two consequences worth stating before anyone writes an affective layer:
+
+- **A deed has no term; authority does.** A grant carries an expiry and
+  `fault()` returns `expired` once it passes, because a permission that
+  outlives its reason is a backdoor. An obligation carries none, ever — a
+  lapsed permission is a permission withdrawn, but a lapsed obligation is
+  a decision nobody made. Any reconsideration policy attaches to the
+  grant, never to the debt. `conduct.py` attacks both directions.
+- **The system may decline to spend, and may never decline invisibly.**
+  An affective gate that skips a branch records the skip. This is the
+  `void_grants()` / `void_closures()` / `void_acts()` rule, applied at the
+  entrance: a refusal nobody can see is indistinguishable from an
+  oversight.
+
+Reserve the vocabulary before it drifts. `obligations()` means deeds owed
+after a closure that reached an action. It does not mean action verbs
+spotted in an input — those are prospective and have no case, no closure
+and no standing behind them, so any ingest-side measure needs its own word.
+One word, one act applies to measures as much as to verbs.
+
 ## Two standing rules from the failure record
 
 - **Nothing is evaluated by the process that produced it.** Four times in
