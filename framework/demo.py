@@ -2,14 +2,17 @@
 
     python3 framework/demo.py
 
-Watch for four things: the author's own accept is recorded but never
+Watch for five things: the author's own accept is recorded but never
 counted; the derived category comes from the record, not from a stored
-field; judgment is only possible on a case that has closed; and closing
-is itself judgment, priced by how little the episode met on its way here.
+field; judgment is only possible on a case that has closed; closing is
+itself judgment, priced by how little the episode met on its way here;
+and a case that closes on an action does not finish — it opens a debt
+that only conduct or a person's written renunciation settles.
 """
 
 from sentinel import (Record, Case, Delegation, Premature, Premise, SYSTEM,
-                      answer, assign, assigned, claim, accept)
+                      answer, assign, assigned, attest, claim, accept,
+                      renounce)
 
 record = Record()
 
@@ -137,3 +140,58 @@ Premise.name(record, "lex", "history-integrity",
              "the reflog is trustworthy; the clock may have drifted")
 print("this case still reads as:  ", f"{case.frame} v{case.version}",
       "- superseded, not corrected")
+
+
+# --- what the closure owes ------------------------------------------------
+# Everything above governs what may be *believed*. The last rung asks what
+# a conclusion now *owes*. An episode that reaches an action and closes has
+# concluded that something be done, and a record that cannot tell a claim
+# about a deed from the deed itself lets every conclusion dissolve into the
+# next round of interpretation. Another analysis is not the verb.
+
+deed = claim(record, "lex", "action",
+             "rewrite the release notes from the reflog", basis=theory)
+accept(record, "jeff", deed, note="agreed, and it should be done today")
+accept(record, "reader", deed, note="the notes are wrong as they stand")
+accept(record, "auditor", deed, note="checked; the history was rewritten")
+
+deed_frame = Premise.name(record, "lex", "release-notes",
+                          "the notes are ours to correct")
+owed = record.considering([seen, theory, deed], deed_frame)
+for n, question in enumerate(list(record.outstanding(owed))):
+    answer(record, ["reader", "auditor", "dana"][n % 3], question, "checked")
+Case.close(record, "lex", [seen, theory, deed], deed_frame)
+
+print()
+print("closed on an action, and:  ", len(record.obligations()), "deed(s) owed")
+
+# The doer's own word is stored and does not settle it. A deed reporting
+# itself done is the soliloquy the entrance already refused, transposed.
+attest(record, "lex", deed, "I rewrote them myself this morning")
+print("after the doer says so:    ", len(record.obligations()), "still owed")
+
+# A hundred further answers written against the deed settle nothing.
+for n in range(100):
+    record.write("reader", "answer", f"further analysis, round {n}", about=deed)
+print("after 100 more answers:    ", len(record.obligations()), "still owed")
+
+# It leaves the list two ways only. A voice other than the doer witnesses
+# the conduct — or a person lays the deed down in writing, with a reason,
+# which is a decision on the record rather than a lapse.
+attest(record, "auditor", deed, "I saw the corrected notes published")
+print("once somebody else saw it: ", len(record.obligations()), "owed")
+
+undone = claim(record, "lex", "action", "email the contributors", basis=theory)
+for who in ("jeff", "reader", "auditor"):
+    accept(record, who, undone, note="they should hear it from us")
+mail_frame = Premise.name(record, "lex", "contributors",
+                          "the contributor list is current")
+mail = record.considering([seen, theory, undone], mail_frame)
+for n, question in enumerate(list(record.outstanding(mail))):
+    answer(record, ["reader", "auditor", "dana"][n % 3], question, "checked")
+Case.close(record, "lex", [seen, theory, undone], mail_frame)
+print("a second deed, unperformed:", len(record.obligations()), "owed")
+
+renounce(record, "jeff", undone,
+         "the contributors were in the room; there is nobody left to tell")
+print("laid down by a person:     ", len(record.obligations()), "owed")

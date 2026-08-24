@@ -51,6 +51,28 @@ of the design, and is simply no longer true of the code.
   as an observation, stuff the ballot, and rewrite what a claim met at
   the door. Every row is stored; no verdict moves. The ledger is
   append-only and therefore full of lies, and simply not credulous.
+- **`closure.py`** — what does an episode have to survive before it may
+  stop? Two episodes go quiet for opposite reasons: one settled because
+  everything in it was answered, one settled because nothing in it was ever
+  asked. Both look finished from inside, and nothing further changed is
+  what both of them look like. The quiet one is asked for more, the floor
+  holds however contested the episode was, and no case closes in a single
+  motion — the first ask draws the questions and cannot answer them.
+- **`closure_invariant.py`** — the exit's standing check, and the twin of
+  `entrance_invariant.py`. Two episodes pay their bills exactly, and the
+  call graph under `earned_closure()` is walked to the bottom: no
+  satisfaction term may be reachable from the decision to stop, at any
+  depth. Comfort sets the bill and may never pay it, which is a property of
+  the code's shape rather than of anyone's intentions.
+- **`premature.py`** — what can be bought by writing straight into the
+  ledger, at the exit rather than at the door? Four holes found the day the
+  close was built, by attacking the table rather than the API: a cheaper
+  ending bought with questions nobody answered, a forged last word, a
+  closure that ripened once somebody else answered its questions, and its
+  mirror, a standing closure unmade by one late question. The last two are
+  the door's own lesson arriving from the opposite direction — a closure is
+  a claim about a moment, and a question about a moment cannot be answered
+  from a room that has since changed.
 - **`narrowing.py`** — can an episode be made to look smaller than it is?
   Three attacks on identity rather than on judgment: open the Sentinel's
   closing file over a one-claim episode and let a six-claim one inherit
@@ -73,6 +95,32 @@ of the design, and is simply no longer true of the code.
   own word is stored and not counted, systems may witness only where
   granted and may lay down nothing, and a hundred further answers settle
   nothing — another analysis is not the verb.
+- **`immutable.py`** — is the append-only record actually append-only?
+  Pillar V was reported standing for eight days and had never been there:
+  the whole guarantee was that no `UPDATE` and no `DELETE` appeared in our
+  code, and the threat model is an attacker who does not call the
+  functions. One `UPDATE` rewrote a claim from *a rotation failed* to *a
+  rotation succeeded*; deleting the accept rows moved a verdict; deleting
+  an enrolment turned a person into nobody. Triggers and foreign keys now
+  refuse it at the table, because a constraint in the application layer is
+  a policy and a constraint in the storage layer is an invariant.
+- **`unmeasured.py`** — can an episode buy a cheaper ending by never
+  being measured? The exit charges for comfort, and it asked the door how
+  each claim got in. The door returns nothing for a claim that never went
+  through it, and nothing is not zero: `None == 0` is False, so a claim
+  written straight into the table was scored exactly like one that had met
+  resistance. The same three claims, the same author, the same words —
+  seven questions through the door, four around it. `premature.py`
+  attacked this number from the opposite side and found that being
+  questioned could be talked up by writing rows; nobody had asked what the
+  count does with a claim that was never at the door at all. The
+  unmeasured is priced as the quiet is priced now, because a discount for
+  not being weighed is one anybody can take. One route is reported and not
+  closed, and it is the finding worth carrying: a row written in the
+  Sentinel's name moves the reading to a number `friction()` cannot
+  produce. The Sentinel is a role rather than an enrolled identity, so
+  there is nothing to re-derive it against — the door is the last place
+  here where a stored number is believed.
 - **`preregistration-taxonomy.md`** — a protocol, not a script, and not
   yet frozen. Can two independent readers apply the book's own taxonomy to
   the same claims, does attribution change the class they assign, and does

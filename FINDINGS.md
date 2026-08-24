@@ -431,6 +431,71 @@ Two words joined the vocabulary with the machinery, kept apart from their
 neighbours by the one-word-one-act rule: a grant is *revoked*, a deed is
 *renounced*; a claim is *accepted*, a deed is *attested*.
 
+The file claimed in its own prose that nothing expires and did not test it
+until 2026-08-18 — the untested-premise shape this bench exists to catch,
+and the same one `forgery.py` had already made by concluding from
+append-only without attacking it. Two attacks now, drawing the distinction
+the affective layer needs before anyone writes it: **a deed has no term;
+authority does.** An expiry row a year old, written about a deed by a
+person, in the very act that retires a grant — the deed is still owed;
+fifty later rows written over it, still owed. A grant carries a term and
+`fault()` returns `expired` once it passes, because a permission that
+outlives its reason is a backdoor. An obligation carries none, ever,
+because a lapsed permission is a permission withdrawn and a lapsed
+obligation is a decision nobody made. Any reconsideration policy attaches
+to the grant, never to the debt.
+
+**A discount for not being weighed** (`experiments/unmeasured.py`,
+2026-08-24). The exit charges for comfort: `settled()` counts the claims
+that entered without resistance, and that number raises what an episode
+must survive in order to stop. It asked `door()` how each claim got in, and
+`door()` returns nothing at all for a claim that never went through the
+door. Nothing is not zero. `None == 0` is False, so the absence of a
+measurement was scored as the presence of resistance.
+
+The same three claims, the same author, the same words, the same frame:
+
+| route | `door()` | `settled()["quiet"]` | asked before it may stop |
+|---|---|---|---|
+| through the door | `[0, 0, 0]` | 3 | **7 questions** |
+| straight to the table | `[None, None, None]` | 0 | **4 questions** |
+
+Three routes past the price, all the same hole: the whole episode written
+around the door, one claim of an honest episode smuggled past it, and
+`plausible()` answering False about a claim it had never looked at. The
+discount is per claim and adds up, and it is bought by evading the
+measurement rather than by paying it — which is the framework's own stated
+threat model, an attacker holding the connection who does not call the
+functions.
+
+`premature.py` attacked this same number from the opposite side on
+2026-08-11 and found that being questioned could be talked up by writing
+rows. Nobody asked the mirror question. Both are the pattern this section
+keeps recording: **a correct answer to a question about the wrong object.**
+The count was sound; it was shown something other than what it was asked
+about, and *unmeasured* and *measured and resisted* were the same sentence
+to it.
+
+It is also the first attack anywhere but the hardest case on the asymmetry
+stated on 2026-08-18 — a measure of the system's own state may raise a cost
+and may never lower one. The generalisation it forces is the one the
+entrance had already learned and the exit had not: **the absence of a
+measurement may never lower a cost either.** Where the record cannot say
+how a claim got in, it now charges as though it got in easily, because the
+other way round is a price anybody can decline to pay.
+
+**And one route reported rather than closed.** With the unmeasured priced,
+the way to the discount is a row written in the Sentinel's name: `door()`
+moves from nothing to nine, which is outside the range `friction()` can
+produce at all — zero to three. The Sentinel is a role rather than an
+enrolled identity, so there is nothing to re-derive it against. Every other
+defence in this instrument works by checking who wrote a row against a
+roster that came from outside, and the door is the last place here where a
+stored number is simply believed. The fix raises the price of the cheat
+from nothing to one forged row in a name that is not the forger's, which is
+an improvement and is not a fix. It is named in the guard, it is named
+here, and it is open.
+
 The shared lesson is narrower than "attack the table" and worth stating on
 its own: **every one of these was a correct answer to a question about the
 wrong object.** Nothing derived falsely. `flaw()`, `superseded()` and
@@ -479,6 +544,18 @@ now nothing in this framework had been asked to say what an episode *is*.
   since a cap is a ceiling and a visible ceiling is a thing to aim at. The
   cost is that settlement scales with length as well as with quiet, and
   those are not the same property.
+- **The door is the last place here where a stored number is believed.**
+  Every other defence works by re-derivation — checking who wrote a row
+  against a roster that came from outside, and recomputing the verdict
+  rather than reading it. The entrance measurement cannot work that way,
+  because friction is relational and a read-time query cannot answer a
+  question about the past, so the Sentinel writes down what it saw. But
+  the Sentinel is a role rather than an enrolled identity, and a row in
+  its name is indistinguishable from a row it wrote. Found and left open
+  on 2026-08-24 (`experiments/unmeasured.py`): one forged `admit` row
+  moves the reading to a number `friction()` cannot produce. Pricing the
+  unmeasured raised the cost of that cheat from nothing to one forged row
+  in somebody else's name. It did not remove it.
 - **Settlement is measured crudely.** Two components — claims that met no
   resistance at the door, and claims never examined between parties. It is
   a proxy for "this episode stopped moving", not a measurement of it.

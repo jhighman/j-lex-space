@@ -167,6 +167,17 @@ Two consequences worth stating before anyone writes an affective layer:
   `void_grants()` / `void_closures()` / `void_acts()` rule, applied at the
   entrance: a refusal nobody can see is indistinguishable from an
   oversight.
+- **The absence of a measurement may never lower a cost.** The corollary,
+  established by attack on 2026-08-24 (`experiments/unmeasured.py`) rather
+  than by argument: `settled()` asked the door how each claim got in, and
+  a claim that never went through the door read as one that met
+  resistance, so an episode written around the entrance was asked four
+  questions where the same episode through it was asked seven. Where the
+  record cannot say how something got in, it charges as though it got in
+  easily. Any new measure gated at the entrance must decide what it
+  reports when it never ran, and the answer that costs the episode
+  something is the one to give — the other way round is a discount
+  available to anybody willing to skip the scales.
 
 Reserve the vocabulary before it drifts, settled with Lex on 2026-08-18.
 `obligations()` means deeds owed after a closure that reached an action.

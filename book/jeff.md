@@ -390,6 +390,44 @@ closure now owes — and the framework that learned to refuse cheap grace at
 the exit has one rung left to build: settlement by conduct, attested,
 between parties.
 
+### Postscript: the rung was built
+
+*24 August 2026.*
+
+The section above closes by saying the framework has one rung left to
+build. It was built on 14 August, two days after this note was written,
+and the sentence has been left standing rather than corrected — the same
+discipline the ledger it describes runs on. A claim about a moment stays
+true of that moment. What comes after it is a new row, not an edit.
+
+What went in is close to what the note asked for and smaller in one
+respect worth naming. A closure that reaches an action opens an
+obligation the record derives at read time and keeps deriving until the
+world pays it. Two things settle one: conduct attested by a voice other
+than the doer and holding standing to observe, or a person laying the
+deed down in writing, with a reason. There is no third way and nothing
+expires — an intention nobody can see expiring is indistinguishable from
+a decision. The doer's own attestation is stored and not counted, which
+is the entrance's soliloquy rule transposed to the exit, and a hundred
+further answers written against a deed settle nothing, which is the
+sentence the note was really about.
+
+The smaller respect: an attestation is a sentence about conduct, not
+conduct. The record still cannot see the world. What it refuses is
+narrower than the note implied and it is real — it will not confuse
+silence with settlement, and it knows who said the deed was done.
+
+Two things the note did not anticipate, both found by attack afterwards.
+A deed has no term and authority does: a grant expires because a
+permission that outlives its reason is a backdoor, and an obligation
+never does, because a lapsed permission is a permission withdrawn and a
+lapsed obligation is a decision nobody made. And the exit was charging
+less for episodes that had evaded its entrance measurement than for those
+that had submitted to it — nothing is not zero, and the absence of a
+measurement was reading as the presence of resistance. Both are in
+FINDINGS.md. Neither was visible from the armchair this note was written
+in, which is the argument for the bench and not against the note.
+
 ### References
 
 - Anscombe, G.E.M. (1957). *Intention*. Blackwell.

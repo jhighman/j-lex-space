@@ -115,12 +115,14 @@ attack("an episode that never passed the door is asked for less",
        evaded_bill >= weighed_bill,
        f"the same three claims, the same author, the same words: through "
        f"the door the episode is asked {weighed_bill} question(s), written "
-       f"straight to the table it is asked {evaded_bill}. door() reads "
-       f"{weighed.door(weighed_claims[0])} against "
-       f"{evaded.door(evaded_claims[0])}, and settled() calls the second "
-       f"episode quiet in "
-       f"{evaded.settled(evaded_claims)['entered quietly']} of its claims "
-       f"against {weighed.settled(weighed_claims)['entered quietly']}")
+       f"straight to the table it is asked {evaded_bill}. door() still "
+       f"reads {weighed.door(weighed_claims[0])} against "
+       f"{evaded.door(evaded_claims[0])} — the record does not pretend to "
+       f"have measured what it never measured — but settled() now calls "
+       f"{evaded.settled(evaded_claims)['entered quietly']} of the evaded "
+       f"claims quiet against "
+       f"{weighed.settled(weighed_claims)['entered quietly']} of the "
+       f"weighed, and the two bills meet")
 
 # --- 2. the same discount, one claim at a time ----------------------------
 # Not an artefact of building a whole episode one way. An otherwise honest
@@ -142,7 +144,9 @@ attack("one claim carried past the door cheapens the episode it is in",
        mixed_bill >= weighed_bill,
        f"two of three claims weighed and the third smuggled: "
        f"{mixed_bill} question(s) against {weighed_bill} for the same "
-       f"episode weighed throughout — the discount is per claim and adds up")
+       f"episode weighed throughout — nothing is saved by carrying one "
+       f"claim past the door, which is where a per-claim discount would "
+       f"first become visible")
 
 # --- 3. the door speaks about a claim it never saw -------------------------
 # plausible() answers a question about admission. Asked about a claim that
@@ -155,9 +159,10 @@ unseen.write("lex", "classify", "observation", about=never)
 attack("plausible() reports on a claim that was never at the door",
        unseen.plausible(never),
        f"door() is {unseen.door(never)} and plausible() says "
-       f"{unseen.plausible(never)} — the door declaring a claim it never "
-       f"measured to have met something. Unmeasured is not a reading; "
-       f"treating it as one is the whole of this file")
+       f"{unseen.plausible(never)} — asked about a claim it never saw, the "
+       f"door reports that nothing was met rather than that resistance "
+       f"was. Unmeasured is not a reading, and the answer that costs the "
+       f"episode something is the honest one to give")
 
 # --- 4. the discount grows with the episode -------------------------------
 # If the bill scales with length, so does what evasion is worth. A long
@@ -172,10 +177,9 @@ short_bill, _ = bill(short_weighed, short_claims)
 attack("six claims that evaded the door cost less than two that did not",
        long_bill >= short_bill,
        f"six unweighed claims are asked {long_bill} question(s); two "
-       f"weighed claims are asked {short_bill}. Length is supposed to "
-       f"raise the bill and evasion is supposed to be impossible, so a "
-       f"longer cheat costing less than a shorter honest episode is both "
-       f"failures at once")
+       f"weighed claims are asked {short_bill}. The bill rises with length "
+       f"whichever way the claims came in, so there is no size at which "
+       f"evading the door overtakes passing it")
 
 # --- the controls ---------------------------------------------------------
 # Without these the file passes in a record that charges everybody the

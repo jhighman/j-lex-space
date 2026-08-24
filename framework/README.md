@@ -27,12 +27,17 @@ in-memory sqlite, written to be read top to bottom.
   declare, through a person and with a written reason, that its warrant
   descends: professions are then taken on credit and settled at the exit,
   and where the instrument has no applicable test it says OUT OF SCOPE
-  rather than FAIL.
+  rather than FAIL. What the record cannot say about how a claim got in it
+  charges for, because a discount for not being weighed is one anybody can
+  take. Past the exit there is one rung more: an episode that closes on an
+  action opens an obligation the record keeps derivable until the world
+  pays it — conduct attested by a voice other than the doer, or a person
+  laying the deed down in writing. Nothing expires.
 - `demo.py` — a round trip through the ideas. Run:
   `python3 framework/demo.py`
 
-After any change here: `python3 experiments/check.py` — ten guards, each
-of which has already caught this code out at least once.
+After any change here: `python3 experiments/check.py` — thirteen guards,
+each of which has already caught this code out at least once.
 
 The axiom, from the dissertation, held to throughout:
 

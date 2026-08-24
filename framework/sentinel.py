@@ -7,7 +7,10 @@ smallest honest sketch of its load-bearing ideas, sized for this project:
 
   1. One record type. Everything the system knows is an assertion: an
      accountable claim by someone, about something — including about
-     another assertion. Immutable once written.
+     another assertion. Immutable once written, and immutable by the
+     table's refusal rather than by our manners: two triggers abort any
+     update or delete, because a constraint in the application layer is a
+     policy and a constraint in the storage layer is an invariant.
   2. Derived, never stored. A claim's category and a promotion's verdict
      are computed at read time from the standing record, never cached.
   3. The Sentinel Principle. No claim promotes itself: the step from one
@@ -29,7 +32,24 @@ smallest honest sketch of its load-bearing ideas, sized for this project:
      feels is measured, recorded, and structurally kept out of the
      decision about whether it may stop — comfort raises the bill and
      never pays it. A case is closed, under named premises, at a moment,
-     which is a claim about that moment and never about all time.
+     which is a claim about that moment and never about all time. What the
+     record cannot say about how a claim got in, it charges for: the
+     unmeasured is priced as the quiet is priced, since a discount for not
+     being weighed is one anybody can take.
+  8. Direction of warrant is declared, not assumed. The chain runs upward
+     and this file assumed all warrant does, silently, until 2026-08-12. A
+     frame may now declare — through a person, with a written reason — that
+     its warrant descends: professions are taken on credit and settle at
+     the exit, where everything reasoned down from them must have been
+     examined between parties. Descent is a different payment schedule and
+     not an exemption, and where there is no applicable test the instrument
+     says so rather than failing the reasoning.
+  9. Settlement by conduct. An episode that closes on an action does not
+     merely close — it opens an obligation the record keeps derivable until
+     the world pays it. Two things settle one: conduct attested by a voice
+     other than the doer, or a person laying the deed down in writing.
+     Nothing expires, because an intention nobody can see expiring is
+     indistinguishable from a decision.
 
 The record is an in-memory sqlite database: real tables, real queries,
 gone when the program ends.
@@ -531,8 +551,13 @@ class Record:
         Read at the door, before the Sentinel's own question, which is
         asked precisely when the answer here is yes. Counting that
         question as resistance would let the system congratulate itself
-        for the doubt it had to manufacture."""
-        return self.door(claim_id) == 0
+        for the doubt it had to manufacture.
+
+        A claim that was never at the door answers yes, for the reason
+        settled() gives: an unmeasured admission is not evidence that
+        something was met. Saying otherwise would be the door reporting a
+        reading it never took."""
+        return self.door(claim_id) in (0, None)
 
     def admit(self, claim_id):
         """Record what this claim cost to get in, and question it if that
@@ -644,10 +669,21 @@ class Record:
 
         Reported and never spent. What this number does is raise what the
         episode must survive; what it may never do is count toward
-        surviving it. See earned_closure(), which cannot reach this."""
+        surviving it. See earned_closure(), which cannot reach this.
+
+        A claim the door never measured counts here as a quiet one. An
+        unmeasured door is not a quiet door and it is not a noisy one: it
+        is unmeasured, and the absence of a measurement may never lower
+        what an episode owes. Until 2026-08-24 this read `door(id) == 0`,
+        and None is not 0, so a claim written straight into the table was
+        scored exactly like a claim that had met resistance — a discount
+        for evading the scales rather than passing them, worth three
+        questions in seven. Where the record cannot say how a claim got
+        in, it charges as though it got in easily, because the other way
+        round is a price anybody can decline to pay."""
         quiet = unexamined = 0
         for id in claim_ids:
-            if self.door(id) == 0:
+            if self.door(id) in (0, None):
                 quiet += 1
             if not self.examined(id):
                 unexamined += 1

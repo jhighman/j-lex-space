@@ -28,6 +28,7 @@ GUARDS = {
     "direction.py": "only a person says which way a frame reasons",
     "conduct.py": "a concluded deed is done, laid down, or owed",
     "immutable.py": "the ledger keeps what was written, by the table's refusal",
+    "unmeasured.py": "an unmeasured claim is not a cheap one",
 }
 
 SURVEYS = {
