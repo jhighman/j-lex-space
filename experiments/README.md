@@ -121,6 +121,22 @@ of the design, and is simply no longer true of the code.
   produce. The Sentinel is a role rather than an enrolled identity, so
   there is nothing to re-derive it against — the door is the last place
   here where a stored number is believed.
+- **`decline.py`** — can a gate decline to spend, and never decline
+  invisibly? The graduated sovereign gate of `test_sovereign_love_v3.py`
+  refuses at the wall: a trigger aborts the insert, which is the strongest
+  place to refuse and the one place a refusal cannot record itself — the
+  row and the memory of refusing it are one statement, and the rollback
+  takes both. This file translates the same envelope into the record's
+  idiom: the row enters, the *spending* is refused, and the gate is a
+  derivation over the rows at the moment asked about. Tolerance, alert,
+  and the shut gate survive translation whole; conduct attested by a voice
+  other than the doer is still the only key; and the translation buys the
+  refusal ledger for free, because a refusal that is a derivation cannot
+  happen in the dark. Both counting policies — does substantive engagement
+  buy the gate back down — derive side by side from the same rows, one
+  visible line apart, because that is a decision and not an accident of
+  arithmetic. Reports and demonstrates rather than guards the framework;
+  run it directly.
 - **`preregistration-taxonomy.md`** — a protocol, not a script, and not
   yet frozen. Can two independent readers apply the book's own taxonomy to
   the same claims, does attribution change the class they assign, and does

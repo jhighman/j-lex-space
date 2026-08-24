@@ -166,7 +166,11 @@ Two consequences worth stating before anyone writes an affective layer:
   An affective gate that skips a branch records the skip. This is the
   `void_grants()` / `void_closures()` / `void_acts()` rule, applied at the
   entrance: a refusal nobody can see is indistinguishable from an
-  oversight.
+  oversight. The reference shape for a visible decline is on the bench
+  (`experiments/decline.py`): the row enters and the *spending* is
+  refused, so the refusal is a derivation anyone can re-run. A gate at
+  the wall cannot keep its own refusal ledger — refusing the row and
+  recording the refusal are one statement, and the rollback takes both.
 - **The absence of a measurement may never lower a cost.** The corollary,
   established by attack on 2026-08-24 (`experiments/unmeasured.py`) rather
   than by argument: `settled()` asked the door how each claim got in, and
