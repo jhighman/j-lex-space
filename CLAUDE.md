@@ -194,6 +194,29 @@ one act applies to measures as much as to verbs, and these two must never
 merge: the first is a reading of text, the second is a debt with a case
 behind it.
 
+## The reconciliation (2026-08-25)
+
+Alexicon's `docs/BENCH-TRANSFERS.md` is the transfer ledger between this
+bench and that engine, kept in the shape of its GOLD-TRANSFERS: findings
+here that transfer there are recorded by citation, with status, and the
+return traffic runs in the same file. Two operational consequences for
+this repository:
+
+- **The beam is derived and held at the door.** Distinctness is not
+  independence: two coupled voices can pay every price in this framework
+  (demonstrated 2026-08-24 — a dyad promotes and closes an
+  interpretation-reaching episode alone, and the closure stands). The
+  mechanism — couplings disclosed from inside, prices counted in beams,
+  not names — reprices this repository's own history, so **do not build
+  `echo.py` or any coupling mechanism until the co-author has reviewed
+  the derivation and the hold is lifted here explicitly.** The waiting
+  is a declared state, recorded in BENCH-TRANSFERS §3.
+- **The founding roster is an unsealed constitution.** Alexicon's
+  pragmatics (its ADR 34) names `FOUNDING` here as one instance of the
+  stratum of facts that never entered through the door. Whether this
+  bench should seal its founding roster the way alexicon seals its
+  constitution is an open question, on the record there.
+
 ## Two standing rules from the failure record
 
 - **Nothing is evaluated by the process that produced it.** Four times in
