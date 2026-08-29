@@ -182,6 +182,39 @@ attack("the unmeasured acquires a reading",
        f"still does not pretend to have measured what it never measured, "
        f"and the unmeasured is still priced as the quiet is")
 
+honest_void = honest.void_readings()
+dressed_void = len(dressed.void_readings())
+
+attack("a forged reading sits in the table unremarked",
+       len(honest_void) == 1 and len(forged.void_readings()) == 1
+       and dressed_void == 3,
+       f"void_readings() names all {dressed_void} rows of the dressed "
+       f"episode, the forged 9, and on the honest record exactly the "
+       f"later account planted above — surfaced, not gated: none of "
+       f"these rows is believed anywhere, and this is where anyone can "
+       f"watch them being disbelieved")
+
+# --- what this attack leaves open -----------------------------------------
+# Reported rather than tallied, as unmeasured.py reported its route. The
+# number and the moment are the room's now, and one thing is still taken
+# on a row's word: the fact of measurement itself. A forged admit row
+# converts a claim the door never saw into one read at its own entry —
+# worth at most the difference between being priced as quiet and the
+# claim's honest entry reading, and worth nothing where the entry was
+# quiet, but taken on the row's word all the same. The Sentinel remains
+# a role rather than an enrolled identity, and whether its rows should
+# require one is next door to the question alexicon's ledger put on this
+# bench's record: whether the founding roster should be a sealed
+# constitution. Neither is answered here.
+
+print()
+print("  OPEN, and reported rather than closed:")
+print("    the fact of measurement is still believed")
+print("        a forged admit row no longer chooses the number or the")
+print("        moment, and it still converts never-weighed into weighed —")
+print("        the Sentinel is a role, and a role's signature re-derives")
+print("        against nothing. The founding-roster question, at the door.")
+
 print()
 if broken:
     print(f"REFUTED. {len(broken)} route(s) through the believed number:")

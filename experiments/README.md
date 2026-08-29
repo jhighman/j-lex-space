@@ -115,12 +115,28 @@ of the design, and is simply no longer true of the code.
   questioned could be talked up by writing rows; nobody had asked what the
   count does with a claim that was never at the door at all. The
   unmeasured is priced as the quiet is priced now, because a discount for
-  not being weighed is one anybody can take. One route is reported and not
-  closed, and it is the finding worth carrying: a row written in the
-  Sentinel's name moves the reading to a number `friction()` cannot
-  produce. The Sentinel is a role rather than an enrolled identity, so
-  there is nothing to re-derive it against — the door is the last place
-  here where a stored number is believed.
+  not being weighed is one anybody can take. One route was reported here
+  rather than closed — a row written in the Sentinel's name moved the
+  reading to a number `friction()` cannot produce, because the door was
+  the last place here where a stored number was believed. Closed on
+  2026-08-29 by `reading.py`, and the report is kept as an attack.
+- **`reading.py`** — is the door's number derived, or believed? The route
+  `unmeasured.py` reported, attacked directly, was as wide as reported
+  and had two companions: three smuggled claims dressed in plausible
+  forged readings were asked four questions where the same claims weighed
+  were asked seven, and an in-range forgery could be timed to match a
+  room furnished after entry — so no validity check on the stored value
+  could have been the fix. The fix is the one the rest of the instrument
+  already ran on: derivation. `door()` now treats the Sentinel's row as
+  the fact of measurement only and re-derives the reading from the rows
+  as they stood at the claim's own entry — the one moment nobody chooses
+  after the fact — because the ledger is append-only and the room a claim
+  walked into is still there to ask. The stored account is kept, compared,
+  and never believed; `void_readings()` names the rows where account and
+  derivation disagree, surfaced beside the other void reports. One
+  residue, reported under its own heading: the *fact* of measurement is
+  still taken on the row's word, because the Sentinel is a role rather
+  than an enrolled identity — the founding-roster question, at the door.
 - **`decline.py`** — can a gate decline to spend, and never decline
   invisibly? The graduated sovereign gate of `test_sovereign_love_v3.py`
   refuses at the wall: a trigger aborts the insert, which is the strongest

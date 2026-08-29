@@ -13,6 +13,9 @@ smallest honest sketch of its load-bearing ideas, sized for this project:
      policy and a constraint in the storage layer is an invariant.
   2. Derived, never stored. A claim's category and a promotion's verdict
      are computed at read time from the standing record, never cached.
+     The door's reading joined this rule on 2026-08-29 — it was the last
+     stored number the record believed, and a believed number is a number
+     anybody can write.
   3. The Sentinel Principle. No claim promotes itself: the step from one
      epistemic state to the next must be accepted by someone independent.
      "Trust is the discipline of preventing inference from becoming
@@ -444,6 +447,38 @@ class Record:
             "SELECT id, act FROM assertions ORDER BY id")
             if act not in self.ACTS]
 
+    def void_readings(self):
+        """The admit rows that look like the door and are not — in another
+        name, about no claim, later than the first, or carrying a number
+        the room disagrees with. Surfaced beside void_grants() and
+        void_closures(), for the same reason: none of these rows is
+        believed anywhere, and a row nobody can see being disbelieved is
+        indistinguishable from one that was never checked.
+
+        The last kind is the one this report exists for. door() derives
+        its reading and never repeats a stored one, so a forged number
+        buys nothing — but the forgery is still sitting in the table
+        wearing the Sentinel's name, and this is where anyone can see
+        the account and the derivation disagree."""
+        out, first = [], set()
+        for id, author, about, body in self.db.execute(
+            "SELECT id, author, about, body FROM assertions"
+            " WHERE act='admit' ORDER BY id"
+        ):
+            if author != SENTINEL:
+                out.append((id, "an account of the door in another name"))
+            elif about is None:
+                out.append((id, "a reading about no claim"))
+            elif about in first:
+                out.append((id, "a later account of a door already read"))
+            else:
+                first.add(about)
+                room = self.friction(about, before=about)["resistance"]
+                if body != str(room):
+                    out.append((id, f"an account the room disagrees with:"
+                                    f" the row says {body}, the rows say {room}"))
+        return out
+
     # -- everything below is derived at read time, never stored --
 
     def category(self, claim_id):
@@ -491,7 +526,7 @@ class Record:
     def _words(text):
         return {w.strip(".,;:!?'\"").lower() for w in text.split() if w.strip(".,;:!?'\"")}
 
-    def friction(self, claim_id):
+    def friction(self, claim_id, before=None):
         """What the record resisted when this claim came in.
 
         Four components, after the four ways a claim slips in unexamined:
@@ -501,6 +536,11 @@ class Record:
         polarity — and is labelled naive rather than dressed up. The system
         reports what it can measure and does not pretend to more.
 
+        `before` reads the room as it stood at a moment rather than now.
+        The ledger is append-only, so the past is still there to ask —
+        which is what lets door() derive its reading instead of believing
+        a stored one. Asked plainly, the question is about the present.
+
         Note which way status runs: an author who is usually right lowers
         the friction of everything they say. That is not a reward. It is
         the exact asymmetry this measurement exists to make visible."""
@@ -509,8 +549,9 @@ class Record:
 
         contradicted = familiar = 0
         for other_id, body in self.db.execute(
-            "SELECT id, body FROM assertions WHERE act='assert' AND id != ?",
-            (claim_id,),
+            "SELECT id, body FROM assertions WHERE act='assert' AND id != ?"
+            "  AND (? IS NULL OR id < ?)",
+            (claim_id, before, before),
         ):
             theirs = self._words(body)
             if len(mine & theirs) >= 2:
@@ -520,13 +561,15 @@ class Record:
 
         author_accepts = self.db.execute(
             "SELECT COUNT(*) FROM assertions WHERE act='accept' AND author != ?"
+            "  AND (? IS NULL OR id < ?)"
             "  AND about IN (SELECT id FROM assertions WHERE author = ?)",
-            (a["author"], a["author"]),
+            (a["author"], before, before, a["author"]),
         ).fetchone()[0]
 
         examined = self.db.execute(
-            "SELECT COUNT(*) FROM assertions WHERE act='challenge' AND about=?",
-            (claim_id,),
+            "SELECT COUNT(*) FROM assertions WHERE act='challenge' AND about=?"
+            "  AND (? IS NULL OR id < ?)",
+            (claim_id, before, before),
         ).fetchone()[0]
 
         parts = {
@@ -590,17 +633,44 @@ class Record:
         )
 
     def door(self, claim_id):
-        """The resistance this claim met at admission, read back from the
-        record rather than recomputed — the past does not move.
+        """The resistance this claim met at admission — derived from the
+        rows as they stood when the claim entered, never read back from a
+        stored number.
 
-        Only the Sentinel's own reading counts, and only its first: the
-        door is a moment, and a later row claiming otherwise is somebody's
-        account of the door rather than the door."""
+        Until 2026-08-29 this returned the body of the Sentinel's admit
+        row, and that was the last place in the framework a stored number
+        was believed: one forged row in the Sentinel's name moved the
+        reading to a 9 that friction() cannot produce, and three claims
+        dressed in plausible forged readings were asked four questions
+        where the same claims weighed were asked seven (reading.py). The
+        Sentinel is a role rather than an enrolled identity, so there is
+        no roster to check the row against — but the ledger is
+        append-only, so the room the claim walked into is still there to
+        ask, and a derivation needs no roster.
+
+        Two rules, and each takes a forger's choice away. Only the
+        Sentinel's first admit row counts, and only as the *fact* of
+        measurement — the door is a moment, and a later row claiming
+        otherwise is somebody's account of the door rather than the door.
+        And the reading is anchored to the claim's own entry, the one
+        moment nobody chooses after the fact — anchored to the admit row
+        instead, a forger could furnish the room and then time the
+        reading to match it. The Sentinel's stored account is kept,
+        compared, and never believed; void_readings() names the rows
+        where account and derivation disagree.
+
+        What a forged admit row still buys is the fact of measurement
+        itself: it converts a claim the door never saw into one read at
+        its own entry, worth at most the difference between being priced
+        as quiet and the claim's honest entry reading. The forger no
+        longer chooses the number or the moment — the room does."""
         row = self.db.execute(
-            "SELECT body FROM assertions WHERE act='admit' AND about=? AND author=?"
+            "SELECT id FROM assertions WHERE act='admit' AND about=? AND author=?"
             " ORDER BY id LIMIT 1", (claim_id, SENTINEL),
         ).fetchone()
-        return int(row[0]) if row else None
+        if row is None:
+            return None
+        return self.friction(claim_id, before=claim_id)["resistance"]
 
     # -- the exit: what a claim must pay to be promoted --
 

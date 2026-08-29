@@ -494,7 +494,49 @@ roster that came from outside, and the door is the last place here where a
 stored number is simply believed. The fix raises the price of the cheat
 from nothing to one forged row in a name that is not the forger's, which is
 an improvement and is not a fix. It is named in the guard, it is named
-here, and it is open.
+here, and it is open. (It stayed open for five days — closed 2026-08-29,
+next entry.)
+
+**A believed number at the door** (`experiments/reading.py`, 2026-08-29).
+The reported route, attacked directly, was as wide as reported and had two
+companions. Three smuggled claims dressed in plausible forged readings of
+3 were asked four questions where the same claims weighed — or honestly
+unmeasured — were asked seven: the same three-in-seven that skipping the
+door bought before it was priced, arriving through a believed number
+instead of a missing one. And the moment-shopped reading, which is why no
+validity check on the stored value could have been the fix: a claim
+smuggled into a quiet room, the room furnished with contradiction
+afterwards, and the reading forged in range to match the furnished room —
+indistinguishable from an honest reading by anything that looks at the
+value alone.
+
+The believed number had a justification, and the justification was the
+house error one more time. `door()` stored what the Sentinel saw because
+"friction is relational and a read-time query cannot answer a question
+about the past" — which is a correct answer to a question about the wrong
+object. The query that cannot answer about the past is a query about the
+*present* room. The ledger is append-only, so the room a claim walked into
+is still there to ask, and `friction(before=)` asks it. `door()` now
+treats the Sentinel's row as the fact of measurement only and derives the
+reading from the rows as they stood at the claim's own entry — the one
+moment nobody chooses after the fact; anchored to the admit row instead, a
+forger could furnish the room and then time the reading to match it. The
+stored account is kept, compared, and never believed, and
+`void_readings()` names the rows where account and derivation disagree,
+beside the other void reports. Pillar II arrived at its own last
+exception: the door was the one holdout of "derived, never stored," and a
+believed number is a number anybody can write.
+
+What remains, reported in the guard under its own heading rather than
+here alone: the *fact* of measurement is still taken on the row's word. A
+forged admit row no longer chooses the number or the moment, and it still
+converts never-weighed into weighed-at-entry — worth at most the
+difference between quiet pricing and the claim's honest entry reading,
+and worth nothing where the entry was quiet. The Sentinel is a role
+rather than an enrolled identity, and whether its rows should require one
+is next door to the question alexicon's transfer ledger put on this
+bench's record: whether the founding roster should be a sealed
+constitution.
 
 The shared lesson is narrower than "attack the table" and worth stating on
 its own: **every one of these was a correct answer to a question about the
@@ -544,18 +586,19 @@ now nothing in this framework had been asked to say what an episode *is*.
   since a cap is a ceiling and a visible ceiling is a thing to aim at. The
   cost is that settlement scales with length as well as with quiet, and
   those are not the same property.
-- **The door is the last place here where a stored number is believed.**
-  Every other defence works by re-derivation — checking who wrote a row
-  against a roster that came from outside, and recomputing the verdict
-  rather than reading it. The entrance measurement cannot work that way,
-  because friction is relational and a read-time query cannot answer a
-  question about the past, so the Sentinel writes down what it saw. But
-  the Sentinel is a role rather than an enrolled identity, and a row in
-  its name is indistinguishable from a row it wrote. Found and left open
-  on 2026-08-24 (`experiments/unmeasured.py`): one forged `admit` row
-  moves the reading to a number `friction()` cannot produce. Pricing the
-  unmeasured raised the cost of that cheat from nothing to one forged row
-  in somebody else's name. It did not remove it.
+- **The Sentinel's presence at the door is still believed.** The stored
+  number is not, since 2026-08-29: `door()` derives its reading from the
+  rows as they stood at the claim's own entry, and `void_readings()`
+  names every admit row the derivation disagrees with. What no derivation
+  can supply is whether the Sentinel was really there — the Sentinel is a
+  role rather than an enrolled identity, and a row in its name is
+  indistinguishable from a row it wrote, so one forged row still converts
+  a claim the door never saw into one read at its own entry. Worth at
+  most the difference between quiet pricing and the honest entry reading,
+  and worth nothing where the entry was quiet — but taken on the row's
+  word, which every other defence here refuses to do. Whether the
+  Sentinel's rows should require an enrolled identity is next door to the
+  founding-roster question on alexicon's record.
 - **Settlement is measured crudely.** Two components — claims that met no
   resistance at the door, and claims never examined between parties. It is
   a proxy for "this episode stopped moving", not a measurement of it.

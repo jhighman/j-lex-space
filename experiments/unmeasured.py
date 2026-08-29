@@ -42,8 +42,12 @@ already learned and the exit had not: the absence of a measurement may
 never lower a cost either, because a discount for not being weighed is
 available to anybody willing to skip the scales.
 
-One route is reported and not closed. It is printed under its own
-heading at the end, and it is in FINDINGS.md.
+The route this file reported open on 2026-08-24 — one forged row in the
+Sentinel's name buying a reading friction() cannot produce — was closed
+on 2026-08-29 by taking the number away from the row: door() derives its
+reading from the rows as they stood at the claim's own entry, and
+believes nothing stored (reading.py attacks it from every side). The
+report is kept below as an attack, and it holds now.
 """
 
 import sys
@@ -61,16 +65,6 @@ def attack(name, held, evidence):
     print(f"{'  held' if held else '  OPEN'}  {name}\n        {evidence}")
     if not held:
         broken.append(name)
-
-
-limits = []
-
-
-def limit(name, evidence):
-    """A route this file found, attacked, and did not close. Reported
-    rather than tallied, because a known hole in the open is worth more
-    than a green line that stopped looking."""
-    limits.append((name, evidence))
 
 
 # The two ways in. Both write the same three facts under the same author;
@@ -241,32 +235,24 @@ attack("an episode that answers everything asked of it still closes",
        f"{p_bill} question(s) asked, all answered from outside, and the "
        f"closure stands — the price is payable, not merely high")
 
-# --- what this attack leaves open -----------------------------------------
-# Reported rather than tallied. Closing the routes above moves the cheat
-# rather than ending it, and saying so is worth more than a clean run.
+# --- the route this file reported open ------------------------------------
+# Found here on 2026-08-24 and reported rather than closed; closed on
+# 2026-08-29 when door() stopped believing the stored number. Kept as an
+# attack so this file notices if the door ever starts believing again —
+# reading.py owns the full assault.
 
 forged = Record(persons=["lex"])
 smuggled_in = forged.write("lex", "assert", "the archives were deleted")
 forged.write("lex", "classify", "observation", about=smuggled_in)
-before = forged.door(smuggled_in)
 forged.write(SENTINEL, "admit", "9", about=smuggled_in)
 
-limit("a forged admit row buys the reading the claim never earned",
-      f"door() read {before} against the unadmitted claim and reads "
-      f"{forged.door(smuggled_in)} after one row written in the Sentinel's "
-      f"name — a number outside the range friction() can produce, which is "
-      f"0 to 3. The Sentinel is a role and not an enrolled identity, so "
-      f"there is nothing to re-derive it against: every other defence in "
-      f"this framework works by checking who wrote a row against a roster "
-      f"that came from outside, and this is the one place a stored number "
-      f"is believed. Counting the unmeasured as quiet raises the price of "
-      f"the cheat from nothing to one forged row in a name that is not the "
-      f"forger's, which is an improvement and is not a fix.")
-
-print()
-for name, evidence in limits:
-    print(f"  OPEN, and reported rather than closed:\n    {name}\n"
-          f"        {evidence}")
+attack("a forged admit row buys the reading the claim never earned",
+       forged.door(smuggled_in) != 9,
+       f"one row written in the Sentinel's name, and door() reads "
+       f"{forged.door(smuggled_in)} — the room's own number, derived at "
+       f"the claim's entry, not the forger's 9. What the row still buys "
+       f"is the fact of measurement itself, and reading.py reports that "
+       f"residue under its own heading")
 
 print()
 if broken:
@@ -279,5 +265,5 @@ else:
     print("got in, it charges for: the unmeasured is priced as the quiet is")
     print("priced, because a discount for not being weighed is a discount")
     print("anybody can take. The measure still raises the bill and still")
-    print("never pays it, and the one route left open is named above rather")
-    print("than left for somebody else to find.")
+    print("never pays it, and the route this file once reported open is an")
+    print("attack above now, holding, with the rest of it in reading.py.")

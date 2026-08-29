@@ -140,6 +140,25 @@ keep less than the attempt, and this ledger's character is to keep what it
 was handed and decline to be persuaded. Add new acts to `ACTS` when you
 add them to the framework, or they go unreported.
 
+## The door's reading is derived, never believed (2026-08-29)
+
+The door was the one holdout of "derived, never stored": `door()`
+repeated the body of the Sentinel's admit row, and one forged row in the
+Sentinel's name bought a number `friction()` cannot produce — and with
+it a cheaper closing bill (`reading.py`, three routes). It now derives:
+the admit row is the *fact* of measurement only, and the reading is
+re-computed via `friction(claim, before=claim)` from the rows as they
+stood at the claim's own entry. Two rules to keep, both of which take a
+forger's choice away: only the Sentinel's first admit row counts, and
+the anchor is the claim's entry, never the admit row's moment — anchored
+there, a forger furnishes the room and times the reading to match.
+`void_readings()` surfaces every admit row the derivation disagrees
+with; do not turn it into a gate, and do not reintroduce a read of the
+stored body anywhere. The residue is stated in the guard rather than
+hidden: the fact of measurement is still taken on the row's word,
+because the Sentinel is a role, not an enrolled identity — one door away
+from the founding-roster question alexicon put on this bench's record.
+
 ## Affect may gate work; affect may never price warrant (2026-08-18)
 
 Proposed by Lex as the governing asymmetry for the affective layer, and it
