@@ -137,6 +137,22 @@ of the design, and is simply no longer true of the code.
   visible line apart, because that is a decision and not an accident of
   arithmetic. Reports and demonstrates rather than guards the framework;
   run it directly.
+- **`knock.py`** — can a knock on a shut door go unrecorded? Version 5 of
+  the sovereign gate (`test_sovereign_love_v5.py`) fixed the freeze — the
+  third strike is written and the closing of the gate is auditable — and
+  stated its residue instead of hiding it: knocks on the shut door leave
+  no rows, because a wall cannot remember refusing. It also decided the
+  counting policy `decline.py` had left open, in a word: engagement resets
+  the run before lockout, and the shut gate is deaf to everything but
+  conduct. This file translates the decided envelope into the record's
+  idiom — the gate is one pure fold over the pair's rows in order, storing
+  nothing between readings — and finds both of the bypass's residues
+  unposeable rather than narrowed. The strike cannot be wiped, because
+  deriving a count writes nothing and a paradox needs a transaction to
+  live in; the knock cannot be silent, because it is a row before it is a
+  refusal, and a refusal that is a derivation cannot erase its own input.
+  Reports and demonstrates rather than guards the framework; run it
+  directly.
 - **`preregistration-taxonomy.md`** — a protocol, not a script, and not
   yet frozen. Can two independent readers apply the book's own taxonomy to
   the same claims, does attribution change the class they assign, and does

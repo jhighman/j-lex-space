@@ -34,6 +34,7 @@ GUARDS = {
 SURVEYS = {
     "axiom_zero.py": "which invariants are held, and which were installed",
     "decline.py": "the graduated gate, derived — a decline is spent attention, on the record",
+    "knock.py": "the shut door keeps its knocks — v5's decided envelope, derived",
 }
 
 failed = []
