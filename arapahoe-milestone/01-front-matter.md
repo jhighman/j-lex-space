@@ -61,6 +61,22 @@ sharpens the rest, and it leaves the largest item exactly where it was: the
 blueprint itself has still never been attacked, and the founding-roster
 question has now survived five mechanisms built against it.
 
+**Section 9 carries the rules somewhere with no ledger in it.** A wordless
+game for four- and five-year-olds was built on the same shape — a closed
+vocabulary, rows only appended, every reading derived — from a children's
+concept document that turns out to be this argument with a playground drawn
+on top. Four safety properties were retrofitted to it; three were already
+true by accident of how it was built, and the fourth, a stop the game
+insists on so that play does not run forever, was absent altogether.
+
+That retrofit produced the finding most likely to outlive it. **A closed
+vocabulary does not stop a true word being written about a false event.** A
+row read *sat still and waited* on the branch where the child had reached
+for a frightened animal: the word is in the list, correctly spelled, written
+by the one call allowed to write it, and every guard in this document passes
+it. The guards check a record's vocabulary and its derivations, and nothing
+between them asks whether a row is true of the event that caused it.
+
 Both of that repository's declarations were reproduced here from a clean
 toolchain, byte for byte. The reproduction is not the useful part. The
 useful part is what went wrong while producing it: the attacking side does

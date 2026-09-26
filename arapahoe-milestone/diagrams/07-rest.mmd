@@ -1,0 +1,11 @@
+flowchart LR
+    A["a stretch of play"] --> B{"is a rest due?"}
+    B -- "asks" --> R[("the record<br/>rows, appended")]
+    R -- "friends since the last rest<br/>minutes since the last rest" --> B
+    B -- "not yet" --> A
+    B -- "yes" --> C["the bench<br/>Milo sits, juice box"]
+    C --> D["the high-five<br/>appears only after he has sat"]
+    D --> E["a rest row is written"]
+    E --> R
+    E --> A
+    X["a clock kept by the game"] -.-> |"there isn't one, on purpose:<br/>a stretch cannot be reset<br/>without leaving evidence"| B
