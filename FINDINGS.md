@@ -681,6 +681,51 @@ caught by running it, which is the only thing that would have caught it.
 - **No concurrency, no adversarial timing, no persistence.** The database
   is in memory and evaporates when the process ends. That is a feature of
   an instrument and a disqualification for anything else.
+- **The guard and the governed actor are one principal, and the record
+  says so (declared 2026-09-26).** "The ledger refuses" is a claim about
+  two triggers on `assertions`, and `immutable.py` prices every UPDATE
+  and DELETE against them from the handle an attacker would hold. It does
+  not price the handle's ownership of the triggers, because in this
+  substrate there is nothing to price: sqlite has no roles, no object
+  ownership and no privilege separation, and the connection that inserts
+  is the connection that created the guards. Run by hand today, five
+  statements, in order:
+
+  ```
+  UPDATE assertions SET body='x' WHERE id=?   -- refused: append-only
+  DROP TRIGGER no_erasure                     -- allowed
+  UPDATE assertions SET body='x' WHERE id=?   -- allowed; the row now reads 'x'
+  GRANT SELECT ON assertions TO someone       -- near "GRANT": syntax error
+  ```
+
+  The first line is what `immutable.py` establishes. The second and third
+  are what it cannot, and the fourth is why. This is the case ABE v0.1
+  (*Assignment-Bounded Execution*, adopted by citation in alexicon at
+  `docs/abe/`) works through as its one worked non-conformance — an
+  embedded single-file database, where "every constraint compiles, every
+  trigger fires," seven of nine tests can pass, and only T5 (*the guard
+  cannot be removed by the actor it constrains*) detects that I2.2 does
+  not hold. Read against that standard this instrument stands as: **I3.1
+  semantics held at the table; T5 unpassable by construction.** The
+  signal-boundary papers next door say the same in their narrow claim —
+  an invariant is a property of the weakest component that can reach the
+  state it constrains — and the weakest component that can reach this
+  table is the process that owns it.
+
+  No guard is added for this, deliberately. A guard that can only ever
+  report OPEN is not a check but a sentence, and the sentence belongs
+  here. The two routes ABE names to conformance — move the record out of
+  process, or run the governed code under a lesser identity — are both
+  deployment properties, and this bench does not deploy. It does not
+  follow that the triggers are decoration: they hold against every actor
+  that goes through the API and every actor holding the handle who does
+  not think to drop them, which is the difference between a promise and a
+  door with a latch. What they are not is a property of the record that
+  survives the record's own process, and CLAUDE.md's sentence should be
+  read with this row beside it. The reconciliation is recorded from the
+  other side in alexicon's `BENCH-TRANSFERS.md` §6.2, where the same
+  finding is filed with the drafter's conflict declared: the assistant
+  that wrote this row helped write the claim it qualifies.
 - **An attestation is a sentence about conduct, not conduct.** The record
   still cannot see the world; what it refuses is smaller and real — it will
   not confuse silence with settlement, and it knows who said a deed was
