@@ -8,15 +8,15 @@ acceptance tests.
 in this repository. Four of the six observations below are this bench's own
 rules meeting an outside artifact; two come from elsewhere and are marked.
 
-**What this is not.** Nothing was run. No implementation of ARAPAHOE was
-attacked, because none was supplied — the blueprint describes a Rust
-Sentinel and an Alexicon that this reading never executed. Every observation
-here is therefore a candidate claim about a described architecture, and it
-stays one until something is built and something else attacks it. The
-distinction matters more than usual here: a reading of a diagram that called
-itself a finding would be inference promoting itself to evidence, which is
-the error this instrument exists to refuse, made in the act of reviewing
-somebody else's boundary.
+**What this is not.** Nothing was run when this was written. No
+implementation of ARAPAHOE was attacked, because none was supplied — the
+blueprint describes a Rust Sentinel and an Alexicon that this reading never
+executed. Every observation here is therefore a candidate claim about a
+described architecture, and it stays one until something is built and
+something else attacks it. The distinction matters more than usual here: a
+reading of a diagram that called itself a finding would be inference
+promoting itself to evidence, which is the error this instrument exists to
+refuse, made in the act of reviewing somebody else's boundary.
 
 ## What the blueprint has right
 
@@ -83,6 +83,15 @@ where the same claim through it was asked seven.
 The remedy is `decline.py`'s: the row enters, and the *spending* is refused,
 so that the refusal is a derivation anyone can re-run rather than an absence
 anyone must take on trust.
+
+**Since run** (`experiments/envelope.py`, 2026-09-26). Both envelopes were
+built beside the record and handed the same traffic: an author refused
+ninety-nine times before its hundredth proposal is accepted, beside one
+accepted at its first. Under the silent envelope the record holds one
+proposal from each and no refusals at all, and the two authors are
+indistinguishable. Under the recorded envelope the stubborn author has a
+hundred proposals and ninety-nine declines, each a row anyone can re-read.
+The silence is no longer a reading; it is priced.
 
 **The acceptance tests hold the gap in place.** A conforming implementation
 is required to refuse an out-of-scope proposal *without changing Alexicon*.
@@ -157,7 +166,9 @@ still watching.
   recorded somewhere this blueprint does not draw, the second observation is
   about the drawing rather than the architecture. That would still be worth
   fixing, since the acceptance tests are drawn from the same page.
-- **Nothing here was attacked, so nothing here is priced.** The observations are
+- **One of the six has since been attacked; five have not.** The silent
+  refusal was built both ways and priced (`experiments/envelope.py`), and that
+  observation now rests on rows rather than on reading. The other five are
   ordered by how much they would cost if they hold, which is a judgment made by
   the reader and not a measurement made by the bench.
 - **The reader is not disinterested.** The last observation cites papers the

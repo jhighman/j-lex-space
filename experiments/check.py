@@ -30,6 +30,7 @@ GUARDS = {
     "immutable.py": "the ledger keeps what was written, by the table's refusal",
     "unmeasured.py": "an unmeasured claim is not a cheap one",
     "reading.py": "the door's number is derived, never believed",
+    "envelope.py": "a gate that declines leaves the refusal on the record",
 }
 
 SURVEYS = {
