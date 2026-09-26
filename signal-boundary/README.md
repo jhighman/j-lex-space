@@ -42,6 +42,21 @@ cannot be frozen, because the teardown assignment raises — but state that is
 not *of the object* leaves nothing for reflection to reach, and the carrier
 can then be frozen outright.
 
+`ts/` is the guard the revision history's round zero is about, and the
+transmission that now runs through it:
+
+```sh
+node ts/check.ts
+```
+
+No install. Node strips the types and runs it directly, which is why the
+file is here rather than the application it came from — that one carries an
+Expo app and thirty-one dependencies, and none of them are the argument. The
+original suite there is vitest; `ts/check.ts` asks the same questions in
+this bench's idiom, and exits non-zero when one of them stops holding. It
+was tested by removing the teardown, which is the only way to know a check
+is a check.
+
 ## What the papers conclude
 
 The in-language invariant holds on every completion path that returns
@@ -87,3 +102,10 @@ The built `.docx` and `.pdf` are absent on purpose: this repository holds
 that manuscripts are not source, and where a document appears is a
 publication decision. `build.sh` in each paper folder regenerates them with
 pandoc, and a LaTeX engine for the PDF.
+
+Neither is the application. Round zero of the revision history describes a
+teaching screen that asserted a property the code beneath it did not
+exercise; the guard it now calls is in `ts/`, and the screen itself is not.
+That round is the one place in the papers where the evidence is testimony
+rather than something a reader can run here, and it is left that way rather
+than importing a React Native shell to close the gap.
