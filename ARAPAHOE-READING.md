@@ -8,6 +8,13 @@ acceptance tests.
 in this repository. Four of the six observations below are this bench's own
 rules meeting an outside artifact; two come from elsewhere and are marked.
 
+**Where this ended up.** The reading became the five guards in
+`experiments/`, and then a milestone document whose sources are in
+`arapahoe-milestone/`. The co-author ruled on that document on 2026-09-26;
+the rulings are in its section 8b, and four of them are owed items in the
+build's own `TRANSFERS.md`. One of them withdrew a claim this reading's
+successor had made.
+
 **What this is not.** Nothing was run when this was written. No
 implementation of ARAPAHOE was attacked, because none was supplied — the
 blueprint describes a Rust Sentinel and an Alexicon that this reading never
@@ -210,7 +217,8 @@ rest possible.
 - **The reader is not disinterested.** The last observation cites papers the
   same reader wrote, and the first four cite rules this repository already
   holds. The second kind is the stronger: those four are the bench catching an
-  outside artifact on its own terms, and they stand or fall with rules that were
+outside artifact on its own terms, and they stand or fall with rules that
+were
   paid for by attack rather than by argument.
 
 ## What happens next (2026-09-26)
