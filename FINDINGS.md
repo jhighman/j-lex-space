@@ -11,19 +11,19 @@ itself.
 ## The largest negative result: the value layer does not work
 
 This one is not ours and not small. It comes from the reference
-implementation behind *Architecture of Contextual Judgment* (Krížová, 2026),
-and it is stated here because a framework of three levels currently has two
-that function.
+implementation behind *Architecture of Contextual Judgment* (Krížová,
+2026), and it is stated here because a framework of three levels currently
+has two that function.
 
 The third level asks: **what commitments made an argumentative step feel
 warranted before the evidence arrived?** A judge was shown a source claim
-and a target claim and asked what value the movement between them protected
-or threatened.
+and a target claim and asked what value the movement between them
+protected or threatened.
 
-It was tested against a discrimination control — genuine argumentative steps
-in one arm, construction-identical claim pairs from the same document that
-had *never formed an argument* in the other. A working value layer should
-find materially more conflict in the real arm.
+It was tested against a discrimination control — genuine argumentative
+steps in one arm, construction-identical claim pairs from the same
+document that had *never formed an argument* in the other. A working value
+layer should find materially more conflict in the real arm.
 
 | design | scope | separation between arms |
 |---|---|---|
@@ -56,11 +56,11 @@ Two conclusions were drawn, and both are load-bearing:
   describe a tension between them. The grammatical form of the question
   presupposed a value was present and asked the system to name it.
 
-That second sentence is worth sitting with. The value layer failed *because*
-a plausible reading could be constructed either way — which means the
-entrance boundary was discovered empirically, in a failed experiment, before
-it was ever named as an axiom. The framework's own worst result is the
-clearest evidence for its newest claim.
+That second sentence is worth sitting with. The value layer failed
+*because* a plausible reading could be constructed either way — which
+means the entrance boundary was discovered empirically, in a failed
+experiment, before it was ever named as an axiom. The framework's own
+worst result is the clearest evidence for its newest claim.
 
 **There is no value layer in this repository.** Not because it is
 unfinished, but because it does not currently work, and shipping a
@@ -77,14 +77,15 @@ evidence" — and nothing else.
 
 It rediscovered four commitments it was never given: premature judgment
 unrepresentable, confidence unable to manufacture warrant, correction that
-is not erasure, and blindness to pedigree. It did **not** invent an entrance
-boundary. Nothing in it measured how easily a claim was admitted.
+is not erasure, and blindness to pedigree. It did **not** invent an
+entrance boundary. Nothing in it measured how easily a claim was admitted.
 
-That absence is the finding. The entrance boundary is not derivable from the
-governance of the exit; it had to be brought from outside and installed. The
-probe keeps **REDISCOVERED** and **BUILT** in separate columns permanently,
-because counting what we constructed as what we found would be inference
-promoting itself to evidence in the plainest possible way.
+That absence is the finding. The entrance boundary is not derivable from
+the governance of the exit; it had to be brought from outside and
+installed. The probe keeps **REDISCOVERED** and **BUILT** in separate
+columns permanently, because counting what we constructed as what we found
+would be inference promoting itself to evidence in the plainest possible
+way.
 
 Current standing:
 
@@ -101,22 +102,22 @@ Current standing:
 | Direction of warrant | **built** 2026-08-12 |
 | Settlement by conduct | **built** 2026-08-14 |
 
-The same absence showed up a second time, at the other end of the episode. A
-system built to govern what may be *promoted* never asked what may be
-*finished*. `Case.close()` had no price at all: every other promotion in the
-framework cost independent acceptance, and the heaviest judgment an episode
-makes — the one that says it is over — was free. The class docstring
-described an invariant, and the invariant was real, but it guarded the wrong
-half: it made a premature *judgment* unrepresentable while leaving premature
-*closure* available to anyone who asked for it.
+The same absence showed up a second time, at the other end of the episode.
+A system built to govern what may be *promoted* never asked what may be
+*finished*. `Case.close()` had no price at all: every other promotion in
+the framework cost independent acceptance, and the heaviest judgment an
+episode makes — the one that says it is over — was free. The class
+docstring described an invariant, and the invariant was real, but it
+guarded the wrong half: it made a premature *judgment* unrepresentable
+while leaving premature *closure* available to anyone who asked for it.
 
 ---
 
 ## Boundaries this instrument failed to hold, and when
 
-Every one of these was found by a guard in this repository, against code in
-this repository, after that code had been written, reviewed, and believed
-correct.
+Every one of these was found by a guard in this repository, against code
+in this repository, after that code had been written, reviewed, and
+believed correct.
 
 **Three holes, found the first time the ledger was attacked directly**
 (`experiments/forgery.py`, 2026-08-10). Every guard until then lived in a
@@ -142,11 +143,11 @@ away and reads only executable code.
 
 **A fact about the past, answered from the present** (2026-08-09). Friction
 is computed against whatever else stands, so measuring it after the fact
-describes a different room. The Sentinel now records what it saw at the door
-as an ordinary immutable assertion.
+describes a different room. The Sentinel now records what it saw at the
+door as an ordinary immutable assertion.
 
-**A revocation that revoked nothing** (2026-08-10). Withdrawing a grant left
-the authority standing, because a grant to a *family* of agents still
+**A revocation that revoked nothing** (2026-08-10). Withdrawing a grant
+left the authority standing, because a grant to a *family* of agents still
 covered the same actor. It looked exactly like a successful revocation.
 `covering()` now enumerates everything that confers an authority, because
 the question is not "did I revoke it" but "what still covers them".
@@ -189,8 +190,8 @@ read as it stood.
 
 **Three holes about identity, found while every guard reported that it
 held** (`experiments/narrowing.py`, 2026-08-11). The previous attacks asked
-whether a judgment could be forged. These asked a question nobody had put to
-the code: whether the record agrees with itself about *which thing* a
+whether a judgment could be forged. These asked a question nobody had put
+to the code: whether the record agrees with itself about *which thing* a
 judgment is about. All three were open at a commit where `check.py` printed
 `Every boundary holds` for eight guards.
 
@@ -236,19 +237,19 @@ interpretations diverged. Then the Sentinel was turned on the six.
 
 It had almost nothing to say about Steinbeck's conduct. It found Lewis
 performing its own function unprompted, refusing promotions that would have
-exceeded their warrant. And it fired continuously against Bonhoeffer — which
-was not a defect in Bonhoeffer.
+exceeded their warrant. And it fired continuously against Bonhoeffer —
+which was not a defect in Bonhoeffer.
 
 `CHAIN` runs upward and `PRICE` rises along it, so a claim earns its place
-by paying independent acceptance. Polanyi's fiduciary entry and Bonhoeffer's
-discipleship run the other way: commitment first, understanding after.
-Judged upward, such reasoning reads as unsupported at every step — the
-instrument describing itself rather than the reasoning. Worse than
+by paying independent acceptance. Polanyi's fiduciary entry and
+Bonhoeffer's discipleship run the other way: commitment first, understanding
+after. Judged upward, such reasoning reads as unsupported at every step —
+the instrument describing itself rather than the reasoning. Worse than
 misjudging it, the record could not **represent** it: `claim()` refuses any
-category above `observation` without a basis beneath it, so a commitment had
-to be entered as a lie about its own grounds or not at all. The framework
-enforced one epistemology with a constructor, which is its strongest device,
-and had never said so.
+category above `observation` without a basis beneath it, so a commitment
+had to be entered as a lie about its own grounds or not at all. The
+framework enforced one epistemology with a constructor, which is its
+strongest device, and had never said so.
 
 The correction is not weaker governance. Direction is now declared on the
 frame by a person (`Premise.name(direction=...)`), carries a written reason
@@ -276,24 +277,24 @@ defences, one of them exercised by nothing. Both are covered now, each
 verified by weakening the other.
 
 One qualification on the experiment that found this, recorded so the paper
-cannot outrun its evidence. The Six Epistemologies write-up reports that all
-six readings converged on a single interpretation of the corpus's subject.
-Checked lexically against the six documents, the convergent sentence appears
-explicitly in **two** of them (the Lewis and Bonhoeffer renditions) and not
-in the other four. A lexical test cannot rule out the pattern being carried
-in other words — recurrence and conduct could hold it without the phrase —
-but "each identified essentially the same pattern" is stronger than what the
-texts show, and all six readings came from one model in one session, so
-later readings are not independent of earlier ones. The paper says this
-itself and then understates it. The proposed fix is the right one: an
-independent human reader who has not seen the six.
+cannot outrun its evidence. The Six Epistemologies write-up reports that
+all six readings converged on a single interpretation of the corpus's
+subject. Checked lexically against the six documents, the convergent
+sentence appears explicitly in **two** of them (the Lewis and Bonhoeffer
+renditions) and not in the other four. A lexical test cannot rule out the
+pattern being carried in other words — recurrence and conduct could hold it
+without the phrase — but "each identified essentially the same pattern" is
+stronger than what the texts show, and all six readings came from one
+model in one session, so later readings are not independent of earlier
+ones. The paper says this itself and then understates it. The proposed
+fix is the right one: an independent human reader who has not seen the six.
 
 **Four routes through the day-old direction machinery, found by review**
-(`experiments/direction.py`, `experiments/closure.py`, 2026-08-12 — the same
-day it was built). The pattern of finding them is the finding: code written
-*with* the forgery lesson, the narrowing lesson, and the actor-counting
-lesson in hand reproduced versions of all three within a day, and every
-guard was green while it did.
+(`experiments/direction.py`, `experiments/closure.py`, 2026-08-12 — the
+same day it was built). The pattern of finding them is the finding: code
+written *with* the forgery lesson, the narrowing lesson, and the
+actor-counting lesson in hand reproduced versions of all three within a
+day, and every guard was green while it did.
 
 - **The descent toll was one hop deep.** `unexamined_descent()` charged
   claims whose basis was directly a profession and let a chain
@@ -320,10 +321,10 @@ guard was green while it did.
   now counts the voices that paid, and stopping takes as many of them as
   the episode's heaviest act would cost to promote.
 
-The rename rides with the fix: the fiduciary act was briefly `commit()`, and
-this workshop says "commit" fifty times a day about the repository. A
-reserved word that shares a spelling with the commonest verb in the room is
-a reservation nobody can keep, so the act is **professed** — Polanyi's
+The rename rides with the fix: the fiduciary act was briefly `commit()`,
+and this workshop says "commit" fifty times a day about the repository. A
+reserved word that shares a spelling with the commonest verb in the room
+is a reservation nobody can keep, so the act is **professed** — Polanyi's
 register — and `vocabulary.py` now holds that reservation alongside
 delegation's, with the borrowed identifier refused outright.
 
@@ -332,25 +333,25 @@ anyone signed** (2026-08-12). `corpus-v3.md` was built to be classified
 blind, and it was built in full view of one of its two designated readers:
 Jeff directed the construction, read the source dataset's labelled
 categories, and watched the well-earned arm being written — he can identify
-every rebuilt item by topic alone. The other reader is likely unblinded too:
-the v2 source dataset came from her side, and anyone holding it can match
-the forty-five unaltered stimuli to their numbered categories, leaving the
-fifteen non-matching items identifiable as the rebuilt arm. The corpus's
-disclosed 77% lexical residual was noise next to this.
+every rebuilt item by topic alone. The other reader is likely unblinded
+too: the v2 source dataset came from her side, and anyone holding it can
+match the forty-five unaltered stimuli to their numbered categories,
+leaving the fifteen non-matching items identifiable as the rebuilt arm.
+The corpus's disclosed 77% lexical residual was noise next to this.
 
 What survives is exactly the original research question. No generator ever
 assigned the stimuli an evidence class, so there is no key to leak on that
 axis: reader agreement on the book's taxonomy, and the randomised
-attribution manipulation, are uncontaminated. The pre-registration has been
-amended accordingly, before signature: transition-validity judgments are
-demoted to exploratory with the unblinding stated, and the primary endpoints
-are the ones with nothing to leak.
+attribution manipulation, are uncontaminated. The pre-registration has
+been amended accordingly, before signature: transition-validity judgments
+are demoted to exploratory with the unblinding stated, and the primary
+endpoints are the ones with nothing to leak.
 
 This is the fourth instance in six days of one pattern — V3, the dataset's
-labels, the six-readings convergence, and now a corpus built in front of its
-reader — and the pattern has a name that is now a build rule in CLAUDE.md:
-**nothing is evaluated by the process that produced it.** It is what the
-value layer died of, and one sentence would have caught all four.
+labels, the six-readings convergence, and now a corpus built in front of
+its reader — and the pattern has a name that is now a build rule in
+CLAUDE.md: **nothing is evaluated by the process that produced it.** It is
+what the value layer died of, and one sentence would have caught all four.
 
 **Pillar V was never held** (`experiments/immutable.py`, 2026-08-17). The
 gravest entry in this file, because it is not a boundary that moved — it is
@@ -360,14 +361,14 @@ never been there.
 `Record`'s docstring said immutability here was not a rule we follow but a
 method we never wrote. That was the whole of the guarantee: no `UPDATE` and
 no `DELETE` appeared in our code. The framework's own threat model, stated
-in `forgery.py`, is an attacker holding the database connection who does not
-call the functions — and against that attacker a single `UPDATE` rewrote a
-claim's body from *"a rotation failed"* to *"a rotation succeeded"*, a
-`DELETE` of the accept rows moved `earned()` from True to False, deleting
-one enrolment turned a person into nobody, and the door was rewritten in
-place. That last one is the sharpest: `forgery.py` attacks the door by
-*appending* a second admit row, and `door()` defends by reading only the
-Sentinel's first — a defence an `UPDATE` walks straight past.
+in `forgery.py`, is an attacker holding the database connection who does
+not call the functions — and against that attacker a single `UPDATE`
+rewrote a claim's body from *"a rotation failed"* to *"a rotation
+succeeded"*, a `DELETE` of the accept rows moved `earned()` from True to
+False, deleting one enrolment turned a person into nobody, and the door was
+rewritten in place. That last one is the sharpest: `forgery.py` attacks the
+door by *appending* a second admit row, and `door()` defends by reading only
+the Sentinel's first — a defence an `UPDATE` walks straight past.
 
 Two things make this worse than a missing constraint.
 
@@ -399,24 +400,25 @@ fit here for two reasons that are worth stating because they are the
 architecture's own: its power comes from the composite key blocking or
 cascading *when the parent changes*, and in an append-only ledger parents
 never change; and its first step stores a derived property on a row, which
-is what "derived, never stored" refuses and what every hole found this month
-has been — a row saying X is not X.
+is what "derived, never stored" refuses and what every hole found this
+month has been — a row saying X is not X.
 
 **A closure that reached an action now opens an obligation**
 (`experiments/conduct.py`, built 2026-08-14, from the margin note of
 2026-08-12). Every mechanism in this instrument governed what may be
-believed; none of it asked what a closure *owes*. An action row and the deed
-it names are satisfied in opposite directions — the row when it matches the
-world, the deed only when the world is brought to match it — and a record
-that cannot tell them apart lets every concluded deed dissolve into the next
-round of interpretation, which the margin note named as the failure the
-whole exercise kept performing: another analysis is not the verb.
+believed; none of it asked what a closure *owes*. An action row and the
+deed it names are satisfied in opposite directions — the row when it
+matches the world, the deed only when the world is brought to match it —
+and a record that cannot tell them apart lets every concluded deed
+dissolve into the next round of interpretation, which the margin note
+named as the failure the whole exercise kept performing: another analysis
+is not the verb.
 
 So the record keeps a ledger of verbs unperformed. `obligations()` derives,
 at read time and from the standing closures only, every action neither
 *attested* — witnessed by a voice other than the doer, holding standing to
-observe where the record knows who anyone is — nor *renounced*, laid down by
-a person, in writing, with a reason. There is no third way out: nothing
+observe where the record knows who anyone is — nor *renounced*, laid down
+by a person, in writing, with a reason. There is no third way out: nothing
 expires, because an intention nobody can see expiring is indistinguishable
 from a decision. The doer's own attestation is stored and not counted (the
 soliloquy, transposed); a system may witness exactly where a person granted
@@ -435,18 +437,18 @@ and the same one `forgery.py` had already made by concluding from
 append-only without attacking it. Two attacks now, drawing the distinction
 the affective layer needs before anyone writes it: **a deed has no term;
 authority does.** An expiry row a year old, written about a deed by a
-person, in the very act that retires a grant — the deed is still owed; fifty
-later rows written over it, still owed. A grant carries a term and `fault()`
-returns `expired` once it passes, because a permission that outlives its
-reason is a backdoor. An obligation carries none, ever, because a lapsed
-permission is a permission withdrawn and a lapsed obligation is a decision
-nobody made. Any reconsideration policy attaches to the grant, never to the
-debt.
+person, in the very act that retires a grant — the deed is still owed;
+fifty later rows written over it, still owed. A grant carries a term and
+`fault()` returns `expired` once it passes, because a permission that
+outlives its reason is a backdoor. An obligation carries none, ever,
+because a lapsed permission is a permission withdrawn and a lapsed
+obligation is a decision nobody made. Any reconsideration policy attaches
+to the grant, never to the debt.
 
 **A discount for not being weighed** (`experiments/unmeasured.py`,
 2026-08-24). The exit charges for comfort: `settled()` counts the claims
-that entered without resistance, and that number raises what an episode must
-survive in order to stop. It asked `door()` how each claim got in, and
+that entered without resistance, and that number raises what an episode
+must survive in order to stop. It asked `door()` how each claim got in, and
 `door()` returns nothing at all for a claim that never went through the
 door. Nothing is not zero. `None == 0` is False, so the absence of a
 measurement was scored as the presence of resistance.
@@ -478,9 +480,9 @@ It is also the first attack anywhere but the hardest case on the asymmetry
 stated on 2026-08-18 — a measure of the system's own state may raise a cost
 and may never lower one. The generalisation it forces is the one the
 entrance had already learned and the exit had not: **the absence of a
-measurement may never lower a cost either.** Where the record cannot say how
-a claim got in, it now charges as though it got in easily, because the other
-way round is a price anybody can decline to pay.
+measurement may never lower a cost either.** Where the record cannot say
+how a claim got in, it now charges as though it got in easily, because the
+other way round is a price anybody can decline to pay.
 
 **And one route reported rather than closed.** With the unmeasured priced,
 the way to the discount is a row written in the Sentinel's name: `door()`
@@ -489,49 +491,52 @@ produce at all — zero to three. The Sentinel is a role rather than an
 enrolled identity, so there is nothing to re-derive it against. Every other
 defence in this instrument works by checking who wrote a row against a
 roster that came from outside, and the door is the last place here where a
-stored number is simply believed. The fix raises the price of the cheat from
-nothing to one forged row in a name that is not the forger's, which is an
-improvement and is not a fix. It is named in the guard, it is named here,
-and it is open. (It stayed open for five days — closed 2026-08-29, next
-entry.)
+stored number is simply believed. The fix raises the price of the cheat
+from nothing to one forged row in a name that is not the forger's, which is
+an improvement and is not a fix. It is named in the guard, it is named
+here, and it is open. (It stayed open for five days — closed 2026-08-29,
+next entry.)
 
 **A believed number at the door** (`experiments/reading.py`, 2026-08-29).
 The reported route, attacked directly, was as wide as reported and had two
-companions. Three smuggled claims dressed in plausible forged readings of 3
-were asked four questions where the same claims weighed — or honestly
+companions. Three smuggled claims dressed in plausible forged readings of
+3 were asked four questions where the same claims weighed — or honestly
 unmeasured — were asked seven: the same three-in-seven that skipping the
-door bought before it was priced, arriving through a believed number instead
-of a missing one. And the moment-shopped reading, which is why no validity
-check on the stored value could have been the fix: a claim smuggled into a
-quiet room, the room furnished with contradiction afterwards, and the
-reading forged in range to match the furnished room — indistinguishable from
-an honest reading by anything that looks at the value alone.
+door bought before it was priced, arriving through a believed number
+instead of a missing one. And the moment-shopped reading, which is why no
+validity check on the stored value could have been the fix: a claim
+smuggled into a quiet room, the room furnished with contradiction
+afterwards, and the reading forged in range to match the furnished room —
+indistinguishable from an honest reading by anything that looks at the
+value alone.
 
-The believed number had a justification, and the justification was the house
-error one more time. `door()` stored what the Sentinel saw because "friction
-is relational and a read-time query cannot answer a question about the past"
-— which is a correct answer to a question about the wrong object. The query
-that cannot answer about the past is a query about the *present* room. The
-ledger is append-only, so the room a claim walked into is still there to
-ask, and `friction(before=)` asks it. `door()` now treats the Sentinel's row
-as the fact of measurement only and derives the reading from the rows as
-they stood at the claim's own entry — the one moment nobody chooses after
-the fact; anchored to the admit row instead, a forger could furnish the room
-and then time the reading to match it. The stored account is kept, compared,
-and never believed, and `void_readings()` names the rows where account and
-derivation disagree, beside the other void reports. Pillar II arrived at its
-own last exception: the door was the one holdout of "derived, never stored,"
-and a believed number is a number anybody can write.
+The believed number had a justification, and the justification was the
+house error one more time. `door()` stored what the Sentinel saw because
+"friction is relational and a read-time query cannot answer a question
+about the past" — which is a correct answer to a question about the wrong
+object. The query that cannot answer about the past is a query about the
+*present* room. The ledger is append-only, so the room a claim walked into
+is still there to ask, and `friction(before=)` asks it. `door()` now
+treats the Sentinel's row as the fact of measurement only and derives the
+reading from the rows as they stood at the claim's own entry — the one
+moment nobody chooses after the fact; anchored to the admit row instead, a
+forger could furnish the room and then time the reading to match it. The
+stored account is kept, compared, and never believed, and
+`void_readings()` names the rows where account and derivation disagree,
+beside the other void reports. Pillar II arrived at its own last
+exception: the door was the one holdout of "derived, never stored," and a
+believed number is a number anybody can write.
 
-What remains, reported in the guard under its own heading rather than here
-alone: the *fact* of measurement is still taken on the row's word. A forged
-admit row no longer chooses the number or the moment, and it still converts
-never-weighed into weighed-at-entry — worth at most the difference between
-quiet pricing and the claim's honest entry reading, and worth nothing where
-the entry was quiet. The Sentinel is a role rather than an enrolled
-identity, and whether its rows should require one is next door to the
-question alexicon's transfer ledger put on this bench's record: whether the
-founding roster should be a sealed constitution.
+What remains, reported in the guard under its own heading rather than
+here alone: the *fact* of measurement is still taken on the row's word. A
+forged admit row no longer chooses the number or the moment, and it still
+converts never-weighed into weighed-at-entry — worth at most the
+difference between quiet pricing and the claim's honest entry reading,
+and worth nothing where the entry was quiet. The Sentinel is a role
+rather than an enrolled identity, and whether its rows should require one
+is next door to the question alexicon's transfer ledger put on this
+bench's record: whether the founding roster should be a sealed
+constitution.
 
 The shared lesson is narrower than "attack the table" and worth stating on
 its own: **every one of these was a correct answer to a question about the
