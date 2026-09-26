@@ -212,3 +212,19 @@ rest possible.
   holds. The second kind is the stronger: those four are the bench catching an
   outside artifact on its own terms, and they stand or fall with rules that were
   paid for by attack rather than by argument.
+
+## What happens next (2026-09-26)
+
+Decided the same day as the guards, by J.H.: ARAPAHOE is built in its own
+repository, `~/Developer/arapahoe`, as a principal separate from whatever
+proposes to it, and attacked from outside by this bench's tests and ABE's.
+Not here, because this instrument declared its guard and the actor it
+constrains one principal by construction and building a separate one inside
+it would unsay that row; not in the engine, whose route to T5 is a role that
+owns nothing. The blueprint is not yet in that record either — its author
+places it there, dated, with its tests — and three decisions come before
+any code: which principal holds the record and which runs the Sentinel,
+what the envelope enumerates, and only then the language. The build and the
+attack are different hands, which is the standing rule applied in advance
+rather than after. This reading stays a reading until something over there
+is run.
