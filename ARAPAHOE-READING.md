@@ -55,6 +55,15 @@ certificate of acceptance; Alexicon appends the accepted transition; Stage 4
 becomes immutable append and authorized execution. The word is named here
 only in order to retire it.
 
+**Since built** (`experiments/vocabulary.py`, 2026-09-26). The reservation
+now reaches past the framework: the guard carries a list of transaction
+surfaces and holds each to the same two rules, so a lifecycle built here
+cannot wear the borrowed identifier without the guard refusing. It was
+tested by being broken — the word was added to a surface and the guard
+exited non-zero, twice, once for each refused word. What it still cannot
+reach is a Sentinel written in another language, which is the part of this
+observation that stays a reading.
+
 ## The refusal that leaves no row
 
 This is the observation worth the reading.
@@ -119,6 +128,14 @@ scaling is a question this reading raises rather than settles, but its
 absence is not visible in the blueprint as written, and absence that nobody
 named is how the value layer went.
 
+**Since built** (`experiments/weight.py`, 2026-09-26). Reach is classified
+by somebody other than the author, and the price is paid in distinct voices.
+One voice endorsing nine times remains one voice and does not pay for the
+world; an author endorsing itself counts for nothing, and neither does the
+Sentinel adjudicating it. A reach an author wrote about its own proposal is
+surfaced and buys no discount, because unplaced is unpayable rather than
+free — which is `unmeasured.py`'s rule kept at this end too.
+
 ## Derived, or believed
 
 Stage 3 has the Sentinel read "the relevant Canon state" while deciding. The
@@ -138,6 +155,14 @@ binds the certificate to the Sentinel. The Sentinel is a role here as it is
 here, and a certificate in its name is indistinguishable from a certificate
 it issued. No acceptance test covers forgery.
 
+**Since built** (`experiments/canon.py`, 2026-09-26). Two Sentinels over the
+same rows: one that stores what it saw and one that re-derives the Canon as
+it stood at the proposal's own entry. A first reading forged in the
+Sentinel's name buys the believer and not the deriver, and a Canon furnished
+after the proposal entered moves the believer's answer while the deriver's
+stays put. `void_readings()` surfaces every disagreement. Both of
+`reading.py`'s rules carried up a floor unchanged.
+
 ## What outlives the process
 
 This one is not from this bench. It is from the signal-boundary papers
@@ -156,6 +181,16 @@ The append-before-release ordering already protects the record. Nothing yet
 protects the world from a record that is correct about an action nobody is
 still watching.
 
+**Since built** (`experiments/outlives.py`, 2026-09-26). A world beside the
+ledger, which does not close when the releaser stops. An effect past its
+term is named and reclaimed by a free function sharing fate with nothing; an
+effect that never carried a term stays live, and the record says so rather
+than implying it. A lease cannot be extended from inside, because only the
+first one written against a release counts. The residue defends the
+blueprint's own ordering: an effect whose release was never appended is an
+orphan no reconciler can name, so append-before-release is what makes the
+rest possible.
+
 ## What this reading cannot establish
 
 - **It read a document.** Every observation above is a claim about a described
@@ -166,11 +201,12 @@ still watching.
   recorded somewhere this blueprint does not draw, the second observation is
   about the drawing rather than the architecture. That would still be worth
   fixing, since the acceptance tests are drawn from the same page.
-- **One of the six has since been attacked; five have not.** The silent
-  refusal was built both ways and priced (`experiments/envelope.py`), and that
-  observation now rests on rows rather than on reading. The other five are
-  ordered by how much they would cost if they hold, which is a judgment made by
-  the reader and not a measurement made by the bench.
+- **All six have since been built, and that is not the same as ARAPAHOE
+  having been attacked.** Each observation was translated into this record's
+  idiom and attacked there, which prices the mechanism and not the blueprint.
+  A Rust Sentinel reading a real Canon could fail differently, or not fail at
+  all, and nothing here would know. What the five guards establish is that the
+  shapes are reachable and the costs are real, not that ARAPAHOE has them.
 - **The reader is not disinterested.** The last observation cites papers the
   same reader wrote, and the first four cite rules this repository already
   holds. The second kind is the stronger: those four are the bench catching an

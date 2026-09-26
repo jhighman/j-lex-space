@@ -31,6 +31,9 @@ GUARDS = {
     "unmeasured.py": "an unmeasured claim is not a cheap one",
     "reading.py": "the door's number is derived, never believed",
     "envelope.py": "a gate that declines leaves the refusal on the record",
+    "weight.py": "a transaction pays for what it reaches, in voices",
+    "canon.py": "the Canon a transaction was judged against is derived",
+    "outlives.py": "what a dead releaser left live is named and reclaimed",
 }
 
 SURVEYS = {

@@ -94,6 +94,14 @@ COMMIT_SHAPES = ("def commit", "'commit'", '"commit"')
 # 'finally' is the language's, not ours, and is left alone.
 REFUSED = re.compile(r"\bfinal(?!ly\b)\w*", re.IGNORECASE)
 
+# The reservation covers any surface this bench builds that hands out a
+# lifecycle, not only the framework. ARAPAHOE-READING.md named the hazard
+# on 2026-09-26: a transaction architecture whose pivotal artifact wears
+# the borrowed identifier would arrive unenforced, because this file used
+# to parse one module and a lifecycle can be written anywhere. Adding a
+# surface here is the cost of building one.
+SURFACES = ("envelope.py", "weight.py", "canon.py", "outlives.py")
+
 source = FRAMEWORK.read_text()
 tree = ast.parse(source)
 
@@ -123,6 +131,14 @@ profess_unreserved = sorted(professes - set(PROFESS_RESERVED))
 profess_silent = sorted(set(PROFESS_RESERVED) - professes)
 borrowed = [shape for shape in COMMIT_SHAPES if shape in source]
 
+surface_refused, surface_borrowed = {}, {}
+for name in SURFACES:
+    text = (Path(__file__).resolve().parent / name).read_text()
+    if found := sorted(set(REFUSED.findall(text))):
+        surface_refused[name] = found
+    if shapes := [shape for shape in COMMIT_SHAPES if shape in text]:
+        surface_borrowed[name] = shapes
+
 print("definitions permitted to speak of delegation:")
 for name, why in sorted(RESERVED.items()):
     held = "  " if name in speaks_of else "? "
@@ -148,9 +164,13 @@ for name, why in sorted(PROFESS_RESERVED.items()):
 print(f"definitions professing without reservation       : {profess_unreserved or 'none'}")
 print(f"the borrowed identifier, anywhere in the framework: {borrowed or 'none'}")
 
+print(f"\ntransaction surfaces held to the same two rules     : {len(SURFACES)}")
+print(f"the refused word, anywhere on a surface            : {surface_refused or 'none'}")
+print(f"the borrowed identifier, anywhere on a surface     : {surface_borrowed or 'none'}")
+
 print()
 if (unreserved or misused or refused or not has_assignment or not has_closure
-        or profess_unreserved or borrowed):
+        or profess_unreserved or borrowed or surface_refused or surface_borrowed):
     print("REFUTED. The word has drifted:")
     for name in unreserved:
         print(f"  - {name} speaks of delegation without being permitted to")
@@ -163,6 +183,11 @@ if (unreserved or misused or refused or not has_assignment or not has_closure
     for shape in borrowed:
         print(f"  - {shape!r} appears in the source; the fiduciary act is "
               f"professed, and the repository's verb stays the repository's")
+    for name, words in surface_refused.items():
+        print(f"  - {name} uses {words}; an episode is closed, not that")
+    for name, shapes in surface_borrowed.items():
+        print(f"  - {name} uses {shapes}; a transaction is accepted, and the "
+              f"repository's verb stays the repository's")
     if not has_assignment:
         print("  - no distinct vocabulary exists for assigning work")
     if not has_closure:
