@@ -94,6 +94,23 @@ by the one call allowed to write it, and every guard in this document passes
 it. The guards check a record's vocabulary and its derivations, and nothing
 between them asks whether a row is true of the event that caused it.
 
+**Section 10 takes the method outside.** Thirteen Member States have asked
+Europe to deep-clean its rulebook, which forces the question this bench has
+been asking in miniature: when a mechanism is simplified, what must remain
+true, and who can prove that it remained so? The distinction there — between
+a *safeguard*, which is what a system intends, and an *invariant*, which is
+what it may not violate — is this repository's own, under a better name.
+
+Run against the warren's record, the six capabilities that argument says
+must survive come out three for six. Know, attribute and understand hold.
+Contest, correct and obtain redress are absent entirely, and absent by
+design: append-only is what makes the record trustworthy and what makes it
+unchallengeable. That trade is defensible where the recording party and the
+affected party share an interest, and indefensible where they do not, and it
+is stated in section 10 rather than smuggled.
+
+Both of that repository's declarations were reproduced here
+
 Both of that repository's declarations were reproduced here from a clean
 toolchain, byte for byte. The reproduction is not the useful part. The
 useful part is what went wrong while producing it: the attacking side does

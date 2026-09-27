@@ -17,6 +17,7 @@ SECTIONS=(
   "07-what-the-record-says.md" "08-what-remains.md"
   "08b-rulings.md"
   "08c-the-warren.md"
+  "08d-what-remains-invariant.md"
   "09-appendix-the-tree.md"
 )
 for s in "${SECTIONS[@]}"; do
