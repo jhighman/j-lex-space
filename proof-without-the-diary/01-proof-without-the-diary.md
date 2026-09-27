@@ -1,8 +1,46 @@
 # Proof Without the Diary
 
-*Part three. Part one asked nine questions of a machine a child confides in.
-Part two ended on a promise: show that information did not cross a boundary,
-without building a surveillance system to watch the boundary.*
+*Safeguards and Invariants, part three. If you have arrived here first, the
+next few paragraphs are all you need; the earlier parts are worth going back
+for, but this does not depend on them.*
+
+---
+
+## Where this is in the series
+
+This series is about a distinction that sounds like pedantry until something
+goes wrong with it.
+
+A **safeguard** is what an organisation arranged: a policy, a control, a
+switch, a promise. An **invariant** is a property the system is not permitted
+to violate, whatever the organisation later decides, however the
+implementation changes, whoever ends up running it.
+
+**Part one** put that distinction in a child's bedroom. A girl tells an AI
+companion her dog's name and what happened with her friends. She is not
+generating data; she is confiding. Then somebody turns memory off. Part one
+asked nine questions about what that switch actually establishes — whether
+the summaries went when the conversation did, whether the metadata still
+shapes the replies, whether the system could reconstruct the conversation
+from what it kept. Its short version: *a toggle is not a fact.* A switch set
+to off proves a switch was flipped. And the property worth naming is that
+**Monday should not be allowed to write Thursday**.
+
+**Part two** pushed on the obvious rejoinder. If you want to prove a
+boundary held, you need evidence — and the cheapest way to get evidence is to
+keep everything, which is the surveillance architecture the whole argument
+exists to refuse. It ended on a promise rather than an answer: show that
+information did not cross a boundary, *without* building a system to watch
+the boundary. We need evidence about the lock, not a warehouse of children's
+secrets.
+
+**This part is the attempt to pay that off.** It is about what happened when
+we stopped writing the argument and built a machine to test it, what that
+machine got badly wrong, and why a rulebook currently being simplified in
+Brussels turns out to be the same problem three sizes up.
+
+There is no children's software in what follows, apart from one test case.
+The argument is about records, boundaries and who has to prove what.
 
 ---
 
@@ -107,29 +145,41 @@ avoid.
 
 A record that can say anything will eventually be asked to.
 
-So the vocabulary is closed. In the smallest version we built — a wordless
-game for four-year-olds, which turned out to be the most complete
-implementation of the whole argument — the record can write exactly twelve
-kinds of thing. A word outside that list cannot be written at all. There is
-no act for a score, none for a mood, none for what the child felt, and none
-for winning. The question *how did she seem today* has no representation.
+So the vocabulary is closed. To test that at full size we built a second,
+deliberately unglamorous thing: a small piece of software that observes a
+person and then reports on them to somebody else. We made it a game for young
+children because that is the least forgiving version of the problem — the
+subject cannot read the report, cannot consent to it meaningfully, and the
+reader is an adult with authority over them. If the architecture fails
+anywhere, it fails there.
 
-That constraint is what makes the record safe to keep. Not encryption, not
-retention limits, not an assurance. The record is safe because of what it is
+Its record can write exactly twelve kinds of thing. A word outside that list
+cannot be written at all. There is no entry for a score, none for a mood,
+none for how the subject seemed, and none for winning. The question *how was
+she today* has no representation in the system — not a blank field, no
+representation.
+
+That constraint is what makes the record safe to keep. Not encryption, not a
+retention limit, not an assurance. It is safe because of what it is
 structurally unable to express.
 
-And one more thing, which is easy to say and hard to hold: the record must
-not be told what it does not need. In that game a child walks with a dog. The
-dog has a name. The record does not know he exists — not as a redaction, not
-as a field left blank, but because the ledger is never told. There is nothing
-to withhold.
+There is a second discipline underneath it, easier to state than to hold: the
+record must not be told what it does not need.
 
-The consequence is not decorative. At the end of the game an animal will only
-come out if three friends speak for the child, and the dog cannot be one of
-them. A record that never learned his name cannot count him as a voice.
+The clearest instance is almost trivial. The subject is accompanied by an
+animal that has a name. The record does not know it exists. Not a redaction,
+not a field left blank — the ledger is simply never told, so there is nothing
+to withhold and nothing to leak.
 
-That is what an invariant looks like when it is small enough to see. Not a
-promise that the name is safe. An architecture with nowhere to put it.
+And because the system genuinely does not know, a later rule falls out of it
+for free rather than being enforced. Progress at one point requires three
+others to attest on the subject's behalf. The companion cannot be one of
+them. Not because a check excludes it; because a record that never learned of
+it cannot count it as a voice.
+
+That is what an invariant looks like when it is small enough to see whole.
+Not a promise that the name is protected. An architecture with nowhere to put
+it.
 
 ---
 
@@ -330,8 +380,25 @@ keep the diary to prove it.
 
 ---
 
-*The experiment described here — the engine, the guards, and the wordless
-game that ended up carrying the argument — is open, along with its record of
-what it got wrong. Nobody outside its two authors has attacked it yet, and
-until somebody does, everything above is a method that survived its own
-makers, which is the weakest form of survival there is.*
+*The experiment described here — the engine, the guards, and the observed-
+subject test case — is open source, along with its own record of what it got
+wrong. Nobody outside its two authors has attacked it. Until somebody does,
+everything above is a method that survived its own makers, which is the
+weakest form of survival there is.*
+
+---
+
+### The rest of the series
+
+**Part one — *Safeguards Are Not Invariants: Nine Questions*.** What a memory
+switch does and does not establish, asked as nine concrete tests you can put
+to any system that claims to have forgotten something. Start here if you want
+the questions rather than the architecture.
+
+**Part two — *Prove the Property, Not the Conversation*.** Why the obvious
+way to prove a boundary held is to keep everything, why that is the wrong
+answer, and the promise this part was written to pay off.
+
+**This part.** What happened when we built the thing instead of arguing about
+it, and why a rulebook being simplified in Brussels is the same problem at a
+different size.
