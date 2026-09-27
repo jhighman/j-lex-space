@@ -126,14 +126,60 @@ That is the moment the abstraction became concrete for us. And it is the
 answer to the question part two left open.
 
 **You do not need to keep the proposal.** You need enough evidence about the
-boundary to establish that something arrived, that the boundary acted, and
-that the action did or did not proceed. The content of the ninety-nine
-rejected proposals is not required to show that ninety-nine proposals were
-rejected.
+boundary to establish three things, and they are different in kind: that
+something arrived, which is an event; that the boundary refused it, which is
+an action; and that nothing consequently crossed, which is the outcome and
+the only one the affected person actually cares about. The content of the
+ninety-nine rejected proposals is required for none of them.
 
 Prove the property. Not the conversation.
 
 A knock is a row. What was said through the door is not.
+
+---
+
+## What was done, and what became true
+
+There is a distinction underneath all of this that is easy to slide past, and
+sliding past it is how most of these systems fail.
+
+**An action is what a party did. An outcome is what became true.**
+
+They are not the same thing and they do not reliably imply each other. An
+action can be performed and fail. An outcome can arrive by a route nobody
+intended. Most systems find actions far easier to record, because the action
+is the thing they themselves performed, and it is available at the moment of
+performing it. The outcome usually has to be observed afterwards, by somebody
+willing to go and look.
+
+This is what part one was about, though we did not put it this way at the
+time. *A toggle is not a fact* is the same sentence as *an action is not an
+outcome*. Flipping the memory switch is an action — performed, logged,
+reportable, genuine. Whether the system forgot is an outcome. The nine
+questions were all attempts to reach the outcome in a system that only
+exposes the action.
+
+Safeguards tend to be actions: *we deleted, we refused, we restricted, we
+notified.* Invariants are about outcomes: *it is gone, it did not cross, it
+cannot be reconstructed.*
+
+The distinction has a sharp edge in our own test case. The one number that
+software reports to an adult is how often the observed subject stayed still
+while another party was distressed. It would have been trivial to count the
+button. We count the other party settling — the outcome — because a button
+press establishes only that a button was pressed.
+
+We did not get this right first time either. A row reading *stayed still and
+waited* was being written on the branch where the subject had done the
+opposite and reached out. The word was in the vocabulary, spelled correctly,
+written by the one call permitted to write it, and every check we had passed
+it. It was an action asserted where the outcome had not occurred. The report
+would have told an adult the exact opposite of what happened, in a system
+otherwise built to make that impossible.
+
+A record of actions is a record of intentions carried out. A record of
+outcomes is a record of what is now the case. The second is harder, costs
+more, and is the only one worth keeping.
 
 ---
 
@@ -333,10 +379,14 @@ Here is the line the small machine gave us, which turns out to generalise:
 Carefully extended:
 
 - A deletion nobody can verify may be indistinguishable from retention.
+  *Deleting* is the action. *Gone* is the outcome. Only one of them is
+  usually recorded, and it is not the one that matters.
 - A right whose exercise leaves no independently examinable trace may be
-  indistinguishable from a promise.
+  indistinguishable from a promise. *Responding to the request* is the
+  action; *the data was corrected* is the outcome.
 - A boundary whose crossing cannot later be reconstructed may be
-  indistinguishable from no boundary.
+  indistinguishable from no boundary. *Applying the rule* is the action;
+  *nothing crossed* is the outcome.
 
 The word doing the work in each is *indistinguishable*. Not *equivalent*. The
 claim is not that the deletion did not happen. It is that the system has
@@ -401,9 +451,15 @@ Only now is it worth stating the property, because it has to be read with
 both halves held at once.
 
 > **A governed transition should leave enough durable evidence for an
-> independent party to determine what happened, under whose authority,
-> against which rule, and with what remedy available — without preserving
-> more of the protected subject than that proof requires.**
+> independent party to determine what was done, what consequently became
+> true, under whose authority, against which rule, and with what remedy
+> available — without preserving more of the protected subject than that
+> proof requires.**
+
+The second clause is the one that is usually missing. Systems are good at
+recording what they did. *What consequently became true* is a separate
+question, it is frequently unrecorded, and it is the only part the person on
+the other side of the boundary was ever asking about.
 
 The first clause is the answer to *a refusal nobody can see*.
 
