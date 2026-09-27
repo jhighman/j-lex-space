@@ -42,18 +42,50 @@ paid, as against what was claimed.
 ```
   test waiting_is_counted_by_the_animal_calming_not_by_the_button ... ok
   test the_stretch_cannot_be_reset_without_a_row ... ok
-  test a_rest_ends_the_stretch_it_follows ... ok
+  test what_the_screen_shows_is_what_the_writer_accepts ... ok
+  test every_figure_the_app_decodes_is_one_this_engine_declares ... ok
+  test the_governance_document_is_not_stale ... ok
   test a_lean_is_its_own_act_and_says_only_that ... ok
-  test rest_is_in_the_vocabulary_and_nothing_else_crept_in ... ok
+  test a_rest_ends_the_stretch_it_follows ... ok
   test friends_are_distinct_creatures_not_rows ... ok
   test an_unknown_act_is_refused ... ok
   test retreats_are_kept ... ok
   test depth_starts_at_one_and_counts_descents ... ok
-  test result: ok. 9 passed; 0 failed
+  test rest_is_in_the_vocabulary_and_nothing_else_crept_in ... ok
+  test result: ok. 12 passed; 0 failed
 ```
-
 The weakest evidence this bench recognises: the author's own tests of the
 author's own code. They are reported as that.
+
+## The meter became the animal
+
+The game kept a trust meter — four or five pips filling in above each
+encounter. It was the most gamified thing in a game otherwise careful never
+to keep score, and it sat at the top of the screen throughout. The record
+had refused the idea all along: `score`, `mood` and `fight` are not words
+the warren can write, and a test says so. The display was the last place a
+score survived.
+
+It is gone. How far along a child is with an animal is now shown by the
+animal. At nothing it is a ball — head tucked, legs folded, ears flat back —
+on the dark side of the burrow. As it comes to trust the child it uncurls,
+its ears come up, it stands to full height, and it walks out of the dark
+into the pool of a hanging lamp. At the end it crosses and sits down beside
+the dog, which is the last step of the meter and the reward for finishing it
+in one movement.
+
+The lamp is what makes this legible, and it had to be built for the purpose:
+an animal coming out of the dark needs somewhere lit to come into, or it is
+only sliding sideways across a wall. The light is a mask multiplied over the
+whole room, so the earth, the roots, the animal and the dog are lit by one
+source — stand near it and you are warm, stand across the burrow and the
+grain of the dither falls over your coat. The sound follows the same figure:
+a bed for the room, and a stem whose volume **is** the trust ratio, so the
+creature is heard arriving before it can be seen clearly.
+
+Nothing here is spent or earned. The animal is not paying the child and the
+child is not buying the animal; it is deciding how close it wants to be,
+which is the only thing trust ever is.
 
 ## The four properties
 
@@ -129,6 +161,55 @@ party that observes the event and the row independently, or acts narrow
 enough that only one event could have written them. The row was removed and
 that branch now writes only the retreat.
 
+## A second copy of a list will drift from the first
+
+The finding above was about one row. This one is about the arrangement that
+produces rows like it, and it arrived three times in a single day.
+
+**The screen counted in prose.** The parent screen called itself the
+complete vocabulary and said *ten kinds of thing, and there is no eleventh*,
+while the engine was writing twelve. Two of the extra words were visible in
+the transcript directly above the claim. The sentence had been true when it
+was written.
+
+**The export kept its own array.** Worse, and underneath it: the function
+that hands the screen its vocabulary held a hardcoded list of ten acts,
+separate from the match deciding what could be written. So a parent could
+read *stopped for a rest* in the transcript and then find a complete
+vocabulary that did not contain it. That is the screen's central claim, and
+it was false.
+
+**And a written description split one act into three.** A report drafted for
+parents listed `food`, `ball` and `hand` as separate acts. There is one act,
+`offer`, and it records the animal — never which of the four things was
+offered. The description named three acts that do not exist while losing two
+that do, and it erred in the direction that matters: it described a game
+collecting more than this one does.
+
+The first two were fixed by deleting the second copy. `parse` now finds an
+act by walking the same array the export prints, so a word outside it cannot
+be written and the two cannot disagree — there is no longer a second list to
+disagree with. The same was then done to the figures: the reading's JSON was
+a format string naming fifteen numbers, and every document describing those
+numbers named them again somewhere else. One array now holds each figure's
+key, the words a parent sees, a line on its derivation and the function that
+computes it; the JSON is built by walking it and the document is printed
+from it.
+
+The third could not be fixed that way, because it lived in a document. So
+the document is generated. `cargo run --bin governance` renders both tables
+from those arrays, and a test fails when the file on disk is no longer what
+the engine would print. A stale description is a red build rather than a
+wrong sentence in front of a parent.
+
+**The transferable part** is not that a list was stale. It is that this
+repository's whole method — guards that fail when a boundary moves — had
+been applied to what the record *may say* and to what the readings
+*compute*, and not once to the prose that describes either. Every claim on
+the parent screen was a guard's output except the ones about the screen
+itself, and those were the three that were wrong. Documentation is a
+surface, and an unguarded surface drifts.
+
 ## A camera that became an act
 
 The game was later given a second view: hold a finger on an animal and you
@@ -152,21 +233,42 @@ Redrawing the close view after a rotation must not write a second row,
 because nothing new happened. That is the same discipline as the finding
 above, arriving one week later in the same afternoon's work.
 
+## A claim that was measured instead of printed
+
+The parent report was to open with three lines of governance: the session is
+in memory, zero bytes are retained, the counting is outcome-verified. Two
+were already true and checkable. The third was a sentence.
+
+So it was measured. The screen walks every directory the app may write to,
+totals what is there, and prints the number when it opens. The first run
+returned **85,983 bytes in nine files** — the graphics system's compiled
+textures, no child anywhere in them, and bytes all the same. A printed *0
+bytes retained* would have been wrong from the first build that drew a
+texture, and nothing would ever have said so.
+
+A fresh afternoon now clears the disk as well as the record, and the crumb
+check looks there too: a sweep that only clears what it remembers about is
+the photocopy problem wearing different clothes. What remains is that the
+measurement can only see where the app is allowed to write. It cannot prove
+nothing was sent anywhere, and that claim still rests on there being no
+network call in the source — which is true, and checkable by reading, and
+not the same thing as proved.
+
 ## One afternoon, played to the bottom
 
 | | |
 |---|---|
 | Time in the warren | 3 min |
 | Friends made | 8 |
-| Burrows visited | 22 |
+| Burrows visited | 25 |
 | How deep they went | 3 |
 | **Waited when an animal was frightened** | **10** |
 | Leaned in close | 8 |
-| Times an animal backed away | 1 |
+| Times an animal backed away | 3 |
 | Rests the game insisted on | 2 |
 | Friends who vouched | 3 |
 
-Eight leans and one retreat is a different afternoon from eight leans and
+Eight leans and three retreats is a different afternoon from eight leans and
 none, and both differ from an afternoon with no leaning in it, even where the
 friends and the waiting come out the same. That is the whole argument for
 recording the view, stated as arithmetic.

@@ -69,6 +69,23 @@ on top. Four safety properties were retrofitted to it; three were already
 true by accident of how it was built, and the fourth, a stop the game
 insists on so that play does not run forever, was absent altogether.
 
+Section 9 has since produced a second finding, and it is about this
+repository's own method. A guard that fails when a boundary moves had been
+pointed at what the record may say and at what the readings compute, and
+never once at the prose describing either. Three separate hand-written
+copies of the act list drifted from the engine in a single day — a screen
+that said ten while twelve were being written, an exported list that kept
+its own stale array of ten beside a transcript contradicting it, and a
+report for parents that split one act into three and lost two others. Every
+claim on that screen was a guard's output except the claims about the screen
+itself, and those were the three that were wrong.
+
+Both are now generated from the arrays the engine uses, and a test fails
+when the document on disk is no longer what the engine would print. A
+governance line that was to have read *zero bytes retained* was measured
+rather than printed, and the first measurement returned 85,983 bytes of
+compiled textures — no child in them, and not zero.
+
 That retrofit produced the finding most likely to outlive it. **A closed
 vocabulary does not stop a true word being written about a false event.** A
 row read *sat still and waited* on the branch where the child had reached
