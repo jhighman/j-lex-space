@@ -222,6 +222,12 @@ Disclosure by volume is not disclosure. It is the transfer of interpretive
 work to whoever is least able to do it, performed while looking maximally
 transparent.
 
+That is **burden displacement**, at the scale of a single screen. The
+obligation was discharged. The work of making sense of it was moved onto the
+reader. Hold that phrase; it turns out to be the most portable thing in this
+essay, and the rest of it is the same move at sizes where nobody can see the
+whole screen at once.
+
 ---
 
 ## And then Europe handed us the same problem at another scale
@@ -339,10 +345,12 @@ identical from outside — and that this is a design outcome, not a misfortune.
 
 ---
 
-## Who carries the burden when the evidence is missing
+## Burden displacement
+
+This is the failure mode worth naming, and naming precisely.
 
 When a system leaves no evidence, the question does not go away. Somebody
-still has to establish what happened. It is almost never the party that holds
+still has to establish what happened. It is almost never the party holding
 the records.
 
 The parent has to establish that Monday survived.
@@ -354,16 +362,38 @@ The citizen has to establish that their data was repurposed.
 The business has to reconstruct which of several overlapping rules governed a
 transaction, and under which national implementation.
 
-Complexity does not disappear when the record disappears. **The burden of
-reconstructing it changes hands** — from the party with the pipeline, the
-definitions and the interfaces, to the party with a question.
+In each case the work did not stop existing when the record did. It moved.
 
-That is the failure mode to watch for in any simplification. Not *how much was
-removed*, but *who now has to prove what*. A reform can reduce administrative
-burden measurably on one side of a boundary while making the other side
-unnavigable, and every number reported about it will look like progress.
+> **Burden displacement:** a system appears simpler because complexity has
+> left the operator's side of the boundary. It has not been eliminated. It
+> has been transferred to the person trying to understand or contest what the
+> system did.
 
----
+The company has the records. The institution has the definitions. The model
+developer understands the pipeline. The regulator understands the procedure.
+The operator controls the interfaces.
+
+The individual has a question.
+
+And when the arrangement requires that individual to establish whether the
+rule applies, whether the data qualified, whether an exception was properly
+invoked, whether an interpretation was reasonable — then the system has done
+something more specific than get simpler. The strongest actor has reduced its
+administrative burden by increasing the evidentiary burden on the weakest
+one.
+
+That is worth its own name too: **complexity inversion**. Not a reduction in
+total complexity, but a reversal of who carries it, in the direction of
+whoever can carry it least.
+
+It is difficult to see from above, and that is the dangerous part. From the
+institution's vantage everything improved: fewer steps, fewer forms, fewer
+hours, a cleaner architecture diagram. Every number reported about the reform
+is true. The person on the other side of the boundary does not appear in any
+of them, because the metrics were all defined on the institution's side.
+
+So the test for any simplification is not *how much was removed*. It is *who
+now has to prove what* — and whether that party has any means of doing it.
 
 ## The invariant
 
