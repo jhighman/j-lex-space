@@ -111,9 +111,9 @@ The original design produced the same history for both.
 
 One acceptance. Nothing else. The ninety-nine refusals had not been hidden or
 redacted — there was nothing to hide. They had never existed as anything a
-later reader could see. An actor hammering at the boundary until something
-gave, and an actor that walked up once and was let in, were the same actor as
-far as the record was concerned.
+later reader could see. An actor that tried a hundred times, and an
+actor that arrived once and was let in, were the same actor as far as the
+record was concerned.
 
 The corrected version records all ninety-nine declines. Handed the same
 traffic, it reports: *stubborn — 100 attempts, 99 refusals. Lucky — 1
@@ -311,12 +311,15 @@ Three scales, one problem:
   it?
 
 The parallel debate about AI and personal data is the stress test rather than
-a separate subject. Privacy advocates have raised concerns about circulating
-draft proposals that would broaden the basis on which existing personal data
-may be processed for AI, and weaken the mechanisms around information,
-correction, deletion and objection. Those are drafts and positions, not
-adopted law, and that distinction matters as much here as it does with the
-simplification paper.
+a separate subject. The privacy organisation noyb has said that proposals
+circulating in connection with the Digital Omnibus discussions would, on its
+reading, broaden the basis on which existing personal data may be processed
+for AI and reduce the effect of the mechanisms around information,
+correction, deletion and objection. That is their characterisation of draft
+material, not a description of adopted law, and we have not verified it
+against the texts. The distinction between a draft, a position and an
+instrument in force matters as much here as it does with the simplification
+paper, and we would rather borrow the question than the alarm.
 
 But the architecture question is available now, and it is exactly ours: if
 processing becomes easier on the operator's side, does the individual retain
@@ -436,11 +439,13 @@ That is worth its own name too: **complexity inversion**. Not a reduction in
 total complexity, but a reversal of who carries it, in the direction of
 whoever can carry it least.
 
-It is difficult to see from above, and that is the dangerous part. From the
-institution's vantage everything improved: fewer steps, fewer forms, fewer
-hours, a cleaner architecture diagram. Every number reported about the reform
-is true. The person on the other side of the boundary does not appear in any
-of them, because the metrics were all defined on the institution's side.
+What makes it hard to catch is that it is invisible to the instruments used
+to evaluate it. From the institution's vantage everything improved: fewer
+steps, fewer forms, fewer hours, a cleaner architecture diagram. Every number
+reported about the reform is true. The person on the other side of the
+boundary appears in none of them, because the metrics were all defined on the
+institution's side. A reform can therefore pass every test it set itself
+while the property it was supposed to preserve has moved.
 
 So the test for any simplification is not *how much was removed*. It is *who
 now has to prove what* — and whether that party has any means of doing it.
