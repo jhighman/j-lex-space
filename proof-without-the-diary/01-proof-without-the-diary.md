@@ -273,6 +273,51 @@ and obtain redress?
 
 ---
 
+## Volume is the wrong axis
+
+The public argument about all of this runs along a single line: more
+regulation or less. Directives or regulations. Brussels or the capitals.
+Competitiveness or rights.
+
+The experiment suggests that line is close to orthogonal to the property.
+
+Consider what actually fixed our engine. The original refused invalid
+proposals and wrote nothing. The corrected version refuses invalid proposals
+and writes a row. We did not add a rule, remove a rule, relax a check or
+tighten one. The Sentinel's authority is identical. What may cross the
+boundary is identical. Every proposal that was refused before is refused now,
+on the same grounds.
+
+**One more row. Nothing else.** And the difference between the two versions
+is the difference between a system that can demonstrate its boundary
+operating and one that cannot be distinguished from a system with no boundary
+at all.
+
+That is not a question of how much regulation there is. It is a question of
+what shape it has.
+
+Which is why the usual scoreboard for simplification is measuring the wrong
+thing. Fewer instruments. Fewer reporting obligations. Fewer compliance
+hours. Fewer overlapping definitions. Every one of those is a real number,
+and every one of them is taken from the institution's side of the boundary.
+They describe how the system feels to operate. None of them describes what a
+person on the other side can still establish.
+
+You can subtract a great deal and lose nothing that matters — duplicated
+returns, three portals where one would do, a definition restated in four
+places. You can also subtract a very small amount and lose the property
+entirely, if what you happened to remove was the part that left a trace. The
+volume of the change tells you almost nothing about which of those two you
+just did.
+
+So the question to put to any consolidation is not *how much came out*. It is
+*what can still be established afterwards, by whom, and against whose
+account*.
+
+A rulebook can get shorter and stronger. It can also get shorter and become
+undemonstrable. Counting pages cannot tell those apart, and counting pages is
+what we are currently set up to do.
+
 ## A refusal nobody can see
 
 Here is the line the small machine gave us, which turns out to generalise:
