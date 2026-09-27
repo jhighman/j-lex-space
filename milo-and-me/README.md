@@ -13,6 +13,10 @@ Four parts in one document:
    apart: what is sold, which layer retrofits and which cannot, the
    competition without flattery, and a first ninety days in which every
    item can stop the plan.
+6. **Research, and what it breaks** — the market check that should have
+   preceded Part V. Its wedge does not exist. Parts IV and V are left
+   standing as written and this part records what they got wrong, because
+   a plan edited to look correct afterwards teaches nobody anything.
 
 ## Two things stated up front
 
