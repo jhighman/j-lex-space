@@ -90,6 +90,15 @@ rather than about a codebase**, and those are verified completely
 differently: by inventory, by build-time enforcement, by network egress
 testing, by reading someone else's release notes forever.
 
+**And this is a liability, not an aesthetic concern.** The amended COPPA
+Rule applies to any operator that knowingly collects children's data
+*including through third-party plug-ins or ad networks*
+([FTC](https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa)).
+Disney paid $10m in September 2025 over data collected from children through
+child-directed video on somebody else's platform. An engine module that
+phones home is not a footnote in the disclosure; it is the violation, and
+the operator owns it.
+
 This is precisely the shape this work's own papers describe as **burden
 displacement**. The system looks simpler because the complexity has left the
 operator's side of the boundary. It has not gone; it has moved to whoever is

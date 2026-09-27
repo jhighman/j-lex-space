@@ -7,18 +7,26 @@ Four parts in one document:
    parent surface, and a full list of what is unproven.
 3. **Unreal** — what ports, what breaks, and the supply-chain problem that
    changes in kind rather than in size.
-4. **The business** — three paths, a recommended order, costs, risks, and
-   the four things that would have to be true.
+4. **The business** — the regulatory position, a benchmarked comparable,
+   three re-weighted paths, costs, and risks in order of lethality.
 
-## Two things stated up front, because they shape everything
+## Two things stated up front
 
 **No child has played this game.** Every judgement about legibility,
-frustration or delight is the authors' imagination.
+frustration or delight is the authors' imagination, and Part IV is
+conditional on that changing.
 
-**No market figures in Part IV were researched.** None were available, and
-inventing plausible ones would be the exact failure the rest of the document
-argues against. Quantities appear as named assumptions with a note on how to
-test each cheaply.
+**Part IV's central finding is negative.** The first draft assumed parents
+would pay for verifiable non-extraction. Published research says privacy is
+not a priority for parents choosing children's apps, and that they are
+reluctant to pay for good apps at all. The section is rebuilt around the
+consequence: the customer for demonstrable non-extraction is the operator
+facing $53,088 per violation, not the parent.
+
+Figures in Part IV are sourced and linked — COPPA's 2025 amendments and
+April 2026 deadline, the ICO's £14.47m Reddit fine, DSA exposure, kidSAFE
+certification counts, and Pok Pok's funding and revenue as the closest
+working comparable.
 
 ## Building
 
