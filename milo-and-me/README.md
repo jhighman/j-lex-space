@@ -9,6 +9,10 @@ Four parts in one document:
    changes in kind rather than in size.
 4. **The business** — the regulatory position, a benchmarked comparable,
    three re-weighted paths, costs, and risks in order of lethality.
+5. **The architecture as a product** — Part IV's strongest path, taken
+   apart: what is sold, which layer retrofits and which cannot, the
+   competition without flattery, and a first ninety days in which every
+   item can stop the plan.
 
 ## Two things stated up front
 

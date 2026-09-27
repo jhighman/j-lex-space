@@ -173,6 +173,10 @@ makes it a measurement.*
   shipping child-directed products, showing the parent screen and asking
   what it would take to be *required* to have one.
 
+**Part V takes this path apart in full** — what is actually sold, the layer
+that can be retrofitted and the layers that cannot, the buyer who wants bad
+news, and the ninety days that would establish whether any of it is real.
+
 ### Path C — institutional
 
 Early-years settings, paediatric and therapeutic contexts, where the
