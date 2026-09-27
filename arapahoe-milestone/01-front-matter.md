@@ -94,20 +94,22 @@ by the one call allowed to write it, and every guard in this document passes
 it. The guards check a record's vocabulary and its derivations, and nothing
 between them asks whether a row is true of the event that caused it.
 
-**Section 10 takes the method outside.** Thirteen Member States have asked
-Europe to deep-clean its rulebook, which forces the question this bench has
-been asking in miniature: when a mechanism is simplified, what must remain
-true, and who can prove that it remained so? The distinction there — between
-a *safeguard*, which is what a system intends, and an *invariant*, which is
-what it may not violate — is this repository's own, under a better name.
+**Section 10 answers the two essays that stand behind this work.** The first
+asked nine questions of a machine that a child confides in, and argued that
+a toggle is not a fact — that what matters is not what a company arranged
+but what stays true after it changes its mind. The second took that
+distinction to the scale of a rulebook thirteen Member States have asked
+Europe to deep-clean, and named how complexity moves rather than disappears
+under simplification.
 
-Run against the warren's record, the six capabilities that argument says
-must survive come out three for six. Know, attribute and understand hold.
-Contest, correct and obtain redress are absent entirely, and absent by
-design: append-only is what makes the record trustworthy and what makes it
-unchallengeable. That trade is defensible where the recording party and the
-affected party share an interest, and indefensible where they do not, and it
-is stated in section 10 rather than smuggled.
+Section 10 stops arguing and runs both against something built. Of the nine
+questions, seven hold and two of those hold only because the artefact is
+small. The two that fail are the two the essays cared most about: the
+promise did not survive Wednesday — a closed vocabulary held while three
+separate hand-written descriptions of it drifted within a day — and if the
+boundary broke, nobody outside this pair would know. Of the second essay's
+six capabilities, three hold and three are absent by design, which is stated
+rather than smuggled.
 
 Both of that repository's declarations were reproduced here
 
