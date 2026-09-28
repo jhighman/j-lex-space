@@ -104,6 +104,42 @@ technique on the grounds that it is available and impressive, which is the
 default condition of game audio and the reason so much of it sounds like a
 demo of itself.
 
+## 55a. World-building without lore
+
+The warren has no history, no factions, no names and no myth anybody is
+told. What it has instead is **physical specificity**, and the clearest
+instance is a thing a player will never consciously notice.
+
+Every burrow mouth is one of four apertures — **slot, scrape, root-hole,
+stone lintel** — and each has its own geometry, its own materials and its own
+early-reflection pattern. A burrow's mouth is derived from its identity, so
+it is the same mouth every time she comes back, the way a hole in the ground
+does not change shape between Tuesdays.
+
+They were simulated rather than asserted. The ring's **T20 is 32–63 ms**, and
+120 ms holds all of the decay: a burrow is an early cluster with no tail. The
+mouths separate in the direction the geometry predicts — **the slot longest
+at 63 ms**, narrow and deep with harder sides, throwing isolated late
+arrivals at 14.5 and 22.5 ms that nothing else has; **the scrape shortest at
+38 ms**, low ceiling and more floor, giving the densest cluster of the four.
+Maximum correlation between any pair over the early window is **0.245**. They
+are not one room with four labels.
+
+That is a great deal of work for a distinction below the threshold of
+description. Its purpose is not to be noticed; it is that the warren has to
+be somewhere, and *somewhere* is a property of surfaces, dimensions and
+materials rather than of history. The same instinct puts the palette in wet
+clay, root-bark, lampblack and moth-dust; keeps the animals' voices as
+substances rather than species noises — cartilage unfolding, dry grass
+settling, a paper-and-dust unstick that is explicitly **not a flutter,
+because flutter is reaching**; and leaves Milo's kennel empty, with no named
+blanket and no second bowl, so that the first thing the game says is *nothing
+was kept from last time.*
+
+**Lore tells a child what to imagine. Materials give her something to be
+inside.** The second is more expensive, does not scale, and cannot be written
+in a bible — and it is the only one that survives a player who cannot read.
+
 ## 56. Measurement, where the industry uses taste
 
 The three tests `SOUND.md` sets for a piece of music are: *can you hum it,
@@ -171,6 +207,36 @@ headroom. Whatever the theme does at 0:40 is for the composer's benefit.
 And the settle — the moment a game would normally score — is specified as the
 absence of one: *the hedgehog's spines lying down is a change that stops
 making sound.* **That stop is the music.**
+
+### The opposite that was removed
+
+That rule has a precondition, and the precondition has quietly gone.
+
+The sound authority argues that **stillness is only audible against its
+opposite**, and builds the opposite deliberately: hurried tapping adds a
+near, dry hit, kicks a little dust into the near field, and makes the room
+smaller for a moment the way a real room shrinks when somebody drums on the
+table. When the tapping stops, *what was there comes back first — do not fade
+in a new instrument, uncover what was there.*
+
+Sequential trust removed every trigger for that. The input is four numerals,
+a jump is legal and unpunished, and there is no hurry for the room to react
+to. The word does not appear in the interior specification and the behaviour
+does not appear in the build.
+
+Put that beside §57's own concession — that music filled the quiet, so the
+burrow no longer teaches stillness *by being* still — and **stillness in the
+current build has lost both the silence it was made of and the commotion it
+was measured against.** Neither loss was a mistake. Each was argued for
+separately, eight days apart, and nobody put the two sentences next to each
+other until somebody described the world out loud and a third person went to
+check.
+
+It is not resolved here, because it is a design question and not a port.
+Either presses perturb the room at no cost — which both documents permit,
+since *idle fidget must not be punished* and a jump is already legal — or
+sound stops carrying stillness and the picture takes the entire load, which
+the picture has never been asked to bear.
 
 ## 58. The picture had to take over, and the bill came due
 
