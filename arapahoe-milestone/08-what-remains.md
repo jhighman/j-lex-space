@@ -302,6 +302,35 @@ Three limits, because the instrument is smaller than it sounds:
   independence but **irreversibility** — a verdict that exists whether or not
   the author still likes it.
 
+**A fourth gap, found by falling into it.** The table above sorts instruments
+by what each can contradict. None of the three can do a fourth thing, and the
+omission is not obvious until it costs you: **enumerate the other members of a
+class somebody has just described.**
+
+The case is small and exact. Two of the game's nine creatures have worlds
+that get darker as trust rises, so their sound must get further away while
+every other creature's comes closer. One was found. The class was named
+correctly and in writing — *the direction belongs to the creature, not to the
+game* — and the fix was applied to the creature it was found in. The second
+surfaced a day later, by accident, during an unrelated question about capture
+protocols. The search that would have found it was four seconds of grep and
+nobody ran it, because a finding written down as a general rule reads as
+finished.
+
+The conformance bench cannot report this: both creatures matched their
+specifications, and the second one's specification *said in words* that its
+sound should get quieter. A person playing would have caught it only by
+playing that particular room. A computed rule could have caught it, and this
+is the strongest argument for the third kind that the project has produced —
+but only if somebody thinks to write the rule as a question about a set
+rather than a fact about an instance.
+
+**A finding stated as a general rule and fixed as a single instance is a fix
+that will be made again.** That is a claim about method and not about tools,
+and it is the one an instrument is least able to help with, because the
+moment of failure is the moment somebody decides they have understood
+something.
+
 The claim to take from this is narrow and it is not about audio. **A refusal
 that is computed against a rule written beforehand is the cheapest honest
 guarantee available**, and it sits in a gap the rest of this document leaves

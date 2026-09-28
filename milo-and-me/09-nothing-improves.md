@@ -48,6 +48,56 @@ the technique they are about.**
   lamp and does not turn**, so a 360° grid of an adult head is the wrong
   measurement, taken well.
 
+### The capture that half the cast does not want
+
+That protocol was written for a burrow, and then the burrow became nine
+worlds. Sorting the cast by what kind of acoustic object each world actually
+is turns a scheduling question into a design one:
+
+| | worlds |
+| --- | --- |
+| a room, constant | hedgehog · badger · moth |
+| a room that **changes shape** while she counts | rabbit — the gap widens · mole — the drive lengthens |
+| **two rooms**, where the meter is the aperture between them | fox |
+| **not a room at all** | deer — a clearing · Moon Hare — open water |
+
+The middle two rows are the interesting ones and neither was anticipated. A
+world that changes shape during the encounter cannot be one convolution: the
+endpoints have to be captured and interpolated, which in the booth is one
+panel moved. And the fox's meter is **the coupling between two enclosures**,
+which two impulse responses and a crossfade cannot say, because what changes
+is not the mix of two rooms but how much they are one room. That is still
+open.
+
+The bottom row is where the useful sentence is, and it is the opposite of
+what the instinct says. The instinct is to schedule a second capture day, in
+a field, for the outdoor worlds. It would be wasted, because **outdoors is
+not a reverb — it is the absence of one.** A clearing has no enclosure, so
+no tail and almost no early reflections: the direct sound, one ground bounce,
+then nothing, under whatever diffuse energy the air is carrying. What makes
+it read as outside is **the convolver nearly bypassed**, and a field
+recording of a real clearing would hand you a tail that clearing does not
+have.
+
+So the two outdoor worlds get a synthetic two-tap — honest to compute,
+because there is nothing there to measure — and **their room is a bed rather
+than an impulse response.** What says *clearing* is air, distance and a far
+boundary: the treeline, not the trees.
+
+The Moon Hare's is the limit case and it comes out backwards from every
+expectation. Open water under a moon is **the most reflective floor and the
+least reverberant space in the cast** — one hard specular bounce and nothing
+returning from anywhere — and her mouth is silent by rule, so there is no
+music to place in it. The world furthest from a burrow is the one that needs
+the least measuring. That is a convenience rather than an argument, and it is
+written down as one, because if the silence rule ever changes it stops being
+true.
+
+**Net effect: the capture day gets longer rather than repeated.** The same
+trip now wants a second chamber for the fox and one panel moved twice.
+Nothing about the deer or the hare belongs on that trip at all, and both can
+be done before a room is ever found.
+
 A literature that mostly says *no* is not a literature anybody needed to
 write. It exists because the alternative is a designer reaching for a
 technique on the grounds that it is available and impressive, which is the
@@ -160,10 +210,32 @@ So the moth's picture went dark while her music came closer.
 The rule was not broken by a second distance. It was broken by **the same
 distance pointed the wrong way** — a case its own wording had no room for,
 because it was written when *near* and *brighter* were the same fact, and
-nine worlds are what made them different. The direction now belongs to the
-creature rather than to the game. It is the clearest example in the project
-of a class of defect no test catches: **two subsystems each obeying a rule
-that was true when there was one room.**
+nine worlds are what made them different. It is the clearest example in the
+project of a class of defect no test catches: **two subsystems each obeying a
+rule that was true when there was one room.**
+
+And then the fix was made to one creature, which is the part worth keeping.
+
+**The owl had it too.** Her specification says, in words, *"sound should get
+quieter with count, not louder."* Her own drawn places say *the room quieter*
+at three and *quietest of the four* at four. Her mix was opening up
+underneath all of it, and she was found a day later by somebody asking an
+unrelated question about capture protocols.
+
+The reason is not that the class was unnamed. The class had been named
+correctly, in writing, the day before — *the direction belongs to the
+creature, not to the game* — and then applied to the creature it was found
+in. **A finding stated as a general rule and fixed as a single instance is a
+fix that will be made again**, and it was, twenty-four hours later, by
+accident.
+
+That is a different failure from the one above and it has no instrument
+either. A test suite reports that a system stopped matching its
+specification. Nothing in this project — and nothing in the verification
+apparatus the middle of this paper is about — enumerates the other members of
+a class somebody has just described. The direction now belongs to the
+creature, and the grep that would have found the owl took four seconds and
+was not run.
 
 The same discipline governs the modelling: *clay that has been handled* —
 uneven silhouettes, matte surfaces, a little weight, the child and Milo
