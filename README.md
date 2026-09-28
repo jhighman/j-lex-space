@@ -128,3 +128,13 @@ mkdir -p private/letters/drafts private/letters/sent private/letters/received pr
 
 The first command arms the guard hook. The second recreates the private
 workspace — git does not carry it between machines, by design.
+
+## Safeguards and Invariants
+
+- `proof-without-the-diary/` — part three. The door that writes the receipt
+  before it opens, and the same question asked of a rulebook in Europe.
+- `the-record-that-cannot-say/` — part four. Where the novelty goes away:
+  recorded refusals, out-of-band enforcement and verifiable policy are all
+  ordinary infrastructure now. What is left is not a mechanism but a
+  question — who is the party the system cannot overrule, and what is the
+  file a record *of*.
