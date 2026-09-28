@@ -17,6 +17,9 @@ Four parts in one document:
    preceded Part V. Its wedge does not exist. Parts IV and V are left
    standing as written and this part records what they got wrong, because
    a plan edited to look correct afterwards teaches nobody anything.
+7. **Somebody else built the door** — NVIDIA's agent safety platform,
+   arrived at independently, and a correction: a paragraph about a gap that
+   was not there, caught by reading the system instead of the page about it.
 
 ## Two things stated up front
 
