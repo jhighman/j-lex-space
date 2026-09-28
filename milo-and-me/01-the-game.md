@@ -57,6 +57,9 @@ middle is about the record and the business it might be:
 - **Part IX — nothing improves, and that is the design.** The craft
   argument: audio, soundtrack, picture, and the psychographics. **If one part
   of this document is the contribution, it is this one.**
+- **Part X — how it holds together.** The five things that make nine
+  encounters one story without a word of text, and the audit that found two
+  of the five were not true of the build.
 
 A note on the fourth part before it starts: **it contains no researched
 market figures.** None were available to the author at the time of writing,

@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
 OUT="${OUT_DIR:-dist}"
 DOCX="${OUT}/Milo-and-Me.docx"
 PDF="${OUT}/Milo-and-Me.pdf"
-SECTIONS=("01-the-game.md" "02-the-architecture.md" "03-unreal.md" "04-business.md" "05-architecture-as-product.md" "06-research-findings.md" "07-somebody-else-built-it.md" "08-what-playing-it-changed.md" "09-nothing-improves.md")
+SECTIONS=("01-the-game.md" "02-the-architecture.md" "03-unreal.md" "04-business.md" "05-architecture-as-product.md" "06-research-findings.md" "07-somebody-else-built-it.md" "08-what-playing-it-changed.md" "09-nothing-improves.md" "10-how-it-holds-together.md")
 for s in "${SECTIONS[@]}"; do
   [[ -f "$s" ]] || { echo "ERROR: missing ${s}" >&2; exit 1; }
 done
