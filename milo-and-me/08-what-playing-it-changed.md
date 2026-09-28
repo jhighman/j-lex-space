@@ -60,6 +60,52 @@ water is blank underneath him. That the one companion who was there the whole
 way cannot speak for her had been a sentence in three documents. It is now a
 picture, and it is the only part of the design that needs no explaining.
 
+### The vocabulary changed, and nothing said so
+
+Sequential trust did not only replace the encounter. **It retired words from
+the record**, and that took three weeks to notice because no build fails when
+it happens.
+
+The lean is the clearest case. Part I describes it as a second door onto the
+same mistake: hold a finger on a frightened animal and the ground slips, the
+same price as a wrong offer. Under sequential trust there is no such move.
+Leaning *is* going into the room — the door, costing nothing, preserving the
+number she was at — and it writes `enter` and `meet`, words that already
+existed. **The twelfth act is gone**, and with it four constants that
+`TRANSFERS.md` lists among the things nobody placed, including the one it
+singles out as *"a design judgement about what a child should be taught, made
+by the author in a function."* The refactor retired it without anybody
+arguing it down.
+
+It was not alone. Set the two vocabularies side by side:
+
+| | words |
+| --- | --- |
+| iOS, declared | wake · enter · meet · offer · wait · calm · retreat · befriend · vouch · deeper · rest · lean · gather |
+| the playtest, written | wake · enter · meet · **count** · **jump** · friend · leave · deeper |
+
+**They share four.** `offer`, `wait`, `calm` and `retreat` went with the four
+offers; `lean` with the encounter it belonged to; `count` and `jump` are new
+and are the entire mechanic. Part II calls the closed vocabulary thirteen
+words, which is true of the build that ships and false of the build where all
+the design happens.
+
+The uncomfortable part is not the divergence, which is expected in a fork. It
+is that **the playtest adopted the loop and dropped the property.**
+`TRANSFERS.md` §1 adopts from the engine, by citation, *"a closed vocabulary;
+an unknown word is refused, not coerced"* — with a test named
+`an_unknown_act_is_refused`. The web build had no list at all. Its vocabulary
+was whatever eight strings happened to be passed to `note()`, scattered across
+four hundred lines, discoverable only by grep. Any typo would have entered the
+record as a new word, silently, and every guard in the architecture would have
+passed it.
+
+That is the drift this project has now recorded three times — a hand-written
+copy of the act list that nothing generates — arriving in its worst form,
+which is a second implementation whose list was never written down even once.
+It is declared now, and `note()` refuses a word that is not in it. Nothing
+reconciles the two builds, and nothing yet can.
+
 This is the same lesson Part I §10 claimed, arrived at from the other side.
 The offer model taught *wait for the frightened one*. Sequential trust
 teaches that the route is the thing, and it teaches it without ever paying

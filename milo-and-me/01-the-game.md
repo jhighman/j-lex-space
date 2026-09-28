@@ -136,6 +136,11 @@ claim is about what happened, not about what was tapped.
 
 ### Leaning in
 
+> **Superseded for the current build — see Part VIII §49.** Under sequential
+> trust the lean is not a move inside the encounter. It is the door into the
+> room, it costs nothing, and it is not written down at all. What follows
+> describes the shipped iOS build.
+
 Holding a finger on the animal brings the child close enough to see it
 looking back. In profile a frightened animal is frightened; face on, it is
 frightened **of you**. Letting go sits her back up.
