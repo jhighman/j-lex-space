@@ -17,7 +17,7 @@ code.** The code was correct in every case.
 
 ---
 
-## 33. The four offers stopped being the encounter
+## 49. The four offers stopped being the encounter
 
 Part I §3 says the encounter is the game: four buttons, always all four, and
 the fourth is stillness. That was true when it was written and it is still
@@ -66,7 +66,7 @@ teaches that the route is the thing, and it teaches it without ever paying
 more for patience — the architecture's standing refusal, which §12 records
 and which survives the change unaltered.
 
-## 34. Nine universes, not one room nine times
+## 50. Nine universes, not one room nine times
 
 Part I §4 is headed *Eight animals, eight moments*. Two corrections.
 
@@ -91,7 +91,7 @@ opposite of the story being told.
 The warren became nine places rather than one place nine times, and the
 descent acquired the variety Part I had been claiming for it.
 
-## 35. The sound authority was overturned by its own author
+## 51. The sound authority was overturned by its own author
 
 `SOUND.md` ruled that music almost should not be in the burrow, and built the
 encounter around what a small clay room sounds like when nobody is playing
@@ -121,7 +121,7 @@ two silences and music fills the second, so **the burrow no longer teaches
 quiet by being quiet.** It teaches it by what the animal does, which is a
 narrower channel and puts more weight on the picture.
 
-## 36. Measurements that were wrong in our favour
+## 52. Measurements that were wrong in our favour
 
 Three, recorded because the shape recurs.
 
@@ -147,7 +147,7 @@ autocorrelation searches lags of 18–150 envelope frames inside a window
 holding 145. A line drawn from three files was then used to judge clips too
 short to test it.
 
-## 37. The map was an installation
+## 53. The map was an installation
 
 The warren was drawn in 3-D alongside the burrow, and it looked like
 something. A reader who had not seen the code named what was wrong with it in
@@ -171,7 +171,7 @@ And the way down moved *into the bowl*, as an arrow. As a dotted line
 spanning two floors it was a route she could see and could not take: from the
 hedgehog nest a player taps the floor below and nothing happens.
 
-## 38. What a bench cannot do
+## 54. What a bench cannot do
 
 This is the part worth keeping if the rest goes stale.
 

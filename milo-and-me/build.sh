@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
 OUT="${OUT_DIR:-dist}"
 DOCX="${OUT}/Milo-and-Me.docx"
 PDF="${OUT}/Milo-and-Me.pdf"
-SECTIONS=("01-the-game.md" "02-the-architecture.md" "03-unreal.md" "04-business.md" "05-architecture-as-product.md" "06-research-findings.md" "07-somebody-else-built-it.md" "08-what-playing-it-changed.md")
+SECTIONS=("01-the-game.md" "02-the-architecture.md" "03-unreal.md" "04-business.md" "05-architecture-as-product.md" "06-research-findings.md" "07-somebody-else-built-it.md" "08-what-playing-it-changed.md" "09-nothing-improves.md")
 for s in "${SECTIONS[@]}"; do
   [[ -f "$s" ]] || { echo "ERROR: missing ${s}" >&2; exit 1; }
 done
@@ -20,9 +20,9 @@ args=(
   --resource-path=.
   --toc --toc-depth=2
   --metadata=title:"Milo & Me"
-  --metadata=subtitle:"A wordless game, its architecture, Unreal, and the business"
+  --metadata=subtitle:"A wordless game built so that nothing in it improves when she does well"
   --metadata=author:"J Highman · Alexandra Křížová"
-  --metadata=date:"2026-09-27"
+  --metadata=date:"2026-09-28"
 )
 
 mkdir -p "${OUT}"

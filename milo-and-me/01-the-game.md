@@ -12,14 +12,33 @@ warren of burrows with her three-legged dog, meets eight animals, and
 learns one thing: *an animal comes to you when you stop reaching for it.*
 There is no score, no losing, no text, and no voice.
 
-Underneath it is an argument about children's software. Everything the game
-records about the child is written in a **closed vocabulary of thirteen
-words**, held in memory, discarded at the end of the afternoon, and shown to
-a parent in full. The claims the parent screen makes are not promises — they
-are measurements taken when the screen opens, and the parts that could drift
-are generated from the engine so that they cannot.
+Every system in it was built to say one sentence: **the world does not get
+better because you did well.** That is a position about how games are made,
+and it is the opposite of the prevailing one. The contemporary craft is
+additive — a layer enters on success, the score swells, the interval between
+rewards is tuned until the thing is hard to put down. This uses the same
+craft pointed the other way, and the cost is itemised rather than claimed.
 
-This document has four parts:
+What that took: **eight handed-down authorities on sound**, most of which
+conclude against the technique they are about; a **measurement tool applied
+to the author's own music** so that taste cannot quietly overrule the rule;
+a soundtrack that may move with trust and may not improve with it
+(*distance, not prettiness*); **nine creatures built as nine worlds** rather
+than one room recoloured; and a reading of the developmental literature that
+inverts the obvious one — the game's job is not to test whether a child can
+wait, but to be the adult who keeps the promise, so that waiting is
+reasonable.
+
+Underneath that is an argument about children's software, and it is the same
+refusal applied to the record. Everything the game records about the child is
+written in a **closed vocabulary of thirteen words**, held in memory,
+discarded at the end of the afternoon, and shown to a parent in full. The
+claims the parent screen makes are not promises — they are measurements taken
+when the screen opens, and the parts that could drift are generated from the
+engine so that they cannot.
+
+Nine parts, of which the first and the last two are about the game and the
+middle is about the record and the business it might be:
 
 - **Part I — the game.** What a child does, and why each mechanic exists.
 - **Part II — the architecture.** How the record works, what is enforced by
@@ -28,6 +47,16 @@ This document has four parts:
   problem that gets qualitatively harder.
 - **Part IV — the business.** Positions, models, risks, and an explicit
   list of the things that would have to be true.
+- **Part V — the architecture as a product**, and the correction a buyer
+  forces on it.
+- **Part VI — research**, and the findings that break Part IV and Part V.
+- **Part VII — somebody else built the door**, and what that costs the claim.
+- **Part VIII — what playing it changed.** Written after the first build
+  anybody could actually play, and the changes are less interesting than the
+  fact that none of them were visible from the code.
+- **Part IX — nothing improves, and that is the design.** The craft
+  argument: audio, soundtrack, picture, and the psychographics. **If one part
+  of this document is the contribution, it is this one.**
 
 A note on the fourth part before it starts: **it contains no researched
 market figures.** None were available to the author at the time of writing,
@@ -70,7 +99,7 @@ joystick, no camera, no menu.
 
 ## 3. The encounter, which is the game
 
-> **Superseded for the current build — see Part VIII §33.** What follows
+> **Superseded for the current build — see Part VIII §49.** What follows
 > describes the shipped iOS game and was true when written. The encounter has
 > since been replaced by sequential trust: a place numbered one to four
 > inside each creature's universe, walked to or jumped to. The lesson is
@@ -124,7 +153,7 @@ the game was silent about the thing it is for.
 
 ## 4. Eight animals, eight moments
 
-> **The cast is nine, not eight — see Part VIII §34.** It has been nine since
+> **The cast is nine, not eight — see Part VIII §50.** It has been nine since
 > the bear cub was dropped and the mole and the moth added. The count here
 > dates from before that and nothing in the repository counts the cast, so
 > the sentence had no generator to keep it true.
