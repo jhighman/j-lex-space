@@ -148,6 +148,23 @@ be the same composition in a different coat.
   water rather than as a cutscene — one light per friendship *walked*, none
   for one jumped to, and **Milo casting none at all.**
 
+**And the discipline had a hole in it, which the refactor found.** The rule
+that binds all of this is *one meter for the eye and the ear* — one number a
+frame, no second distance for audio. The build honoured it exactly: the mix
+opened from 700 Hz to 14 kHz as she counted, for every creature. The
+specification for the moth requires her star to **dim** as she counts. Both
+halves were correct against their own authority and both had passing tests.
+
+So the moth's picture went dark while her music came closer.
+
+The rule was not broken by a second distance. It was broken by **the same
+distance pointed the wrong way** — a case its own wording had no room for,
+because it was written when *near* and *brighter* were the same fact, and
+nine worlds are what made them different. The direction now belongs to the
+creature rather than to the game. It is the clearest example in the project
+of a class of defect no test catches: **two subsystems each obeying a rule
+that was true when there was one room.**
+
 The same discipline governs the modelling: *clay that has been handled* —
 uneven silhouettes, matte surfaces, a little weight, the child and Milo
 modelled from the same lump as the rabbit. Not a shader showcase. A real light
