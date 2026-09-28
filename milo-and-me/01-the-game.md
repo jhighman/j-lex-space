@@ -7,8 +7,8 @@ date: "2026-09-27"
 
 # Summary
 
-**Milo & Me** is a wordless game for a child of about four. She walks a boy
-and his three-legged dog into a warren of burrows, meets eight animals, and
+**Milo & Me** is a wordless game for a child of about four. She walks into a
+warren of burrows with her three-legged dog, meets eight animals, and
 learns one thing: *an animal comes to you when you stop reaching for it.*
 There is no score, no losing, no text, and no voice.
 
@@ -40,19 +40,19 @@ needed it is marked as an assumption to be tested, not a finding.
 
 ## 1. The situation
 
-A boy wakes in a dark yard. A dog is asleep in a kennel. Light comes up, the
+A child wakes in a dark yard. A dog is asleep in a kennel. Light comes up, the
 dog wakes, stretches, shakes himself off. Nothing is carried out of the
 kennel, because there is nothing in it.
 
 That is the first thing the game says, and it says it by showing rather than
 claiming: **nothing was kept from last time.**
 
-The boy comes out. There are four things he can do with the dog — offer
+She comes out. There are four things she can do with the dog — offer
 food, offer a ball, hold out a hand, or sit still — and on this one animal
-all four simply work. Milo is his already. There is no trust to win and no
+all four simply work. Milo is hers already. There is no trust to win and no
 wrong answer, and none of it is written down.
 
-Only after the boy has played does a hole open at the end of the yard.
+Only after she has played does a hole open at the end of the yard.
 
 **The crossing is a choice, not a corridor.** The way down appears and then
 waits. A child who does something else is not corrected; the dog goes to the
