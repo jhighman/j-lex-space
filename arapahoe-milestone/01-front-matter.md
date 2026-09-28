@@ -94,6 +94,20 @@ by the one call allowed to write it, and every guard in this document passes
 it. The guards check a record's vocabulary and its derivations, and nothing
 between them asks whether a row is true of the event that caused it.
 
+**Section 7 has since gained a finding about benches themselves**, and it is
+the one most likely to be useful outside this repository. Every instrument
+here compares a system to its own stated intent, so none of them can report
+that the intent was wrong; an afternoon of somebody playing the game found
+five such cases in a single sitting, in every one of which the code was
+correct. But a person looking cannot be scheduled, repeated, or cited. The
+third form closes that gap: **a rule written before the artefact exists and
+computed rather than applied.** The sound authority's tests were turned into
+a tool and run on the author's own music, and barred it. It is the only
+instrument of the three that is both repeatable and able to rule against the
+person who built it — the same mechanism as the provenance guard, invented
+twice here and named once — and it reaches only as far as a rule can be made
+computable, which the most important of those three tests cannot.
+
 **Section 10 answers the two essays that stand behind this work.** The first
 asked nine questions of a machine that a child confides in, and argued that
 a toggle is not a fact — that what matters is not what a company arranged

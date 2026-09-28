@@ -230,6 +230,88 @@ arranging to hear the second.
 The cheapest instrument in the project turned out to be the only one able to
 say *no* about a premise. It should have existed first.
 
+## A third kind, which rules against its author
+
+The section above leaves a gap it did not notice. It sets two instruments
+against each other — the conformance bench, which cannot report that the
+intent was mistaken, and an afternoon of somebody playing the thing, which
+can — and it ends by recommending the second. But the second is a person
+looking. It cannot be scheduled, it cannot be repeated, it produces no row,
+and it fires only when somebody happens to look at the right screen on the
+right day. As a guarantee it is worth nothing; as an event it was worth more
+than the rest of the apparatus combined. That is an uncomfortable pair of
+sentences to leave standing next to each other.
+
+There is a third instrument in the work, and this document has walked past it
+twice.
+
+The sound authority states three tests a piece of music must pass — *can you
+hum it, can you tap your foot to it, does it get prettier when she does the
+right thing.* Two of the three are properties of a file. So they were
+computed, in `tools/hear-music.py`, and the tool was run on the author's own
+music. It returned **G major, root on G2, 93% of energy in seven pitch
+classes, 0.83 notes per second over 27 semitones** and barred the cue under
+the first test. The rule was the author's, the music was the author's, and
+the verdict went against both.
+
+That is the same move as the disk sweep in the warren document. A governance
+line was going to read *zero bytes retained*; it was measured instead of
+printed, and the first run returned **85,983 bytes in nine files.** A printed
+claim would have been wrong from the first build that drew a texture and
+nothing would ever have said so.
+
+**The three differ in what each is able to contradict**, and that is the
+distinction the section above was reaching for:
+
+| | can contradict | cannot |
+| --- | --- | --- |
+| the conformance bench | the code | the specification |
+| somebody plays it | the specification | nothing — but it cannot be scheduled, repeated, or cited |
+| a computed rule | the author's judgement about a particular artefact | anything the rule was too vague to compute |
+
+The third is the only one that is both **repeatable and able to rule against
+the person who built it.** It is not a substitute for the second — no
+instrument would have reported that the encounter at the centre of the design
+was too thin — but it is the only one of the three that can be run on
+Wednesday and cited on Friday.
+
+**What makes it worth anything is the order it was written in.** The rule
+existed before the artefact it judged. That is precisely the property this
+repository already values in the provenance guard, written before the first
+impulse response existed *so that nothing could arrive unjudged* — and it is
+the same mechanism, invented twice in the same project and named once. A rule
+written after the artefact is a rationalisation with a tool attached; a rule
+written before it, and computed rather than applied, is the only form of
+self-certification that survives the author falling in love with the thing.
+
+Three limits, because the instrument is smaller than it sounds:
+
+- **It reaches only as far as a rule is computable.** The third sound test —
+  *does it get prettier when she does the right thing* — is not a property of
+  a file. It is a property of the wiring, it is the most important of the
+  three, and no tool in the project can check it.
+- **A line can be drawn from too few points, and was.** The no-clock
+  threshold came from a sample of three files, and was then applied to clips
+  too short for the measurement to be valid at all — beat strength over a
+  1.5-second window reads about a third of its true value. The instrument was
+  wrong in the author's favour for a week, and nothing but a second look
+  found it.
+- **The tool, the rule and the music share an author.** This is *Distinctness
+  is not independence* arriving in a third place. One voice computing its own
+  rule against its own work is still one voice; what it buys is not
+  independence but **irreversibility** — a verdict that exists whether or not
+  the author still likes it.
+
+The claim to take from this is narrow and it is not about audio. **A refusal
+that is computed against a rule written beforehand is the cheapest honest
+guarantee available**, and it sits in a gap the rest of this document leaves
+open: above a conformance check, which can only compare a thing to its own
+intent, and below a person looking, which cannot be arranged. The turnstile
+ruling applies to it unchanged — `hear-music.py` computes the gate and does
+not set it, and authority for setting one stays with the authors. The
+calculator still accepts a number from the air. What changed is that it now
+prints the verdict where the author has to read it.
+
 ## And ARAPAHOE itself
 
 Still never attacked, and the substrate repository says so more plainly than
