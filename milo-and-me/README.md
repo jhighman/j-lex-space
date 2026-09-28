@@ -43,3 +43,15 @@ working comparable.
 
     ./build.sh          # docx + pdf into dist/
     ./build.sh docx
+
+## Part VIII
+
+`08-what-playing-it-changed.md` is the account of the first afternoon
+anybody played the thing. It supersedes two sections of Part I and overturns
+one of the authorities in Part II, and it is kept as a new part rather than
+folded back in, so a reader can see which claims were argued with and which
+were never noticed.
+
+The finding under all of it: the repository is full of checks that the code
+matches what was written down, and **none of them can report that what was
+written down is wrong.**

@@ -70,6 +70,13 @@ joystick, no camera, no menu.
 
 ## 3. The encounter, which is the game
 
+> **Superseded for the current build — see Part VIII §33.** What follows
+> describes the shipped iOS game and was true when written. The encounter has
+> since been replaced by sequential trust: a place numbered one to four
+> inside each creature's universe, walked to or jumped to. The lesson is
+> unchanged and arrived at from the other side.
+
+
 In a burrow there is an animal, a lamp, and the dog.
 
 The animal holds up a picture of what it wants: food, play, a hand, or —
@@ -116,6 +123,12 @@ an animal that startles easily notices the commotion. It is the one moment
 the game was silent about the thing it is for.
 
 ## 4. Eight animals, eight moments
+
+> **The cast is nine, not eight — see Part VIII §34.** It has been nine since
+> the bear cub was dropped and the mole and the moth added. The count here
+> dates from before that and nothing in the repository counts the cast, so
+> the sentence had no generator to keep it true.
+
 
 Each animal asks for a different amount of patience and wants different
 things, drawn from a temperament — a deer really is skittish, a badger

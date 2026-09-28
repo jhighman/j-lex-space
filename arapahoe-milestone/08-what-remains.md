@@ -183,6 +183,53 @@ layer and the fingerprint exist, not because a suite went quiet. The four
 questions travel with the code if it moves and are not retired by passing.
 **This milestone promotes nothing**, and promotion would be a separate act.
 
+## A second kind of bench, and what the first kind cannot do
+
+This is new since the document was written, and it changes what the word
+*bench* is doing in it.
+
+Everything the instrument does is a comparison against something already
+stated. A declaration is run and its outcome is checked. A governance
+document is generated and a test fails when the prose and the engine come
+apart. A provenance guard is written before the first artefact it will judge
+exists, precisely so that nothing can arrive unjudged. The whole apparatus is
+built to make one guarantee: **that what is running matches what was written
+down.**
+
+Then the game — the wordless one, downstream of all this — was rebuilt in a
+browser so that somebody could play it rather than read it. An afternoon's
+work. It found, in that afternoon, that the encounter at the centre of the
+design was too thin to carry the lesson; that the sound authority's central
+rule was wrong and had to be rewritten by its own author; that the map was an
+installation rather than a map; that a hiss reported as a room tone was the
+animal's own voice, wired to trust, so that earning an animal's confidence
+paid out in static; and that a filter built to make a door sound like a door
+was worth exactly zero decibels.
+
+**In every one of those cases the code was correct.** It did what its
+specification said. Not one of them could have been caught by any test in
+this repository, because every test here is an argument with the past — it
+catches the moment a system stops doing what it used to do, and is
+structurally unable to notice a system that has always done the wrong thing.
+
+The instrument has no outside, and section 7 makes that absence load-bearing.
+The finding to add is narrower and more uncomfortable: **a bench that can
+only compare a system to its own stated intent has no way to report that the
+intent was mistaken.** It will pass, honestly and repeatedly, right up to the
+point where somebody looks at the thing.
+
+That is not an argument against the instrument. The guarantees it makes are
+real and were expensive to get, and none of the afternoon's findings would
+have been *safe* to act on without them — a design that can be overturned in
+an afternoon needs a substrate that cannot. It is an argument about what
+kind of claim a passing bench is. It says the thing does what you said. It
+does not say you were right, and this repository spent considerably longer
+building increasingly rigorous guarantees of the first kind than it spent
+arranging to hear the second.
+
+The cheapest instrument in the project turned out to be the only one able to
+say *no* about a premise. It should have existed first.
+
 ## And ARAPAHOE itself
 
 Still never attacked, and the substrate repository says so more plainly than
