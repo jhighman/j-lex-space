@@ -43,6 +43,23 @@ count eases over three quarters of a second; a jump snaps. **Counting to
 four makes a friend. Jumping to four does not** — the room is at four, and
 nobody walks out of the mouth with her, because the walk did not happen.
 
+**And the ending had to follow it.** The Moon Hare came out when three
+friends vouched for you, which was a set piece: they walk over while she
+waits. Sequential trust has nobody to walk and no meter to fill, so the scene
+became a division — **the tide is hers, the light on the water is theirs.**
+Her four places move the water like any creature's numbers move their world.
+One light lands on the water for each friendship that was *walked* to four,
+in that animal's coat colour; a friendship jumped to four leaves none. At
+three lights and full tide she turns round.
+
+No slot is ever drawn empty, which would make the warren a checklist. No
+number in her room can be pressed toward it: the only thing that turns her is
+a walk taken somewhere else, earlier, with somebody else. And **Milo casts no
+light** — he is on the bank beside her, nearer than any of them, and the
+water is blank underneath him. That the one companion who was there the whole
+way cannot speak for her had been a sentence in three documents. It is now a
+picture, and it is the only part of the design that needs no explaining.
+
 This is the same lesson Part I §10 claimed, arrived at from the other side.
 The offer model taught *wait for the frightened one*. Sequential trust
 teaches that the route is the thing, and it teaches it without ever paying
