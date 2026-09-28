@@ -35,7 +35,7 @@ enforcement.*
 
 It would have been wrong. OpenShell's own documentation says it **records
 every allow and deny decision, with destination, binary and reason**, in an
-[OCSF](https://docs.nvidia.com/openshell/dev/manage/policies/advisor) audit
+[OCSF](https://docs.nvidia.com/openshell/observability/logging) audit
 trail, and that when policy blocks a request the denial is recorded so it can
 be reviewed. The refusals are kept.
 
