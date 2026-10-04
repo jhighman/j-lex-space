@@ -133,6 +133,15 @@ needs `PRAGMA foreign_keys = ON` (off by default, per connection). Never
 add an update or delete path: correction here is a new row that a
 derivation prefers, and `immutable.py` attacks every route.
 
+"Enforced by the table" holds for every actor that goes through the API.
+It does not hold against the process that owns the table: in sqlite the
+connection that inserts is the connection that created the triggers, and
+it can drop them. The guard and the actor it constrains are one principal
+here, by construction — see FINDINGS.md, *The guard and the governed
+actor are one principal* (2026-09-26). Do not describe this ledger as
+tamper-proof, and do not add a guard that can only ever report OPEN; the
+sentence in FINDINGS is the record of it.
+
 The vocabulary of acts is **surfaced, not gated**. `Record.ACTS` lists
 them and `void_acts()` reports rows outside it, beside `void_grants()` and
 `void_closures()`. Do not add a `CHECK` on `act` — refusing the row would

@@ -169,6 +169,62 @@ of the design, and is simply no longer true of the code.
   refusal, and a refusal that is a derivation cannot erase its own input.
   Reports and demonstrates rather than guards the framework; run it
   directly.
+
+The next four are the readings in `../ARAPAHOE-READING.md`, built. That
+file read an outside blueprint for a transaction lifecycle — a proposer
+crosses an envelope, a Sentinel checks it against a Canon, the accepted
+transition is appended, and privileged execution is released only after
+the receipt — and asked it six questions. A reading cannot run anything,
+so each question that could be posed in this record's idiom was built
+here and attacked. Each file builds its own small ledger beside
+`sentinel.py` rather than on it, for `decline.py`'s reason: the framework
+has no transaction surface, and inventing one inside the guarded file to
+ask a question about it is the wrong order. What they establish is that
+the shapes are reachable and the costs are real here — not that ARAPAHOE
+has them. ARAPAHOE now has its own repository, and is attacked there.
+
+- **`envelope.py`** — can a transaction envelope keep the refusals it
+  hands out? The blueprint's envelope refuses without writing a row, so
+  an author refused ninety-nine times and accepted on the hundredth looks
+  exactly like an author accepted the first time: `stubborn 1, lucky 1 —
+  indistinguishable`. Translated into this record's idiom — the proposal
+  enters, the *spending* is refused — the same traffic reads `stubborn
+  100 attempts, lucky 1`, and every decline is a row anyone can re-read.
+  A release with no acceptance beneath it is surfaced, not believed.
+- **`weight.py`** — does a transaction pay for what it reaches? The
+  blueprint prices every transition alike; this bench prices stopping by
+  what the heaviest act would cost to promote. Reach is three words here —
+  `query`, `record`, `world` — at a price of zero, one and two distinct
+  outside voices. The attacks are the ones `forgery.py` found once
+  already: one voice repeated nine times is still one voice, an author's
+  endorsement of itself counts for nothing, and a reach an author wrote
+  about itself is surfaced and leaves the transition unpayable, not free.
+- **`canon.py`** — is the Canon the Sentinel read derived, or believed?
+  `door()` moved up a floor and asked the same question. Two Sentinels
+  over one ledger: the believer stores what it saw and is bought by the
+  first forged reading in the Sentinel's name; the deriver re-computes the
+  Canon as it stood at the proposal's own entry and is not. The two rules
+  `reading.py` ended on carry across unchanged — only the first reading
+  counts, and the anchor is the entry, because a Canon furnished after
+  entry with the reading timed to match is the attack the anchor exists
+  to refuse.
+- **`outlives.py`** — what does a released action leave live when the
+  releaser dies? The one reading that came from the signal-boundary papers
+  rather than this bench. A deterministic clock, a world the ledger cannot
+  reach, releases with a lease or without one, and a releaser that dies
+  mid-flight. A reconciler that shares no fate reclaims what expired, and
+  the reclamation is a row; what never had a term is named and still
+  live; a second lease row asking for more changes nothing. The last
+  check is a residue and a defence of the blueprint's own ordering: an
+  effect whose release was never appended cannot be named by anyone, so
+  append-before-release is what makes the rest possible.
+
+All four end on the same residue, stated rather than hidden: the Sentinel,
+the classifier who places reach, and the reconciler are roles, not
+enrolled identities, so a row in their name is indistinguishable from a
+row they wrote. It is the founding-roster question, arriving at three
+more doors.
+
 - **`preregistration-taxonomy.md`** — a protocol, not a script, and not
   yet frozen. Can two independent readers apply the book's own taxonomy to
   the same claims, does attribution change the class they assign, and does
