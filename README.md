@@ -9,6 +9,29 @@ it. This repository is both the book and the workshop it's being written
 in. It is the same relationship that produced her dissertation, continued
 into a new medium.
 
+## New: Basis, a visual deck for music
+
+**[`basis/`](basis/)** turns any track into a body of light you can play.
+Drop in a song and it is analysed in the browser and drawn live; choose one
+of eight lenses (Tide fills with water, Frost grows a crystal, Kiln heats,
+Garden plants a stem in each new key) and play it like a deck, with pads
+that land on the beat. Record the performance and it saves as an MP4.
+
+Start with the sample: **[`basis/samples/Editions.mp3`](basis/samples/Editions.mp3)**
+is the track, and **[`basis/samples/editions-basis.mp4`](basis/samples/editions-basis.mp4)**
+is the take Basis made from it, with every key that was pressed written out
+in [`basis/samples/README.md`](basis/samples/README.md).
+
+```bash
+cd basis
+npm install
+npm run dev      # open the page, then drop samples/Editions.mp3 on it
+```
+
+Unlike the instrument below, Basis has dependencies and a build step. Its
+own [README](basis/README.md) has the keys, the lenses, and how it is put
+together.
+
 ## The instrument, and what it is not
 
 This repository contains a working model of the *Architecture of
