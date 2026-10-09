@@ -1,0 +1,24 @@
+flowchart TB
+  subgraph DIR["Direct — two processes, one OS user"]
+    direction LR
+    H1["harness"] -->|"appends an Accept row"| R1[("record file")]
+    R1 --> V1["write succeeds<br/>replay refuses to believe it<br/>void = 1"]
+    V1 --> T1["T5 · FAIL, expected<br/>a derivation is not custody"]
+  end
+
+  subgraph CUS["Under ./launch — the record is its own principal"]
+    direction LR
+    H2["harness<br/>in a kernel sandbox"] -->|"append"| K{"kernel"}
+    K -->|"Operation not permitted"| X["refused at the wall"]
+    R2[("record<br/>held by the custodian")]
+    K -.->|"never reached"| R2
+    X --> T2["T5 · PASS<br/>and the refusal leaves no row"]
+  end
+
+  DIR ==>|"decision 0005"| CUS
+
+  style V1 fill:#fde2e2,stroke:#b03030
+  style T1 fill:#fde2e2,stroke:#b03030
+  style T2 fill:#e3f0e3,stroke:#2f7a2f
+  style X fill:#fff3d6,stroke:#b8860b
+  style R2 fill:#e3f0e3,stroke:#2f7a2f

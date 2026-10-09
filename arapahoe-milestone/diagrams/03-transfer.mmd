@@ -1,0 +1,27 @@
+flowchart LR
+  subgraph OLD["Already held here"]
+    direction TB
+    D["decline.py"]
+    F["forgery.py · settlers()"]
+    U["unmeasured.py"]
+    R["reading.py"]
+  end
+
+  subgraph NEW["Re-derived one floor up"]
+    direction TB
+    E["envelope.py<br/>a refusal is a row"]
+    W["weight.py<br/>voices, never rows"]
+    C["canon.py<br/>derived at the entry"]
+  end
+
+  D --> E
+  F --> W
+  U --> W
+  R --> C
+
+  OUT["signal-boundary papers"] ==> O["outlives.py<br/>what the world keeps"]
+
+  style OUT fill:#fff3d6,stroke:#b8860b
+  style O fill:#fff3d6,stroke:#b8860b
+  style NEW fill:#f4f8ff,stroke:#3b6ea5
+  style OLD fill:#f7f7f7,stroke:#777

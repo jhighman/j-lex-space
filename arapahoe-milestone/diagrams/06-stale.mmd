@@ -1,0 +1,26 @@
+flowchart TB
+  D["harness/Cargo.toml<br/><b>[dependencies]</b> empty<br/><i>by design: the attacker must not link the engine</i>"]
+
+  subgraph RUN["cargo run -p harness"]
+    direction LR
+    H1["harness<br/>rebuilt"] --> SP1["spawns Command::new(bin)"]
+    S1["sentinel<br/><b>not rebuilt</b><br/>not a dependency"] -.-> BIN[("target/debug/sentinel<br/>whatever it last was")]
+    SP1 --> BIN
+  end
+
+  subgraph BUILD["cargo build &amp;&amp; cargo run -p harness"]
+    direction LR
+    H2["harness rebuilt"] --> SP2["spawns"]
+    S2["sentinel <b>rebuilt</b>"] --> BIN2[("the engine you edited")]
+    SP2 --> BIN2
+  end
+
+  D --> RUN
+  RUN --> X["a mutation in the engine<br/>is never under test<br/>the suite stays green"]
+  BUILD --> Y["Q4 goes red, as it should"]
+
+  style X fill:#fde2e2,stroke:#b03030
+  style Y fill:#e3f0e3,stroke:#2f7a2f
+  style S1 fill:#fde2e2,stroke:#b03030
+  style S2 fill:#e3f0e3,stroke:#2f7a2f
+  style D fill:#fff3d6,stroke:#b8860b

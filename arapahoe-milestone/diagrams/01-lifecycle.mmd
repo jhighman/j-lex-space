@@ -1,0 +1,20 @@
+flowchart LR
+  P["Proposer<br/>zero write authority"]
+  E["Envelope<br/>strips ambient authority"]
+  S{"Sentinel<br/>verify against Canon"}
+  L[("Ledger<br/>append-only")]
+  X["Privileged execution"]
+  F["Freeze<br/>no repair, no guess"]
+
+  P -->|"1 ingest"| E --> S
+  S -->|"valid"| A["accept"] -->|"2 append"| L
+  L -->|"3 receipt"| S
+  S -->|"4 release"| X
+  S -->|"invalid or undecidable"| F
+
+  F -.->|"writes nothing"| G(("the silence"))
+
+  style F fill:#fde2e2,stroke:#b03030
+  style G fill:#fff,stroke:#b03030,stroke-dasharray: 4 4
+  style L fill:#e3f0e3,stroke:#2f7a2f
+  style X fill:#ede3f5,stroke:#6a3d9a

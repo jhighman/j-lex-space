@@ -1,0 +1,24 @@
+flowchart TB
+  subgraph SIL["As drawn — the freeze is silent"]
+    direction LR
+    P1["proposer"] --> S1{"Sentinel"}
+    S1 -->|"accepted"| L1[("ledger")]
+    S1 -->|"declined"| N1["nothing"]
+    L1 --- R1["99 refusals, 0 rows<br/>stubborn and lucky are indistinguishable"]
+  end
+
+  subgraph REC["As built — the row enters, the spending is refused"]
+    direction LR
+    P2["proposer"] -->|"propose"| L2[("ledger")]
+    L2 --> S2{"Sentinel"}
+    S2 -->|"accept"| L2
+    S2 -->|"decline"| L2
+    L2 --- R2["99 declines, 100 proposals<br/>persistence is priced"]
+  end
+
+  SIL ==>|"the correction"| REC
+
+  style N1 fill:#fde2e2,stroke:#b03030
+  style R1 fill:#fde2e2,stroke:#b03030
+  style R2 fill:#e3f0e3,stroke:#2f7a2f
+  style L2 fill:#e3f0e3,stroke:#2f7a2f

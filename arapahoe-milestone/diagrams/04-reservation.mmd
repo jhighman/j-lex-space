@@ -1,0 +1,17 @@
+flowchart TB
+  V["vocabulary.py<br/>parses Python"] --> PY["framework/sentinel.py<br/>+ 4 transaction surfaces"]
+  PY --> OK1(("held"))
+
+  HQ["harness Q1<br/>scans both crates"] --> RS["the Rust target"]
+  RS --> OK2(("held"))
+
+  NEXT["a build in a further language<br/>· the blueprint's own<br/>· ts/ in the bench"] -.-> GAP(("owes its own"))
+
+  DATA["the vocabulary as data,<br/>read by every side"] -.-> UNTAKEN(("untaken"))
+
+  style OK1 fill:#e3f0e3,stroke:#2f7a2f
+  style OK2 fill:#e3f0e3,stroke:#2f7a2f
+  style GAP fill:#fde2e2,stroke:#b03030
+  style NEXT fill:#fde2e2,stroke:#b03030
+  style DATA fill:#fff3d6,stroke:#b8860b
+  style UNTAKEN fill:#fff3d6,stroke:#b8860b
