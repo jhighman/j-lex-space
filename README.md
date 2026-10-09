@@ -107,6 +107,11 @@ back to humanity.
 - `docs/` — the public site, served by GitHub Pages from this branch. One
   hand-written `index.html`, no build step and no dependencies: edit it,
   commit, and it is live.
+- `basis/` — a visual deck for any piece of music, in the browser: eight
+  lenses that each draw the music by a different idea, pads that land on
+  the beat, setlists fitted to a whole track, and takes recorded to MP4.
+  Unlike the rest of this repository it has a build step:
+  `cd basis && npm install && npm run dev`.
 - `tools/` — small, dependency-free helpers. `letterpress.py` turns a
   markdown letter into email-ready HTML: book-like type with every style
   inlined, so it survives pasting into mail clients and blog editors.

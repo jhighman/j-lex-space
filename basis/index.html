@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A visual deck for any track: eight lenses, pads on the beat, setlists, and takes recorded to MP4." />
+    <title>Basis</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <canvas id="stage" aria-label="A visual body driven by the music"></canvas>
+
+    <header class="top">
+      <div class="mark">
+        <h1>Basis</h1>
+        <p>a visual deck for any track · eight lenses · play it on the beat</p>
+      </div>
+      <nav class="lenses" id="lenses" aria-label="Lens"></nav>
+    </header>
+    <p class="note" id="note"></p>
+
+    <section class="empty" id="empty">
+      <div>
+        <p class="big">Drop a track</p>
+        <p>or <button class="link" id="open-2">choose a file</button>. Nothing leaves your machine.</p>
+        <p class="keys"><kbd>space</kbd> play · <kbd>1</kbd>–<kbd>8</kbd> change lens (<kbd>⇧</kbd> to cue for the fader) · <kbd>C</kbd> cut · <kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>F</kbd> pads · <kbd>V</kbd> record · drag the body to scratch</p>
+      </div>
+    </section>
+
+    <aside class="signal" id="signal" hidden>
+      <h2>what it hears</h2>
+      <pre id="signal-text"></pre>
+    </aside>
+
+    <p class="caption" id="caption" hidden aria-live="polite"></p>
+
+    <aside class="setlist" id="set" hidden aria-label="Setlist">
+      <div class="set-head">
+        <h2>Setlist</h2>
+        <button id="set-close" class="x" aria-label="Close">×</button>
+      </div>
+      <p class="set-status" id="set-status">Open a track, and the setlist will be fitted to the whole of it.</p>
+      <div class="set-row">
+        <select id="set-pick" aria-label="Choose a setlist"></select>
+        <button id="set-open" title="Open a setlist (.json)">Open…</button>
+        <button id="set-edit">Edit</button>
+      </div>
+      <p class="set-note" id="set-note"></p>
+      <div id="set-editor" hidden>
+        <textarea id="set-text" spellcheck="false" aria-label="The setlist, as JSON"></textarea>
+        <p class="hint">A scene asks for a moment (the start, the peak, the lull, the brightest, the darkest, a new key, a boundary, next) or a shape (a build, a release, a jump, a drop, a dip, a plateau, getting brighter, getting darker). Never a time.</p>
+        <button id="set-run" class="primary">Fit to track</button>
+      </div>
+      <ul class="set-problems" id="set-problems" hidden></ul>
+      <label class="drive"><input type="checkbox" id="set-drive" /> Let the setlist choose the lens</label>
+      <ol class="set-scenes" id="set-scenes"></ol>
+      <ul class="set-rules" id="set-rules"></ul>
+      <ul class="set-notes" id="set-notes"></ul>
+      <div class="set-row">
+        <button id="set-copy" disabled title="Copy the fitted plan, tied to this track">Copy plan</button>
+        <button id="set-log" disabled title="Copy every choice the fitting made, and why">Copy log</button>
+      </div>
+    </aside>
+
+    <section class="deck" id="deck" aria-label="Decks and pads">
+      <div class="decks">
+        <div class="side" id="deck-a"><span class="lbl">A</span><span class="w" id="deck-a-name">None</span></div>
+        <input type="range" id="fader" min="0" max="1000" value="0" aria-label="Crossfader" />
+        <div class="side" id="deck-b"><span class="lbl">B</span><span class="w" id="deck-b-name">None</span></div>
+      </div>
+      <div class="pads">
+        <button class="pad cut" id="pad-cut" title="Swing the fader to the other deck, on the beat (C)"><kbd>C</kbd>cut</button>
+        <button class="pad" id="pad-burst" title="Throw the motes outward (A)"><kbd>A</kbd>burst</button>
+        <button class="pad" id="pad-reverse" title="Turn the other way (S)"><kbd>S</kbd>reverse</button>
+        <button class="pad" id="pad-fold" title="Mirror the body round its centre (D)"><kbd>D</kbd>fold <span id="fold-n"></span></button>
+        <button class="pad" id="pad-trails" title="Let the last frames linger (F)"><kbd>F</kbd>trails</button>
+        <label class="quant" title="Pads land on the next beat (Q)"><i class="beatdot" id="beatdot"></i><input type="checkbox" id="quantise" checked /> on the beat</label>
+      </div>
+    </section>
+
+    <div class="notice" id="notice" hidden>
+      <p id="notice-text"></p>
+      <textarea id="notice-json" readonly hidden aria-label="JSON to copy"></textarea>
+      <div class="notice-actions">
+        <button id="notice-anyway" hidden>Load anyway</button>
+        <button id="notice-close">Dismiss</button>
+      </div>
+    </div>
+
+    <footer class="transport">
+      <button id="open" title="Open a track">Open</button>
+      <button id="play" class="play" title="Play / pause (space)" disabled aria-label="Play">▶</button>
+      <button id="rec" class="rec" title="Record a take from the top: saves an .mp4 when the track ends, or press again to stop (V)" disabled aria-pressed="false">● Record</button>
+      <span class="time" id="time">0:00</span>
+      <div class="timeline" id="timeline" role="slider" aria-label="Position" tabindex="0">
+        <div class="spans" id="spans"></div>
+        <div class="fill" id="fill"></div>
+        <div class="ticks" id="ticks"></div>
+      </div>
+      <span class="time" id="dur">0:00</span>
+      <button id="mark" title="Mark this moment (M)" disabled>Mark</button>
+      <button id="export" title="Copy the marks, fingerprinted to this track" disabled>Copy marks</button>
+      <button id="import" title="Load marks" disabled>Load marks</button>
+      <button id="set-toggle" title="Fit a setlist to this track (L)">Setlist</button>
+      <button id="signal-toggle" title="Show what the analyser hears (I)">Signal</button>
+    </footer>
+
+    <input type="file" id="file" accept="audio/*" hidden />
+    <input type="file" id="set-file" accept=".json,application/json" hidden />
+    <input type="file" id="marks-file" accept=".json,application/json" hidden />
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
