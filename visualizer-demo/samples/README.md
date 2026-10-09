@@ -5,7 +5,7 @@ Something to work with: one track in, one take out.
 | file | what it is |
 |---|---|
 | `Editions.mp3` | the input: a 5:25 track |
-| `editions-basis.mp4` | the output: a 5:25 take of Basis playing that track, recorded by Basis itself (1280×632, H.264 and AAC) |
+| `editions-visualizer.mp4` | the output: a 5:25 take of the Visualizer Demo playing that track, recorded by the demo itself (1280×632, H.264 and AAC) |
 
 To try it, run `npm run dev`, open the page, and drop `Editions.mp3` on it.
 Press `V` to record your own take; it saves an MP4 when the track ends.

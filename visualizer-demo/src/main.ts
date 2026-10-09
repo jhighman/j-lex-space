@@ -170,7 +170,7 @@ async function load(file: File): Promise<void> {
   decks.a.prev = decks.b.prev = null;
   analyzer?.reset();
   renderTicks();
-  document.title = `${file.name.replace(/\.[^.]+$/, "")} · Basis`;
+  document.title = `${file.name.replace(/\.[^.]+$/, "")} · Visualizer Demo`;
   $("empty").hidden = true;
   if (take) await finishTake();
   for (const b of ["play", "mark", "export", "import", "rec"]) $<HTMLButtonElement>(b).disabled = false;
@@ -269,7 +269,7 @@ async function finishTake(): Promise<void> {
   recBtn.textContent = "● Record";
   audio.pause();
   const blob = await t.stop();
-  const name = `${(trackId?.name ?? "take").replace(/\.[^.]+$/, "")} · basis.${t.format.ext}`;
+  const name = `${(trackId?.name ?? "take").replace(/\.[^.]+$/, "")} · visualizer.${t.format.ext}`;
   await save(name, blob, notify);
 }
 

@@ -1,4 +1,4 @@
-# Basis
+# Visualizer Demo
 
 A visual deck for any piece of music. Drop in a track and it plays as a
 body of light: a spiral of motes inside a shell, with twelve spokes for the
@@ -8,7 +8,7 @@ it like a deck, on the beat, and record the take to MP4.
 Nothing leaves the browser: the track is read from your disk and analysed
 in the page.
 
-`samples/` has a track to start with and a take Basis recorded from it,
+`samples/` has a track to start with and a take the demo recorded from it,
 with the performance written out so it can be played again.
 
 ```sh

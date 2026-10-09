@@ -2,7 +2,7 @@
 // Artifact: the CSS and JS inlined, and no document skeleton, because the
 // host wraps the page in its own <!doctype>/<head>/<body>.
 //
-//   npm run artifact   →  artifact/basis.html
+//   npm run artifact   →  artifact/visualizer-demo.html
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -22,5 +22,5 @@ const body = html.match(/<body>([\s\S]*)<\/body>/)[1].replace(/<script[^>]*src=[
 
 const out = `${title}\n<style>\n${css}\n</style>\n${body.trim()}\n<script type="module">\n${js}\n</script>\n`;
 mkdirSync(join(root, "artifact"), { recursive: true });
-writeFileSync(join(root, "artifact", "basis.html"), out);
-console.log(`artifact/basis.html  ${(out.length / 1024).toFixed(1)} kB`);
+writeFileSync(join(root, "artifact", "visualizer-demo.html"), out);
+console.log(`artifact/visualizer-demo.html  ${(out.length / 1024).toFixed(1)} kB`);

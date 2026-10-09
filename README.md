@@ -9,28 +9,29 @@ it. This repository is both the book and the workshop it's being written
 in. It is the same relationship that produced her dissertation, continued
 into a new medium.
 
-## New: Basis, a visual deck for music
+## New: Visualizer Demo, a visual deck for music
 
-**[`basis/`](basis/)** turns any track into a body of light you can play.
-Drop in a song and it is analysed in the browser and drawn live; choose one
-of eight lenses (Tide fills with water, Frost grows a crystal, Kiln heats,
-Garden plants a stem in each new key) and play it like a deck, with pads
-that land on the beat. Record the performance and it saves as an MP4.
+**[`visualizer-demo/`](visualizer-demo/)** turns any track into a body of
+light you can play. Drop in a song and it is analysed in the browser and
+drawn live; choose one of eight lenses (Tide fills with water, Frost grows a
+crystal, Kiln heats, Garden plants a stem in each new key) and play it like
+a deck, with pads that land on the beat. Record the performance and it
+saves as an MP4.
 
-Start with the sample: **[`basis/samples/Editions.mp3`](basis/samples/Editions.mp3)**
-is the track, and **[`basis/samples/editions-basis.mp4`](basis/samples/editions-basis.mp4)**
-is the take Basis made from it, with every key that was pressed written out
-in [`basis/samples/README.md`](basis/samples/README.md).
+Start with the sample: **[`visualizer-demo/samples/Editions.mp3`](visualizer-demo/samples/Editions.mp3)**
+is the track, and **[`visualizer-demo/samples/editions-visualizer.mp4`](visualizer-demo/samples/editions-visualizer.mp4)**
+is the take the demo made from it, with every key that was pressed written
+out in [`visualizer-demo/samples/README.md`](visualizer-demo/samples/README.md).
 
 ```bash
-cd basis
+cd visualizer-demo
 npm install
 npm run dev      # open the page, then drop samples/Editions.mp3 on it
 ```
 
-Unlike the instrument below, Basis has dependencies and a build step. Its
-own [README](basis/README.md) has the keys, the lenses, and how it is put
-together.
+Unlike the instrument below, the demo has dependencies and a build step.
+Its own [README](visualizer-demo/README.md) has the keys, the lenses, and
+how it is put together.
 
 ## The instrument, and what it is not
 
@@ -130,11 +131,11 @@ back to humanity.
 - `docs/` — the public site, served by GitHub Pages from this branch. One
   hand-written `index.html`, no build step and no dependencies: edit it,
   commit, and it is live.
-- `basis/` — a visual deck for any piece of music, in the browser: eight
-  lenses that each draw the music by a different idea, pads that land on
-  the beat, setlists fitted to a whole track, and takes recorded to MP4.
-  Unlike the rest of this repository it has a build step:
-  `cd basis && npm install && npm run dev`.
+- `visualizer-demo/` — a visual deck for any piece of music, in the
+  browser: eight lenses that each draw the music by a different idea, pads
+  that land on the beat, setlists fitted to a whole track, and takes
+  recorded to MP4. Unlike the rest of this repository it has a build step:
+  `cd visualizer-demo && npm install && npm run dev`.
 - `tools/` — small, dependency-free helpers. `letterpress.py` turns a
   markdown letter into email-ready HTML: book-like type with every style
   inlined, so it survives pasting into mail clients and blog editors.
