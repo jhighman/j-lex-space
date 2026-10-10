@@ -77,6 +77,13 @@ export class Hand {
     this.fader = Math.max(0, Math.min(1, x));
   }
 
+  /** glide the crossfader to a position over some seconds */
+  glideFader(to: number, now: number, seconds: number): void {
+    const x = Math.max(0, Math.min(1, to));
+    if (seconds <= 0) { this.setFader(x); return; }
+    this.glide = { from: this.fader, to: x, start: now, dur: seconds };
+  }
+
   /** which deck is on air: the one the fader is nearer */
   onAir(): "a" | "b" {
     return this.fader < 0.5 ? "a" : "b";

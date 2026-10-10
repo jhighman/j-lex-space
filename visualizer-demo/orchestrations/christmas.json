@@ -1,0 +1,31 @@
+{
+  "title": "Again it's Christmas time",
+  "song": "../samples/Again it's Christmas time.mp3",
+  "cues": [
+    { "at": "0:00", "lens": "tide", "note": "A-flat major, the song gathering: the basin fills" },
+    { "at": "0:09.3", "lens": "garden", "note": "the song steps up: a stem grows" },
+    { "at": "0:20", "lens": "lissajous", "note": "the key change to C major: the interval as a figure" },
+    { "at": "0:20.2", "pad": "burst" },
+    { "at": "0:31", "lens": "pulley", "note": "F minor: Herbert's poem, with sorrow arriving a few lines in" },
+    { "at": "0:43.3", "cue": "sunburst", "note": "beside Pulley, the sunburst is the poem's map" },
+    { "at": "0:44", "blend": "sunburst", "amount": 0.5, "over": 8, "note": "the body and its map at once" },
+    { "at": "0:54.3", "blend": "sunburst", "amount": 1, "over": 6, "note": "into the map" },
+    { "at": "1:13.5", "lens": "pulley", "note": "back to the body for the end of the minor stretch" },
+    { "at": "1:13.6", "pad": "fold" },
+    { "at": "1:21.8", "reset": true, "note": "C minor begins: let everything go" },
+    { "at": "1:21.9", "lens": "ripple", "note": "stones on dark water" },
+    { "at": "1:40", "pad": "trails" },
+    { "at": "1:55", "lens": "kiln", "note": "the long C minor stretch builds heat" },
+    { "at": "2:10", "pad": "burst" },
+    { "at": "2:12", "pad": "burst" },
+    { "at": "2:20", "lens": "swarm" },
+    { "at": "2:20.1", "pad": "fold" },
+    { "at": "2:32.3", "lens": "frost", "note": "quieter, still minor: a crystal grows" },
+    { "at": "2:32.4", "pad": "trails" },
+    { "at": "2:40.5", "lens": "sunburst", "note": "the key change back to A-flat: the song's own map" },
+    { "at": "2:50.5", "lens": "prism", "note": "loud A-flat: the chord split into wedges" },
+    { "at": "3:05", "pad": "reverse" },
+    { "at": "3:16.5", "lens": "garden", "note": "the opening's garden, grown" },
+    { "at": "3:31", "blend": "none", "amount": 1, "over": 8, "note": "the quiet close: the colour drains to the grey body" }
+  ]
+}

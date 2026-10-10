@@ -14,7 +14,12 @@
 
    A setlist, when there is one, sits beside the loop rather than in it:
    the whole track is analysed once, the setlist is fitted to that, and the
-   scene playing now chooses the lens. It never sees a frame. */
+   scene playing now chooses the lens. It never sees a frame.
+
+   Everything a performer does can also be asked for from outside: by URL
+   parameters (?song, ?orchestration, ?lens, ?record, ?signal, ?quantise),
+   by an orchestration that plays its cues as the song reaches them, or by
+   calling `window.visualizer` from a script. */
 
 import { analyse } from "./audio/analyse";
 import { Analyzer } from "./audio/analyzer";
@@ -27,6 +32,7 @@ import { type Context, LENSES, PLAIN, type View, lensKey } from "./lenses";
 import type { PulleyState } from "./lenses/pulley";
 import { mix } from "./lenses/mix";
 import { type MarkSet, type TrackId, identify, parse, verdict } from "./marks/fingerprint";
+import { type Action, type Orchestration, due, read } from "./orchestra/orchestration";
 import { Take, format } from "./record/take";
 import { Body } from "./render/body";
 import { sceneAt } from "./setlist/fit";
@@ -188,7 +194,10 @@ async function load(file: File): Promise<void> {
   $("empty").hidden = true;
   if (take) await finishTake();
   for (const b of ["play", "mark", "export", "import", "rec"]) $<HTMLButtonElement>(b).disabled = false;
-  await toggle(true);
+  orchT = -1;
+  /* a browser will not start sound before the page has been clicked; when
+     the song arrived by URL that may not have happened yet */
+  try { await toggle(true); } catch { notify("Press space or ▶ to start: the browser waits for a click before it plays sound."); }
 
   /* the whole track, once, for the setlist. It may finish after another
      track has been dropped, and then it is about a track nobody is playing */
@@ -201,6 +210,15 @@ async function load(file: File): Promise<void> {
   } catch {
     if (trackId === id) setlist.setAnalysis(null, "This file could not be decoded whole, so no setlist can be fitted to it.");
   }
+}
+
+/* a song by URL: fetched, then loaded exactly as a dropped file is */
+async function loadUrl(url: string): Promise<void> {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`could not fetch ${url} (${r.status})`);
+  const blob = await r.blob();
+  const name = decodeURIComponent(new URL(url, location.href).pathname.split("/").pop() || "song");
+  await load(new File([blob], name, { type: blob.type || "audio/mpeg" }));
 }
 
 async function toggle(forcePlay = false): Promise<void> {
@@ -267,11 +285,20 @@ async function recordTake(): Promise<void> {
   if (!analyzer) analyzer = new Analyzer(audio);
   await analyzer.ctx.resume();
   audio.currentTime = 0;
+  orchT = -1;
   take = new Take(stage, analyzer.stream(), fmt);
   take.start();
   document.body.classList.add("recording");
   recBtn.ariaPressed = "true";
-  await audio.play();
+  try { await audio.play(); }
+  catch {
+    const t = take;
+    take = null;
+    document.body.classList.remove("recording");
+    recBtn.ariaPressed = "false";
+    await t.stop();
+    notify("Click Record to start: the browser waits for a click before it plays sound.");
+  }
 }
 
 async function finishTake(): Promise<void> {
@@ -289,6 +316,92 @@ async function finishTake(): Promise<void> {
 
 recBtn.addEventListener("click", () => recordTake());
 audio.addEventListener("ended", () => { if (take) finishTake(); });
+
+/* ---- orchestration and outside control ----------------------------- */
+
+let orch: Orchestration | null = null;
+/** where in the song the orchestration last looked, so each cue fires once */
+let orchT = -1;
+const lensIx = (id: string) => (id === "none" ? -1 : LENSES.findIndex((l) => l.id === id));
+
+/* one action, as a performer would take it */
+function perform(a: Action): void {
+  const now = performance.now() / 1000;
+  switch (a.kind) {
+    case "lens": switchTo(lensIx(a.lens)); break;
+    case "cue": cue(lensIx(a.lens)); break;
+    case "cut": press("cut"); break;
+    case "pad": press(a.pad); break;
+    case "reset": hand.reset(); break;
+    case "quantise": hand.quantise = quantise.checked = a.on; break;
+    case "blend": {
+      /* toward whichever deck holds the lens, putting it on the other deck first if neither does */
+      const ix = lensIx(a.lens);
+      let side: "a" | "b" | null = decks.a.ix === ix ? "a" : decks.b.ix === ix ? "b" : null;
+      if (!side) { cue(ix); side = offAir(); }
+      setlist.setDriving(false);
+      hand.glideFader(side === "b" ? a.amount : 1 - a.amount, now, a.over);
+      break;
+    }
+  }
+}
+
+async function orchestrate(source: string | unknown): Promise<Orchestration | null> {
+  const base = typeof source === "string" ? new URL(source, location.href) : new URL(location.href);
+  const json = typeof source === "string" ? await (await fetch(base)).json() : source;
+  const r = read(json, LENSES.map((l) => l.id), audio.duration || null);
+  if (!r.ok) { notify(`This orchestration cannot be played: ${r.problems.join("; ")}`); return null; }
+  orch = r.orchestration;
+  orchT = -1;
+  notify(`Orchestration “${orch.title}”: ${orch.cues.length} cues.`);
+  return orch.song ? { ...orch, song: new URL(orch.song, base).href } : orch;
+}
+
+/* ?song=…  ?orchestration=…  ?lens=…  ?record=1  ?signal=1  ?quantise=0 */
+async function fromUrl(): Promise<void> {
+  const p = new URLSearchParams(location.search);
+  if (p.get("signal") === "1") $("signal").hidden = false;
+  if (p.get("quantise") === "0") hand.quantise = quantise.checked = false;
+  let song = p.get("song");
+  const o = p.get("orchestration");
+  if (o) { const played = await orchestrate(o); if (!song && played?.song) song = played.song; }
+  const first = p.get("lens");
+  if (first && lensIx(first) >= -1) { cue(lensIx(first)); hand.setFader(offAir() === "b" ? 1 : 0); renderDecks(); }
+  if (!song) return;
+  await loadUrl(song);
+  if (p.get("record") === "1") {
+    /* wait for the whole-track analysis, so the lenses that use it have it from the first frame */
+    for (let i = 0; i < 60 && !setlist.analysis(); i++) await new Promise((r) => setTimeout(r, 250));
+    await recordTake();
+  }
+}
+
+/* the same, for a script: everything a performer can do, by name */
+const visualizer = {
+  load: loadUrl,
+  orchestrate,
+  play: () => toggle(true),
+  pause: () => audio.pause(),
+  seek: (s: number) => { audio.currentTime = s; },
+  lens: (id: string) => perform({ kind: "lens", lens: id }),
+  cue: (id: string) => perform({ kind: "cue", lens: id }),
+  cut: () => perform({ kind: "cut" }),
+  pad: (pad: Pad) => perform({ kind: "pad", pad: pad as never }),
+  blend: (id: string, amount = 1, over = 2) => perform({ kind: "blend", lens: id, amount, over }),
+  reset: () => perform({ kind: "reset" }),
+  record: recordTake,
+  state: () => ({
+    t: audio.currentTime,
+    duration: audio.duration || null,
+    playing: !audio.paused,
+    recording: !!take,
+    onAir: hand.onAir(),
+    decks: { a: LENSES[decks.a.ix]?.id ?? "none", b: LENSES[decks.b.ix]?.id ?? "none" },
+    fader: hand.view(performance.now() / 1000).fader,
+    orchestration: orch?.title ?? null,
+  }),
+};
+(window as unknown as { visualizer: typeof visualizer }).visualizer = visualizer;
 
 /* ---- marks -------------------------------------------------------- */
 
@@ -387,6 +500,7 @@ function readout(f: Frame, lenses: string, x: number): string {
     lenses,
     `fader   A ${"─".repeat(pos)}●${"─".repeat(8 - pos)} B`,
     ...(plan && setlist.driving() ? [`scene   ${sceneAt(plan, f.t)?.name ?? "—"}`] : []),
+    ...(orch ? [`score   ${orch.title} · next ${orch.cues.find((c) => c.at > f.t) ? clock(orch.cues.find((c) => c.at > f.t)!.at) : "—"}`] : []),
   ].join("\n");
 }
 
@@ -428,6 +542,12 @@ let lastOnAir = hand.onAir();
 function frame(now: number): void {
   const f: Frame = analyzer ? analyzer.read() : silent(audio.currentTime);
   const secs = now / 1000;
+
+  /* the orchestration's cues, each once, as the song reaches it */
+  if (orch && !audio.paused) {
+    for (const c of due(orch.cues, orchT, audio.currentTime)) perform(c.action);
+    orchT = audio.currentTime;
+  } else if (orch && audio.currentTime < orchT) orchT = audio.currentTime;
 
   /* the scene playing now: when it changes, the setlist cues its lens on
      the deck that is off air and cuts to it on the beat */
@@ -491,3 +611,4 @@ function frame(now: number): void {
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
+fromUrl().catch((e) => notify(`Could not start from this address: ${(e as Error).message}`));

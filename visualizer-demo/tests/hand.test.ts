@@ -116,3 +116,17 @@ describe("a take", () => {
     expect(format(() => false)).toBeNull();
   });
 });
+
+describe("a timed blend", () => {
+  it("glides the fader to a position over the seconds asked", () => {
+    const h = new Hand();
+    h.step(beat(1), 0);
+    h.glideFader(0.5, 0, 4);
+    h.step(beat(1), 2);
+    const mid = h.view(2).fader;
+    expect(mid).toBeGreaterThan(0.1);
+    expect(mid).toBeLessThan(0.4);
+    h.step(beat(1), 4);
+    expect(h.view(4).fader).toBe(0.5);
+  });
+});

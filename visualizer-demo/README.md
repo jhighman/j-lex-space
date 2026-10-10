@@ -40,6 +40,65 @@ in its own way, so the same fader position looks different for every
 pair. Pads pressed between beats are armed and fire on the next beat; if
 no beat comes within 0.6 s they fire anyway.
 
+## Orchestrating it
+
+Everything a performer does can be asked for from outside, so a
+performance can be written down, replayed, and recorded without anyone at
+the keys.
+
+**By URL.** The address says what to play and how:
+
+```
+/?orchestration=orchestrations/christmas.json&record=1
+/?song=samples/Editions.mp3&lens=pulley&signal=1
+```
+
+| parameter | |
+|---|---|
+| `song` | the song to load: any path or URL the page can fetch |
+| `orchestration` | a score to perform; it brings its own song |
+| `lens` | the lens on air at the start |
+| `record=1` | record the whole song from the top, and save the MP4 when it ends |
+| `signal=1` | open the signal panel |
+| `quantise=0` | actions land at once instead of on the next beat |
+
+A browser will not start sound until the page has been clicked, so opened
+by hand the page asks for a click first; a test browser started with
+autoplay allowed plays straight away.
+
+**By orchestration.** A JSON score of cues, each a time and one action:
+
+```json
+{
+  "title": "Again it's Christmas time",
+  "song": "../samples/Again it's Christmas time.mp3",
+  "cues": [
+    { "at": "0:00", "lens": "tide" },
+    { "at": "0:31", "lens": "pulley", "note": "F minor" },
+    { "at": "0:43.3", "cue": "sunburst" },
+    { "at": "0:44", "blend": "sunburst", "amount": 0.5, "over": 8 },
+    { "at": "1:13.6", "pad": "fold" },
+    { "at": "3:31", "blend": "none", "over": 8 }
+  ]
+}
+```
+
+Actions are `lens` (switch on the next beat), `cue` (put on the other
+deck), `cut`, `pad` (burst, reverse, fold, trails), `blend` (toward a
+lens's deck, `amount` 0–1 over `over` seconds), `reset` and `quantise`.
+Times are seconds or `m:ss`, in order; an orchestration that names a lens
+or pad that does not exist, or runs out of order, is refused with the
+reasons. `orchestrations/christmas.json` is a full one, written around the
+song's analysed parts and key changes.
+
+**By script.** `window.visualizer` has `load(url)`, `orchestrate(urlOrJson)`,
+`play()`, `pause()`, `seek(seconds)`, `lens(id)`, `cue(id)`, `cut()`,
+`pad(name)`, `blend(id, amount, over)`, `reset()`, `record()` and
+`state()`, which reports the time, what is on each deck, the fader, and
+whether a take is recording.
+
+Takes recorded locally can be kept in `takes/`, which git ignores.
+
 ## Lenses
 
 Each lens keeps its own state and changes it when something happens in the
@@ -150,6 +209,7 @@ setlist/    setlists, fitting, examples
 render/     the canvas
 record/     MP4 takes
 marks/      marks tied to the track they were placed on
+orchestra/  orchestrations: reading, checking, and which cues are due
 ui/         panels and saving
 ```
 

@@ -12,7 +12,7 @@ const walk = (d: string): string[] =>
 const files = walk(SRC).filter((f) => f.endsWith(".ts")).map((f) => ({ path: relative(SRC, f), text: readFileSync(f, "utf8") }));
 
 const AUDIO = /\b(AudioContext|AnalyserNode|getByteFrequencyData|getFloatFrequencyData|createMediaElementSource|HTMLAudioElement)\b/;
-const READERS = ["render/", "lenses/", "law/", "marks/", "setlist/", "hand/", "record/"];
+const READERS = ["render/", "lenses/", "law/", "marks/", "setlist/", "hand/", "record/", "orchestra/"];
 
 describe("one way in for the sound", () => {
   it("found the source", () => expect(files.length).toBeGreaterThan(8));
