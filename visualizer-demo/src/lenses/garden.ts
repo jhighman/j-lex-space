@@ -54,6 +54,7 @@ export const garden: Lens<GardenState> = {
     centre: () => [0, 0],
     ground: () => hue(95, 0.35, 0.05),
     emblem: () => [{ dot: [0, 0, 0.05], v: 0.7 }, { circle: 0.1, v: 0.3 }],
+    rings: () => [],
     words: () => null,
     blendIn: (x, k) => clamp01((x - k * 0.5) * 2),
   }),

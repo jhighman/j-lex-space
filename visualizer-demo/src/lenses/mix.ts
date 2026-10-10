@@ -48,5 +48,10 @@ export function mix(a: View, b: View, x: number): View {
     emblem: () => [],
     blendIn: (t) => t,
     words: () => (wm < 0.5 ? a.words() : b.words()),
+    /* rings fade with their deck's share of the fader */
+    rings: () => [
+      ...a.rings().map((r) => ({ ...r, alpha: (r.alpha ?? 1) * (1 - wm) })),
+      ...b.rings().map((r) => ({ ...r, alpha: (r.alpha ?? 1) * wm })),
+    ],
   };
 }

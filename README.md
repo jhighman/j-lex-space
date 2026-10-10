@@ -13,10 +13,11 @@ into a new medium.
 
 **[`visualizer-demo/`](visualizer-demo/)** turns any track into a body of
 light you can play. Drop in a song and it is analysed in the browser and
-drawn live; choose one of nine lenses (Tide fills with water, Frost grows a
-crystal, Garden plants a stem in each new key, and Pulley reads Herbert's
-*The Pulley* as forces round a centre, from Lex's spec in `specs/herbert/`)
-and play it like a deck, with pads that land on the beat. Record the
+drawn live; choose one of ten lenses (Tide fills with water, Frost grows a
+crystal, Pulley reads Herbert's *The Pulley* as forces round a centre from
+Lex's spec in `specs/herbert/`, and Sunburst maps the song, or the poem
+beside Pulley, as zooming rings) and play it like a deck, with pads that
+land on the beat. Record the
 performance and it saves as an MP4.
 
 Start with a source song: **[`visualizer-demo/samples/Editions.mp3`](visualizer-demo/samples/Editions.mp3)**.
@@ -131,7 +132,7 @@ back to humanity.
   hand-written `index.html`, no build step and no dependencies: edit it,
   commit, and it is live.
 - `visualizer-demo/` — a visual deck for any piece of music, in the
-  browser: nine lenses that each draw the music by a different idea, pads
+  browser: ten lenses that each draw the music by a different idea, pads
   that land on the beat, setlists fitted to a whole track, and takes
   recorded to MP4. Unlike the rest of this repository it has a build step:
   `cd visualizer-demo && npm install && npm run dev`.

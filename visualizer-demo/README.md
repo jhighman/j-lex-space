@@ -22,7 +22,7 @@ npm run artifact   # one self-contained HTML file in artifact/
 | | |
 |---|---|
 | `space` | play / pause |
-| `1`–`9` | switch lens on the next beat; `0` for none. Shift: cue it on the other deck without switching |
+| `1`–`9`, `U` | switch lens on the next beat (`U` is Sunburst); `0` for none. Shift: cue it on the other deck without switching |
 | `C` | cut between the two decks |
 | `A` `S` `D` `F` | pads: burst, reverse, fold, trails |
 | drag the body | grab it and scratch it round; up and down to zoom; double-click to reset (`R`) |
@@ -53,6 +53,7 @@ music. What separates them is what they *do* on a beat and on a key change.
 | Garden | grows the newest stem | plants another | each stem keeps the key it grew in |
 | Prism | turns the spectrum a wedge | swaps fifths and chromatic order | each wedge is its note |
 | Pulley | applies the force of the poem's current verb, and reads on | recolours the world at the rim | gold at the centre, the key at the rim, rose where it strays |
+| Sunburst | lights the bar and part playing | zooms into the part where it happened | parts by key; beside Pulley, verbs by force |
 
 ### Pulley
 
@@ -82,6 +83,27 @@ alternating A-flat major and C minor chords flipped between joy and sorrow
 every few seconds.
 `tests/pulley.test.ts` holds the lens to each of these, one test per
 claim.
+
+### Sunburst
+
+Sunburst draws a tree as rings, the way a partition sunburst does: the root
+in the centre, each level a ring further out, each node an arc as wide as
+its share. Two rings show at once, and the view zooms into a node, easing
+over three quarters of a second. Which tree depends on what is around it:
+
+- **The song**, once the whole track has been analysed: its parts, sized by
+  length and coloured by key, with bars around them, the playing part and
+  bar lit and a needle at the playhead. A key change zooms into the part
+  where it happened and opens its beats; leaving the part zooms back out.
+- **The poem**, when Pulley is on the other deck: stanzas, lines and words,
+  each verb coloured by its force, following the reading into the current
+  stanza. Crossfading between the two decks turns Pulley's body into the
+  map of the poem it is reading.
+- **The harmony**, before any analysis: the twelve notes as wide as they are
+  loud, turning the key to the top on a key change.
+
+The music drives the zoom; clicking the canvas grabs the body as it does
+for every lens.
 
 ## Setlists
 
@@ -116,7 +138,7 @@ order, each asking for a moment or a shape of the music, never a time.
 
 ```
 audio/      the analyser (live) and the whole-track analysis; the only code that touches Web Audio
-lenses/     the nine lenses, the mixer, and the View each one answers
+lenses/     the ten lenses, the mixer, and the View each one answers
 law/        colour and light
 hand/       pads, platter, crossfader
 setlist/    setlists, fitting, examples
@@ -136,7 +158,7 @@ by care:
 - **The lens chooses the colours; loudness only changes brightness.** Every
   lens is played loud and quiet in the tests, and the colours must match.
 - **The hand moves shapes, never colours.**
-- **No two lenses behave alike.** The tests play all nine the same music
+- **No two lenses behave alike.** The tests play all ten the same music
   and require every pair to produce different results.
 - **Times are tied to their track.** Marks and fitted plans carry the
   track's length and SHA-256, and marks from another track are refused.

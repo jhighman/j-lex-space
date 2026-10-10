@@ -272,6 +272,7 @@ export const pulley: Lens<PulleyState> = {
       },
       /* hoisted: it lifts a little, then settles into place */
       blendIn: (x) => clamp01(x - 0.12 * Math.sin(2 * Math.PI * x)),
+      rings: () => [],
       words: () => POEM[s.line],
     };
   },

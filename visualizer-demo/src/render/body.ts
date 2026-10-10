@@ -153,6 +153,42 @@ export class Body {
       }
     }
 
+    /* rings, for a lens that draws them: filled arcs from the top, turning
+       with the body, labelled where a label fits */
+    const rings = u.rings();
+    if (rings.length) {
+      g.save();
+      g.translate(cx, cy);
+      g.rotate(turn);
+      for (const r of rings) {
+        const a0 = r.x0 * TAU - Math.PI / 2 + 0.002, a1 = r.x1 * TAU - Math.PI / 2 - 0.002;
+        if (a1 <= a0) continue;
+        g.beginPath();
+        g.arc(0, 0, r.r1 * R, a0, a1);
+        g.arc(0, 0, r.r0 * R + 1, a1, a0, true);
+        g.closePath();
+        g.fillStyle = css(shade(r.colour, s.lux * r.v), 0.92 * (r.alpha ?? 1));
+        g.fill();
+      }
+      g.font = `11px ui-sans-serif, -apple-system, system-ui, sans-serif`;
+      g.textAlign = "center";
+      g.textBaseline = "middle";
+      for (const r of rings) {
+        if (!r.label) continue;
+        const mid = (r.r0 + r.r1) / 2 * R, width = (r.x1 - r.x0) * TAU * mid;
+        if (width < g.measureText(r.label).width + 10 || (r.alpha ?? 1) < 0.5) continue;
+        const a = ((r.x0 + r.x1) / 2) * TAU - Math.PI / 2;
+        g.save();
+        g.rotate(a);
+        g.translate(mid, 0);
+        if (Math.cos(a + turn) < 0) g.rotate(Math.PI);
+        g.fillStyle = `rgba(10,10,16,${0.8 * (r.alpha ?? 1)})`;
+        g.fillText(r.label, 0, 0);
+        g.restore();
+      }
+      g.restore();
+    }
+
     g.strokeStyle = css(shade(u.colour(1, 0, 0), s.lux), 0.85);
     g.lineWidth = 1.2 + 4 * beat + 3 * hand.burst;
     g.beginPath();
@@ -190,11 +226,18 @@ export class Body {
       g.font = `italic ${size}px Georgia, "Times New Roman", serif`;
       g.textAlign = "center";
       g.textBaseline = "top";
+      /* under the body, but clear of the deck and transport at the bottom,
+         on a dark band so it reads over rings as well as motes */
+      const y = Math.min(cy + R * 1.18 + 14, h - 250);
+      const tw = Math.min(w - 32, g.measureText(this.shown).width);
+      g.fillStyle = css(shade(u.ground(), 1), 0.72 * fade);
+      g.beginPath();
+      g.roundRect(w / 2 - tw / 2 - 14, y - 6, tw + 28, size * 1.5 + 6, 8);
+      g.fill();
       g.fillStyle = css(shade(u.colour(1, 0, 0), Math.max(1, s.lux)), 0.9 * fade);
       g.shadowColor = "rgba(0,0,0,0.85)";
       g.shadowBlur = 12;
-      /* under the body, but clear of the deck and transport at the bottom */
-      g.fillText(this.shown, w / 2, Math.min(cy + R * 1.18 + 14, h - 250), w - 32);
+      g.fillText(this.shown, w / 2, y, w - 32);
       g.shadowBlur = 0;
     }
   }

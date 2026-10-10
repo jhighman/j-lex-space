@@ -65,6 +65,7 @@ export const lissajous: Lens<LissajousState> = {
         { line: [1, 1, -1, 1], v: 0.4 }, { line: [-1, 1, -1, -1], v: 0.4 },
         { line: [-1.08, 0, 1.08, 0], v: 0.25 }, { line: [0, -1.08, 0, 1.08], v: 0.25 },
       ],
+      rings: () => [],
       words: () => null,
       blendIn: (x) => clamp01(0.5 - 0.5 * Math.cos(Math.PI * x)),
     };

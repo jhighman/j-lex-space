@@ -23,7 +23,8 @@ import { type Frame, type Sounding, silent } from "./audio/frame";
 import { keyName } from "./audio/key";
 import { Hand, type Pad } from "./hand/hand";
 import { css, hue, luxOf, shade } from "./law/light";
-import { LENSES, PLAIN, type View } from "./lenses";
+import { type Context, LENSES, PLAIN, type View, lensKey } from "./lenses";
+import type { PulleyState } from "./lenses/pulley";
 import { mix } from "./lenses/mix";
 import { type MarkSet, type TrackId, identify, parse, verdict } from "./marks/fingerprint";
 import { Take, format } from "./record/take";
@@ -63,9 +64,10 @@ const lensNav = $("lenses");
 const TITLES = ["None", ...LENSES.map((l) => l.title)];
 TITLES.forEach((title, i) => {
   const b = document.createElement("button");
-  b.innerHTML = `<kbd>${i}</kbd> `;
+  const k = i ? lensKey(i - 1) : "0";
+  b.innerHTML = `<kbd>${k}</kbd> `;
   b.append(title);
-  b.title = i ? `Switch to ${title} on the next beat (${i}); Shift to cue it for the fader` : "Switch to no lens: the grey body (0)";
+  b.title = i ? `Switch to ${title} on the next beat (${k}); Shift to cue it for the fader` : "Switch to no lens: the grey body (0)";
   b.addEventListener("click", (e) => (e.shiftKey ? cue(i - 1) : switchTo(i - 1)));
   lensNav.append(b);
 });
@@ -104,11 +106,23 @@ function renderDecks(): void {
   $("note").innerHTML = l ? `<strong>${l.title}</strong><br>${l.idea}` : `No lens: the grey body. Choose one with 1–${LENSES.length}.`;
 }
 
-function deckView(d: Deck, f: Frame): { view: View; label: string } {
+/* what a lens may know beyond the frame: the track's parts, and the line
+   Pulley is reading if Pulley is on the other deck */
+function contextFor(side: "a" | "b"): Context {
+  const other = decks[side === "a" ? "b" : "a"];
+  const a = setlist.analysis();
+  const pulleyBeside = LENSES[other.ix]?.id === "pulley" && other.prev;
+  return {
+    parts: a ? a.sections : null,
+    poemLine: pulleyBeside ? (other.prev as PulleyState).line : null,
+  };
+}
+
+function deckView(d: Deck, f: Frame, side: "a" | "b"): { view: View; label: string } {
   const l = LENSES[d.ix];
   if (!l) return { view: PLAIN, label: "none" };
   if (f.muted) return { view: PLAIN, label: "waiting for sound" };
-  const s = l.state(f as Sounding, d.prev);
+  const s = l.state(f as Sounding, d.prev, contextFor(side));
   d.prev = s;
   return { view: l.view(s), label: l.label(s) };
 }
@@ -382,6 +396,7 @@ addEventListener("keydown", (e) => {
   const el = e.target;
   if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement || e.metaKey || e.ctrlKey) return;
   if (e.key === " ") { e.preventDefault(); toggle(); }
+  else if (e.key === "u" || e.key === "U") { const ix = LENSES.findIndex((l) => l.id === "sunburst"); if (e.shiftKey) cue(ix); else switchTo(ix); }
   else if (/^Digit[0-9]$/.test(e.code) || /^[0-9]$/.test(e.key)) {
     /* the physical key, so Shift+number works on any layout; the typed
        digit when a keyboard reports no code */
@@ -409,6 +424,7 @@ addEventListener("resize", () => body.resize());
 let tick = 0;
 let lastT = 0;
 let lastScene: string | null = null;
+let lastOnAir = hand.onAir();
 function frame(now: number): void {
   const f: Frame = analyzer ? analyzer.read() : silent(audio.currentTime);
   const secs = now / 1000;
@@ -425,7 +441,6 @@ function frame(now: number): void {
   setlist.at(scene);
 
   /* the pads that landed on this beat */
-  const wasOn = hand.onAir();
   for (const pad of hand.step(f, secs)) {
     const b = $(`pad-${pad}`);
     b.classList.remove("armed", "landed");
@@ -435,7 +450,7 @@ function frame(now: number): void {
   }
   const played = hand.view(secs);
 
-  const A = deckView(decks.a, f), B = deckView(decks.b, f);
+  const A = deckView(decks.a, f, "a"), B = deckView(decks.b, f, "b");
   const view = mix(A.view, B.view, played.fader);
   const emblems = [
     { marks: A.view.emblem(), colour: A.view.colour(1, 0, 0), alpha: 1 - played.fader },
@@ -446,7 +461,9 @@ function frame(now: number): void {
   const tint = view.colour(1, 0, 0);
 
   if (!fading) fader.value = String(Math.round(played.fader * 1000));
-  if (hand.onAir() !== wasOn) renderDecks();
+  /* whichever way the fader moved — a cut, or a hand on it between frames —
+     the page says which deck is on air */
+  if (hand.onAir() !== lastOnAir) { lastOnAir = hand.onAir(); renderDecks(); }
   $("beatdot").style.opacity = String(f.muted ? 0.15 : 0.15 + 0.85 * f.dynamics.beat);
   $("pad-reverse").classList.toggle("on", played.reverse);
   $("pad-trails").classList.toggle("on", played.trails);

@@ -55,6 +55,7 @@ export const frost: Lens<FrostState> = {
         const a0 = (j / 6) * 2 * Math.PI, a1 = ((j + 1) / 6) * 2 * Math.PI;
         return { line: [Math.cos(a0) * 1.15, Math.sin(a0) * 1.15, Math.cos(a1) * 1.15, Math.sin(a1) * 1.15] as const, v: 0.35 };
       }),
+      rings: () => [],
       words: () => null,
       blendIn: (x, k) => (k <= x * 1.05 ? 1 : 0),
     };

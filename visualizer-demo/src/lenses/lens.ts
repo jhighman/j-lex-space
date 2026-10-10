@@ -55,6 +55,39 @@ export interface View {
   blendIn(x: number, k: number): number;
   /** words to set under the body, if the lens has any */
   words(): string | null;
+  /** filled rings to draw in place of motes, if the lens draws any */
+  rings(): readonly Ring[];
+}
+
+/** a filled arc of a ring: from x0 to x1 (turns, from the top), from radius
+ *  r0 to r1 (fractions of the body), in a colour, lit by v */
+export interface Ring {
+  readonly x0: number;
+  readonly x1: number;
+  readonly r0: number;
+  readonly r1: number;
+  readonly colour: Albedo;
+  readonly v: number;
+  readonly label?: string;
+  /** how much of it shows, for crossfades; 1 if not given */
+  readonly alpha?: number;
+}
+
+/* What a lens may know beyond the frame: plain data, given by the page, so
+   a lens stays a pure function a test can hand literals. */
+export interface Context {
+  /** the whole track as parts, once the analysis has finished */
+  readonly parts?: readonly Part[] | null;
+  /** the line Pulley is reading, when Pulley is on the other deck */
+  readonly poemLine?: number | null;
+}
+
+export interface Part {
+  readonly at: number;
+  readonly until: number;
+  readonly energy: number;
+  readonly tonic: number;
+  readonly minor: boolean;
 }
 
 export interface Lens<S> {
@@ -62,7 +95,7 @@ export interface Lens<S> {
   readonly title: string;
   /** one line on what it does, for the page */
   readonly idea: string;
-  state(f: Sounding, prev: S | null): S;
+  state(f: Sounding, prev: S | null, context?: Context): S;
   view(s: S): View;
   label(s: S): string;
 }
@@ -80,6 +113,7 @@ export const PLAIN: View = Object.freeze({
   emblem: () => [],
   blendIn: (x: number) => x,
   words: () => null,
+  rings: () => [],
 });
 
 /** the golden angle, in turns */

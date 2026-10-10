@@ -14,6 +14,8 @@ const clock = (t: number) => `${Math.floor(t / 60)}:${(t % 60).toFixed(1).padSta
 export interface SetlistPanel {
   setAnalysis(a: Analysis | null, status?: string): void;
   plan(): Plan | null;
+  /** the whole-track analysis, once there is one */
+  analysis(): Analysis | null;
   /** whether the setlist is choosing the lens */
   driving(): boolean;
   setDriving(on: boolean): void;
@@ -157,6 +159,7 @@ export function mountSetlist(
       if (a && plan) notify(`“${plan.setlist}”: ${plan.scenes.filter((p) => p.outcome === "found").length} of ${plan.scenes.length} scenes found.`);
     },
     plan: () => plan,
+    analysis: () => analysis,
     driving: () => drive.checked,
     setDriving(on) { drive.checked = on; if (!on) $("caption").hidden = true; },
     at(scene) {
