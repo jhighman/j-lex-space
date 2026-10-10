@@ -29,6 +29,7 @@ import { type Frame, type Sounding, silent } from "./audio/frame";
 import { keyName } from "./audio/key";
 import { Hand, type Pad } from "./hand/hand";
 import { keyField } from "./audio/key";
+import { type Crumb, drawCaptions } from "./render/captions";
 import { calmOf, css, fieldGround, hue, luxOf, shade } from "./law/light";
 import { type Context, LENSES, PLAIN, type View, lensKey } from "./lenses";
 import type { PulleyState } from "./lenses/pulley";
@@ -328,7 +329,30 @@ let orchT = -1;
 const lensIx = (id: string) => (id === "none" ? -1 : LENSES.findIndex((l) => l.id === id));
 
 /* one action, as a performer would take it */
+/* Captions, when asked for: every call the performance makes, written as
+   the API call that would make it, and the score's note for the moment. */
+let captions = false;
+const crumbs: Crumb[] = [];
+/* a note belongs to the lens it was written for: the one its cue switches
+   or blends to, or the one on air for a pad */
+let note: { text: string; at: number; ix: number } | null = null;
+let explained = { ix: -2, since: 0 };
+const crumb = (call: string) => { crumbs.push({ at: audio.currentTime || 0, call }); if (crumbs.length > 50) crumbs.shift(); };
+const q = (x: string) => JSON.stringify(x);
+function apiCall(a: Action): string {
+  switch (a.kind) {
+    case "lens": return `visualizer.lens(${q(a.lens)})`;
+    case "cue": return `visualizer.cue(${q(a.lens)})`;
+    case "cut": return "visualizer.cut()";
+    case "pad": return `visualizer.pad(${q(a.pad)})`;
+    case "blend": return `visualizer.blend(${q(a.lens)}, ${a.amount}, ${a.over})`;
+    case "reset": return "visualizer.reset()";
+    case "quantise": return `visualizer.quantise(${a.on})`;
+  }
+}
+
 function perform(a: Action): void {
+  crumb(apiCall(a));
   const now = performance.now() / 1000;
   switch (a.kind) {
     case "lens": switchTo(lensIx(a.lens)); break;
@@ -357,14 +381,17 @@ async function orchestrate(source: string | unknown): Promise<Orchestration | nu
   orch = r.orchestration;
   orchT = -1;
   fieldGrounds = orch.ground === "field";
+  captions ||= orch.captions;
   notify(`Orchestration “${orch.title}”: ${orch.cues.length} cues.`);
   return orch.song ? { ...orch, song: new URL(orch.song, base).href } : orch;
 }
 
-/* ?song=…  ?orchestration=…  ?lens=…  ?record=1  ?signal=1  ?quantise=0  ?ground=field */
+/* ?song=…  ?orchestration=…  ?lens=…  ?record=1  ?signal=1  ?quantise=0  ?ground=field  ?captions=1 */
 async function fromUrl(): Promise<void> {
   const p = new URLSearchParams(location.search);
   if (p.get("ground") === "field") fieldGrounds = true;
+  if (p.get("captions") === "1") captions = true;
+  crumb(`GET ${location.pathname}${location.search}`);
   if (p.get("signal") === "1") $("signal").hidden = false;
   if (p.get("quantise") === "0") hand.quantise = quantise.checked = false;
   let song = p.get("song");
@@ -377,6 +404,7 @@ async function fromUrl(): Promise<void> {
   if (p.get("record") === "1") {
     /* wait for the whole-track analysis, so the lenses that use it have it from the first frame */
     for (let i = 0; i < 60 && !setlist.analysis(); i++) await new Promise((r) => setTimeout(r, 250));
+    crumb("visualizer.record()");
     await recordTake();
   }
 }
@@ -394,6 +422,7 @@ const visualizer = {
   pad: (pad: Pad) => perform({ kind: "pad", pad: pad as never }),
   blend: (id: string, amount = 1, over = 2) => perform({ kind: "blend", lens: id, amount, over }),
   reset: () => perform({ kind: "reset" }),
+  quantise: (on: boolean) => perform({ kind: "quantise", on }),
   record: recordTake,
   state: () => ({
     t: audio.currentTime,
@@ -566,7 +595,13 @@ function frame(now: number): void {
 
   /* the orchestration's cues, each once, as the song reaches it */
   if (orch && !audio.paused) {
-    for (const c of due(orch.cues, orchT, audio.currentTime)) perform(c.action);
+    for (const c of due(orch.cues, orchT, audio.currentTime)) {
+      if (c.note) {
+        const a = c.action;
+        note = { text: c.note, at: audio.currentTime, ix: a.kind === "lens" || a.kind === "blend" || a.kind === "cue" ? lensIx(a.lens) : decks[hand.onAir()].ix };
+      }
+      perform(c.action);
+    }
     orchT = audio.currentTime;
   } else if (orch && audio.currentTime < orchT) orchT = audio.currentTime;
 
@@ -608,6 +643,19 @@ function frame(now: number): void {
   const weights = field;
   const drawn = fieldGrounds && weights ? { ...view, ground: () => fieldGround(weights, view.ground().v) } : view;
   body.draw({ frame: f, view: drawn, hand: played, emblems, lux, calm, words: f.muted ? null : view.words() }, secs);
+  if (captions) {
+    const ix = decks[hand.onAir()].ix;
+    if (ix !== explained.ix) explained = { ix, since: secs };
+    const l = LENSES[ix];
+    const t = audio.currentTime;
+    drawCaptions(stage.getContext("2d")!, stage.clientWidth, {
+      crumbs,
+      title: l?.title ?? null,
+      idea: l?.idea ?? null,
+      note: note && note.ix === ix && t - note.at < 14 && t >= note.at ? note.text : null,
+      fresh: secs - explained.since,
+    });
+  }
   const tint = view.colour(1, 0, 0);
 
   if (!fading) fader.value = String(Math.round(played.fader * 1000));

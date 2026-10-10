@@ -61,6 +61,7 @@ the keys.
 | `record=1` | record the whole song from the top, and save the MP4 when it ends |
 | `signal=1` | open the signal panel |
 | `quantise=0` | actions land at once instead of on the next beat |
+| `captions=1` | draw the API calls (top left) and an explainer (top right) on the canvas, so a take carries them |
 | `ground=field` | draw the ground from every key at once instead of from the lens (see *Colour*) |
 
 A browser will not start sound until the page has been clicked, so opened
@@ -89,12 +90,18 @@ deck), `cut`, `pad` (burst, reverse, fold, trails), `blend` (toward a
 lens's deck, `amount` 0–1 over `over` seconds), `reset` and `quantise`.
 Times are seconds or `m:ss`, in order; an orchestration that names a lens
 or pad that does not exist, or runs out of order, is refused with the
-reasons. An optional `"ground": "field"` does what `ground=field` does. `orchestrations/christmas.json` is a full one, written around the
+reasons. An optional `"ground": "field"` does what `ground=field` does, and
+`"captions": true` what `captions=1` does: every call the performance
+makes is written top left as the API call that would make it, and the lens
+on air, what it does and the cue's `note` are written top right.
+`orchestrations/showcase.json` is the one to watch first: every lens in
+turn on the Christmas song, the pads, and Atlas between each, filling in
+the song's timeline as it goes. `orchestrations/christmas.json` is a full one, written around the
 song's analysed parts and key changes.
 
 **By script.** `window.visualizer` has `load(url)`, `orchestrate(urlOrJson)`,
 `play()`, `pause()`, `seek(seconds)`, `lens(id)`, `cue(id)`, `cut()`,
-`pad(name)`, `blend(id, amount, over)`, `reset()`, `record()` and
+`pad(name)`, `blend(id, amount, over)`, `reset()`, `quantise(on)`, `record()` and
 `state()`, which reports the time, what is on each deck, the fader,
 whether a take is recording, the calm, and which ground is drawn.
 

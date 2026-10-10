@@ -81,6 +81,19 @@ describe("playing it", () => {
   });
 });
 
+describe("what an orchestration says about how it is shown", () => {
+  const base = { title: "t", cues: [{ at: 0, lens: "tide" }] };
+  it("draws captions and a field ground only when asked", () => {
+    const plain = read(base, ["tide"], null), asked = read({ ...base, captions: true, ground: "field" }, ["tide"], null);
+    expect(plain.ok && [plain.orchestration.captions, plain.orchestration.ground]).toEqual([false, "lens"]);
+    expect(asked.ok && [asked.orchestration.captions, asked.orchestration.ground]).toEqual([true, "field"]);
+  });
+  it("refuses captions or a ground it cannot read", () => {
+    const r = read({ ...base, captions: "yes", ground: "sky" }, ["tide"], null);
+    expect(r.ok ? [] : r.problems).toEqual(["captions is true or false", "ground is “lens” or “field”, not “sky”"]);
+  });
+});
+
 describe("the orchestrations that ship", () => {
   it("every orchestration reads cleanly against every lens and the song's 3:39.8", async () => {
     const { readFileSync, readdirSync } = await import("node:fs");
