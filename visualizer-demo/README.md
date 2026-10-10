@@ -25,7 +25,7 @@ npm run artifact   # one self-contained HTML file in artifact/
 | | |
 |---|---|
 | `space` | play / pause |
-| `1`–`9`, `U`, `T`, `G` | switch lens on the next beat (`U` is Sunburst, `T` Stern–Brocot, `G` Globe); `0` for none. Shift: cue it on the other deck without switching |
+| `1`–`9`, `U`, `T`, `G`, `B` | switch lens on the next beat (`U` is Sunburst, `T` Stern–Brocot, `G` Globe, `B` Bridson); `0` for none. Shift: cue it on the other deck without switching |
 | `C` | cut between the two decks |
 | `A` `S` `D` `F` | pads: burst, reverse, fold, trails |
 | drag the body | grab it and scratch it round; up and down to zoom; double-click to reset (`R`) |
@@ -118,6 +118,7 @@ music. What separates them is what they *do* on a beat and on a key change.
 | Sunburst | lights the bar and part playing | zooms into the part where it happened | parts by key; beside Pulley, verbs by force |
 | Stern–Brocot | walks one step down the tree toward the sounding interval | re-roots the walk at 1/1 | the note each fraction sounds above the key |
 | Globe | turns the globe a twenty-fourth | moves the sun, sweeping the terminator across | the notes, painted round it in bands |
+| Bridson | grows the points one round outward | clears a patch at the new key and regrows it | each growth keeps its key's colour |
 
 ### Pulley
 
@@ -194,6 +195,20 @@ and the terminator sweeps across. The shading is brightness only, the
 cosine of the angle to the sun with a faint night side, so the key decides
 where the light falls and loudness changes nothing about colour.
 
+### Bridson
+
+Bridson's algorithm for Poisson-disc sampling, run one round per beat:
+each active point tries thirty candidates in the ring between r and 2r and
+keeps those far enough from every other, so the body fills with points
+that are random but evenly spaced, the frontier spreading like lichen. A key
+change clears a patch where the new key sits on the circle of fifths and
+regrows it in the new key's colour, and once the disc is full the loudest
+note clears and regrows smaller patches, so a song leaves a patchwork of
+where its harmony has been. The randomness is seeded and kept in the state,
+so the same music grows the same pattern. `tests/bridson.test.ts` holds the
+sampling to its guarantees: no two points closer than r, none outside the
+disc, and no gap wider than 2r when it finishes.
+
 ## Setlists
 
 A setlist is a performance written before the track is chosen: scenes in
@@ -227,7 +242,7 @@ order, each asking for a moment or a shape of the music, never a time.
 
 ```
 audio/      the analyser (live) and the whole-track analysis; the only code that touches Web Audio
-lenses/     the twelve lenses, the mixer, and the View each one answers
+lenses/     the thirteen lenses, the mixer, and the View each one answers
 law/        colour and light
 hand/       pads, platter, crossfader
 setlist/    setlists, fitting, examples
@@ -248,7 +263,7 @@ by care:
 - **The lens chooses the colours; loudness only changes brightness.** Every
   lens is played loud and quiet in the tests, and the colours must match.
 - **The hand moves shapes, never colours.**
-- **No two lenses behave alike.** The tests play all twelve the same music
+- **No two lenses behave alike.** The tests play all thirteen the same music
   and require every pair to produce different results.
 - **Times are tied to their track.** Marks and fitted plans carry the
   track's length and SHA-256, and marks from another track are refused.
