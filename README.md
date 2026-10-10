@@ -22,9 +22,10 @@ performance and it saves as an MP4.
 
 Start with a source song: **[`visualizer-demo/samples/Editions.mp3`](visualizer-demo/samples/Editions.mp3)**.
 The songs to play it with are kept in [`visualizer-demo/samples/`](visualizer-demo/samples/).
-They are by Jeff Highman and copyright © Jeff Highman, all rights reserved:
-they are here to be heard and played with in the demo, and are not licensed
-for any other use ([`COPYRIGHT.md`](visualizer-demo/samples/COPYRIGHT.md)).
+They are by Jeff Highman. The demo and its songs are copyright © 2026 Jeff
+Highman, all rights reserved: they are here to be read, run, heard and
+played with, and are not licensed for any other use
+([`COPYRIGHT.md`](visualizer-demo/COPYRIGHT.md)).
 
 ```bash
 cd visualizer-demo

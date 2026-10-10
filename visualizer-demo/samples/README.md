@@ -1,7 +1,7 @@
 # Source songs
 
-Songs by Jeff Highman, to play the demo with. Both are copyright © Jeff
-Highman, all rights reserved; see [COPYRIGHT.md](COPYRIGHT.md).
+Songs by Jeff Highman, to play the demo with. Both are copyright © 2026
+Jeff Highman, all rights reserved; see [COPYRIGHT.md](COPYRIGHT.md).
 
 | file | |
 |---|---|

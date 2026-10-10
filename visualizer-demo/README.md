@@ -8,9 +8,10 @@ it like a deck, on the beat, and record the take to MP4.
 Nothing leaves the browser: the track is read from your disk and analysed
 in the page.
 
-`samples/` holds the source songs to play it with, by Jeff Highman and
-copyright © Jeff Highman, all rights reserved; see
-[`samples/COPYRIGHT.md`](samples/COPYRIGHT.md).
+`samples/` holds the source songs to play it with, by Jeff Highman.
+
+Copyright © 2026 Jeff Highman. All rights reserved: the code, the tests and
+the songs. See [`COPYRIGHT.md`](COPYRIGHT.md).
 
 ```sh
 npm install

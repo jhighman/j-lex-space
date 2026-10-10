@@ -65,7 +65,7 @@ stay 8, bestow 12, adore 13, rest 14, keep 16 and 17, lead 19, toss 20.
 
 ## The two songs
 
-Both songs are Jeff's, copyright © Jeff Highman, and are in
+Both songs are Jeff's, copyright © 2026 Jeff Highman, and are in
 `visualizer-demo/samples/` to be heard and played with here; on GitHub,
 open one and choose **View raw**.
 
