@@ -82,11 +82,15 @@ describe("playing it", () => {
 });
 
 describe("the orchestrations that ship", () => {
-  it("the Christmas orchestration reads cleanly against every lens and the song's 3:39.8", async () => {
-    const { readFileSync } = await import("node:fs");
+  it("every orchestration reads cleanly against every lens and the song's 3:39.8", async () => {
+    const { readFileSync, readdirSync } = await import("node:fs");
     const { LENSES: ALL } = await import("../src/lenses");
-    const json = JSON.parse(readFileSync(new URL("../orchestrations/christmas.json", import.meta.url), "utf8"));
-    const r = read(json, ALL.map((l) => l.id), 219.8);
-    expect(r.ok ? [] : r.problems).toEqual([]);
+    const dir = new URL("../orchestrations/", import.meta.url);
+    const files = readdirSync(dir).filter((f) => f.endsWith(".json"));
+    expect(files.length).toBeGreaterThanOrEqual(2);
+    for (const f of files) {
+      const r = read(JSON.parse(readFileSync(new URL(f, dir), "utf8")), ALL.map((l) => l.id), 219.8);
+      expect(r.ok ? [] : r.problems, f).toEqual([]);
+    }
   });
 });

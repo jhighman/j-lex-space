@@ -310,7 +310,8 @@ async function finishTake(): Promise<void> {
   recBtn.textContent = "● Record";
   audio.pause();
   const blob = await t.stop();
-  const name = `${(trackId?.name ?? "take").replace(/\.[^.]+$/, "")} · visualizer.${t.format.ext}`;
+  /* named after the orchestration when one is playing, so two takes of one song do not collide */
+  const name = `${(orch?.title ?? trackId?.name ?? "take").replace(/\.[^.]+$/, "")} · visualizer.${t.format.ext}`;
   await save(name, blob, notify);
 }
 

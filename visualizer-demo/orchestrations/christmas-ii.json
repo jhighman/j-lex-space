@@ -1,0 +1,23 @@
+{
+  "title": "Again it's Christmas time, second take",
+  "song": "../samples/Again it's Christmas time.mp3",
+  "cues": [
+    { "at": "0:00", "lens": "bridson", "note": "lichen grows out from the centre in A-flat" },
+    { "at": "0:20", "pad": "burst", "note": "the key change to C clears a patch and grows it back in C" },
+    { "at": "0:31", "lens": "globe", "note": "F minor: the sun swings to F" },
+    { "at": "0:43.3", "cue": "sternbrocot" },
+    { "at": "0:44", "blend": "sternbrocot", "amount": 0.5, "over": 6, "note": "the globe and the tree of intervals at once" },
+    { "at": "0:54.3", "blend": "sternbrocot", "amount": 1, "over": 4 },
+    { "at": "1:13.5", "lens": "pulley", "note": "the poem, as the minor stretch deepens" },
+    { "at": "1:21.8", "cue": "sunburst" },
+    { "at": "1:22", "blend": "sunburst", "amount": 1, "over": 6, "note": "C minor: the poem's map, beside Pulley" },
+    { "at": "1:50", "lens": "globe", "note": "the sun over C minor" },
+    { "at": "2:05", "pad": "trails" },
+    { "at": "2:20", "lens": "sternbrocot" },
+    { "at": "2:32.3", "lens": "bridson", "note": "the quiet bars; the return to A-flat seeds a new patch" },
+    { "at": "2:32.4", "pad": "trails" },
+    { "at": "2:50.5", "lens": "globe", "note": "loud A-flat, the sun back home" },
+    { "at": "3:16.5", "lens": "sunburst", "note": "the whole song laid out as it ends" },
+    { "at": "3:31", "blend": "none", "amount": 1, "over": 8, "note": "the close" }
+  ]
+}
