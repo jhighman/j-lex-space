@@ -50,11 +50,14 @@ function grid(samples: readonly Sample[], r: number) {
   return { clear, add: (x: number, y: number, i: number) => cells.set(key(x, y), i) };
 }
 
+/** the unit disc, where growth may go unless a lens says otherwise */
+export const DISC_REGION = (x: number, y: number) => x * x + y * y <= 1;
+
 /**
- * One round: every active sample tries its K candidates. Returns the
- * samples after the round and the next seed.
+ * One round: every active sample tries its K candidates, keeping those
+ * inside the region. Returns the samples after the round and the next seed.
  */
-export function round(samples: readonly Sample[], r: number, seed: number, beat: number, limit = Infinity): { samples: Sample[]; seed: number } {
+export function round(samples: readonly Sample[], r: number, seed: number, beat: number, limit = Infinity, inside = DISC_REGION): { samples: Sample[]; seed: number } {
   const out: Sample[] = samples.slice();
   const g = grid(out, r);
   let s = seed, u: number;
@@ -69,7 +72,7 @@ export function round(samples: readonly Sample[], r: number, seed: number, beat:
       /* uniform in the ring's area, between r and 2r */
       const d = Math.sqrt(r * r + u * 3 * r * r);
       const x = p.x + d * Math.cos(a), y = p.y + d * Math.sin(a);
-      if (x * x + y * y > 1 || !g.clear(x, y)) continue;
+      if (!inside(x, y) || !g.clear(x, y)) continue;
       out.push({ x, y, pc: p.pc, born: beat, active: true, parent: i });
       g.add(x, y, out.length - 1);
       placed = true;
@@ -77,6 +80,12 @@ export function round(samples: readonly Sample[], r: number, seed: number, beat:
     if (!placed) out[i] = { ...p, active: false };
   }
   return { samples: out, seed: s };
+}
+
+/** a new growth at a point, if no sample is closer than r; otherwise none */
+export function plant(samples: readonly Sample[], x: number, y: number, r: number, pc: number, beat: number): Sample[] {
+  if (samples.some((s) => Math.hypot(s.x - x, s.y - y) < r)) return samples.slice();
+  return [...samples, { x, y, pc, born: beat, active: true, parent: -1 }];
 }
 
 /** seed a growth at a point, clearing a patch round it first */

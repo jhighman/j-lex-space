@@ -25,7 +25,7 @@ npm run artifact   # one self-contained HTML file in artifact/
 | | |
 |---|---|
 | `space` | play / pause |
-| `1`–`9`, `U`, `T`, `G`, `B` | switch lens on the next beat (`U` is Sunburst, `T` Stern–Brocot, `G` Globe, `B` Bridson); `0` for none. Shift: cue it on the other deck without switching |
+| `1`–`9`, `U`, `T`, `G`, `B`, `O` | switch lens on the next beat (`U` is Sunburst, `T` Stern–Brocot, `G` Globe, `B` Bridson, `O` Atlas); `0` for none. Shift: cue it on the other deck without switching |
 | `C` | cut between the two decks |
 | `A` `S` `D` `F` | pads: burst, reverse, fold, trails |
 | drag the body | grab it and scratch it round; up and down to zoom; double-click to reset (`R`) |
@@ -119,6 +119,7 @@ music. What separates them is what they *do* on a beat and on a key change.
 | Stern–Brocot | walks one step down the tree toward the sounding interval | re-roots the walk at 1/1 | the note each fraction sounds above the key |
 | Globe | turns the globe a twenty-fourth | moves the sun, sweeping the terminator across | the notes, painted round it in bands |
 | Bridson | grows the points one round outward | clears a patch at the new key and regrows it | each growth keeps its key's colour |
+| Atlas | seeds at the needle and grows one round, never past it | ticks the timeline where it was heard | each point the key heard at its place in the song; the parts by their analysed key |
 
 ### Pulley
 
@@ -180,7 +181,8 @@ left and larger to the right, and each fraction has one path of turns down
 from 1/1. Musical intervals are fractions, and consonance roughly follows
 depth: the octave is one turn down, the fifth two, the major third four,
 the minor second fifteen. The lens draws the tree round the body, finds the
-sounding interval in it, and walks one step toward it on each beat, climbing
+sounding interval in it (the loudest note other than the tonic, against the
+tonic, so it reads unison only when nothing else sounds), and walks one step toward it on each beat, climbing
 back to where the paths part when the interval changes. A deep walk does
 not fit on screen, so the view follows it down. `tests/sternbrocot.test.ts`
 checks the tree against what defines it, for every fraction up to 30/30.
@@ -208,6 +210,25 @@ where its harmony has been. The randomness is seeded and kept in the state,
 so the same music grows the same pattern. `tests/bridson.test.ts` holds the
 sampling to its guarantees: no two points closer than r, none outside the
 disc, and no gap wider than 2r when it finishes.
+
+### Atlas
+
+Two lenses in one body: Sunburst's map of the song is the scaffold, and
+Bridson's growth fills it in. The circle is the song's timeline, clockwise
+from the top. The analysed parts sit in a ring round the rim, as wide as
+they are long and in their key's colour, and a needle marks the playhead.
+Each beat plants a seed at the needle in the key being heard and runs one
+round of Bridson's algorithm, held to the part of the circle the song has
+reached. A point takes the key heard at its place on the timeline, so growth
+that spreads on from an old key is recoloured as it crosses into the new
+one. Nothing is cleared. Each key change the live analyser hears leaves a
+tick just inside the ring, so by the end the circle is the song as heard,
+inside the song as analysed, and you can see where the two disagree: on
+*Again it's Christmas time* the live key, which follows the chords, changes
+far more often than the thirteen analysed parts. The lens keeps growing on
+the other deck while another lens is blended over it;
+`orchestrations/christmas-iii.json` uses that. `tests/atlas.test.ts` holds
+it to the needle, the spacing, the colours and the ticks.
 
 ## Setlists
 
@@ -242,7 +263,7 @@ order, each asking for a moment or a shape of the music, never a time.
 
 ```
 audio/      the analyser (live) and the whole-track analysis; the only code that touches Web Audio
-lenses/     the thirteen lenses, the mixer, and the View each one answers
+lenses/     the fourteen lenses, the mixer, and the View each one answers
 law/        colour and light
 hand/       pads, platter, crossfader
 setlist/    setlists, fitting, examples
@@ -263,7 +284,7 @@ by care:
 - **The lens chooses the colours; loudness only changes brightness.** Every
   lens is played loud and quiet in the tests, and the colours must match.
 - **The hand moves shapes, never colours.**
-- **No two lenses behave alike.** The tests play all thirteen the same music
+- **No two lenses behave alike.** The tests play all fourteen the same music
   and require every pair to produce different results.
 - **Times are tied to their track.** Marks and fitted plans carry the
   track's length and SHA-256, and marks from another track are refused.

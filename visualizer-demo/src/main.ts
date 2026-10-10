@@ -511,7 +511,7 @@ addEventListener("keydown", (e) => {
   const el = e.target;
   if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement || e.metaKey || e.ctrlKey) return;
   if (e.key === " ") { e.preventDefault(); toggle(); }
-  else if (/^[uUtTgGbB]$/.test(e.key)) {
+  else if (/^[uUtTgGbBoO]$/.test(e.key)) {
     const ix = LENSES.findIndex((_, j) => lensKey(j) === e.key.toUpperCase());
     if (ix >= 0) { if (e.shiftKey) cue(ix); else switchTo(ix); }
   }
