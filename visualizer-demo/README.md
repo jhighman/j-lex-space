@@ -74,7 +74,12 @@ body, and each of its verbs acts on the body from its line until the next:
   released. Locally disruptive, globally restorative.
 
 A major key is joy, radiating symmetrically and never past the rim; a minor
-key is sorrow, drawn inward and tied to the centre by tension cords.
+key is sorrow, drawn inward and tied to the centre by tension cords. The
+arc is a mood, not a reaction: it follows how minor the music has been over
+the last few lines, changes only at the end of a line, and holds for at
+least two. The live key follows the chords, and without that memory a song
+alternating A-flat major and C minor chords flipped between joy and sorrow
+every few seconds.
 `tests/pulley.test.ts` holds the lens to each of these, one test per
 claim.
 

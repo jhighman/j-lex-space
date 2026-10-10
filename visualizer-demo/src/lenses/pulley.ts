@@ -25,6 +25,21 @@
                  in a major key (joy) and dark in a minor one (sorrow). A key
                  change recolours the world and leaves the centre, gold,
                  exactly as it was.
+     the arc     joy or sorrow follows how minor the music has been over
+                 the last four lines or so, and changes only with
+                 conviction: to sorrow when that passes 65%, back to joy
+                 below 35%, only at the end of a line, and never again
+                 within two lines of the last change.
+
+   The arc has a memory because the live key follows the chords. On a track
+   that alternates A-flat major and C minor chords — two triads with two
+   notes in common — the live key alternated with them, and Pulley flipped
+   between joy and sorrow every four to eight seconds for two minutes,
+   turning the cords and the symmetry on and off. Deciding once a line was
+   not enough, because successive lines really did lean different ways, and
+   a shorter memory still turned twice in four seconds. An alternation that
+   is half minor now leaves the arc where it is; a passage that stays minor
+   turns it to sorrow about four lines in, and it stays.
 
    A key change does not move the reading. It once turned the poem to its
    next stanza, and on a real track the live key wavered often enough that
@@ -79,6 +94,13 @@ export const FORCES: Readonly<Record<string, Force>> = {
 
 export const LINE_BEATS = 8;
 
+/* the arc's memory, in beats, and the thresholds it must cross */
+export const MEMORY = 32;
+export const TO_SORROW = 0.65;
+export const TO_JOY = 0.35;
+/** lines the arc holds after it changes */
+export const HOLD_LINES = 2;
+
 /* Which verb each line carries, found in the text rather than typed in.
    "Rest in the bottom lay" is the noun, the thing God holds back; the verb
    is "rest in Nature", three lines later, so a line counts only where the
@@ -120,6 +142,10 @@ export interface PulleyState {
   /** local disruption, 1 on a toss and settling after */
   readonly shake: number;
   readonly joy: boolean;
+  /** how minor the music has been lately, 0..1, remembered over about MEMORY beats */
+  readonly minorness: number;
+  /** lines since the arc last changed */
+  readonly held: number;
   /** the key's pitch class: the colour of the world at the rim */
   readonly key: number;
 }
@@ -131,7 +157,9 @@ export const pulley: Lens<PulleyState> = {
   idea: "Herbert's “The Pulley” as forces round a centre: each verb pushes, pulls, holds or tosses the body home.",
   state(f, prev) {
     const t = ticks(f, prev?.seen ?? null);
-    const joy = !f.harmony.minor;
+    let joy = prev ? prev.joy : !f.harmony.minor;
+    let minorness = prev?.minorness ?? (f.harmony.minor ? 1 : 0);
+    let held = prev?.held ?? HOLD_LINES;
     const key = f.harmony.tonic;
     let line = prev?.line ?? 0;
     let onLine = prev?.onLine ?? 0;
@@ -163,10 +191,19 @@ export const pulley: Lens<PulleyState> = {
       if (force !== "stabilizing") spread += joy ? 0.01 : -0.015;
       spread = Math.max(MIN_SPREAD, Math.min(joy ? 1 : 0.9, spread));
 
+      minorness += ((f.harmony.minor ? 1 : 0) - minorness) / MEMORY;
       onLine++;
-      if (onLine >= LINE_BEATS) { onLine = 0; line = (line + 1) % POEM.length; }
+      if (onLine >= LINE_BEATS) {
+        held++;
+        if (held >= HOLD_LINES) {
+          if (joy && minorness > TO_SORROW) { joy = false; held = 0; }
+          else if (!joy && minorness < TO_JOY) { joy = true; held = 0; }
+        }
+        onLine = 0;
+        line = (line + 1) % POEM.length;
+      }
     }
-    return { seen: seen(f), line, onLine, spread, drift, falseRest, potential, shake, joy, key };
+    return { seen: seen(f), line, onLine, spread, drift, falseRest, potential, shake, joy, minorness, held, key };
   },
   view: (s) => {
     const verb = verbAt(s.line);
@@ -227,7 +264,7 @@ export const pulley: Lens<PulleyState> = {
           for (let j = 0; j < 12; j++) {
             /* sorrow's tension cords, tied to the fulcrum */
             const a = (j / 12) * 2 * Math.PI;
-            marks.push({ line: [0, 0, Math.cos(a) * 0.95 * s.spread, Math.sin(a) * 0.95 * s.spread], v: 0.6 });
+            marks.push({ line: [0, 0, Math.cos(a) * 0.95 * s.spread, Math.sin(a) * 0.95 * s.spread], v: 0.9 });
           }
         if (s.falseRest > 0.05) marks.push({ dot: [FALSE_CENTRE[0], FALSE_CENTRE[1], 0.045], v: s.falseRest });
         if (driftAmount > 0.05) marks.push({ dot: [WORLD[0], WORLD[1], 0.035], v: driftAmount });

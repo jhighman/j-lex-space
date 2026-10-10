@@ -143,6 +143,46 @@ describe("the emotional arcs", () => {
     expect(cords.length).toBe(12);
   });
 
+  /** the arc at every beat, for a run of beats whose mode is given */
+  const arcs = (minorAt: (b: number) => boolean, beats: number) => {
+    let s: PulleyState | null = null;
+    const out: boolean[] = [];
+    for (let b = 0; b < beats; b++) { s = pulley.state(at(b, { minor: minorAt(b) }), s); out.push(s.joy); }
+    return out;
+  };
+  const changes = (xs: boolean[]) => xs.filter((x, i) => i > 0 && x !== xs[i - 1]).length;
+
+  it("turns to sorrow when the music stays minor, and only at the end of a line", () => {
+    const a = arcs((b) => b >= LINE_BEATS * 2, LINE_BEATS * 8);
+    const turn = a.indexOf(false);
+    expect(turn).toBeGreaterThan(LINE_BEATS * 2);
+    /* lines end on beats 8, 16, 24…: the first frame is not a beat */
+    expect(turn % LINE_BEATS).toBe(0);
+    expect(a.slice(turn).every((x) => !x)).toBe(true);
+  });
+
+  it("holds its arc while the key alternates half and half, chord by chord", () => {
+    /* major and minor alternating every four beats, as an A-flat / C minor vamp did */
+    expect(changes(arcs((b) => Math.floor(b / 4) % 2 === 1, LINE_BEATS * 20))).toBe(0);
+    /* and every line */
+    expect(changes(arcs((b) => Math.floor(b / LINE_BEATS) % 2 === 1, LINE_BEATS * 20))).toBe(0);
+  });
+
+  it("holds a change for at least two lines", () => {
+    const a = arcs((b) => Math.floor(b / (LINE_BEATS * 5)) % 2 === 0, LINE_BEATS * 40);
+    let run = 0;
+    for (let i = 1; i < a.length; i++) {
+      if (a[i] !== a[i - 1]) { if (run) expect(run).toBeGreaterThanOrEqual(LINE_BEATS * 2); run = 0; }
+      run++;
+    }
+  });
+
+  it("comes back to joy when the music stays major again", () => {
+    const a = arcs((b) => b < LINE_BEATS * 6, LINE_BEATS * 16);
+    expect(a[LINE_BEATS * 6]).toBe(false);
+    expect(a[a.length - 1]).toBe(true);
+  });
+
   it("a key change recolours the world at the rim, and leaves the centre and the reading alone", () => {
     const s = onLine(2, 1);
     const last = s[s.length - 1];
