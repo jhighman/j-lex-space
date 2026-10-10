@@ -64,6 +64,7 @@ button.link { border: 0; padding: 0; text-decoration: underline; color: var(--ti
   letter-spacing: 0.02em;
 }
 .mark p { margin: 2px 0 0; color: var(--ink-dim); font-size: 12px; }
+.mark .rights { font-size: 11px; opacity: 0.7; }
 
 .lenses { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
 .lenses button { padding: 5px 12px; font-size: 13px; background: var(--panel); backdrop-filter: blur(8px); }
