@@ -16,13 +16,11 @@ light you can play. Drop in a song and it is analysed in the browser and
 drawn live; choose one of nine lenses (Tide fills with water, Frost grows a
 crystal, Garden plants a stem in each new key, and Pulley reads Herbert's
 *The Pulley* as forces round a centre, from Lex's spec in `specs/herbert/`)
-and play it like a deck, with pads that land on the beat. Record the performance and it
-saves as an MP4.
+and play it like a deck, with pads that land on the beat. Record the
+performance and it saves as an MP4.
 
-Start with the sample: **[`visualizer-demo/samples/Editions.mp3`](visualizer-demo/samples/Editions.mp3)**
-is the track, and **[`visualizer-demo/samples/editions-visualizer.mp4`](visualizer-demo/samples/editions-visualizer.mp4)**
-is the take the demo made from it, with every key that was pressed written
-out in [`visualizer-demo/samples/README.md`](visualizer-demo/samples/README.md).
+Start with a source song: **[`visualizer-demo/samples/Editions.mp3`](visualizer-demo/samples/Editions.mp3)**.
+The songs to play it with are kept in [`visualizer-demo/samples/`](visualizer-demo/samples/).
 
 ```bash
 cd visualizer-demo

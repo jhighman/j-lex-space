@@ -8,8 +8,7 @@ it like a deck, on the beat, and record the take to MP4.
 Nothing leaves the browser: the track is read from your disk and analysed
 in the page.
 
-`samples/` has a track to start with and a take the demo recorded from it,
-with the performance written out so it can be played again.
+`samples/` holds the source songs to play it with.
 
 ```sh
 npm install
