@@ -82,7 +82,9 @@ least two. The live key follows the chords, and without that memory a song
 alternating A-flat major and C minor chords flipped between joy and sorrow
 every few seconds.
 `tests/pulley.test.ts` holds the lens to each of these, one test per
-claim.
+claim. [`specs/herbert/visualizer-notes.md`](../specs/herbert/visualizer-notes.md)
+says how to play it against the spec, what the two source songs showed, and
+the questions building it raised.
 
 ### Sunburst
 
