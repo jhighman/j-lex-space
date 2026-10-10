@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="A visual deck for any track: eight lenses, pads on the beat, setlists, and takes recorded to MP4." />
+    <meta name="description" content="A visual deck for any track: nine lenses, pads on the beat, setlists, and takes recorded to MP4." />
     <title>Visualizer Demo</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
@@ -13,11 +13,13 @@
     <header class="top">
       <div class="mark">
         <h1>Visualizer Demo</h1>
-        <p>a visual deck for any track · eight lenses · play it on the beat</p>
+        <p>a visual deck for any track · nine lenses · play it on the beat</p>
       </div>
-      <nav class="lenses" id="lenses" aria-label="Lens"></nav>
+      <div class="pick">
+        <nav class="lenses" id="lenses" aria-label="Lens"></nav>
+        <p class="note" id="note"></p>
+      </div>
     </header>
-    <p class="note" id="note"></p>
 
     <section class="empty" id="empty">
       <div>

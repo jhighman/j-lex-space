@@ -442,7 +442,7 @@ function frame(now: number): void {
     { marks: B.view.emblem(), colour: B.view.colour(1, 0, 0), alpha: played.fader },
   ];
   const lux = luxOf(f.muted ? null : f.dynamics);
-  body.draw({ frame: f, view, hand: played, emblems, lux }, secs);
+  body.draw({ frame: f, view, hand: played, emblems, lux, words: f.muted ? null : view.words() }, secs);
   const tint = view.colour(1, 0, 0);
 
   if (!fading) fader.value = String(Math.round(played.fader * 1000));

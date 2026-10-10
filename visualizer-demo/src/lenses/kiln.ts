@@ -59,6 +59,7 @@ export const kiln: Lens<KilnState> = {
       { arc: [1.2, 0.62, 0.88], v: 0.3 },
       { arc: [1.2, 0.62, 0.62 + 0.26 * s.heat], v: 1 },
     ],
+    words: () => null,
     blendIn: (x) => clamp01(Math.pow(x, 0.7)),
   }),
   label: (s) => `${Math.round(700 + s.heat * 5800)} K`,

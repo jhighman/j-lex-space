@@ -58,6 +58,7 @@ export const prism: Lens<PrismState> = {
         const a = (e + s.turns / 12) * 2 * Math.PI;
         return { line: [Math.cos(a) * 0.1, Math.sin(a) * 0.1, Math.cos(a) * 1.15, Math.sin(a) * 1.15] as const, v: 0.3 };
       }),
+      words: () => null,
       blendIn: (x) => (x >= 1 ? 1 : steps(x - 1 / 24, 12)),
     };
   },

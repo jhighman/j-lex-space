@@ -1,0 +1,169 @@
+/* The Pulley lens, held to Lex's spec (specs/herbert/semantic_forces.md),
+   one claim at a time. */
+
+import { describe, expect, it } from "vitest";
+import { type Sounding, sounding } from "../src/audio/frame";
+import { toXY } from "../src/lenses/lens";
+import { FALSE_CENTRE, FORCES, LINE_BEATS, POEM, type PulleyState, VERB_ON_LINE, WORLD, pulley, verbAt } from "../src/lenses/pulley";
+
+const at = (beats: number, o: { t?: number; minor?: boolean; tonic?: number } = {}): Sounding => sounding({
+  t: o.t ?? beats * 0.5,
+  dynamics: { energy: 0.5, beat: 0, flux: 0.3, bright: 0.4 },
+  harmony: { chroma: Array(12).fill(0.3), tonic: o.tonic ?? 0, minor: o.minor ?? false },
+  rhythm: { beats, phase: 0.2, bpm: 120 },
+});
+
+/** play from the start of a line until n beats into it */
+function onLine(line: number, n: number, o: { minor?: boolean } = {}): PulleyState[] {
+  const start = line * LINE_BEATS;
+  let s: PulleyState | null = null;
+  const out: PulleyState[] = [];
+  for (let b = 0; b <= start + n; b++) { s = pulley.state(at(b, o), s); out.push(s); }
+  return out.slice(start);
+}
+
+/** where mote i actually is, in the body's coordinates, centre included */
+function where(s: PulleyState, i: number): [number, number] {
+  const v = pulley.view(s);
+  const k = 0.94 * Math.sqrt(i / 400), a = i * 0.381966;
+  const p = v.place(k, a, i);
+  const [x, y] = toXY(p.k, p.a);
+  const [cx, cy] = v.centre();
+  return [x + cx, y + cy];
+}
+const meanDistance = (s: PulleyState) => {
+  let d = 0;
+  for (let i = 0; i < 400; i++) d += Math.hypot(...where(s, i));
+  return d / 400;
+};
+
+describe("the poem and its verbs", () => {
+  it("carries the twenty lines of the poem, and the eleven verbs of the spec", () => {
+    expect(POEM).toHaveLength(20);
+    expect(Object.keys(FORCES).sort()).toEqual(["adore", "bestow", "contract", "dispersed", "flowed", "keep", "lead", "pour", "rest", "stay", "toss"]);
+  });
+
+  it("finds each verb on its line in the text, and reads 'Rest in the bottom lay' as the noun", () => {
+    const found = VERB_ON_LINE.map((v, i) => (v ? `${i + 1}:${v}` : null)).filter(Boolean);
+    expect(found).toEqual(["3:pour", "4:dispersed", "5:contract", "7:flowed", "8:stay", "12:bestow", "13:adore", "14:rest", "16:keep", "17:keep", "19:lead", "20:toss"]);
+  });
+
+  it("classifies the forces as the spec does", () => {
+    for (const v of ["pour", "dispersed", "flowed", "bestow"]) expect(FORCES[v]).toBe("centrifugal");
+    for (const v of ["contract", "lead"]) expect(FORCES[v]).toBe("centripetal");
+    expect(FORCES.stay).toBe("stabilizing");
+    expect(FORCES.keep).toBe("containment");
+    expect(FORCES.adore).toBe("false attraction");
+    expect(FORCES.rest).toBe("competing equilibrium");
+  });
+
+  it("keeps a verb in force until the next one, and has none before the first", () => {
+    expect(verbAt(0)).toBeNull();
+    expect(verbAt(5)).toBe("contract");
+    expect(verbAt(9)).toBe("stay");
+  });
+});
+
+describe("each force does what the spec says", () => {
+  it("pour expands the body outward", () => {
+    const s = onLine(2, LINE_BEATS - 1);
+    expect(s[s.length - 1].spread).toBeGreaterThan(s[0].spread);
+  });
+
+  it("contract draws it inward", () => {
+    const s = onLine(4, LINE_BEATS - 1);
+    expect(s[s.length - 1].spread).toBeLessThan(s[0].spread);
+  });
+
+  it("stay arrests everything: nothing moves for the whole line", () => {
+    const s = onLine(7, LINE_BEATS - 1);
+    const last = s[s.length - 1];
+    expect(last.spread).toBe(s[0].spread);
+    expect(last.drift).toEqual(s[0].drift);
+  });
+
+  it("keep holds energy without moving the body", () => {
+    const s = onLine(15, LINE_BEATS - 1);
+    const last = s[s.length - 1];
+    expect(last.potential).toBeGreaterThan(s[0].potential);
+  });
+
+  it("adore pulls the whole body off its true centre, toward the world", () => {
+    const s = onLine(12, LINE_BEATS - 1);
+    const d = (x: PulleyState) => Math.hypot(x.drift[0] - WORLD[0], x.drift[1] - WORLD[1]);
+    expect(d(s[s.length - 1])).toBeLessThan(d(s[0]));
+  });
+
+  it("rest sets up a false centre that half the body settles round", () => {
+    const s = onLine(13, LINE_BEATS - 1);
+    const last = s[s.length - 1];
+    expect(last.falseRest).toBeGreaterThan(0.5);
+    const [x, y] = where(last, 401);
+    expect(Math.hypot(x - FALSE_CENTRE[0], y - FALSE_CENTRE[1])).toBeLessThan(Math.hypot(x, y));
+  });
+});
+
+describe("the key invariant: toss is locally disruptive and globally restorative", () => {
+  const before = onLine(19, 0)[0];
+  const tossed = onLine(19, 2);
+  const after = tossed[tossed.length - 1];
+
+  it("throws every mote about: positions jump between moments", () => {
+    const jump = (s: PulleyState) => {
+      const later = { ...s, seen: { ...s.seen, t: s.seen.t + 0.05 } };
+      let d = 0;
+      for (let i = 0; i < 200; i++) { const [a, b] = where(s, i), [c, e] = where(later, i); d += Math.hypot(a - c, b - e); }
+      return d / 200;
+    };
+    expect(after.shake).toBe(1);
+    /* at least three times the trembling of the energy kept before it */
+    expect(jump(after)).toBeGreaterThan(jump(before) * 3);
+  });
+
+  it("and brings the body home: nearer the true centre, the false one and the world let go, the kept energy released", () => {
+    const calm = (s: PulleyState) => ({ ...s, shake: 0 });
+    expect(meanDistance(calm(after))).toBeLessThan(meanDistance(calm(before)));
+    expect(Math.hypot(...after.drift)).toBeLessThan(Math.hypot(...before.drift) + 1e-9);
+    expect(after.falseRest).toBeLessThan(before.falseRest + 1e-9);
+    expect(after.potential).toBeLessThan(before.potential);
+  });
+});
+
+describe("the emotional arcs", () => {
+  it("joy radiates outward without coming away from the centre", () => {
+    const s = onLine(6, LINE_BEATS * 6);
+    for (const x of s) expect(x.spread).toBeLessThanOrEqual(1);
+    expect(pulley.view(s[0]).folds(1)).toBe(2);
+  });
+
+  it("sorrow draws inward, tied to the fulcrum by tension cords", () => {
+    const joy = onLine(5, 4)[4], sorrow = onLine(5, 4, { minor: true })[4];
+    expect(sorrow.spread).toBeLessThan(joy.spread);
+    const cords = pulley.view(sorrow).emblem().filter((m) => "line" in m && m.line[0] === 0 && m.line[1] === 0 && m.line[3] !== -1.28);
+    expect(cords.length).toBe(12);
+  });
+
+  it("a key change recolours the world at the rim, and leaves the centre and the reading alone", () => {
+    const s = onLine(2, 1);
+    const last = s[s.length - 1];
+    const moved = pulley.state(at(18, { tonic: 7 }), last);
+    expect(moved.line).toBe(last.line);
+    const [a, b] = [pulley.view(last), pulley.view(moved)];
+    expect(b.colour(0, 0, 0)).toEqual(a.colour(0, 0, 0));
+    expect(b.colour(1, 0, 0).h).not.toBe(a.colour(1, 0, 0).h);
+  });
+
+  it("reads the poem in order, whatever the key does", () => {
+    let s: PulleyState | null = null;
+    const lines: number[] = [];
+    for (let b = 0; b < LINE_BEATS * 20; b++) {
+      s = pulley.state(at(b, { tonic: (b * 7) % 12, minor: b % 3 === 0 }), s);
+      if (!lines.length || lines[lines.length - 1] !== s.line) lines.push(s.line);
+    }
+    expect(lines).toEqual(Array.from({ length: 20 }, (_, i) => i));
+  });
+
+  it("sets the line being read under the body", () => {
+    expect(pulley.view(onLine(19, 0)[0]).words()).toBe("May toss him to my breast.”");
+  });
+});

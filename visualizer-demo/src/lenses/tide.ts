@@ -63,6 +63,7 @@ export const tide: Lens<TideState> = {
         ...Array.from({ length: 11 }, (_, j) => ({ line: [1.26, -1 + j * 0.2, 1.34, -1 + j * 0.2] as const, v: 0.3 })),
         { dot: [1.3, surface, 0.04], v: 1 },
       ],
+      words: () => null,
       blendIn: (x) => clamp01(x * x * (3 - 2 * x)),
     };
   },

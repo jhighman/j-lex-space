@@ -53,6 +53,8 @@ export interface View {
   /** how this lens fades in: x is the crossfader's progress toward it, k a
    *  mote's radius; returns that mote's progress */
   blendIn(x: number, k: number): number;
+  /** words to set under the body, if the lens has any */
+  words(): string | null;
 }
 
 export interface Lens<S> {
@@ -77,6 +79,7 @@ export const PLAIN: View = Object.freeze({
   ground: () => GREY_GROUND,
   emblem: () => [],
   blendIn: (x: number) => x,
+  words: () => null,
 });
 
 /** the golden angle, in turns */

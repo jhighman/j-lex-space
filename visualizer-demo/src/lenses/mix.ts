@@ -47,5 +47,6 @@ export function mix(a: View, b: View, x: number): View {
     /* the emblems are drawn by the body, each at its own deck's share */
     emblem: () => [],
     blendIn: (t) => t,
+    words: () => (wm < 0.5 ? a.words() : b.words()),
   };
 }

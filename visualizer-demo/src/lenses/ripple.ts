@@ -66,6 +66,7 @@ export const ripple: Lens<RippleState> = {
       centre: () => [0, 0],
       ground: () => hue(200, 0.45, 0.05),
       emblem: () => [{ circle: 1.12, v: 0.35 }, ...s.drops.map((d) => ({ dot: [d.x, d.y, 0.025] as const, v: 0.9 }))],
+      words: () => null,
       blendIn: (x, k) => clamp01(x + 0.18 * Math.sin(k * 40) * x * (1 - x) * 4),
     };
   },

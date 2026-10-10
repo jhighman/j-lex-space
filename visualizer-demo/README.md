@@ -23,7 +23,7 @@ npm run artifact   # one self-contained HTML file in artifact/
 | | |
 |---|---|
 | `space` | play / pause |
-| `1`–`8` | switch lens on the next beat; `0` for none. Shift: cue it on the other deck without switching |
+| `1`–`9` | switch lens on the next beat; `0` for none. Shift: cue it on the other deck without switching |
 | `C` | cut between the two decks |
 | `A` `S` `D` `F` | pads: burst, reverse, fold, trails |
 | drag the body | grab it and scratch it round; up and down to zoom; double-click to reset (`R`) |
@@ -53,6 +53,31 @@ music. What separates them is what they *do* on a beat and on a key change.
 | Kiln | adds heat; quiet cools it | a draft takes half | the glow of its temperature |
 | Garden | grows the newest stem | plants another | each stem keeps the key it grew in |
 | Prism | turns the spectrum a wedge | swaps fifths and chromatic order | each wedge is its note |
+| Pulley | applies the force of the poem's current verb, and reads on | recolours the world at the rim | gold at the centre, the key at the rim, rose where it strays |
+
+### Pulley
+
+Pulley draws George Herbert's poem *The Pulley* (1633) as forces round a
+centre, from Lex's design in
+[`specs/herbert/semantic_forces.md`](../specs/herbert/semantic_forces.md).
+The centre is Rest, the fulcrum; the rim is the human course through time.
+The poem is read in order, a line every eight beats, and set under the
+body, and each of its verbs acts on the body from its line until the next:
+
+- **pour, dispersed, flowed, bestow** push outward; **contract, lead** draw
+  inward;
+- **stay** stops everything for the length of its line;
+- **keep** holds energy without moving, so the body trembles;
+- **adore** pulls the whole body off its centre, toward the world;
+- **rest** sets up a false centre that half the body settles round;
+- **toss** throws every mote about while bringing everything home: nearer
+  the true centre, the world and the false centre let go, the kept energy
+  released. Locally disruptive, globally restorative.
+
+A major key is joy, radiating symmetrically and never past the rim; a minor
+key is sorrow, drawn inward and tied to the centre by tension cords.
+`tests/pulley.test.ts` holds the lens to each of these, one test per
+claim.
 
 ## Setlists
 
@@ -87,7 +112,7 @@ order, each asking for a moment or a shape of the music, never a time.
 
 ```
 audio/      the analyser (live) and the whole-track analysis; the only code that touches Web Audio
-lenses/     the eight lenses, the mixer, and the View each one answers
+lenses/     the nine lenses, the mixer, and the View each one answers
 law/        colour and light
 hand/       pads, platter, crossfader
 setlist/    setlists, fitting, examples
@@ -107,7 +132,7 @@ by care:
 - **The lens chooses the colours; loudness only changes brightness.** Every
   lens is played loud and quiet in the tests, and the colours must match.
 - **The hand moves shapes, never colours.**
-- **No two lenses behave alike.** The tests play all eight the same music
+- **No two lenses behave alike.** The tests play all nine the same music
   and require every pair to produce different results.
 - **Times are tied to their track.** Marks and fitted plans carry the
   track's length and SHA-256, and marks from another track are refused.

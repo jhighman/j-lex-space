@@ -50,6 +50,7 @@ export const swarm: Lens<SwarmState> = {
       centre: () => off,
       ground: () => onWheel(s.seen.tonic, 0.3, 0.05),
       emblem: () => [{ dot: [0, 0, 0.03], v: 0.8 }, { circle: 0.08, v: 0.4 }],
+      words: () => null,
       blendIn: (x, k) => (x >= hash01(Math.round(k * 997)) ? 1 : 0),
     };
   },

@@ -69,10 +69,9 @@ button.link { border: 0; padding: 0; text-decoration: underline; color: var(--ti
 .lenses button { padding: 5px 12px; font-size: 13px; background: var(--panel); backdrop-filter: blur(8px); }
 .lenses button[aria-pressed="true"] { border-color: var(--tint); color: var(--tint); }
 
+.pick { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 0; }
 .note {
-  position: fixed;
-  top: 64px; right: 20px;
-  max-width: 340px;
+  max-width: 360px;
   margin: 0;
   text-align: right;
   color: var(--ink-dim);
@@ -189,7 +188,7 @@ kbd {
 @media (max-width: 720px) {
   .top { flex-direction: column; padding: 14px 16px; }
   .lenses { justify-content: flex-start; }
-  .note { top: auto; bottom: 120px; left: 16px; right: 16px; text-align: left; max-width: none; }
+  .pick { align-items: stretch; }
   .signal { left: 16px; right: 16px; width: auto; top: 128px; }
   .transport { flex-wrap: wrap; padding: 12px 16px 16px; gap: 8px; }
   .timeline { order: -1; flex-basis: 100%; }

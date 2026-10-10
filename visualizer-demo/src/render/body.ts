@@ -27,6 +27,8 @@ export interface Scene {
   readonly hand: HandView;
   readonly emblems: readonly Emblem[];
   readonly lux: number;
+  /** words to set under the body: the lens's, if it has any */
+  readonly words: string | null;
 }
 
 const TAU = Math.PI * 2;
@@ -46,6 +48,8 @@ export class Body {
   private cy = 0;
   private rest = 0;
   private last = 0;
+  private shown: string | null = null;
+  private shownAt = 0;
 
   constructor(private readonly canvas: HTMLCanvasElement) {
     const g = canvas.getContext("2d");
@@ -175,6 +179,23 @@ export class Body {
         const aj = (j % 2 ? -a : a) + (j * TAU) / folds;
         g.fillRect(cx + Math.cos(aj) * rho - size / 2, cy + Math.sin(aj) * rho - size / 2, size, size);
       }
+    }
+
+    /* the words, under the body, fading in when they change; drawn on the
+       canvas so a recorded take carries them */
+    if (s.words !== this.shown) { this.shown = s.words; this.shownAt = now; }
+    if (this.shown) {
+      const fade = Math.min(1, (now - this.shownAt) / 0.8);
+      const size = Math.max(15, Math.min(28, half * 0.07));
+      g.font = `italic ${size}px Georgia, "Times New Roman", serif`;
+      g.textAlign = "center";
+      g.textBaseline = "top";
+      g.fillStyle = css(shade(u.colour(1, 0, 0), Math.max(1, s.lux)), 0.9 * fade);
+      g.shadowColor = "rgba(0,0,0,0.85)";
+      g.shadowBlur = 12;
+      /* under the body, but clear of the deck and transport at the bottom */
+      g.fillText(this.shown, w / 2, Math.min(cy + R * 1.18 + 14, h - 250), w - 32);
+      g.shadowBlur = 0;
     }
   }
 }
