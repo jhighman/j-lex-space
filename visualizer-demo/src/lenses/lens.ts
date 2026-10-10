@@ -158,18 +158,5 @@ export function loudest(ch: readonly number[]): number {
   return top;
 }
 
-/** how loud, against the loudest, a note other than the tonic must be to
- *  make an interval with it */
-export const AUDIBLE = 0.35;
-
-/**
- * The interval sounding above the key, in semitones: the loudest note
- * other than the tonic. In most bars the loudest note is the tonic itself,
- * so measuring the loudest note against the key read unison nearly all the
- * time. Unison now means nothing else is sounding.
- */
-export function interval(ch: readonly number[], tonic: number): number {
-  let top = -1;
-  for (let i = 0; i < 12; i++) if (i !== tonic && (top < 0 || ch[i] > ch[top])) top = i;
-  return ch[top] >= AUDIBLE ? (((top - tonic) % 12) + 12) % 12 : 0;
-}
+/* the interval above the key is harmony, so it lives with the key */
+export { AUDIBLE, interval } from "../audio/key";

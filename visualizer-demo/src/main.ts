@@ -5,7 +5,8 @@
      deck A, deck B: lens.state(frame, prev)  →  view
      mix(A, B, fader)  →  view
      luxOf(frame.dynamics)  →  lux                   (light only)
-     body.draw({frame, view, hand, emblems, lux})
+     calmOf(frame.harmony)  →  calm, eased           (saturation only)
+     body.draw({frame, view, hand, emblems, lux, calm})
 
    Nothing outside `audio/` touches the sound; everything else sees the
    frame. The lens chooses the colours and the music can only make them
@@ -27,7 +28,8 @@ import { decode } from "./audio/decode";
 import { type Frame, type Sounding, silent } from "./audio/frame";
 import { keyName } from "./audio/key";
 import { Hand, type Pad } from "./hand/hand";
-import { css, hue, luxOf, shade } from "./law/light";
+import { keyField } from "./audio/key";
+import { calmOf, css, fieldGround, hue, luxOf, shade } from "./law/light";
 import { type Context, LENSES, PLAIN, type View, lensKey } from "./lenses";
 import type { PulleyState } from "./lenses/pulley";
 import { mix } from "./lenses/mix";
@@ -354,13 +356,15 @@ async function orchestrate(source: string | unknown): Promise<Orchestration | nu
   if (!r.ok) { notify(`This orchestration cannot be played: ${r.problems.join("; ")}`); return null; }
   orch = r.orchestration;
   orchT = -1;
+  fieldGrounds = orch.ground === "field";
   notify(`Orchestration “${orch.title}”: ${orch.cues.length} cues.`);
   return orch.song ? { ...orch, song: new URL(orch.song, base).href } : orch;
 }
 
-/* ?song=…  ?orchestration=…  ?lens=…  ?record=1  ?signal=1  ?quantise=0 */
+/* ?song=…  ?orchestration=…  ?lens=…  ?record=1  ?signal=1  ?quantise=0  ?ground=field */
 async function fromUrl(): Promise<void> {
   const p = new URLSearchParams(location.search);
+  if (p.get("ground") === "field") fieldGrounds = true;
   if (p.get("signal") === "1") $("signal").hidden = false;
   if (p.get("quantise") === "0") hand.quantise = quantise.checked = false;
   let song = p.get("song");
@@ -400,6 +404,8 @@ const visualizer = {
     decks: { a: LENSES[decks.a.ix]?.id ?? "none", b: LENSES[decks.b.ix]?.id ?? "none" },
     fader: hand.view(performance.now() / 1000).fader,
     orchestration: orch?.title ?? null,
+    calm,
+    ground: fieldGrounds ? "field" : "lens",
   }),
 };
 (window as unknown as { visualizer: typeof visualizer }).visualizer = visualizer;
@@ -543,6 +549,17 @@ let tick = 0;
 let lastT = 0;
 let lastScene: string | null = null;
 let lastOnAir = hand.onAir();
+/* How calm the harmony is, eased so that a passing note does not flicker
+   the saturation; and the key field, eased over as long as Globe's sun
+   takes to move, which the ground is drawn from when an orchestration or
+   the address asks for it (`ground: "field"`). */
+const CALM_SECONDS = 0.4;
+const FIELD_SECONDS = 1.5;
+let calm = 1;
+let field: number[] | null = null;
+let fieldGrounds = false;
+let lastSecs = 0;
+
 function frame(now: number): void {
   const f: Frame = analyzer ? analyzer.read() : silent(audio.currentTime);
   const secs = now / 1000;
@@ -581,7 +598,16 @@ function frame(now: number): void {
     { marks: B.view.emblem(), colour: B.view.colour(1, 0, 0), alpha: played.fader },
   ];
   const lux = luxOf(f.muted ? null : f.dynamics);
-  body.draw({ frame: f, view, hand: played, emblems, lux, words: f.muted ? null : view.words() }, secs);
+  const dt = lastSecs ? Math.min(0.1, Math.max(0, secs - lastSecs)) : 0;
+  lastSecs = secs;
+  calm += (calmOf(f.muted ? null : f.harmony) - calm) * Math.min(1, dt / CALM_SECONDS);
+  if (!f.muted) {
+    const heard = keyField(f.harmony.chroma);
+    field = field ? field.map((w, i) => w + (heard[i] - w) * Math.min(1, dt / FIELD_SECONDS)) : heard;
+  }
+  const weights = field;
+  const drawn = fieldGrounds && weights ? { ...view, ground: () => fieldGround(weights, view.ground().v) } : view;
+  body.draw({ frame: f, view: drawn, hand: played, emblems, lux, calm, words: f.muted ? null : view.words() }, secs);
   const tint = view.colour(1, 0, 0);
 
   if (!fading) fader.value = String(Math.round(played.fader * 1000));

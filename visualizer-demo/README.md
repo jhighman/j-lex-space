@@ -61,6 +61,7 @@ the keys.
 | `record=1` | record the whole song from the top, and save the MP4 when it ends |
 | `signal=1` | open the signal panel |
 | `quantise=0` | actions land at once instead of on the next beat |
+| `ground=field` | draw the ground from every key at once instead of from the lens (see *Colour*) |
 
 A browser will not start sound until the page has been clicked, so opened
 by hand the page asks for a click first; a test browser started with
@@ -88,14 +89,14 @@ deck), `cut`, `pad` (burst, reverse, fold, trails), `blend` (toward a
 lens's deck, `amount` 0–1 over `over` seconds), `reset` and `quantise`.
 Times are seconds or `m:ss`, in order; an orchestration that names a lens
 or pad that does not exist, or runs out of order, is refused with the
-reasons. `orchestrations/christmas.json` is a full one, written around the
+reasons. An optional `"ground": "field"` does what `ground=field` does. `orchestrations/christmas.json` is a full one, written around the
 song's analysed parts and key changes.
 
 **By script.** `window.visualizer` has `load(url)`, `orchestrate(urlOrJson)`,
 `play()`, `pause()`, `seek(seconds)`, `lens(id)`, `cue(id)`, `cut()`,
 `pad(name)`, `blend(id, amount, over)`, `reset()`, `record()` and
-`state()`, which reports the time, what is on each deck, the fader, and
-whether a take is recording.
+`state()`, which reports the time, what is on each deck, the fader,
+whether a take is recording, the calm, and which ground is drawn.
 
 Takes recorded locally can be kept in `takes/`, which git ignores.
 
@@ -230,6 +231,33 @@ the other deck while another lens is blended over it;
 `orchestrations/christmas-iii.json` uses that. `tests/atlas.test.ts` holds
 it to the needle, the spacing, the colours and the ticks.
 
+## Colour
+
+Hue is the lens's: almost every lens builds it from harmony, a key or a
+note on the circle of fifths, so keys a fifth apart sit side by side and a
+tritone is the opposite colour. The music may then change a colour in two
+ways, each through one number the body applies to everything it draws:
+
+- **Loudness changes value.** `luxOf` turns loudness and onsets into a
+  light that lifts or dims every colour by at most a quarter.
+- **Consonance changes saturation.** `calmOf` reads the interval sounding
+  above the key (the loudest note other than the tonic) and gives how calm
+  it is: unison, fourth, fifth and octave leave the colours whole, thirds
+  and sixths nearly so, seconds and sevenths less, and the minor second,
+  major seventh and tritone pull them furthest toward grey, never so far
+  that the hue is lost. It eases over 0.4 s so a passing note does not
+  flicker. Hue is untouched, and loudness has no say in it.
+
+**The key field** (`ground=field`, or `"ground": "field"` in an
+orchestration) is an experiment with the ground. Instead of one key, it
+weighs every key by how well the music fits it, places each weight at its
+tonic on the circle of fifths, and adds them as vectors: the direction is
+the hue and the agreement is the saturation. A passage that sits between
+A-flat major and C minor gets a ground between violet and red, greyer than
+either, and a modulation sweeps the ground continuously, eased over 1.5 s,
+instead of stepping. The lens still sets the ground's value. It is off by
+default.
+
 ## Setlists
 
 A setlist is a performance written before the track is chosen: scenes in
@@ -281,8 +309,10 @@ by care:
   else gets a frozen frame, and a test fails if any other module refers to
   the audio API.
 - **Silence is not zero.** A silent frame has no readings at all.
-- **The lens chooses the colours; loudness only changes brightness.** Every
-  lens is played loud and quiet in the tests, and the colours must match.
+- **The lens chooses the colours; loudness only changes brightness, and
+  consonance only saturation.** Every lens is played loud and quiet in the
+  tests and the colours must match, and `shade` is tested to keep hue
+  under both.
 - **The hand moves shapes, never colours.**
 - **No two lenses behave alike.** The tests play all fourteen the same music
   and require every pair to produce different results.

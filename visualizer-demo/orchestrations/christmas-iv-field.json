@@ -1,0 +1,63 @@
+{
+  "title": "Again it's Christmas time, fourth take, field ground",
+  "song": "../samples/Again it's Christmas time.mp3",
+  "ground": "field",
+  "cues": [
+    {
+      "at": "0:00",
+      "lens": "atlas",
+      "note": "the song's parts round the rim; growth starts at the top in A-flat"
+    },
+    {
+      "at": "0:31",
+      "blend": "globe",
+      "amount": 1,
+      "over": 4,
+      "note": "F minor on the globe, while the atlas keeps growing underneath"
+    },
+    {
+      "at": "0:52",
+      "blend": "atlas",
+      "amount": 1,
+      "over": 4,
+      "note": "back to the atlas: the C and F minor stretches have filled in behind the needle"
+    },
+    {
+      "at": "1:13.5",
+      "blend": "pulley",
+      "amount": 1,
+      "over": 3,
+      "note": "the poem, as the minor stretch deepens"
+    },
+    {
+      "at": "1:40",
+      "blend": "atlas",
+      "amount": 1,
+      "over": 4,
+      "note": "C minor, the longest part, growing in"
+    },
+    {
+      "at": "2:05",
+      "blend": "sternbrocot",
+      "amount": 1,
+      "over": 3,
+      "note": "the tree of intervals, now hearing the note above the tonic"
+    },
+    {
+      "at": "2:27",
+      "blend": "atlas",
+      "amount": 1,
+      "over": 4,
+      "note": "the return to A-flat, heard at the needle"
+    },
+    {
+      "at": "2:50.5",
+      "pad": "trails"
+    },
+    {
+      "at": "3:16.5",
+      "pad": "trails",
+      "note": "the circle closes: the song as heard, inside the song as analysed"
+    }
+  ]
+}

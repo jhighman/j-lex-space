@@ -1,13 +1,13 @@
 /* The body: an emblem, a shell, a spiral of motes inside it, and twelve
    spokes for the pitch classes laid round the circle of fifths.
 
-   It is handed a frame, a lens's view, the hand's view, the emblems and
-   one lux, and that is all it knows. It imports no audio and no lens —
-   `tests/channel.test.ts` holds it to that. Every colour it draws is one a
-   lens handed it (grey when there is no lens), shaded by the lux, so the
-   music reaches colour only as value. The hand arrives as
-   numbers of angle and size, and there is nowhere for it to choose a
-   colour. */
+   It is handed a frame, a lens's view, the hand's view, the emblems, one
+   lux and one calm, and that is all it knows. It imports no audio and no
+   lens — `tests/channel.test.ts` holds it to that. Every colour it draws is
+   one a lens handed it (grey when there is no lens), shaded by the lux and
+   the calm, so loudness reaches colour only as value and consonance only
+   as saturation. The hand arrives as numbers of angle and size, and there
+   is nowhere for it to choose a colour. */
 
 import type { Frame } from "../audio/frame";
 import type { HandView } from "../hand/hand";
@@ -27,6 +27,8 @@ export interface Scene {
   readonly hand: HandView;
   readonly emblems: readonly Emblem[];
   readonly lux: number;
+  /** how calm the harmony is: what saturation the colours keep, 0..1 */
+  readonly calm: number;
   /** words to set under the body: the lens's, if it has any */
   readonly words: string | null;
 }
@@ -110,7 +112,7 @@ export class Body {
     const bright = f.muted ? 0.3 : f.dynamics.bright;
 
     /* the ground, laid thin so the last frames show through as a trail */
-    g.fillStyle = css(shade(u.ground(), s.lux), hand.trails ? 0.05 : 0.22);
+    g.fillStyle = css(shade(u.ground(), s.lux, s.calm), hand.trails ? 0.05 : 0.22);
     g.fillRect(0, 0, w, h);
 
     const R = this.radius * half * hand.zoom;
@@ -126,7 +128,7 @@ export class Body {
       if (p.alpha < 0.02) continue;
       for (const m of p.marks) {
         const a = p.alpha * (m.v ?? 0.5) * 0.55;
-        g.strokeStyle = g.fillStyle = css(shade(p.colour, s.lux * 0.85), a);
+        g.strokeStyle = g.fillStyle = css(shade(p.colour, s.lux * 0.85, s.calm), a);
         g.lineWidth = 1.2;
         g.beginPath();
         if ("circle" in m) g.arc(cx, cy, m.circle * R, 0, TAU);
@@ -136,7 +138,7 @@ export class Body {
           g.font = `${Math.round(Math.max(10, Math.min(14, R * 0.035)))}px ui-monospace, Menlo, monospace`;
           g.textAlign = "center";
           g.textBaseline = "middle";
-          g.fillStyle = css(shade(p.colour, s.lux), Math.min(1, a));
+          g.fillStyle = css(shade(p.colour, s.lux, s.calm), Math.min(1, a));
           g.fillText(m.text[2], cx + m.text[0] * R, cy + m.text[1] * R);
           continue;
         }
@@ -152,7 +154,7 @@ export class Body {
         const t = FIFTHS_TURN[pc] + turn / TAU;
         const a = t * TAU;
         const r0 = R * 1.08, r1 = R * (1.12 + 0.55 * c);
-        g.strokeStyle = css(shade(u.colour(1, t, pc), s.lux * (0.5 + 0.5 * c)), 0.2 + 0.55 * c);
+        g.strokeStyle = css(shade(u.colour(1, t, pc), s.lux * (0.5 + 0.5 * c), s.calm), 0.2 + 0.55 * c);
         g.lineWidth = 1 + 2.5 * c;
         g.beginPath();
         g.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0);
@@ -175,7 +177,7 @@ export class Body {
         g.arc(0, 0, r.r1 * R, a0, a1);
         g.arc(0, 0, r.r0 * R + 1, a1, a0, true);
         g.closePath();
-        g.fillStyle = css(shade(r.colour, s.lux * r.v), 0.92 * (r.alpha ?? 1));
+        g.fillStyle = css(shade(r.colour, s.lux * r.v, s.calm), 0.92 * (r.alpha ?? 1));
         g.fill();
       }
       g.font = `11px ui-sans-serif, -apple-system, system-ui, sans-serif`;
@@ -197,7 +199,7 @@ export class Body {
       g.restore();
     }
 
-    g.strokeStyle = css(shade(u.colour(1, 0, 0), s.lux), 0.85);
+    g.strokeStyle = css(shade(u.colour(1, 0, 0), s.lux, s.calm), 0.85);
     g.lineWidth = 1.2 + 4 * beat + 3 * hand.burst;
     g.beginPath();
     g.arc(cx, cy, R, 0, TAU);
@@ -217,7 +219,7 @@ export class Body {
       const p = u.place(k, at, i);
       if (p.v < 0.02) continue;
       const rho = R * p.k * (1 + 0.06 * flux * Math.sin(i * 12.9898)) * (1 + 0.9 * blast * (0.3 + k0));
-      g.fillStyle = css(shade(u.colour(p.k, p.a, i), s.lux * p.v * (0.55 + 0.45 * (1 - k0))), 0.88);
+      g.fillStyle = css(shade(u.colour(p.k, p.a, i), s.lux * p.v * (0.55 + 0.45 * (1 - k0)), s.calm), 0.88);
       const a = p.a * TAU;
       for (let j = 0; j < folds; j++) {
         const aj = (j % 2 ? -a : a) + (j * TAU) / folds;
@@ -238,11 +240,11 @@ export class Body {
          on a dark band so it reads over rings as well as motes */
       const y = Math.min(cy + R * 1.18 + 14, h - 250);
       const tw = Math.min(w - 32, g.measureText(this.shown).width);
-      g.fillStyle = css(shade(u.ground(), 1), 0.72 * fade);
+      g.fillStyle = css(shade(u.ground(), 1, s.calm), 0.72 * fade);
       g.beginPath();
       g.roundRect(w / 2 - tw / 2 - 14, y - 6, tw + 28, size * 1.5 + 6, 8);
       g.fill();
-      g.fillStyle = css(shade(u.colour(1, 0, 0), Math.max(1, s.lux)), 0.9 * fade);
+      g.fillStyle = css(shade(u.colour(1, 0, 0), Math.max(1, s.lux), s.calm), 0.9 * fade);
       g.shadowColor = "rgba(0,0,0,0.85)";
       g.shadowBlur = 12;
       g.fillText(this.shown, w / 2, y, w - 32);

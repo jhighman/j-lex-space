@@ -11,6 +11,7 @@
      {
        "title": "…",
        "song": "samples/….mp3",
+       "ground": "field",
        "cues": [
          { "at": "0:00", "lens": "tide" },
          { "at": "0:31", "lens": "pulley", "note": "the turn to F minor" },
@@ -20,6 +21,8 @@
        ]
      }
 
+   `ground` is optional: "lens", the default, lets each lens choose its
+   ground; "field" draws the ground from every key at once (`fieldGround`).
    A time is seconds or m:ss(.s). `check` lists everything wrong with an
    orchestration in plain words; `due` says which cues fall between two
    moments, which is all a player needs. */
@@ -41,9 +44,12 @@ export interface Cue {
   readonly note?: string;
 }
 
+export type Ground = "lens" | "field";
+
 export interface Orchestration {
   readonly title: string;
   readonly song: string | null;
+  readonly ground: Ground;
   readonly cues: readonly Cue[];
 }
 
@@ -73,6 +79,7 @@ export function read(input: unknown, lenses: readonly string[], length: number |
   const o = input as Record<string, unknown>;
   if (typeof o.title !== "string" || !o.title.trim()) problems.push("the orchestration has no title");
   if (o.song !== undefined && typeof o.song !== "string") problems.push("song is the path or URL of the song, as text");
+  if (o.ground !== undefined && o.ground !== "lens" && o.ground !== "field") problems.push(`ground is “lens” or “field”, not “${String(o.ground)}”`);
   if (!Array.isArray(o.cues) || !o.cues.length) return { ok: false, problems: [...problems, "the orchestration has no cues"] };
 
   const known = new Set(["none", ...lenses]);
@@ -125,7 +132,7 @@ export function read(input: unknown, lenses: readonly string[], length: number |
     if (times[k] < times[k - 1]) problems.push(`cues must run in time order; ${clock(times[k])} comes after ${clock(times[k - 1])}`);
 
   if (problems.length) return { ok: false, problems };
-  return { ok: true, orchestration: { title: (o.title as string).trim(), song: (o.song as string | undefined) ?? null, cues } };
+  return { ok: true, orchestration: { title: (o.title as string).trim(), song: (o.song as string | undefined) ?? null, ground: (o.ground as Ground | undefined) ?? "lens", cues } };
 }
 
 /**

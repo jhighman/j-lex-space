@@ -34,3 +34,35 @@ export const keyName = (tonic: number, minor: boolean) => `${NOTE[tonic]} ${mino
 
 /** the pitch class of a frequency, C = 0 */
 export const pitchClass = (hz: number) => (((Math.round(12 * Math.log2(hz / 440)) + 9) % 12) + 12) % 12;
+
+/** how loud, against the loudest, a note other than the tonic must be to
+ *  make an interval with it */
+export const AUDIBLE = 0.35;
+
+/**
+ * The interval sounding above the key, in semitones: the loudest note
+ * other than the tonic. In most bars the loudest note is the tonic itself,
+ * so measuring the loudest note against the key read unison nearly all the
+ * time. Unison now means nothing else is sounding.
+ */
+export function interval(ch: ArrayLike<number>, tonic: number): number {
+  let top = -1;
+  for (let i = 0; i < 12; i++) if (i !== tonic && (top < 0 || ch[i] > ch[top])) top = i;
+  return ch[top] >= AUDIBLE ? (((top - tonic) % 12) + 12) % 12 : 0;
+}
+
+/** how sharply the key field favours the best-fitting keys */
+export const FIELD_SHARPNESS = 4;
+
+/**
+ * Every key at once: how well the chroma fits each tonic, major and minor
+ * together, as twelve weights from C. Where `keyOf` names one key, this
+ * keeps them all, so a passage between A-flat major and C minor is a field
+ * with two peaks rather than a key that flips between them.
+ */
+export function keyField(chroma: ArrayLike<number>): number[] {
+  const w = Array<number>(12).fill(0);
+  for (let r = 0; r < 12; r++)
+    w[r] = Math.max(0, correlate(chroma, MAJOR, r)) ** FIELD_SHARPNESS + Math.max(0, correlate(chroma, MINOR, r)) ** FIELD_SHARPNESS;
+  return w;
+}

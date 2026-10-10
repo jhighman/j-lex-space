@@ -9,14 +9,21 @@
       beat that brightens the body cannot change what colour it is.
       `tests/lenses.test.ts` plays every lens loud and quiet and requires
       the colours to agree.
-   4. The hand never colours. It moves shapes; `tests/channel.test.ts`
+   4. Consonance sets saturation. The interval sounding above the key
+      (`interval`) is a degree of calm: the perfect intervals leave every
+      colour as the lens drew it, and the dissonant ones pull it toward
+      grey. `calmOf` turns the harmony into that one number and `shade`
+      scales saturation by it, so hue is still the lens's alone, and
+      loudness still reaches value and nothing else.
+   5. The hand never colours. It moves shapes; `tests/channel.test.ts`
       keeps colour out of `src/hand/`.
 
    The wheel lenses use for notes is the circle of fifths, so keys a fifth
    apart sit side by side and a tritone is the opposite colour. A lens may
    ignore the wheel altogether: Frost and Kiln do. */
 
-import type { Dynamics } from "../audio/frame";
+import type { Dynamics, Harmony } from "../audio/frame";
+import { interval } from "../audio/key";
 
 declare const albedo: unique symbol;
 
@@ -69,6 +76,44 @@ export function luxOf(d: Dynamics | null): number {
   return 0.84 + 0.2 * e + 0.18 * k;
 }
 
+/**
+ * How calm each interval above the key is, by semitones: the saturation it
+ * leaves. Unison, fourth, fifth and octave are perfect and leave colour
+ * whole; thirds and sixths nearly so; seconds and sevenths less; the minor
+ * second, major seventh and tritone least. The order is the textbook one of
+ * consonance; the numbers are chosen so the most dissonant interval still
+ * keeps its hue legible.
+ */
+export const CALM: readonly number[] = [1, 0.42, 0.68, 0.86, 0.9, 0.96, 0.38, 1, 0.84, 0.88, 0.66, 0.48];
+
+/* With nothing playing there is no interval, and colour is as drawn. */
+export function calmOf(h: Harmony | null): number {
+  if (!h) return 1;
+  return CALM[interval(h.chroma, h.tonic)];
+}
+
+/** the most the key field may saturate a ground */
+export const FIELD_SATURATION = 0.5;
+
+/**
+ * A ground from the key field: every key's weight placed at its tonic on
+ * the circle of fifths and added as a vector. The direction is the hue; how
+ * much the keys agree is the saturation, so two keys a fifth apart blend to
+ * the colour between them, and two far apart cancel toward grey. The value
+ * is the lens's own.
+ */
+export function fieldGround(weights: readonly number[], v: number): Albedo {
+  let x = 0, y = 0, sum = 0;
+  for (let pc = 0; pc < 12; pc++) {
+    const a = (fifthsHue(pc) * Math.PI) / 180;
+    x += weights[pc] * Math.cos(a);
+    y += weights[pc] * Math.sin(a);
+    sum += weights[pc];
+  }
+  if (sum <= 0) return make(0, 0, v);
+  return make((Math.atan2(y, x) * 180) / Math.PI, FIELD_SATURATION * Math.hypot(x, y) / sum, v);
+}
+
 function hsvToRgb(h: number, s: number, v: number): RGB {
   const c = v * s, x = c * (1 - Math.abs(((h / 60) % 2) - 1)), m = v - c;
   const [r, g, b] =
@@ -77,11 +122,11 @@ function hsvToRgb(h: number, s: number, v: number): RGB {
   return { r: r + m, g: g + m, b: b + m };
 }
 
-/* The only thing light may do to a colour: hue and saturation come back
-   untouched, and value is scaled and clipped. There is no parameter
-   through which anything else could arrive. */
-export function shade(a: Albedo, lux: number): RGB {
-  return hsvToRgb(a.h, a.s, Math.max(0, Math.min(1, a.v * lux)));
+/* All that the music may do to a colour once a lens has chosen it: light
+   scales value, and calm scales saturation. Hue comes back untouched, and
+   there is no parameter through which anything else could arrive. */
+export function shade(a: Albedo, lux: number, calm = 1): RGB {
+  return hsvToRgb(a.h, a.s * Math.max(0, Math.min(1, calm)), Math.max(0, Math.min(1, a.v * lux)));
 }
 
 export const css = (c: RGB, alpha = 1) =>
