@@ -6,12 +6,15 @@
                  the figure rolls over on itself in time
      key change  swaps the axes: what was across is now up
 
+   The interval is the loudest note other than the tonic, against the
+   tonic; unison only when nothing else is sounding.
+
    Colour is the pair of notes making the figure: the tonic at the centre,
-   the loudest note at the edge. It fades in smoothly, the way a scope
+   the other note at the edge. It fades in smoothly, the way a scope
    trace settles. */
 
 import { blend, onWheel } from "../law/light";
-import { type Lens, type Seen, clamp01, loudest, seen, ticks, toPolar } from "./lens";
+import { type Lens, type Seen, clamp01, interval, seen, ticks, toPolar } from "./lens";
 
 /* small whole-number frequency ratios for each interval above the tonic */
 export const RATIO: readonly (readonly [number, number])[] = [
@@ -33,8 +36,9 @@ export const lissajous: Lens<LissajousState> = {
   idea: "The interval as two oscillators' figure; every beat rolls the phase a quarter turn.",
   state(f, prev) {
     const t = ticks(f, prev?.seen ?? null);
-    const top = loudest(f.harmony.chroma);
-    const [a, b] = RATIO[(((top - f.harmony.tonic) % 12) + 12) % 12];
+    const semis = interval(f.harmony.chroma, f.harmony.tonic);
+    const top = (f.harmony.tonic + semis) % 12;
+    const [a, b] = RATIO[semis];
     return {
       seen: seen(f), top, a, b,
       phase: (prev?.phase ?? 0) + (t.beat ? 1 : 0),

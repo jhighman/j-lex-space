@@ -6,7 +6,9 @@
    with its fraction. The interval sounding above the key is a fraction —
    3/2 for a fifth, 5/4 for a major third, 16/15 for a minor second — and it
    has one path of turns down from 1/1. Consonant intervals are near the
-   root and dissonant ones deep.
+   root and dissonant ones deep. The interval is the loudest note other
+   than the tonic, against the tonic, so the walk sits at 1/1 only when
+   nothing else is sounding.
 
      a beat       reads the interval and walks one step down its path. If the
                   interval has changed, the walk first climbs back to where
@@ -22,7 +24,7 @@
    pale. It fades in level by level from the centre. */
 
 import { type Albedo, onWheel } from "../law/light";
-import { type Lens, type Mark, type Seen, clamp01, frac, hash01, loudest, seen, ticks, toPolar } from "./lens";
+import { type Lens, type Mark, type Seen, clamp01, frac, hash01, interval, seen, ticks, toPolar } from "./lens";
 import { RATIO } from "./lissajous";
 import { type Fraction, type Turn, at, pathTo, shared, show } from "./sb";
 
@@ -73,7 +75,7 @@ export const sternBrocot: Lens<SternBrocotState> = {
   state(f, prev) {
     const t = ticks(f, prev?.seen ?? null);
     const read = () => {
-      const semis = (((loudest(f.harmony.chroma) - f.harmony.tonic) % 12) + 12) % 12;
+      const semis = interval(f.harmony.chroma, f.harmony.tonic);
       const target = RATIO[semis] as Fraction;
       return { semis, target, path: pathTo(target[0], target[1]) };
     };

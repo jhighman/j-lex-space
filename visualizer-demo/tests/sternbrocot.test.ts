@@ -3,6 +3,7 @@
 import { describe, expect, it } from "vitest";
 import { type Sounding, sounding } from "../src/audio/frame";
 import { at, level, pathTo, shared } from "../src/lenses/sb";
+import { AUDIBLE, interval } from "../src/lenses/lens";
 import { ABOVE, type SternBrocotState, sternBrocot } from "../src/lenses/sternbrocot";
 
 const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a);
@@ -100,5 +101,37 @@ describe("the lens", () => {
     const s = walk(Array.from({ length: 4 }, () => [7] as [number]));
     const labels = sternBrocot.view(s[3]).emblem().filter((m) => "text" in m).map((m) => ("text" in m ? m.text[2] : ""));
     expect(labels).toEqual(expect.arrayContaining(["1/1", "2/1", "3/2"]));
+  });
+});
+
+describe("the interval it hears", () => {
+  const chroma = (levels: Record<number, number>) => Array.from({ length: 12 }, (_, i) => levels[i] ?? 0.1);
+
+  it("is the loudest note other than the tonic, even when the tonic is loudest", () => {
+    /* a C chord with C loudest: the fifth, not unison */
+    expect(interval(chroma({ 0: 1, 4: 0.6, 7: 0.8 }), 0)).toBe(7);
+    expect(interval(chroma({ 0: 1, 4: 0.9, 7: 0.5 }), 0)).toBe(4);
+  });
+
+  it("is unison only when nothing else is sounding", () => {
+    expect(interval(chroma({ 0: 1 }), 0)).toBe(0);
+    expect(interval(chroma({ 0: 1, 7: AUDIBLE - 0.01 }), 0)).toBe(0);
+  });
+
+  it("counts up from the tonic", () => {
+    /* in A-flat, E-flat above it is a fifth */
+    expect(interval(chroma({ 8: 1, 3: 0.7 }), 8)).toBe(7);
+  });
+
+  it("walks toward the fifth while the tonic is the loudest note", () => {
+    let s: SternBrocotState | null = null;
+    for (let n = 0; n < 4; n++)
+      s = sternBrocot.state(sounding({
+        t: n * 0.5, dynamics: { energy: 0.5, beat: 0, flux: 0.3, bright: 0.4 },
+        harmony: { chroma: chroma({ 0: 1, 7: 0.8 }), tonic: 0, minor: false },
+        rhythm: { beats: n, phase: 0.2, bpm: 120 },
+      }), s);
+    expect(s!.target).toEqual([3, 2]);
+    expect(s!.walked).toBe(2);
   });
 });
