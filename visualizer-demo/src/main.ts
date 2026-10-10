@@ -510,7 +510,10 @@ addEventListener("keydown", (e) => {
   const el = e.target;
   if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement || e.metaKey || e.ctrlKey) return;
   if (e.key === " ") { e.preventDefault(); toggle(); }
-  else if (e.key === "u" || e.key === "U") { const ix = LENSES.findIndex((l) => l.id === "sunburst"); if (e.shiftKey) cue(ix); else switchTo(ix); }
+  else if (/^[uUtT]$/.test(e.key)) {
+    const ix = LENSES.findIndex((_, j) => lensKey(j) === e.key.toUpperCase());
+    if (ix >= 0) { if (e.shiftKey) cue(ix); else switchTo(ix); }
+  }
   else if (/^Digit[0-9]$/.test(e.code) || /^[0-9]$/.test(e.key)) {
     /* the physical key, so Shift+number works on any layout; the typed
        digit when a keyboard reports no code */

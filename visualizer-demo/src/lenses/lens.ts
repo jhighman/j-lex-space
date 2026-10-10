@@ -24,7 +24,8 @@ export type Mark =
   | { readonly circle: number; readonly v?: number }
   | { readonly arc: readonly [r: number, from: number, to: number]; readonly v?: number }
   | { readonly line: readonly [x1: number, y1: number, x2: number, y2: number]; readonly v?: number }
-  | { readonly dot: readonly [x: number, y: number, r: number]; readonly v?: number };
+  | { readonly dot: readonly [x: number, y: number, r: number]; readonly v?: number }
+  | { readonly text: readonly [x: number, y: number, s: string]; readonly v?: number };
 
 /** where a mote is drawn: radius 0..1 of the body, angle in turns, and a value */
 export interface Place { readonly k: number; readonly a: number; readonly v: number }

@@ -132,6 +132,14 @@ export class Body {
         if ("circle" in m) g.arc(cx, cy, m.circle * R, 0, TAU);
         else if ("arc" in m) g.arc(cx, cy, m.arc[0] * R, m.arc[1] * TAU, m.arc[2] * TAU);
         else if ("line" in m) { g.moveTo(cx + m.line[0] * R, cy + m.line[1] * R); g.lineTo(cx + m.line[2] * R, cy + m.line[3] * R); }
+        else if ("text" in m) {
+          g.font = `${Math.round(Math.max(10, Math.min(14, R * 0.035)))}px ui-monospace, Menlo, monospace`;
+          g.textAlign = "center";
+          g.textBaseline = "middle";
+          g.fillStyle = css(shade(p.colour, s.lux), Math.min(1, a));
+          g.fillText(m.text[2], cx + m.text[0] * R, cy + m.text[1] * R);
+          continue;
+        }
         else { g.arc(cx + m.dot[0] * R, cy + m.dot[1] * R, Math.max(1.5, m.dot[2] * R), 0, TAU); g.fill(); continue; }
         g.stroke();
       }

@@ -14,7 +14,7 @@ import { blend, onWheel } from "../law/light";
 import { type Lens, type Seen, clamp01, loudest, seen, ticks, toPolar } from "./lens";
 
 /* small whole-number frequency ratios for each interval above the tonic */
-const RATIO: readonly (readonly [number, number])[] = [
+export const RATIO: readonly (readonly [number, number])[] = [
   [1, 1], [16, 15], [9, 8], [6, 5], [5, 4], [4, 3], [7, 5], [3, 2], [8, 5], [5, 3], [7, 4], [15, 8],
 ];
 
