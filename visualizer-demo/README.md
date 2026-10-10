@@ -25,7 +25,7 @@ npm run artifact   # one self-contained HTML file in artifact/
 | | |
 |---|---|
 | `space` | play / pause |
-| `1`–`9`, `U`, `T` | switch lens on the next beat (`U` is Sunburst, `T` Stern–Brocot); `0` for none. Shift: cue it on the other deck without switching |
+| `1`–`9`, `U`, `T`, `G` | switch lens on the next beat (`U` is Sunburst, `T` Stern–Brocot, `G` Globe); `0` for none. Shift: cue it on the other deck without switching |
 | `C` | cut between the two decks |
 | `A` `S` `D` `F` | pads: burst, reverse, fold, trails |
 | drag the body | grab it and scratch it round; up and down to zoom; double-click to reset (`R`) |
@@ -117,6 +117,7 @@ music. What separates them is what they *do* on a beat and on a key change.
 | Pulley | applies the force of the poem's current verb, and reads on | recolours the world at the rim | gold at the centre, the key at the rim, rose where it strays |
 | Sunburst | lights the bar and part playing | zooms into the part where it happened | parts by key; beside Pulley, verbs by force |
 | Stern–Brocot | walks one step down the tree toward the sounding interval | re-roots the walk at 1/1 | the note each fraction sounds above the key |
+| Globe | turns the globe a twenty-fourth | moves the sun, sweeping the terminator across | the notes, painted round it in bands |
 
 ### Pulley
 
@@ -183,6 +184,16 @@ back to where the paths part when the interval changes. A deep walk does
 not fit on screen, so the view follows it down. `tests/sternbrocot.test.ts`
 checks the tree against what defines it, for every fraction up to 30/30.
 
+### Globe
+
+The body as a sphere in orthographic projection, lit like a planet. The
+twelve notes are painted round it as bands of longitude in fifths order,
+each as bright as its note is sounding; the beat turns it; and the sun sits
+where the key is on the circle of fifths, so a key change moves the light
+and the terminator sweeps across. The shading is brightness only, the
+cosine of the angle to the sun with a faint night side, so the key decides
+where the light falls and loudness changes nothing about colour.
+
 ## Setlists
 
 A setlist is a performance written before the track is chosen: scenes in
@@ -216,7 +227,7 @@ order, each asking for a moment or a shape of the music, never a time.
 
 ```
 audio/      the analyser (live) and the whole-track analysis; the only code that touches Web Audio
-lenses/     the eleven lenses, the mixer, and the View each one answers
+lenses/     the twelve lenses, the mixer, and the View each one answers
 law/        colour and light
 hand/       pads, platter, crossfader
 setlist/    setlists, fitting, examples
@@ -237,7 +248,7 @@ by care:
 - **The lens chooses the colours; loudness only changes brightness.** Every
   lens is played loud and quiet in the tests, and the colours must match.
 - **The hand moves shapes, never colours.**
-- **No two lenses behave alike.** The tests play all eleven the same music
+- **No two lenses behave alike.** The tests play all twelve the same music
   and require every pair to produce different results.
 - **Times are tied to their track.** Marks and fitted plans carry the
   track's length and SHA-256, and marks from another track are refused.
