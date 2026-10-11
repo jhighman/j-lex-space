@@ -5,7 +5,8 @@
      top left    breadcrumbs of the API: the address the take was opened
                  with, then every call the performance made, newest last,
                  older ones fading
-     top right   which lens is on air and what it does, and the score's
+     top right   which lens is on air and what it does, what its state
+                 says of itself right now (its label), and the score's
                  note for the moment, if it has one
 
    Off unless asked for (`captions=1`, or "captions": true in an
@@ -21,6 +22,8 @@ export interface Captions {
   readonly crumbs: readonly Crumb[];
   readonly title: string | null;
   readonly idea: string | null;
+  /** the lens's own account of its state this frame, if it has one */
+  readonly label?: string | null;
   readonly note: string | null;
   /** seconds since the explainer last changed, for fading it in */
   readonly fresh: number;
@@ -99,11 +102,13 @@ export function drawCaptions(g: CanvasRenderingContext2D, w: number, c: Captions
     /* measure first, for the panel behind it */
     g.font = `${size}px ${SANS}`;
     const ideaLines = c.idea ? wrap(g, c.idea, width) : [];
+    g.font = `${size * 0.92}px ${MONO}`;
+    const labelLines = c.label ? wrap(g, c.label, width) : [];
     g.font = `italic ${size}px ${SERIF}`;
     const noteLines = c.note ? wrap(g, c.note, width) : [];
     g.font = `italic ${size * 1.75}px ${SERIF}`;
-    const across = Math.max(g.measureText(c.title).width, ...[...ideaLines, ...noteLines].map(() => width));
-    const tall = size * 2.4 + ideaLines.length * size * 1.45 + (noteLines.length ? size * 0.6 + noteLines.length * size * 1.45 : 0);
+    const across = Math.max(g.measureText(c.title).width, ...[...ideaLines, ...labelLines, ...noteLines].map(() => width));
+    const tall = size * 2.4 + ideaLines.length * size * 1.45 + (labelLines.length ? size * 0.5 + labelLines.length * size * 1.4 : 0) + (noteLines.length ? size * 0.6 + noteLines.length * size * 1.45 : 0);
     panel(g, x - Math.min(across, width) - 12, pad - 8, Math.min(across, width) + 22, tall + 12);
     let y = pad;
     g.font = `italic ${size * 1.75}px ${SERIF}`;
@@ -113,6 +118,12 @@ export function drawCaptions(g: CanvasRenderingContext2D, w: number, c: Captions
     g.font = `${size}px ${SANS}`;
     g.fillStyle = INK(0.8 * fade);
     for (const line of ideaLines) { g.fillText(line, x, y); y += size * 1.45; }
+    if (labelLines.length) {
+      y += size * 0.5;
+      g.font = `${size * 0.92}px ${MONO}`;
+      g.fillStyle = INK(0.9);
+      for (const line of labelLines) { g.fillText(line, x, y); y += size * 1.4; }
+    }
     if (noteLines.length) {
       y += size * 0.6;
       g.font = `italic ${size}px ${SERIF}`;

@@ -6,7 +6,7 @@
     { "at": "0:09.3", "lens": "garden", "note": "the song steps up: a stem grows" },
     { "at": "0:20", "lens": "lissajous", "note": "the key change to C major: the interval as a figure" },
     { "at": "0:20.2", "pad": "burst" },
-    { "at": "0:31", "lens": "pulley", "note": "F minor: Herbert's poem, with sorrow arriving a few lines in" },
+    { "at": "0:31", "lens": "pulley", "note": "F minor at the rim: Herbert's poem, its sorrow coming from the text's last stanza" },
     { "at": "0:43.3", "cue": "sunburst", "note": "beside Pulley, the sunburst is the poem's map" },
     { "at": "0:44", "blend": "sunburst", "amount": 0.5, "over": 8, "note": "the body and its map at once" },
     { "at": "0:54.3", "blend": "sunburst", "amount": 1, "over": 6, "note": "into the map" },

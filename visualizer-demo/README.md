@@ -97,7 +97,14 @@ on air, what it does and the cue's `note` are written top right.
 `orchestrations/showcase.json` is the one to watch first: every lens in
 turn on the Christmas song, the pads, and Atlas between each, filling in
 the song's timeline as it goes. `orchestrations/christmas.json` is a full one, written around the
-song's analysed parts and key changes.
+song's analysed parts and key changes. `orchestrations/herbert.json` keeps
+Pulley on air for the whole song and captions what Lex's §4 put into it:
+the nouns anchoring, the charge turning the arc, the rope taking the
+weight, and the toss arriving. With captions on, the explainer top right
+also carries the lens's own label, live: for Pulley, the line, the verb,
+the anchor, the charge and how far the body is hoisted. The beat clock
+sets the poem's pace, so a cue timed to the song's clock lands a line or
+two differently from one take to the next.
 
 **By script.** `window.visualizer` has `load(url)`, `orchestrate(urlOrJson)`,
 `play()`, `pause()`, `seek(seconds)`, `lens(id)`, `cue(id)`, `cut()`,

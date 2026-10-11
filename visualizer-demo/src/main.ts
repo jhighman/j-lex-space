@@ -375,7 +375,8 @@ function perform(a: Action): void {
 
 async function orchestrate(source: string | unknown): Promise<Orchestration | null> {
   const base = typeof source === "string" ? new URL(source, location.href) : new URL(location.href);
-  const json = typeof source === "string" ? await (await fetch(base)).json() : source;
+  /* fetched fresh every time: a score edited between takes must play as edited, not as cached */
+  const json = typeof source === "string" ? await (await fetch(base, { cache: "no-store" })).json() : source;
   const r = read(json, LENSES.map((l) => l.id), audio.duration || null);
   if (!r.ok) { notify(`This orchestration cannot be played: ${r.problems.join("; ")}`); return null; }
   orch = r.orchestration;
@@ -647,11 +648,13 @@ function frame(now: number): void {
     const ix = decks[hand.onAir()].ix;
     if (ix !== explained.ix) explained = { ix, since: secs };
     const l = LENSES[ix];
+    const st = decks[hand.onAir()].prev;
     const t = audio.currentTime;
     drawCaptions(stage.getContext("2d")!, stage.clientWidth, {
       crumbs,
       title: l?.title ?? null,
       idea: l?.idea ?? null,
+      label: l && st ? l.label(st as never) : null,
       note: note && note.ix === ix && t - note.at < 14 && t >= note.at ? note.text : null,
       fresh: secs - explained.since,
     });

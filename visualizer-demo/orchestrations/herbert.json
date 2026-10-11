@@ -1,0 +1,19 @@
+{
+  "title": "Again it's Christmas time, Herbert",
+  "song": "../samples/Again it's Christmas time.mp3",
+  "captions": true,
+  "cues": [
+    {"at": "0:00", "lens": "pulley", "note": "Lex's §4 read into Pulley. Nouns anchor: each is found in the text and stands where the spec's topology puts it, the core at the centre, the human orbit between, the world at the rim beside its line. Verbs act between them. The key colours the rim and nothing else."},
+    {"at": "0:22", "quantise": true, "note": "The faint points round the body are the nouns. The one anchoring the line being read is named where it stands; the line above says the line, the verb, the anchor and the charge, live."},
+    {"at": "0:58", "quantise": true, "note": "Adore drifts the body toward the gifts; rest settles half of it round Nature. Both are nouns now, not typed-in points."},
+    {"at": "1:12", "quantise": true, "note": "Adjectives charge. The words of state push a charge on every beat of their line: losers, repining, restlessness, weary, weariness toward sorrow; rich, goodness toward joy. 'Repining restlessness' turns the arc; 'rich and weary' hold each other."},
+    {"at": "1:26", "quantise": true, "note": "Past the threshold the charge hoists the body up the rope, faster at first; the lit length of rope is what takes the weight. A staging of §4's Z in the plane, not Z."},
+    {"at": "1:38", "quantise": true, "note": "The toss arrives. Lex's staged grounding: a decade nearer home each beat, 0.9, 0.99, 0.999, 0.9999, then within tolerance and home exactly. The rope goes taut and holds until the next verb acts."},
+    {"at": "2:00", "cue": "sunburst", "note": "Second reading. Sunburst on the other deck is the poem's map: stanzas, lines, words, each verb in the colour of its force."},
+    {"at": "2:01", "blend": "sunburst", "amount": 0.45, "over": 6, "note": "The body and its map at once."},
+    {"at": "2:24", "blend": "sunburst", "amount": 0, "over": 6, "note": "Back to the body."},
+    {"at": "2:40", "quantise": true, "note": "What the key does to the song's parts (A-flat, C, F minor, C minor, A-flat) reaches the rim's hue only; joy and sorrow come from the text alone, so the second reading turns where the first did."},
+    {"at": "3:02", "quantise": true, "note": "The last stanza again: watch the charge fall through 'repining restlessness', hold through 'rich and weary', and the body rise on the rope."},
+    {"at": "3:24", "quantise": true, "note": "And the toss again. Four questions back to the spec are on issue #1: whether the key keeps any say, which words are the anchors, what the adjective's threshold is in the poem's terms, and whether arriving is what toss does."}
+  ]
+}
