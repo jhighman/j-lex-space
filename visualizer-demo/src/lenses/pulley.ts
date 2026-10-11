@@ -21,6 +21,11 @@
      three points the forces reach for (the world adore drifts to, the
      false centre rest settles round, the breast toss comes home to) are
      the places of the nouns that name them.
+   - Toss arrives. Lex's staged grounding (specs/test_harmonic_grounding.py)
+     takes the body a decade nearer home on each beat of the toss — 0.9,
+     0.99, 0.999 of the way — and once what is left is within tolerance it
+     is home exactly, and holds there until the next verb acts. An ease
+     that only ever gets nearer never arrives; this one does.
 
    How the music and the poem divide the work:
 
@@ -201,6 +206,26 @@ export const FALSE_CENTRE = anchorOf("nature");
 const STEP = 0.05;
 const MIN_SPREAD = 0.2;
 
+/* Lex's staged grounding chain: after k beats of the toss the body is
+   1 - 10^-k of the way home, and once the remainder is within TOLERANCE it
+   is absorbed — home exactly, not nearly. */
+export const TOLERANCE = 1e-5;
+export function ground(stages: number): number {
+  if (stages <= 0) return 0;
+  const g = 1 - 10 ** -stages;
+  return 1 - g <= TOLERANCE ? 1 : g;
+}
+
+/** where the body was when the toss began: what it is grounded from */
+export interface Departure {
+  readonly drift: readonly [number, number];
+  readonly falseRest: number;
+  readonly potential: number;
+  readonly spread: number;
+  /** the spread the toss brings it to */
+  readonly homeSpread: number;
+}
+
 export interface PulleyState {
   readonly seen: Seen;
   readonly line: number;
@@ -216,6 +241,9 @@ export interface PulleyState {
   readonly potential: number;
   /** local disruption, 1 on a toss and settling after */
   readonly shake: number;
+  /** beats of the toss so far; 0 until it, and again once another verb acts */
+  readonly stages: number;
+  readonly departure: Departure | null;
   readonly joy: boolean;
   /** how minor the music has been lately, 0..1, remembered over about MEMORY beats */
   readonly minorness: number;
@@ -243,6 +271,8 @@ export const pulley: Lens<PulleyState> = {
     let falseRest = prev?.falseRest ?? 0;
     let potential = prev?.potential ?? 0;
     let shake = (prev?.shake ?? 0) * Math.exp(-1.6 * t.dt);
+    let stages = prev?.stages ?? 0;
+    let departure = prev?.departure ?? null;
 
     if (t.beat) {
       const verb = verbAt(line);
@@ -254,16 +284,31 @@ export const pulley: Lens<PulleyState> = {
         case "containment": potential = Math.min(1, potential + 0.08); break;
         case "false attraction": drift = lerp2(drift, WORLD, 0.12); break;
         case "competing equilibrium": falseRest = Math.min(1, falseRest + 0.12); break;
-        case "restorative disruption":
-          shake = 1;
-          spread -= 0.12 + 0.1 * potential;
-          potential *= 0.4;
-          drift = lerp2(drift, CORE, 0.5);
-          falseRest *= 0.5;
+        case "restorative disruption": {
+          /* the first beat throws; every beat grounds, a decade closer */
+          if (stages === 0) {
+            shake = 1;
+            departure = { drift, falseRest, potential, spread, homeSpread: Math.max(MIN_SPREAD, spread - 0.24 - 0.2 * potential) };
+          }
+          stages++;
+          const g = ground(stages), d = departure!;
+          if (g === 1) {
+            drift = [CORE[0], CORE[1]]; falseRest = 0; potential = 0; spread = d.homeSpread;
+          } else {
+            drift = lerp2(d.drift, CORE, g);
+            falseRest = d.falseRest * (1 - g);
+            potential = d.potential * (1 - g);
+            spread = d.spread + (d.homeSpread - d.spread) * g;
+          }
           break;
+        }
       }
-      /* the arc, everywhere but where the poem has made a stay */
-      if (force !== "stabilizing") spread += joy ? 0.01 : -0.015;
+      /* another verb acting lets go of home */
+      if (force && force !== "restorative disruption") { stages = 0; departure = null; }
+      /* the arc, everywhere but where the poem has made a stay or the toss
+         has the body: while it is being grounded, and once home, the chain
+         owns the spread */
+      if (force !== "stabilizing" && stages === 0) spread += joy ? 0.01 : -0.015;
       spread = Math.max(MIN_SPREAD, Math.min(joy ? 1 : 0.9, spread));
 
       minorness += ((f.harmony.minor ? 1 : 0) - minorness) / MEMORY;
@@ -278,7 +323,7 @@ export const pulley: Lens<PulleyState> = {
         line = (line + 1) % POEM.length;
       }
     }
-    return { seen: seen(f), line, onLine, spread, drift, falseRest, potential, shake, joy, minorness, held, key };
+    return { seen: seen(f), line, onLine, spread, drift, falseRest, potential, shake, stages, departure, joy, minorness, held, key };
   },
   view: (s) => {
     const verb = verbAt(s.line);
@@ -288,6 +333,7 @@ export const pulley: Lens<PulleyState> = {
     const rim: Albedo = s.joy ? onWheel(s.key, 0.45, 0.95) : onWheel(s.key, 0.6, 0.7);
     const rose = hue(338, 0.55, 0.92);
     const driftAmount = clamp01(Math.hypot(s.drift[0], s.drift[1]) / Math.hypot(WORLD[0], WORLD[1]));
+    const home = ground(s.stages) === 1;
     return {
       turn: (x) => (still ? s.line / POEM.length : x * 0.4),
       shell: () => 0.3 + 0.62 * s.spread,
@@ -324,9 +370,9 @@ export const pulley: Lens<PulleyState> = {
       ground: () => onWheel(s.key, 0.4, 0.05),
       emblem: () => {
         const marks: Mark[] = [
-          /* the fulcrum, and the rope up to the pulley's wheel */
-          { circle: 0.05, v: 1 }, { circle: 0.1, v: 0.45 },
-          { line: [0, 0, 0, -1.28], v: 0.25 }, { dot: [0, -1.32, 0.06], v: 0.7 },
+          /* the fulcrum, and the rope up to the pulley's wheel: taut once home */
+          { circle: 0.05, v: 1 }, { circle: 0.1, v: home ? 0.9 : 0.45 },
+          { line: [0, 0, 0, -1.28], v: home ? 0.75 : 0.25 }, { dot: [0, -1.32, 0.06], v: home ? 1 : 0.7 },
           /* the twenty lines of the poem round the rim, the one being read lit */
           ...POEM.map((_, j) => ({ arc: [1.14, j / POEM.length + 0.004, (j + 1) / POEM.length - 0.004] as const, v: j === s.line ? 1 : j < s.line ? 0.45 : 0.18 })),
         ];
@@ -363,6 +409,8 @@ export const pulley: Lens<PulleyState> = {
   label: (s) => {
     const verb = verbAt(s.line);
     const noun = nounAt(s.line);
-    return `line ${s.line + 1} of ${POEM.length} · ${verb ? `${verb}, ${FORCES[verb]}` : "before the first verb"}${noun ? ` · at ${noun}, ${NOUNS[noun]}` : ""} · ${s.joy ? "joy" : "sorrow"}`;
+    const g = ground(s.stages);
+    const grounding = s.stages === 0 ? "" : g === 1 ? " · home" : ` · grounding ${g.toFixed(s.stages)}`;
+    return `line ${s.line + 1} of ${POEM.length} · ${verb ? `${verb}, ${FORCES[verb]}` : "before the first verb"}${noun ? ` · at ${noun}, ${NOUNS[noun]}` : ""}${grounding} · ${s.joy ? "joy" : "sorrow"}`;
   },
 };

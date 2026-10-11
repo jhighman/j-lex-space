@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { type Sounding, sounding } from "../src/audio/frame";
 import { toXY } from "../src/lenses/lens";
-import { ANCHORS, CORE, FALSE_CENTRE, FORCES, LINE_BEATS, NOUNS, NOUNS_ON_LINE, POEM, type PulleyState, RADIUS, VERB_ON_LINE, WORLD, anchorOf, nounAt, pulley, verbAt } from "../src/lenses/pulley";
+import { ANCHORS, CORE, FALSE_CENTRE, FORCES, LINE_BEATS, NOUNS, NOUNS_ON_LINE, POEM, type PulleyState, RADIUS, TOLERANCE, VERB_ON_LINE, WORLD, anchorOf, ground, nounAt, pulley, verbAt } from "../src/lenses/pulley";
 
 const at = (beats: number, o: { t?: number; minor?: boolean; tonic?: number } = {}): Sounding => sounding({
   t: o.t ?? beats * 0.5,
@@ -174,7 +174,7 @@ describe("each force does what the spec says", () => {
 
 describe("the key invariant: toss is locally disruptive and globally restorative", () => {
   const before = onLine(19, 0)[0];
-  const tossed = onLine(19, 2);
+  const tossed = onLine(19, 1);
   const after = tossed[tossed.length - 1];
 
   it("throws every mote about: positions jump between moments", () => {
@@ -195,6 +195,66 @@ describe("the key invariant: toss is locally disruptive and globally restorative
     expect(Math.hypot(...after.drift)).toBeLessThan(Math.hypot(...before.drift) + 1e-9);
     expect(after.falseRest).toBeLessThan(before.falseRest + 1e-9);
     expect(after.potential).toBeLessThan(before.potential);
+  });
+});
+
+describe("the toss arrives: Lex's staged grounding (specs/test_harmonic_grounding.py)", () => {
+  it("is a decade nearer home each beat, and absorbs once the remainder is within tolerance", () => {
+    expect(ground(0)).toBe(0);
+    expect([1, 2, 3, 4].map(ground)).toEqual([0.9, 0.99, 0.999, 0.9999]);
+    expect(1 - ground(4)).toBeGreaterThan(TOLERANCE);
+    expect(ground(5)).toBe(1);
+    expect(ground(9)).toBe(1);
+  });
+
+  it("grounds the body from where the toss found it: drift, the false centre and the kept energy each shrink a decade a beat", () => {
+    const s = onLine(19, 4);
+    const from = s[1].departure!;
+    expect(from.drift).toEqual(s[0].drift);
+    expect(from.potential).toBe(s[0].potential);
+    for (let k = 1; k <= 4; k++) {
+      const left = 10 ** -k;
+      expect(s[k].stages).toBe(k);
+      expect(Math.hypot(...s[k].drift)).toBeCloseTo(Math.hypot(...from.drift) * left, 12);
+      expect(s[k].falseRest).toBeCloseTo(from.falseRest * left, 12);
+      expect(s[k].potential).toBeCloseTo(from.potential * left, 12);
+      expect(s[k].spread).toBeCloseTo(from.spread + (from.homeSpread - from.spread) * (1 - left), 12);
+    }
+  });
+
+  it("is home exactly on the fifth beat, not nearly, and holds there for the rest of the line", () => {
+    const s = onLine(19, LINE_BEATS - 1);
+    expect(Math.hypot(...s[4].drift)).toBeGreaterThan(0);
+    for (let k = 5; k < s.length; k++) {
+      expect(s[k].drift).toEqual([CORE[0], CORE[1]]);
+      expect(s[k].falseRest).toBe(0);
+      expect(s[k].potential).toBe(0);
+      expect(s[k].spread).toBe(s[5].spread);
+      expect(pulley.label(s[k])).toContain("· home");
+    }
+    expect(pulley.label(s[2])).toContain("grounding 0.99");
+  });
+
+  it("stays home through the lines that carry no verb, and lets go when the next verb acts", () => {
+    let s: PulleyState | null = null;
+    const states: PulleyState[] = [];
+    for (let b = 0; b <= 19 * LINE_BEATS + 26; b++) { s = pulley.state(at(b), s); states.push(s); }
+    const home = (x: PulleyState) => ground(x.stages) === 1;
+    /* the two verbless lines after the toss, and pour's first beat */
+    for (let b = 19 * LINE_BEATS + 8; b <= 19 * LINE_BEATS + 24; b++) { expect(home(states[b])).toBe(true); expect(states[b].drift).toEqual([0, 0]); }
+    const poured = states[19 * LINE_BEATS + 25];
+    expect(poured.line).toBe(2);
+    expect(home(poured)).toBe(false);
+    expect(poured.stages).toBe(0);
+    expect(poured.departure).toBeNull();
+    expect(poured.spread).toBeGreaterThan(states[19 * LINE_BEATS + 24].spread);
+  });
+
+  it("draws the rope taut once home", () => {
+    const rope = (x: PulleyState) => pulley.view(x).emblem().find((m) => "line" in m && m.line[3] === -1.28);
+    const v = (m: ReturnType<typeof rope>) => (m && "v" in m ? m.v ?? 0 : 0);
+    expect(v(rope(onLine(19, 2)[2]))).toBeLessThan(0.5);
+    expect(v(rope(onLine(19, 6)[6]))).toBeGreaterThan(0.7);
   });
 });
 

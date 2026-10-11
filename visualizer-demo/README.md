@@ -162,6 +162,16 @@ of it round Nature, and toss brings it home to the breast. The reading
 is one table in `pulley.ts`, kept in one place to be argued with;
 restlessness, weariness and goodness are left for the affective reading.
 
+Toss arrives. Each beat of the toss takes the body a decade nearer home,
+after Lex's staged grounding in `specs/test_harmonic_grounding.py`: nine
+tenths of the way on the first beat, then 0.99, 0.999, 0.9999, and on the
+fifth, when what is left is within tolerance, it is home exactly: the
+drift gone, the false centre let go, the kept energy spent, the rope drawn
+taut. It holds there, through the lines that carry no verb, until the
+next verb acts. Every other ease in the demo only ever gets nearer; this
+is the one that arrives, and the lens says which it is doing in its
+label: *grounding 0.99*, then *home*.
+
 A major key is joy, radiating symmetrically and never past the rim; a minor
 key is sorrow, drawn inward and tied to the centre by tension cords. The
 arc is a mood, not a reaction: it follows how minor the music has been over
