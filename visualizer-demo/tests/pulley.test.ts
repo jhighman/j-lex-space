@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { type Sounding, sounding } from "../src/audio/frame";
 import { toXY } from "../src/lenses/lens";
-import { FALSE_CENTRE, FORCES, LINE_BEATS, POEM, type PulleyState, VERB_ON_LINE, WORLD, pulley, verbAt } from "../src/lenses/pulley";
+import { ANCHORS, CORE, FALSE_CENTRE, FORCES, LINE_BEATS, NOUNS, NOUNS_ON_LINE, POEM, type PulleyState, RADIUS, VERB_ON_LINE, WORLD, anchorOf, nounAt, pulley, verbAt } from "../src/lenses/pulley";
 
 const at = (beats: number, o: { t?: number; minor?: boolean; tonic?: number } = {}): Sounding => sounding({
   t: o.t ?? beats * 0.5,
@@ -61,6 +61,75 @@ describe("the poem and its verbs", () => {
     expect(verbAt(0)).toBeNull();
     expect(verbAt(5)).toBe("contract");
     expect(verbAt(9)).toBe("stay");
+  });
+});
+
+describe("the nouns anchor (spec §4), placed by its topology (§1)", () => {
+  it("finds the nouns on each line in the text, and never the word read as the line's verb", () => {
+    const found = NOUNS_ON_LINE.map((ns, i) => (ns.length ? `${i + 1}:${ns.join(",")}` : null)).filter(Boolean);
+    expect(found).toEqual([
+      "1:god,man", "2:glass,blessings", "4:world,riches", "5:span", "6:strength", "7:beauty,wisdom,honour,pleasure",
+      "8:god", "9:treasure", "10:rest", "12:jewel,creature", "13:gifts", "14:nature,god", "16:rest", "20:breast",
+    ]);
+    /* "rest in Nature" is the verb; Nature is the noun */
+    expect(VERB_ON_LINE[13]).toBe("rest");
+    expect(NOUNS_ON_LINE[13]).not.toContain("rest");
+  });
+
+  it("places every noun once, where it is first read: the core at the centre, the orbit between, the world at the rim beside its line", () => {
+    expect(ANCHORS.map((a) => a.word)).toEqual([...new Set(NOUNS_ON_LINE.flat())]);
+    for (const a of ANCHORS) {
+      expect(Math.hypot(...a.at)).toBeCloseTo(RADIUS[a.region], 9);
+      if (a.region !== "core") {
+        /* within its line's arc: the arc spans line/20 .. (line+1)/20 turns */
+        const turns = ((Math.atan2(a.at[1], a.at[0]) / (2 * Math.PI)) % 1 + 1) % 1;
+        expect(turns).toBeGreaterThan(a.line / POEM.length);
+        expect(turns).toBeLessThan((a.line + 1) / POEM.length);
+      }
+    }
+    /* no two anchors off the core stand on one point */
+    const off = ANCHORS.filter((a) => a.region !== "core");
+    for (const a of off) for (const b of off) if (a !== b) expect(Math.hypot(a.at[0] - b.at[0], a.at[1] - b.at[1])).toBeGreaterThan(0.02);
+    /* a line's nouns keep the line's order round the rim */
+    const line7 = off.filter((a) => a.line === 6).map((a) => a.word);
+    expect(line7).toEqual(["beauty", "wisdom", "honour", "pleasure"]);
+    expect(RADIUS.core).toBe(0);
+    expect(RADIUS.orbit).toBeGreaterThan(RADIUS.core);
+    expect(RADIUS.world).toBeGreaterThan(RADIUS.orbit);
+    expect(anchorOf("god")).toEqual([0, 0]);
+    expect(() => anchorOf("fulcrum")).toThrow();
+  });
+
+  it("a noun anchors its line and every line after it until the next, as a verb does", () => {
+    expect(nounAt(0)).toBe("god");
+    expect(nounAt(2)).toBe("glass");
+    expect(nounAt(10)).toBe("rest");
+    expect(nounAt(18)).toBe("rest");
+    expect(nounAt(19)).toBe("breast");
+  });
+
+  it("the points the forces reach for are nouns: the gifts adored, the Nature rested in, the breast tossed to", () => {
+    expect(WORLD).toEqual(anchorOf("gifts"));
+    expect(NOUNS.gifts).toBe("world");
+    expect(FALSE_CENTRE).toEqual(anchorOf("nature"));
+    expect(NOUNS.nature).toBe("world");
+    expect(CORE).toEqual(anchorOf("breast"));
+    expect(CORE).toEqual([0, 0]);
+  });
+
+  it("draws every anchor off the core beside its line, and names the one anchoring the line being read", () => {
+    const marks = pulley.view(onLine(12, 0)[0]).emblem();
+    const named = marks.filter((m) => "text" in m).map((m) => ("text" in m ? m.text[2] : ""));
+    expect(named).toEqual(["gifts"]);
+    const dots = marks.filter((m) => "dot" in m && m.dot[2] === 0.018);
+    expect(dots.length).toBe(ANCHORS.filter((a) => a.region !== "core").length);
+    /* a core noun is named at the centre, under the fulcrum */
+    const atRest = pulley.view(onLine(9, 0)[0]).emblem().find((m) => "text" in m);
+    expect(atRest && "text" in atRest ? atRest.text : null).toEqual([0, 0.17, "rest"]);
+  });
+
+  it("says in its label where the body is anchored", () => {
+    expect(pulley.label(onLine(13, 0)[0])).toContain("at nature, world");
   });
 });
 

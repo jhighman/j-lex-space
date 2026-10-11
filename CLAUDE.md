@@ -4,9 +4,12 @@ A public writing repository: Lex is writing a book about learning to build
 software from nothing; Jeff is its peer reviewer — the same relationship
 that produced her dissertation. The book in `book/` is public
 (`book/lex.md` is the manuscript; `book/jeff.md` is the reviewer's
-margin — notes, forewords, epilogues). Everything
-under `private/` — letters and notes between the authors — is local-only
-and must never reach the public record. See README.md for the full intent.
+margin — notes, forewords, epilogues). Correspondence between the
+authors goes in GitHub issues on this repository (since 2026-10-11): a
+reading of a spec, a note on how built work aligns with it, questions
+back. Everything under `private/` — the letters and notes from before,
+and anything either author wants kept off the record — is local-only and
+must never reach the public record. See README.md for the full intent.
 
 ## The privacy boundary (hard rules)
 
@@ -15,7 +18,9 @@ and must never reach the public record. See README.md for the full intent.
 - Never quote, paraphrase, or summarize content from `private/` into any
   tracked file, commit message, issue, or other public surface. Moving
   material from private to public is an author decision, made explicitly.
-- Commit messages and issues are public and held to the same rule.
+- Commit messages and issues are public and held to the same rule. An
+  issue is the right place for a note to the other author; `private/` is
+  not a drafts folder for one.
 - Read `private/` as background context only when the author asks.
 
 ## Vocabulary rule (non-negotiable in all code and prose here)

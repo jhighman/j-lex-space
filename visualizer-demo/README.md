@@ -148,6 +148,20 @@ body, and each of its verbs acts on the body from its line until the next:
   the true centre, the world and the false centre let go, the kept energy
   released. Locally disruptive, globally restorative.
 
+The nouns are the anchors the verbs act between (the spec's §4), and each
+is found in the text on its line the way the verbs are. Where a noun
+stands is read from the spec's topology: God, Rest, the treasure, the
+jewel and the breast are the core, at the centre; man, the span and the
+creature are the human orbit, between; the glass, the blessings, the
+world and its riches, strength, beauty, wisdom, honour, pleasure, the
+gifts and Nature are the world, at the rim. Each stands beside the line
+it is first read on, as a faint point, and the noun anchoring the line
+being read is named where it stands. The three points the forces reach
+for are nouns: adore drifts the body toward the gifts, rest settles half
+of it round Nature, and toss brings it home to the breast. The reading
+is one table in `pulley.ts`, kept in one place to be argued with;
+restlessness, weariness and goodness are left for the affective reading.
+
 A major key is joy, radiating symmetrically and never past the rim; a minor
 key is sorrow, drawn inward and tied to the centre by tension cords. The
 arc is a mood, not a reaction: it follows how minor the music has been over

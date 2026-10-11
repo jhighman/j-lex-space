@@ -14,6 +14,13 @@
      Toss is how the poem ends, and how everything is reunited.
    - Joy radiates outward from the centre without coming away from it;
      sorrow is a heavy pull inward, tied to the centre by tension cords.
+   - Nouns are anchors (spec §4): the reference points the verbs act
+     between. Without them the actions float. Each noun the poem names is
+     placed where §1's topology puts it — the core, the human orbit, or
+     the world at the rim — beside the line it is first read on, and the
+     three points the forces reach for (the world adore drifts to, the
+     false centre rest settles round, the breast toss comes home to) are
+     the places of the nouns that name them.
 
    How the music and the poem divide the work:
 
@@ -106,10 +113,10 @@ export const HOLD_LINES = 2;
    is "rest in Nature", three lines later, so a line counts only where the
    word is used as the spec uses it. */
 const NOUN = /^Rest in the bottom/;
+const wordsOf = (line: string): string[] => line.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").match(/[a-z]+/g) ?? [];
 export const VERB_ON_LINE: readonly (string | null)[] = POEM.map((line) => {
   if (NOUN.test(line)) return null;
-  const words = line.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").match(/[a-z]+/g) ?? [];
-  return words.find((w) => w in FORCES) ?? null;
+  return wordsOf(line).find((w) => w in FORCES) ?? null;
 });
 
 /** the verb in force on a line: its own, or the last one before it in the poem */
@@ -118,10 +125,78 @@ export function verbAt(line: number): string | null {
   return null;
 }
 
-/* where the world draws the body when it adores, and where the false
-   centre stands when it rests */
-export const WORLD: readonly [number, number] = [0.42, -0.24];
-export const FALSE_CENTRE: readonly [number, number] = [0.46, 0.3];
+/* The nouns, and where each stands. Spec §4 makes nouns the anchors in the
+   plane; §1 says where the plane's regions are: the core is God, Rest, the
+   fulcrum; the perimeter is the human course through earthly time. So each
+   noun the poem names is read as standing on the core, on the human orbit,
+   or on the world's side at the rim. This is a reading, like the verb
+   table, and is kept here in one place so it can be argued with.
+
+   Left out, on purpose: restlessness, weariness and goodness, which are
+   states rather than things and belong to the affective reading (§4's
+   adjectives), and "way" and "losers", which name neither a thing nor a
+   place. "Rest" is read as the core wherever it is the noun, including
+   "keep the rest" (line 16), where the remainder carries the pun. */
+export type Region = "core" | "orbit" | "world";
+export const NOUNS: Readonly<Record<string, Region>> = {
+  god: "core", rest: "core", treasure: "core", jewel: "core", breast: "core",
+  man: "orbit", span: "orbit", creature: "orbit",
+  glass: "world", blessings: "world", world: "world", riches: "world",
+  strength: "world", beauty: "world", wisdom: "world", honour: "world", pleasure: "world",
+  gifts: "world", nature: "world",
+};
+/** how far from the centre each region stands, as a fraction of the body */
+export const RADIUS: Readonly<Record<Region, number>> = { core: 0, orbit: 0.45, world: 0.8 };
+
+/* the nouns on each line, found in the text, each once however often the
+   line says it ("Nature, not the God of Nature"); the word read as the
+   line's verb is not also its noun ("rest in Nature" is the verb, Nature
+   the noun) */
+export const NOUNS_ON_LINE: readonly (readonly string[])[] = POEM.map((line, j) => [...new Set(wordsOf(line).filter((w) => w in NOUNS && w !== VERB_ON_LINE[j]))]);
+
+export interface Anchor {
+  readonly word: string;
+  readonly region: Region;
+  /** the line it is first read on */
+  readonly line: number;
+  /** where it stands: the core at the centre, the others along their line's arc */
+  readonly at: readonly [number, number];
+}
+
+/** every noun once, placed where it is first read: nouns sharing a line
+ *  are spread along that line's arc in the order the line says them */
+export const ANCHORS: readonly Anchor[] = (() => {
+  const out: Anchor[] = [];
+  NOUNS_ON_LINE.forEach((nouns, line) => {
+    const fresh = nouns.filter((w) => !out.some((a) => a.word === w) && NOUNS[w] !== "core");
+    for (const word of nouns) {
+      if (out.some((a) => a.word === word)) continue;
+      const region = NOUNS[word];
+      const i = fresh.indexOf(word);
+      const at = region === "core" ? ([0, 0] as const) : toXY(RADIUS[region], (line + (i + 1) / (fresh.length + 1)) / POEM.length);
+      out.push({ word, region, line, at });
+    }
+  });
+  return out;
+})();
+
+export function anchorOf(word: string): readonly [number, number] {
+  const a = ANCHORS.find((x) => x.word === word);
+  if (!a) throw new Error(`the poem names no "${word}"`);
+  return a.at;
+}
+
+/** the noun anchoring a line: the first on it, or the last one read before it */
+export function nounAt(line: number): string | null {
+  for (let j = line; j >= 0; j--) if (NOUNS_ON_LINE[j].length) return NOUNS_ON_LINE[j][0];
+  return null;
+}
+
+/* the points the forces reach for are nouns: adore drifts toward the gifts,
+   rest settles round Nature, and the core is where toss brings him home */
+export const CORE = anchorOf("breast");
+export const WORLD = anchorOf("gifts");
+export const FALSE_CENTRE = anchorOf("nature");
 
 const STEP = 0.05;
 const MIN_SPREAD = 0.2;
@@ -174,7 +249,7 @@ export const pulley: Lens<PulleyState> = {
       const force = verb ? FORCES[verb] : null;
       switch (force) {
         case "centrifugal": spread += STEP; break;
-        case "centripetal": spread -= STEP; drift = lerp2(drift, [0, 0], 0.15); falseRest *= 0.85; break;
+        case "centripetal": spread -= STEP; drift = lerp2(drift, CORE, 0.15); falseRest *= 0.85; break;
         case "stabilizing": break;
         case "containment": potential = Math.min(1, potential + 0.08); break;
         case "false attraction": drift = lerp2(drift, WORLD, 0.12); break;
@@ -183,7 +258,7 @@ export const pulley: Lens<PulleyState> = {
           shake = 1;
           spread -= 0.12 + 0.1 * potential;
           potential *= 0.4;
-          drift = lerp2(drift, [0, 0], 0.5);
+          drift = lerp2(drift, CORE, 0.5);
           falseRest *= 0.5;
           break;
       }
@@ -268,6 +343,15 @@ export const pulley: Lens<PulleyState> = {
           }
         if (s.falseRest > 0.05) marks.push({ dot: [FALSE_CENTRE[0], FALSE_CENTRE[1], 0.045], v: s.falseRest });
         if (driftAmount > 0.05) marks.push({ dot: [WORLD[0], WORLD[1], 0.035], v: driftAmount });
+        /* the nouns: every anchor off the core as a faint point beside its
+           line, and the noun anchoring the line being read named where it
+           stands */
+        const noun = nounAt(s.line);
+        for (const a of ANCHORS) if (a.region !== "core") marks.push({ dot: [a.at[0], a.at[1], 0.018], v: a.word === noun ? 0.9 : 0.22 });
+        if (noun) {
+          const a = ANCHORS.find((x) => x.word === noun)!;
+          marks.push({ text: [a.at[0], a.at[1] + (a.region === "core" ? 0.17 : 0.07), noun], v: 0.8 });
+        }
         return marks;
       },
       /* hoisted: it lifts a little, then settles into place */
@@ -278,6 +362,7 @@ export const pulley: Lens<PulleyState> = {
   },
   label: (s) => {
     const verb = verbAt(s.line);
-    return `line ${s.line + 1} of ${POEM.length} · ${verb ? `${verb}, ${FORCES[verb]}` : "before the first verb"} · ${s.joy ? "joy" : "sorrow"}`;
+    const noun = nounAt(s.line);
+    return `line ${s.line + 1} of ${POEM.length} · ${verb ? `${verb}, ${FORCES[verb]}` : "before the first verb"}${noun ? ` · at ${noun}, ${NOUNS[noun]}` : ""} · ${s.joy ? "joy" : "sorrow"}`;
   },
 };
