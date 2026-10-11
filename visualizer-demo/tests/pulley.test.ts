@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { type Sounding, sounding } from "../src/audio/frame";
 import { toXY } from "../src/lenses/lens";
-import { ANCHORS, CORE, FALSE_CENTRE, FORCES, LINE_BEATS, NOUNS, NOUNS_ON_LINE, POEM, type PulleyState, RADIUS, TOLERANCE, VERB_ON_LINE, WORLD, anchorOf, ground, nounAt, pulley, verbAt } from "../src/lenses/pulley";
+import { ANCHORS, CHARGE, CHARGE_ON_LINE, CORE, FALSE_CENTRE, FORCES, LINE_BEATS, NOUNS, NOUNS_ON_LINE, POEM, type PulleyState, RADIUS, TOLERANCE, TO_JOY, TO_SORROW, VERB_ON_LINE, WORLD, anchorOf, chargeOf, ground, nounAt, pulley, verbAt } from "../src/lenses/pulley";
 
 const at = (beats: number, o: { t?: number; minor?: boolean; tonic?: number } = {}): Sounding => sounding({
   t: o.t ?? beats * 0.5,
@@ -258,58 +258,93 @@ describe("the toss arrives: Lex's staged grounding (specs/test_harmonic_groundin
   });
 });
 
-describe("the emotional arcs", () => {
+describe("the emotional arcs come from the text's charge (spec §4), not the key", () => {
+  /** every state of a full reading of the poem, in a key that is minor or major throughout */
+  const reading = (minor: boolean) => {
+    let s: PulleyState | null = null;
+    const out: PulleyState[] = [];
+    for (let b = 0; b <= LINE_BEATS * POEM.length + 2; b++) { s = pulley.state(at(b, { minor }), s); out.push(s); }
+    return out;
+  };
+  /** the state at the start of a line (1-based), after the previous line's last beat */
+  const atLine = (states: PulleyState[], line: number) => states[(line - 1) * LINE_BEATS];
+  const major = reading(false), minor = reading(true);
+
+  it("finds the charge words on their lines in the text, with the valence the poem gives them", () => {
+    const found = CHARGE_ON_LINE.map((ws, i) => (ws.length ? `${i + 1}:${ws.join(",")}` : null)).filter(Boolean);
+    expect(found).toEqual(["15:losers", "17:repining,restlessness", "18:rich,weary", "19:goodness,weariness"]);
+    expect(chargeOf(16)).toBe(-2);
+    expect(chargeOf(17)).toBe(0);
+    expect(CHARGE.rich).toBe(1);
+    expect(CHARGE.weary).toBe(-1);
+  });
+
+  it("a word is one thing: no charge word is a noun anchor or a verb", () => {
+    for (const w of Object.keys(CHARGE)) { expect(w in NOUNS).toBe(false); expect(w in FORCES).toBe(false); }
+  });
+
+  it("begins in joy, and the key does not turn it: the first sixteen lines are joy in a minor key as in a major one", () => {
+    for (let line = 1; line <= 17; line++) { expect(atLine(major, line).joy).toBe(true); expect(atLine(minor, line).joy).toBe(true); }
+  });
+
   it("joy radiates outward without coming away from the centre", () => {
     const s = onLine(6, LINE_BEATS * 6);
     for (const x of s) expect(x.spread).toBeLessThanOrEqual(1);
     expect(pulley.view(s[0]).folds(1)).toBe(2);
   });
 
-  it("sorrow draws inward, tied to the fulcrum by tension cords", () => {
-    const joy = onLine(5, 4)[4], sorrow = onLine(5, 4, { minor: true })[4];
-    expect(sorrow.spread).toBeLessThan(joy.spread);
-    const cords = pulley.view(sorrow).emblem().filter((m) => "line" in m && m.line[0] === 0 && m.line[1] === 0 && m.line[3] !== -1.28);
-    expect(cords.length).toBe(12);
-  });
-
-  /** the arc at every beat, for a run of beats whose mode is given */
-  const arcs = (minorAt: (b: number) => boolean, beats: number) => {
-    let s: PulleyState | null = null;
-    const out: boolean[] = [];
-    for (let b = 0; b < beats; b++) { s = pulley.state(at(b, { minor: minorAt(b) }), s); out.push(s.joy); }
-    return out;
-  };
-  const changes = (xs: boolean[]) => xs.filter((x, i) => i > 0 && x !== xs[i - 1]).length;
-
-  it("turns to sorrow when the music stays minor, and only at the end of a line", () => {
-    const a = arcs((b) => b >= LINE_BEATS * 2, LINE_BEATS * 8);
-    const turn = a.indexOf(false);
-    expect(turn).toBeGreaterThan(LINE_BEATS * 2);
-    /* lines end on beats 8, 16, 24…: the first frame is not a beat */
-    expect(turn % LINE_BEATS).toBe(0);
-    expect(a.slice(turn).every((x) => !x)).toBe(true);
-  });
-
-  it("holds its arc while the key alternates half and half, chord by chord", () => {
-    /* major and minor alternating every four beats, as an A-flat / C minor vamp did */
-    expect(changes(arcs((b) => Math.floor(b / 4) % 2 === 1, LINE_BEATS * 20))).toBe(0);
-    /* and every line */
-    expect(changes(arcs((b) => Math.floor(b / LINE_BEATS) % 2 === 1, LINE_BEATS * 20))).toBe(0);
-  });
-
-  it("holds a change for at least two lines", () => {
-    const a = arcs((b) => Math.floor(b / (LINE_BEATS * 5)) % 2 === 0, LINE_BEATS * 40);
-    let run = 0;
-    for (let i = 1; i < a.length; i++) {
-      if (a[i] !== a[i - 1]) { if (run) expect(run).toBeGreaterThanOrEqual(LINE_BEATS * 2); run = 0; }
-      run++;
+  it("'repining restlessness' drives the charge down through its line, and the arc turns to sorrow at the line's end, whatever the key", () => {
+    for (const r of [major, minor]) {
+      const before = atLine(r, 17), after = atLine(r, 18);
+      expect(before.joy).toBe(true);
+      expect(after.charge).toBeLessThan(before.charge);
+      expect(after.charge).toBeLessThanOrEqual(TO_SORROW);
+      expect(after.joy).toBe(false);
+      /* and only at the end: the line itself is still joy */
+      for (let k = 1; k < LINE_BEATS; k++) expect(r[16 * LINE_BEATS + k].joy).toBe(true);
     }
   });
 
-  it("comes back to joy when the music stays major again", () => {
-    const a = arcs((b) => b < LINE_BEATS * 6, LINE_BEATS * 16);
-    expect(a[LINE_BEATS * 6]).toBe(false);
-    expect(a[a.length - 1]).toBe(true);
+  it("'rich and weary' hold each other: the charge does not move on their line", () => {
+    const before = atLine(major, 18), after = atLine(major, 19);
+    expect(after.charge).toBeCloseTo(before.charge, 12);
+    expect(after.joy).toBe(false);
+  });
+
+  it("sorrow draws inward, tied to the fulcrum by cords lit by the charge's amplitude", () => {
+    /* line 18 has keep in force, which leaves the spread alone: what draws
+       the body in over the line is sorrow (by line 17's end, joy had the spread at its cap) */
+    expect(atLine(major, 18).spread).toBe(1);
+    const sorrow = atLine(major, 19);
+    expect(sorrow.spread).toBeLessThan(atLine(major, 18).spread);
+    const cords = pulley.view(sorrow).emblem().filter((m) => "line" in m && m.line[0] === 0 && m.line[1] === 0 && m.line[3] !== -1.28);
+    expect(cords.length).toBe(12);
+    expect(cords[0].v).toBeGreaterThan(0.8);
+  });
+
+  it("the toss grounds the charge with everything else, and arriving home is what restores joy", () => {
+    const toss = 19 * LINE_BEATS;
+    expect(major[toss].charge).toBeLessThanOrEqual(TO_SORROW);
+    expect(major[toss + 1].charge).toBeCloseTo(major[toss].charge * 0.1, 12);
+    expect(major[toss + 5].charge).toBe(0);
+    expect(major[toss + 5].joy).toBe(false);
+    expect(major[toss + 5].charge).toBeGreaterThan(TO_JOY);
+    expect(atLine(major, 21).joy).toBe(true);
+    expect(minor[toss + LINE_BEATS].joy).toBe(true);
+  });
+
+  it("a line with no charge word lets the charge fade, so 'losers' alone does not turn the arc", () => {
+    const lost = atLine(major, 16), later = atLine(major, 17);
+    expect(lost.charge).toBeLessThan(0);
+    expect(lost.charge).toBeGreaterThan(TO_SORROW);
+    expect(Math.abs(later.charge)).toBeLessThan(Math.abs(lost.charge));
+    expect(later.joy).toBe(true);
+  });
+
+  it("says the charge, and the words moving it, in its label", () => {
+    expect(pulley.label(onLine(16, 3)[3])).toMatch(/sorrow|joy/);
+    expect(pulley.label(onLine(16, 3)[3])).toContain("(repining, restlessness)");
+    expect(pulley.label(onLine(16, 3)[3])).toMatch(/charge −0\.\d\d/);
   });
 
   it("a key change recolours the world at the rim, and leaves the centre and the reading alone", () => {

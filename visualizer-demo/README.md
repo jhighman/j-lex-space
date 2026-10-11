@@ -172,13 +172,19 @@ next verb acts. Every other ease in the demo only ever gets nearer; this
 is the one that arrives, and the lens says which it is doing in its
 label: *grounding 0.99*, then *home*.
 
-A major key is joy, radiating symmetrically and never past the rim; a minor
-key is sorrow, drawn inward and tied to the centre by tension cords. The
-arc is a mood, not a reaction: it follows how minor the music has been over
-the last few lines, changes only at the end of a line, and holds for at
-least two. The live key follows the chords, and without that memory a song
-alternating A-flat major and C minor chords flipped between joy and sorrow
-every few seconds.
+The emotion is the text's (the spec's §4: adjectives carry the charge).
+The words of state in the poem each push a charge one way: losers,
+repining, restlessness, weary and weariness toward sorrow, rich and
+goodness toward joy, a little on every beat of their line, and a line
+without one lets it fade. The arc turns at the end of a line once the
+charge has crossed a threshold: joy radiates symmetrically and never
+past the rim; sorrow is drawn inward and tied to the centre by tension
+cords, lit by the charge's amplitude. "Repining restlessness" is what
+turns it, "rich and weary" hold each other, and the toss grounds the
+charge with everything else, so arriving home is what restores joy. The
+key colours the rim and does not turn the arc; it used to, and whether
+it should keep any say is a question put back to the spec. The label
+says the charge and the words moving it.
 `tests/pulley.test.ts` holds the lens to each of these, one test per
 claim. [`specs/herbert/visualizer-notes.md`](../specs/herbert/visualizer-notes.md)
 says how to play it against the spec, what the two source songs showed, and

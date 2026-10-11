@@ -27,31 +27,34 @@
      is home exactly, and holds there until the next verb acts. An ease
      that only ever gets nearer never arrives; this one does.
 
+   - Adjectives carry the charge (spec §4): affective amplitude and
+     valence, which the verbs do not have and the nouns do not have. The
+     words of state in the text — repining, restlessness, rich, weary,
+     goodness, weariness, losers — each push the charge one way, and when
+     it crosses a threshold the arc turns, non-linearly: joy to sorrow, or
+     back. The toss grounds the charge with everything else, so arriving
+     home is what restores joy.
+
    How the music and the poem divide the work:
 
-     the poem    sets the force. It is read in order, one line every eight
-                 beats; a verb acts from its line until the next verb takes
-                 over.
-     a beat      applies the force once, and moves the reading on
-     the key     colours the world: the rim takes the key's colour, bright
-                 in a major key (joy) and dark in a minor one (sorrow). A key
+     the poem    sets the force, the anchor and the charge. It is read in
+                 order, one line every eight beats; a verb acts from its
+                 line until the next verb takes over.
+     a beat      applies the force once, moves the charge, and moves the
+                 reading on
+     the key     colours the world: the rim takes the key's hue. A key
                  change recolours the world and leaves the centre, gold,
-                 exactly as it was.
-     the arc     joy or sorrow follows how minor the music has been over
-                 the last four lines or so, and changes only with
-                 conviction: to sorrow when that passes 65%, back to joy
-                 below 35%, only at the end of a line, and never again
-                 within two lines of the last change.
+                 exactly as it was. The key does not turn the arc.
+     the arc     joy or sorrow follows the charge: to sorrow when it falls
+                 to TO_SORROW, back to joy when it rises past TO_JOY, and
+                 only at the end of a line.
 
-   The arc has a memory because the live key follows the chords. On a track
-   that alternates A-flat major and C minor chords — two triads with two
-   notes in common — the live key alternated with them, and Pulley flipped
-   between joy and sorrow every four to eight seconds for two minutes,
-   turning the cords and the symmetry on and off. Deciding once a line was
-   not enough, because successive lines really did lean different ways, and
-   a shorter memory still turned twice in four seconds. An alternation that
-   is half minor now leaves the arc where it is; a passage that stays minor
-   turns it to sorrow about four lines in, and it stays.
+   The arc once followed the key instead — a major key was joy and a minor
+   one sorrow, with a memory to keep the live key's chord-by-chord
+   wavering from flipping it every few seconds. That was the lens's guess
+   at where the emotion lives; §4 says it lives in the text, so the music
+   has been demoted to a tint, and whether it should keep any say is a
+   question put back to the spec (issue #1).
 
    A key change does not move the reading. It once turned the poem to its
    next stanza, and on a real track the live key wavered often enough that
@@ -106,12 +109,21 @@ export const FORCES: Readonly<Record<string, Force>> = {
 
 export const LINE_BEATS = 8;
 
-/* the arc's memory, in beats, and the thresholds it must cross */
-export const MEMORY = 32;
-export const TO_SORROW = 0.65;
-export const TO_JOY = 0.35;
-/** lines the arc holds after it changes */
-export const HOLD_LINES = 2;
+/* The charge words, and which way each pushes (spec §4's adjectives). A
+   reading, like the verbs and the nouns: words of state in the poem, with
+   the valence the poem gives them. "Rich" is the one that pulls toward
+   joy on its line and "weary" pulls back on the same line, which is the
+   poem's point. "Alone" (line 9) is read as "only" and left out. */
+export const CHARGE: Readonly<Record<string, 1 | -1>> = {
+  losers: -1, repining: -1, restlessness: -1, rich: 1, weary: -1, goodness: 1, weariness: -1,
+};
+/** how far one charge word moves the charge on each beat of its line */
+export const CHARGE_STEP = 0.05;
+/** how the charge fades on a line with no charge word, per beat */
+export const CHARGE_FADE = 0.97;
+/* the thresholds the charge must cross for the arc to turn */
+export const TO_SORROW = -0.5;
+export const TO_JOY = -0.2;
 
 /* Which verb each line carries, found in the text rather than typed in.
    "Rest in the bottom lay" is the noun, the thing God holds back; the verb
@@ -158,6 +170,11 @@ export const RADIUS: Readonly<Record<Region, number>> = { core: 0, orbit: 0.45, 
    line's verb is not also its noun ("rest in Nature" is the verb, Nature
    the noun) */
 export const NOUNS_ON_LINE: readonly (readonly string[])[] = POEM.map((line, j) => [...new Set(wordsOf(line).filter((w) => w in NOUNS && w !== VERB_ON_LINE[j]))]);
+
+/** the charge words on each line, found in the text */
+export const CHARGE_ON_LINE: readonly (readonly string[])[] = POEM.map((line) => [...new Set(wordsOf(line).filter((w) => w in CHARGE))]);
+/** the push of a line's charge words together: -2 .. 2 */
+export const chargeOf = (line: number): number => CHARGE_ON_LINE[line].reduce((sum, w) => sum + CHARGE[w], 0);
 
 export interface Anchor {
   readonly word: string;
@@ -222,6 +239,7 @@ export interface Departure {
   readonly falseRest: number;
   readonly potential: number;
   readonly spread: number;
+  readonly charge: number;
   /** the spread the toss brings it to */
   readonly homeSpread: number;
 }
@@ -245,10 +263,8 @@ export interface PulleyState {
   readonly stages: number;
   readonly departure: Departure | null;
   readonly joy: boolean;
-  /** how minor the music has been lately, 0..1, remembered over about MEMORY beats */
-  readonly minorness: number;
-  /** lines since the arc last changed */
-  readonly held: number;
+  /** the affective charge the text has built up: -1 (sorrow) .. 1 (joy) */
+  readonly charge: number;
   /** the key's pitch class: the colour of the world at the rim */
   readonly key: number;
 }
@@ -260,9 +276,8 @@ export const pulley: Lens<PulleyState> = {
   idea: "Herbert's “The Pulley” as forces round a centre: each verb pushes, pulls, holds or tosses the body home.",
   state(f, prev) {
     const t = ticks(f, prev?.seen ?? null);
-    let joy = prev ? prev.joy : !f.harmony.minor;
-    let minorness = prev?.minorness ?? (f.harmony.minor ? 1 : 0);
-    let held = prev?.held ?? HOLD_LINES;
+    let joy = prev?.joy ?? true;
+    let charge = prev?.charge ?? 0;
     const key = f.harmony.tonic;
     let line = prev?.line ?? 0;
     let onLine = prev?.onLine ?? 0;
@@ -288,17 +303,18 @@ export const pulley: Lens<PulleyState> = {
           /* the first beat throws; every beat grounds, a decade closer */
           if (stages === 0) {
             shake = 1;
-            departure = { drift, falseRest, potential, spread, homeSpread: Math.max(MIN_SPREAD, spread - 0.24 - 0.2 * potential) };
+            departure = { drift, falseRest, potential, spread, charge, homeSpread: Math.max(MIN_SPREAD, spread - 0.24 - 0.2 * potential) };
           }
           stages++;
           const g = ground(stages), d = departure!;
           if (g === 1) {
-            drift = [CORE[0], CORE[1]]; falseRest = 0; potential = 0; spread = d.homeSpread;
+            drift = [CORE[0], CORE[1]]; falseRest = 0; potential = 0; spread = d.homeSpread; charge = 0;
           } else {
             drift = lerp2(d.drift, CORE, g);
             falseRest = d.falseRest * (1 - g);
             potential = d.potential * (1 - g);
             spread = d.spread + (d.homeSpread - d.spread) * g;
+            charge = d.charge * (1 - g);
           }
           break;
         }
@@ -311,19 +327,22 @@ export const pulley: Lens<PulleyState> = {
       if (force !== "stabilizing" && stages === 0) spread += joy ? 0.01 : -0.015;
       spread = Math.max(MIN_SPREAD, Math.min(joy ? 1 : 0.9, spread));
 
-      minorness += ((f.harmony.minor ? 1 : 0) - minorness) / MEMORY;
+      /* the charge: the line's words push it, a line without them lets it
+         fade, and the toss grounds it above */
+      if (force !== "restorative disruption") {
+        /* a line whose words cancel ("rich and weary") holds the charge; a line with none lets it fade */
+        charge = CHARGE_ON_LINE[line].length ? Math.max(-1, Math.min(1, charge + CHARGE_STEP * chargeOf(line))) : charge * CHARGE_FADE;
+      }
       onLine++;
       if (onLine >= LINE_BEATS) {
-        held++;
-        if (held >= HOLD_LINES) {
-          if (joy && minorness > TO_SORROW) { joy = false; held = 0; }
-          else if (!joy && minorness < TO_JOY) { joy = true; held = 0; }
-        }
+        /* the arc turns at the end of a line, when the charge has crossed a threshold */
+        if (joy && charge <= TO_SORROW) joy = false;
+        else if (!joy && charge > TO_JOY) joy = true;
         onLine = 0;
         line = (line + 1) % POEM.length;
       }
     }
-    return { seen: seen(f), line, onLine, spread, drift, falseRest, potential, shake, stages, departure, joy, minorness, held, key };
+    return { seen: seen(f), line, onLine, spread, drift, falseRest, potential, shake, stages, departure, joy, charge, key };
   },
   view: (s) => {
     const verb = verbAt(s.line);
@@ -376,16 +395,18 @@ export const pulley: Lens<PulleyState> = {
           /* the twenty lines of the poem round the rim, the one being read lit */
           ...POEM.map((_, j) => ({ arc: [1.14, j / POEM.length + 0.004, (j + 1) / POEM.length - 0.004] as const, v: j === s.line ? 1 : j < s.line ? 0.45 : 0.18 })),
         ];
+        /* the charge's amplitude lights the arc's marks: joy's rays and sorrow's cords */
+        const amplitude = Math.abs(s.charge);
         if (s.joy)
           for (let j = 0; j < 12; j++) {
             const a = (j / 12) * 2 * Math.PI;
-            marks.push({ line: [Math.cos(a) * 1.2, Math.sin(a) * 1.2, Math.cos(a) * 1.3, Math.sin(a) * 1.3], v: 0.55 });
+            marks.push({ line: [Math.cos(a) * 1.2, Math.sin(a) * 1.2, Math.cos(a) * (1.3 + 0.1 * amplitude), Math.sin(a) * (1.3 + 0.1 * amplitude)], v: 0.4 + 0.4 * amplitude });
           }
         else
           for (let j = 0; j < 12; j++) {
             /* sorrow's tension cords, tied to the fulcrum */
             const a = (j / 12) * 2 * Math.PI;
-            marks.push({ line: [0, 0, Math.cos(a) * 0.95 * s.spread, Math.sin(a) * 0.95 * s.spread], v: 0.9 });
+            marks.push({ line: [0, 0, Math.cos(a) * 0.95 * s.spread, Math.sin(a) * 0.95 * s.spread], v: 0.5 + 0.4 * amplitude });
           }
         if (s.falseRest > 0.05) marks.push({ dot: [FALSE_CENTRE[0], FALSE_CENTRE[1], 0.045], v: s.falseRest });
         if (driftAmount > 0.05) marks.push({ dot: [WORLD[0], WORLD[1], 0.035], v: driftAmount });
@@ -411,6 +432,7 @@ export const pulley: Lens<PulleyState> = {
     const noun = nounAt(s.line);
     const g = ground(s.stages);
     const grounding = s.stages === 0 ? "" : g === 1 ? " · home" : ` · grounding ${g.toFixed(s.stages)}`;
-    return `line ${s.line + 1} of ${POEM.length} · ${verb ? `${verb}, ${FORCES[verb]}` : "before the first verb"}${noun ? ` · at ${noun}, ${NOUNS[noun]}` : ""}${grounding} · ${s.joy ? "joy" : "sorrow"}`;
+    const charged = CHARGE_ON_LINE[s.line];
+    return `line ${s.line + 1} of ${POEM.length} · ${verb ? `${verb}, ${FORCES[verb]}` : "before the first verb"}${noun ? ` · at ${noun}, ${NOUNS[noun]}` : ""}${grounding} · ${s.joy ? "joy" : "sorrow"}, charge ${s.charge >= 0 ? "+" : "−"}${Math.abs(s.charge).toFixed(2)}${charged.length ? ` (${charged.join(", ")})` : ""}`;
   },
 };
