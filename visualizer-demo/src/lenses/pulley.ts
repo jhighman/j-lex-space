@@ -34,6 +34,15 @@
      it crosses a threshold the arc turns, non-linearly: joy to sorrow, or
      back. The toss grounds the charge with everything else, so arriving
      home is what restores joy.
+   - The rope stages Z. §4 puts the charge on a third axis, out of the
+     plane, and this body has no third axis: a lens places a mote by
+     radius, angle and light, and the renderer draws in the plane. What
+     the lens does have is a rope, from the fulcrum up to the wheel. Past
+     the threshold, the charge's amplitude hoists the whole body up it,
+     non-linearly, and the toss grounds it back onto the fulcrum. That is
+     a pulley doing what a pulley does, and it is a staging of elevation
+     in the plane, not elevation. A third axis is a change to the lens
+     contract and the renderer, and is not faked here.
 
    How the music and the poem divide the work:
 
@@ -124,6 +133,18 @@ export const CHARGE_FADE = 0.97;
 /* the thresholds the charge must cross for the arc to turn */
 export const TO_SORROW = -0.5;
 export const TO_JOY = -0.2;
+
+/* The hoist: how far up the rope the charge can lift the body, in body
+   radii (the wheel is at 1.28). Nothing below the threshold; past it the
+   lift rises with the amplitude, faster at first — a threshold crossed
+   and a non-linear displacement, in §4's words, without claiming its
+   attractor. */
+export const HOIST = 0.5;
+export const LIFT_FROM = Math.abs(TO_JOY);
+export function lift(charge: number): number {
+  const x = Math.max(0, Math.min(1, (Math.abs(charge) - LIFT_FROM) / (1 - LIFT_FROM)));
+  return HOIST * x * (2 - x);
+}
 
 /* Which verb each line carries, found in the text rather than typed in.
    "Rest in the bottom lay" is the noun, the thing God holds back; the verb
@@ -353,6 +374,7 @@ export const pulley: Lens<PulleyState> = {
     const rose = hue(338, 0.55, 0.92);
     const driftAmount = clamp01(Math.hypot(s.drift[0], s.drift[1]) / Math.hypot(WORLD[0], WORLD[1]));
     const home = ground(s.stages) === 1;
+    const hoisted = lift(s.charge);
     return {
       turn: (x) => (still ? s.line / POEM.length : x * 0.4),
       shell: () => 0.3 + 0.62 * s.spread,
@@ -385,13 +407,16 @@ export const pulley: Lens<PulleyState> = {
         if (worldly > 0) c = blend(c, rose, worldly);
         return c;
       },
-      centre: () => s.drift,
+      /* the body stands where it has drifted, hoisted up the rope by its charge */
+      centre: () => [s.drift[0], s.drift[1] - hoisted] as const,
       ground: () => onWheel(s.key, 0.4, 0.05),
       emblem: () => {
         const marks: Mark[] = [
           /* the fulcrum, and the rope up to the pulley's wheel: taut once home */
           { circle: 0.05, v: 1 }, { circle: 0.1, v: home ? 0.9 : 0.45 },
           { line: [0, 0, 0, -1.28], v: home ? 0.75 : 0.25 }, { dot: [0, -1.32, 0.06], v: home ? 1 : 0.7 },
+          /* the length of rope taking the weight, from the wheel down to the body */
+          ...(hoisted > 0.005 ? [{ line: [0, -1.28, 0, -hoisted] as const, v: 0.85 }] : []),
           /* the twenty lines of the poem round the rim, the one being read lit */
           ...POEM.map((_, j) => ({ arc: [1.14, j / POEM.length + 0.004, (j + 1) / POEM.length - 0.004] as const, v: j === s.line ? 1 : j < s.line ? 0.45 : 0.18 })),
         ];
@@ -433,6 +458,7 @@ export const pulley: Lens<PulleyState> = {
     const g = ground(s.stages);
     const grounding = s.stages === 0 ? "" : g === 1 ? " · home" : ` · grounding ${g.toFixed(s.stages)}`;
     const charged = CHARGE_ON_LINE[s.line];
-    return `line ${s.line + 1} of ${POEM.length} · ${verb ? `${verb}, ${FORCES[verb]}` : "before the first verb"}${noun ? ` · at ${noun}, ${NOUNS[noun]}` : ""}${grounding} · ${s.joy ? "joy" : "sorrow"}, charge ${s.charge >= 0 ? "+" : "−"}${Math.abs(s.charge).toFixed(2)}${charged.length ? ` (${charged.join(", ")})` : ""}`;
+    const hoisted = lift(s.charge);
+    return `line ${s.line + 1} of ${POEM.length} · ${verb ? `${verb}, ${FORCES[verb]}` : "before the first verb"}${noun ? ` · at ${noun}, ${NOUNS[noun]}` : ""}${grounding} · ${s.joy ? "joy" : "sorrow"}, charge ${s.charge >= 0 ? "+" : "−"}${Math.abs(s.charge).toFixed(2)}${charged.length ? ` (${charged.join(", ")})` : ""}${hoisted > 0.005 ? ` · hoisted ${hoisted.toFixed(2)}` : ""}`;
   },
 };

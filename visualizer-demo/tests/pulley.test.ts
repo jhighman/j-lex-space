@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { type Sounding, sounding } from "../src/audio/frame";
 import { toXY } from "../src/lenses/lens";
-import { ANCHORS, CHARGE, CHARGE_ON_LINE, CORE, FALSE_CENTRE, FORCES, LINE_BEATS, NOUNS, NOUNS_ON_LINE, POEM, type PulleyState, RADIUS, TOLERANCE, TO_JOY, TO_SORROW, VERB_ON_LINE, WORLD, anchorOf, chargeOf, ground, nounAt, pulley, verbAt } from "../src/lenses/pulley";
+import { ANCHORS, CHARGE, CHARGE_ON_LINE, CORE, HOIST, LIFT_FROM, lift, FALSE_CENTRE, FORCES, LINE_BEATS, NOUNS, NOUNS_ON_LINE, POEM, type PulleyState, RADIUS, TOLERANCE, TO_JOY, TO_SORROW, VERB_ON_LINE, WORLD, anchorOf, chargeOf, ground, nounAt, pulley, verbAt } from "../src/lenses/pulley";
 
 const at = (beats: number, o: { t?: number; minor?: boolean; tonic?: number } = {}): Sounding => sounding({
   t: o.t ?? beats * 0.5,
@@ -255,6 +255,53 @@ describe("the toss arrives: Lex's staged grounding (specs/test_harmonic_groundin
     const v = (m: ReturnType<typeof rope>) => (m && "v" in m ? m.v ?? 0 : 0);
     expect(v(rope(onLine(19, 2)[2]))).toBeLessThan(0.5);
     expect(v(rope(onLine(19, 6)[6]))).toBeGreaterThan(0.7);
+  });
+});
+
+describe("the rope stages the charge's elevation (spec §4's Z), in the plane", () => {
+  const reading = () => {
+    let s: PulleyState | null = null;
+    const out: PulleyState[] = [];
+    for (let b = 0; b <= LINE_BEATS * POEM.length + 2; b++) { s = pulley.state(at(b), s); out.push(s); }
+    return out;
+  };
+  const states = reading();
+  const atLine = (line: number) => states[(line - 1) * LINE_BEATS];
+
+  it("lifts nothing below the threshold, and past it rises with the amplitude, faster at first", () => {
+    expect(lift(0)).toBe(0);
+    expect(lift(LIFT_FROM)).toBe(0);
+    expect(lift(-LIFT_FROM)).toBe(0);
+    expect(lift(1)).toBe(HOIST);
+    expect(lift(-1)).toBe(HOIST);
+    const mid = (LIFT_FROM + 1) / 2;
+    expect(lift(mid)).toBeGreaterThan(HOIST / 2);
+    expect(lift(mid)).toBeLessThan(HOIST);
+  });
+
+  it("the body stands on the plane while the charge is small: its centre is where it has drifted", () => {
+    for (let line = 1; line <= 15; line++) {
+      const s = atLine(line);
+      expect(pulley.view(s).centre()).toEqual([s.drift[0], s.drift[1]]);
+    }
+  });
+
+  it("'repining restlessness' hoists it up the rope, and the rope shows the length taking the weight", () => {
+    const s = atLine(18);
+    expect(Math.abs(s.charge)).toBe(1);
+    const [x, y] = pulley.view(s).centre();
+    expect(x).toBe(s.drift[0]);
+    expect(y).toBeCloseTo(s.drift[1] - HOIST, 12);
+    const rope = pulley.view(s).emblem().find((m) => "line" in m && m.line[1] === -1.28);
+    expect(rope && "line" in rope ? rope.line[3] : null).toBeCloseTo(-HOIST, 12);
+    expect(pulley.label(s)).toContain("hoisted 0.50");
+  });
+
+  it("the toss grounds the hoist with the charge: home, the body is on the fulcrum", () => {
+    const toss = 19 * LINE_BEATS;
+    expect(pulley.view(states[toss]).centre()[1]).toBeLessThan(-0.4);
+    expect(pulley.view(states[toss + 5]).centre()).toEqual([0, 0]);
+    expect(pulley.label(states[toss + 5])).not.toContain("hoisted");
   });
 });
 

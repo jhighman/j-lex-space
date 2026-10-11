@@ -185,6 +185,15 @@ charge with everything else, so arriving home is what restores joy. The
 key colours the rim and does not turn the arc; it used to, and whether
 it should keep any say is a question put back to the spec. The label
 says the charge and the words moving it.
+
+The spec puts that charge on a third axis, out of the plane, and the
+body has no third axis: a lens places a mote by radius, angle and light,
+and the renderer draws in the plane. What Pulley has is a rope, from the
+fulcrum up to the wheel. Past the threshold the charge's amplitude
+hoists the whole body up it, faster at first, the rope showing the
+length that takes the weight, and the toss grounds it back onto the
+fulcrum. A pulley doing what a pulley does; a staging of elevation in
+the plane, not elevation. The label says how far it is hoisted.
 `tests/pulley.test.ts` holds the lens to each of these, one test per
 claim. [`specs/herbert/visualizer-notes.md`](../specs/herbert/visualizer-notes.md)
 says how to play it against the spec, what the two source songs showed, and
