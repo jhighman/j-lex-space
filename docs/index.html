@@ -382,7 +382,8 @@ python3 framework/demo.py        # the ideas, running
 python3 experiments/check.py     # every boundary, checked
 python3 experiments/forgery.py   # attack the ledger directly
 python3 experiments/premature.py # attack the close directly
-python3 experiments/reading.py   # attack the door's own reading</pre>
+python3 experiments/reading.py   # attack the door's own reading
+python3 experiments/envelope.py  # a refusal that leaves a row</pre>
     <p>No dependencies. Standard library only. Written to be read top to
     bottom. The guards fail loudly and exit non-zero — <strong>if you find a
     route past one, that is the most valuable contribution available
@@ -442,7 +443,7 @@ python3 experiments/reading.py   # attack the door's own reading</pre>
         <tr><td>Epistemic distinction — confidence cannot make warrant</td><td><span class="tag found">rediscovered</span></td></tr>
         <tr><td>Topology — consequence sets the price of proof</td><td><span class="tag built">built</span></td></tr>
         <tr><td>Immutable ledger — correction is not erasure</td><td><span class="tag found">rediscovered</span></td></tr>
-        <tr><td>Enforced immutability — the table refuses, we do not merely abstain</td><td><span class="tag built">built</span></td></tr>
+        <tr><td>Enforced immutability — the table refuses, we do not merely abstain; not against the process that owns it</td><td><span class="tag built">built</span></td></tr>
         <tr><td>Status blindness — scrutiny by consequence, not pedigree</td><td><span class="tag found">rediscovered</span></td></tr>
         <tr><td>The entrance boundary</td><td><span class="tag built">built</span></td></tr>
         <tr><td>Earned closure — comfort raises the price of stopping</td><td><span class="tag built">built</span></td></tr>
@@ -525,6 +526,22 @@ python3 experiments/reading.py   # attack the door's own reading</pre>
     is still taken on the row's word, because the Sentinel is a role rather
     than an enrolled identity — the root-of-trust question, wearing the
     door's clothes.</p>
+    <h3>The guard and the guarded are one process</h3>
+    <p>The table refuses an edit, and the refusal is real against every actor
+    that goes through the API. It is not real against the process that owns
+    the table. In this substrate the connection that writes rows is the
+    connection that created the triggers, and five statements typed by hand
+    show it: an <code>UPDATE</code> is refused, a <code>DROP TRIGGER</code> is
+    allowed, the same <code>UPDATE</code> then succeeds, and a
+    <code>GRANT</code> is a syntax error, because there is nobody else to
+    grant anything to. Read against <em>Assignment-Bounded Execution</em>,
+    the standard that names this case as its worked non-conformance, the
+    instrument holds the semantics at the table and cannot pass the one test
+    that asks whether the guard can be removed by the actor it constrains —
+    by construction, not by oversight. No guard was added for it: a check
+    that can only ever report open is a sentence, and the sentence is in the
+    findings. The triggers are a latch on a door, not a property of the
+    record that survives its own process.</p>
     <p>The <a href="https://github.com/jhighman/j-lex-space/blob/main/FINDINGS.md">full
     findings</a> record all of it with dates — every boundary the code failed
     to hold before it held, a test that believed a docstring, a fact about the
@@ -557,6 +574,35 @@ python3 experiments/reading.py   # attack the door's own reading</pre>
     terminates or terminates in nothing — is an unsealed constitution.
     Whether it should be a sealed one is this bench's question to take up,
     and it is open, on the record there.</p>
+    <h3>A blueprint, read and then built against</h3>
+    <p>On 26 September an outside blueprint arrived: ARAPAHOE, a lifecycle in
+    which an unprivileged proposer crosses a narrow envelope, a Sentinel
+    checks the proposal against a Canon, the accepted transition is appended,
+    and privileged execution is released only after the record returns a
+    receipt. The shape is the one this bench keeps arriving at. It was
+    <a href="https://github.com/jhighman/j-lex-space/blob/main/ARAPAHOE-READING.md">read
+    against the rules already standing here</a>, and the reading asked six
+    questions of it, marked as candidate claims about a document, because a
+    reading of a diagram that called itself a finding would be the error this
+    instrument exists to refuse.</p>
+    <p>The questions that could be posed in this record's idiom were then
+    built and attacked. The clearest number is the envelope's. As drawn, it
+    refuses without writing a row, so an author refused ninety-nine times
+    and accepted on the hundredth reads exactly like an author accepted on
+    the first try. With the refusal kept as a row, the same traffic reads
+    one hundred attempts against one. A gate may decline; it may never
+    decline invisibly. The other three ask whether a transition pays for
+    what it reaches, counted in voices and not rows; whether the Canon the
+    Sentinel read is derived at the proposal's entry or believed from a
+    stored reading; and what a released action leaves live when the process
+    that released it dies.</p>
+    <p>What those guards establish is that the shapes are reachable here and
+    the costs are real here — not that ARAPAHOE has them. So ARAPAHOE is
+    built in <a href="https://github.com/jhighman/arapahoe">its own
+    repository</a>, as a principal separate from whatever proposes to it,
+    and attacked from outside. Not here: this instrument declared its guard
+    and the actor it constrains one process, and building a separate
+    principal inside it would unsay that.</p>
   </section>
 
   <section>
