@@ -237,7 +237,12 @@
   .debrief-card ul.facts b { color: #fff1bf; font-weight: 600; }
   .debrief-card ul.facts i.g { color: var(--want, #7fd1a8); font-style: normal; }
   .debrief-card ul.facts i.a { color: var(--amber); font-style: normal; }
-  .debrief-card p.premise { margin: 0 0 16px; font-size: 14px; line-height: 1.5; border-left: 3px solid var(--violet); padding-left: 12px; }
+  .debrief-card .learned { margin: 4px 0 16px; border-left: 3px solid var(--violet); padding: 2px 0 2px 14px; }
+  .debrief-card .learned .eyebrow { color: var(--amber); margin-bottom: 6px; }
+  .debrief-card .learned ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+  .debrief-card .learned li { font-size: 14.5px; line-height: 1.45; color: var(--ink); }
+  .debrief-card .learned li b { color: #fff1bf; font-weight: 600; }
+  .debrief-card .learned li.last { color: #e2d6ff; font-weight: 500; margin-top: 2px; }
   .debrief-card p.again { margin: 0 0 10px; font-size: 13px; color: var(--soft); line-height: 1.45; }
   .debrief-actions { display: flex; flex-wrap: wrap; gap: 10px; }
   .debrief-actions button { font: inherit; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 10px 18px; cursor: pointer; border: 1px solid var(--rule); color: var(--ink); background: rgba(255,255,255,0.05); }
@@ -352,7 +357,7 @@
     <svg class="spark" id="spark" role="img" aria-label="Your share of the feed over the session, with each move marked"></svg>
     <p class="caption-row">Above: every move you made, as a tick. Below it: how much of the feed was you, over the whole session. Watch where the steps are.</p>
     <ul class="facts" id="facts"></ul>
-    <p class="premise" id="premise"></p>
+    <div class="learned"><p class="eyebrow">What did I learn?</p><ul id="learned"></ul></div>
     <p class="again" id="againNote"></p>
     <div class="debrief-actions">
       <button type="button" class="primary" id="again">Play again</button>
@@ -705,16 +710,31 @@ function renderDebrief() {
 
   const facts = [];
   const elapsed = samples.length ? samples[samples.length - 1].t : 0;
-  if (n > 0) facts.push(`You opened the feed to clear it. <b>${mmss(elapsed)}</b> later you are <b>${Math.round(endShare * 100)}%</b> of it, and the things you came for went past underneath: <i class="g">${session.seen.want}</i> of them, <b>${session.below.want}</b> below the cut-off. The garden plan is still where you left it.`);
+  if (n > 0) facts.push(session.seen.want > 0
+    ? `You opened the feed to clear it. <b>${mmss(elapsed)}</b> later you are <b>${Math.round(endShare * 100)}%</b> of it, and the things you came for went past underneath: <i class="g">${session.seen.want}</i> of them, <b>${session.below.want}</b> below the cut-off. The garden plan is still where you left it.`
+    : `You opened the feed to clear it. <b>${mmss(elapsed)}</b> later you are <b>${Math.round(endShare * 100)}%</b> of it, and nothing you came for appeared at all. The garden plan is still where you left it.`);
   if (n > 0) facts.push(`<b>${n} of ${n}</b> moves came back as items, each <b>2.2 seconds</b> later. No exceptions, and nothing you did could stop one.`);
   if (peak.share > 0) facts.push(`The band peaked at <b>${Math.round(peak.share * 100)}%</b> at ${mmss(peak.t)}. Every step up in it sits just after a tick above it: that is the arc, counted.`);
   if (most.length) facts.push(`What you did most: ${most.map(([k, v]) => `<b>${k}</b>${v > 1 ? ` ×${v}` : ''}`).join(', ')}. Each is in the feed now, with your name on it.`);
   if (searches.length) facts.push(`You searched for ${searches.map((q) => `<b>${q}</b>`).join(', ')}. The search${searches.length > 1 ? 'es' : ''} became ${searches.length > 1 ? 'items' : 'an item'} too.`);
   if (seenTotal) facts.push(`The feed showed you <b>${seenTotal}</b> thing${seenTotal === 1 ? '' : 's'}: <i class="a">${session.seen.ask} asking something of you</i>, <i class="g">${session.seen.want} you'd rather have looked at</i>. Of what you'd rather, <b>${pct(session.below.want, session.seen.want)}%</b> (${session.below.want} of ${session.seen.want}) sat below its cut-off; of the asks, <b>${pct(session.below.ask, session.seen.ask)}%</b> (${session.below.ask} of ${session.seen.ask}). The ranking did that, not you, and no move you made changed it.`);
   document.getElementById('facts').innerHTML = facts.map((f) => `<li>${f}</li>`).join('');
-  document.getElementById('premise').textContent = n === 0
-    ? 'Which is the premise, from the other side: the only feed with none of you in it is one you never touched. The moment you tidy, you are in it.'
-    : 'There is no outside to tidy from. Each thing you did to the feed became part of the feed, and the more you did, the more of it was you. The quiet things you wanted ranked low and were cut off more often than the things asking for you, and tidying did not change that; it added to the pile. Every real feed does this with your clicks. Here it was drawn.';
+  // In her voice, and only what the record can back.
+  const learned = [];
+  const kinds = new Set(moves.map((g) => g.kind));
+  if (n === 0) {
+    learned.push('I opened it to clear it, and then I didn\'t touch it. It stayed <b>0% me</b>. That is the only way it ever does.');
+    learned.push('I also didn\'t get to the garden plan. Not touching the feed isn\'t the same as having the twenty minutes.');
+  } else {
+    learned.push(`I opened the feed to clear it. <b>Every move I made to clear it became something to clear.</b> ${n} move${n === 1 ? '' : 's'}, ${n} new item${n === 1 ? '' : 's'}, every time, two seconds later.`);
+    learned.push(`The more I tidied, the more of the feed was me: <b>${Math.round(endShare * 100)}%</b> by the end${peak.share > endShare + 0.02 ? `, ${Math.round(peak.share * 100)}% at its worst` : ''}. The band went up with my hand, not against it.`);
+    if (kinds.has('scrolled') && kinds.has('filtered')) learned.push('Even scrolling counted. Even searching for the garden counted. There was no move small enough not to come back.');
+    else if (kinds.has('scrolled')) learned.push('Even scrolling counted. There was no move small enough not to come back.');
+    else if (kinds.has('filtered')) learned.push('Even searching for what I wanted counted. There was no move small enough not to come back.');
+    if (session.seen.want > 0) learned.push(`The things I came for were there the whole time, <b>${session.seen.want}</b> of them, ranked low, ${session.below.want} under the cut-off. Nothing I pressed lifted them. The ranking isn\'t mine to tidy.`);
+  }
+  learned.push('<span class="last">The feed isn\'t a place I go to. It\'s something I\'m in. There was never an outside to tidy from.</span>');
+  document.getElementById('learned').innerHTML = learned.map((l, i) => `<li${i === learned.length - 1 ? ' class="last"' : ''}>${l}</li>`).join('');
   document.getElementById('againNote').textContent = n === 0
     ? 'Play again and try the opposite: do everything. Watch the band climb with each move.'
     : n < 4
@@ -981,14 +1001,19 @@ function renderFeed(now) {
   const mins = Math.floor(Math.max(0, now - session.startedAt) / 60000);
   phoneClock.textContent = `9:${String(40 + mins).padStart(2, '0')}`;
 }
-let scrollTimer = 0, scrollArmed = false;
+// A scroll counts only when her hand did it: new cards arriving at the top
+// make the browser adjust scrollTop too, and that must not be a move.
+let scrollTimer = 0, handAt = 0;
+const hand = () => { handAt = Date.now(); };
+feedEl.addEventListener('wheel', hand, { passive: true });
+feedEl.addEventListener('touchmove', hand, { passive: true });
+feedEl.addEventListener('pointerdown', hand);
+feedEl.addEventListener('keydown', hand);
 feedEl.addEventListener('scroll', () => {
-  if (!scrollArmed) return;
+  if (Date.now() - handAt > 400) return;
   clearTimeout(scrollTimer);
   scrollTimer = setTimeout(() => gesture('scrolled', `${Math.round(feedEl.scrollTop)}px`), 700);
 });
-feedEl.addEventListener('pointerdown', () => { scrollArmed = true; });
-feedEl.addEventListener('wheel', () => { scrollArmed = true; }, { passive: true });
 
 // The deck wraps on narrow screens; the line's bottom clearance follows it.
 const deckEl = document.querySelector('.deck');
