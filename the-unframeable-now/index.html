@@ -263,8 +263,10 @@
     <p class="eyebrow">The Unframeable Now · a three-minute experiment</p>
     <h2 id="welcomeTitle">Try to tidy your feed without leaving a trace of yourself in it.</h2>
     <dl>
+      <dt>Who you are</dt>
+      <dd>It's 9:40 on a Tuesday. You're forty-one, you run a team of six, and your phone is also where your mother, your daughter's school and the group chat find you. The kitchen is done. You have twenty minutes before you're too tired to want them, and you meant them for the garden plan, or the record, or the painter's question. <b>You open the feed first. Just to clear it.</b></dd>
       <dt>What this is</dt>
-      <dd>Your feed, invented but true to shape. The group chat, the news, work after hours, the school portal, all asking. Underneath them, what you'd rather be looking at: the garden, a painter's half-finished canvas, a record you keep meaning to play. Real feed machinery runs it: a ranking that favours whatever asks something of you, a cut-off, a lifetime, links.</dd>
+      <dd>That feed, invented but true to shape. The group chat, the news, work after hours, the school portal, all asking; underneath them, the garden, the canvas, the record. Real feed machinery runs it: a ranking that favours whatever asks something of you, a cut-off, a lifetime, links.</dd>
       <dt>What you do</dt>
       <dd>Everything you can do is on the bar at the bottom of the screen. <span class="where">Left to right:</span>
         <ul class="howto">
@@ -647,6 +649,8 @@ function renderDebrief() {
   }
 
   const facts = [];
+  const elapsed = samples.length ? samples[samples.length - 1].t : 0;
+  if (n > 0) facts.push(`You opened the feed to clear it. <b>${mmss(elapsed)}</b> later you are <b>${Math.round(endShare * 100)}%</b> of it, and the things you came for went past underneath: <i class="g">${session.seen.want}</i> of them, <b>${session.below.want}</b> below the cut-off. The garden plan is still where you left it.`);
   if (n > 0) facts.push(`<b>${n} of ${n}</b> moves came back as items, each <b>2.2 seconds</b> later. No exceptions, and nothing you did could stop one.`);
   if (peak.share > 0) facts.push(`The band peaked at <b>${Math.round(peak.share * 100)}%</b> at ${mmss(peak.t)}. Every step up in it sits just after a tick above it: that is the arc, counted.`);
   if (most.length) facts.push(`What you did most: ${most.map(([k, v]) => `<b>${k}</b>${v > 1 ? ` ×${v}` : ''}`).join(', ')}. Each is in the feed now, with your name on it.`);
