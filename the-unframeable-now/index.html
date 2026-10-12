@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>The Unframeable Now</title>
+<style>
+  :root {
+    --void: #0a0b10;
+    --panel: #0f1118;
+    --rule: rgba(222, 231, 238, 0.14);
+    --ink: rgba(237, 242, 244, 0.88);
+    --soft: rgba(219, 225, 229, 0.55);
+    --amber: #d4af37;
+    --cyan: #55e2e1;
+    --coral: #ff626b;
+    --card: #f4f1ea;
+    --card-ink: #1d1b17;
+    --card-soft: #6b665b;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; background: var(--void); color: var(--ink); }
+  body {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    overflow: hidden;
+  }
+  header {
+    display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline;
+    padding: 14px 16px 8px; border-bottom: 1px solid var(--rule);
+  }
+  .eyebrow { color: var(--amber); font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+  .caption { color: var(--ink); font-size: 12px; letter-spacing: 0.04em; }
+  .counter { margin-left: auto; color: var(--cyan); font-size: 11px; letter-spacing: 0.06em; }
+  .operators {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    padding: 8px 16px; border-bottom: 1px solid var(--rule); background: var(--panel);
+  }
+  .operators .label { color: var(--soft); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; margin-right: 4px; }
+  button.op {
+    font: inherit; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink); background: transparent; border: 1px solid var(--rule);
+    border-radius: 8px; padding: 6px 11px; cursor: pointer;
+  }
+  button.op:hover { border-color: rgba(212, 175, 55, 0.6); }
+  button.op:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  button.op[aria-pressed="true"] { color: var(--void); background: var(--amber); border-color: var(--amber); }
+  button.op[aria-pressed="true"]::before { content: "■ "; }
+  button.op[aria-pressed="false"]::before { content: "□ "; }
+  .filter { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  .filter input {
+    font: inherit; font-size: 11px; color: var(--ink); background: transparent;
+    border: 1px solid var(--rule); border-radius: 8px; padding: 6px 9px; width: 160px;
+  }
+  .filter input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
+
+  main.split { display: grid; grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr); min-height: 0; }
+  #reception { position: relative; overflow: auto; border-right: 1px solid var(--rule); background: #12131a; }
+  #reception.cut { overflow: hidden; }
+  #collision { display: none; width: 100%; height: 170px; background: var(--panel); border-bottom: 1px solid var(--rule); }
+  body.collision #collision { display: block; }
+  #cards { position: relative; padding: 12px; min-height: 100%; }
+  #reception.cut #cards { padding: 0; height: 100%; }
+
+  .card {
+    position: relative; margin: 0 0 10px; padding: 10px 12px 9px;
+    background: var(--card); color: var(--card-ink);
+    border-radius: 8px; border-left: 4px solid #b9b3a4;
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 13px; line-height: 1.4;
+    transition: transform 0.9s cubic-bezier(.2,.8,.2,1), opacity 0.6s, width 0.6s;
+    cursor: pointer;
+  }
+  .card:focus-visible { outline: 2px solid var(--cyan); }
+  .card.pos { border-left-color: #c9a227; }
+  .card.neg { border-left-color: #2ba8b9; }
+  .card.gesture { background: #e8f3f3; }
+  .tissue { display: flex; gap: 10px; color: var(--card-soft); font-size: 11px; }
+  .tissue .src { font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .tissue .time { margin-left: auto; font-family: ui-monospace, Menlo, monospace; }
+  .body { margin: 5px 0 4px; }
+  .body .trunc { display: none; color: var(--coral); font-family: ui-monospace, Menlo, monospace; font-size: 10px; margin-left: 4px; }
+  .tissue.bottom { margin-top: 4px; }
+  .tissue .sent { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .tissue .rel a { color: #5d6a9a; margin-right: 8px; text-decoration: underline; cursor: pointer; }
+  .apparatus { display: none; margin-top: 7px; padding-top: 6px; border-top: 1px dashed #c6c0b1; font-family: ui-monospace, Menlo, monospace; font-size: 10px; color: var(--card-soft); }
+  .apparatus .row { display: flex; align-items: center; gap: 8px; margin: 2px 0; }
+  .apparatus .k { width: 64px; }
+  .apparatus .meter { flex: 1; height: 6px; background: #d9d3c4; border-radius: 3px; position: relative; overflow: hidden; }
+  .apparatus .meter i { position: absolute; left: 0; top: 0; bottom: 0; background: #c9a227; }
+  .apparatus .meter.timer i { background: #2ba8b9; }
+  .apparatus .meter .thr { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--coral); }
+  .apparatus .v { width: 70px; text-align: right; }
+  .card.below { opacity: 0.45; }
+
+  /* Cut: tissue removed, cards scattered. */
+  #reception.cut .tissue, #reception.cut .card .rel { display: none; }
+  #reception.cut .card { position: absolute; width: 180px; border-left-color: #b9b3a4; border-radius: 2px; margin: 0; }
+  /* Expose: the apparatus is drawn around each fragment. */
+  body.expose .card { outline: 1px dashed var(--coral); outline-offset: 3px; }
+  body.expose .apparatus, body.expose .body .trunc { display: block; }
+  body.expose .body .trunc { display: inline; }
+  /* Duration refusal: nothing holds still. */
+  @keyframes shiver { 0% { translate: 0 0; } 25% { translate: 1px -1px; } 50% { translate: -1px 1px; } 75% { translate: 1px 1px; } 100% { translate: 0 0; } }
+  body.refusal .card { animation: shiver 0.6s infinite linear; }
+  body.refusal .card.fading { opacity: 0.25; }
+
+  #volume { position: relative; min-height: 0; background: var(--void); }
+  #stage { width: 100%; height: 100%; display: block; outline: none; touch-action: none; }
+  .status { position: absolute; left: 14px; top: 12px; color: var(--soft); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; pointer-events: none; }
+  .hint { position: absolute; right: 14px; bottom: 10px; color: var(--soft); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; pointer-events: none; }
+
+  @media (max-width: 900px) {
+    main.split { grid-template-columns: 1fr; grid-template-rows: 1fr 42vh; }
+    #reception { border-right: 0; border-bottom: 1px solid var(--rule); }
+    .filter { margin-left: 0; }
+    .counter { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">The Unframeable Now</div>
+  <div class="caption">Every frame applied re-enters as signal.</div>
+  <div class="counter" id="counter" role="status" aria-live="polite">frames applied 0 · fragments still unframed 0</div>
+</header>
+
+<section class="operators" role="group" aria-label="Avant-garde operators">
+  <span class="label">Operators</span>
+  <button class="op" type="button" data-op="cut" aria-pressed="false" title="Remove the connective tissue; only discontinuous fragments remain">Cut</button>
+  <button class="op" type="button" data-op="expose" aria-pressed="false" title="Render ranking, truncation, refresh and visibility threshold as geometry">Expose apparatus</button>
+  <button class="op" type="button" data-op="collision" aria-pressed="false" title="Place signals of different magnitude in one coordinate system, size preserved">Scale collision</button>
+  <button class="op" type="button" data-op="refusal" aria-pressed="false" title="Nothing settles; fragments decay, re-enter, are re-sampled">Duration refusal</button>
+  <label class="filter"><span class="label">Filter</span><input id="filter" type="search" placeholder="keep only…" aria-label="Filter fragments by text"></label>
+</section>
+
+<main class="split">
+  <section id="reception" aria-label="Reception layer: the stream as cards">
+    <svg id="collision" aria-label="Scale collision: every magnitude on one axis, relative size preserved"></svg>
+    <div id="cards"></div>
+  </section>
+  <section id="volume" aria-label="The field: fragments as shards in a volume">
+    <canvas id="stage" tabindex="0" aria-label="Three-dimensional field of fragments. Drag to orbit, scroll or pinch to zoom."></canvas>
+    <div class="status" id="status">field · 0 shards</div>
+    <div class="hint">drag to orbit · scroll to zoom · each gesture re-enters</div>
+  </section>
+</main>
+
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+/* ------------------------------------------------------------------ */
+/* Tuning. Change these to change the pace of the piece.               */
+/* ------------------------------------------------------------------ */
+const STREAM_INTERVAL_MS = 1400;   // a new fragment enters this often
+const FRAGMENT_LIFE_MS   = 32000;  // how long a fragment lasts in the default layer
+const REFUSAL_LIFE_MS    = 6500;   // under Duration refusal, how long before it is re-sampled
+const REENTRY_DELAY_MS   = 2200;   // a viewer gesture comes back as a fragment after this
+const MAX_FRAGMENTS      = 48;     // oldest fragments leave when this is exceeded
+const SHARD_POOL         = 320;    // shards in the volume; fragments borrow one each
+const TICK_MS            = 250;    // how often decay and the 2D layer are recomputed
+
+/* ------------------------------------------------------------------ */
+/* The shared state. Both layers subscribe; nothing else holds truth.  */
+/* ------------------------------------------------------------------ */
+const state = {
+  fragments: [],              // what is in the field right now
+  activeOperators: new Set(), // 'cut' | 'expose' | 'collision' | 'refusal'
+  viewerGestures: [],         // every gesture the viewer has made, in order
+  unframedResidue: 0,         // fragments the reception layer is not holding in a frame
+  framesApplied: 0,           // gestures that framed or filtered: the counter's left side
+  filter: '',
+};
+const listeners = [];
+function subscribe(fn) { listeners.push(fn); }
+function notify() { for (const fn of listeners) fn(state); }
+const has = (op) => state.activeOperators.has(op);
+
+/* ------------------------------------------------------------------ */
+/* The stream: a simulated pool. No real people or organisations.      */
+/* ------------------------------------------------------------------ */
+const SHARDS = [
+  { text: 'levee gauge crossed stage three at 04:12', mag: 3, sent: -1 },
+  { text: 'weights released under a permissive licence; checksum pending', mag: 141, sent: 1 },
+  { text: 'council vote deferred for the third time this quarter', mag: 3, sent: -1 },
+  { text: 'an aggregated feed reports a cascade in the eastern relay', mag: 12, sent: -1 },
+  { text: 'summary: sentiment broadly negative, confidence moderate', mag: 0.55, sent: -1 },
+  { text: 'thread: nobody is talking about the pressure readings', mag: 1, sent: 0 },
+  { text: 'a border post changed hands overnight, sources unverified', mag: 1, sent: -1 },
+  { text: 'model output: the situation is developing', mag: 0.5, sent: 0 },
+  { text: 'tile 44 of 120 re-rendered after the correction', mag: 44, sent: 0 },
+  { text: 'the index closed up on thin volume', mag: 31480, sent: 1 },
+  { text: 'the sensor at the north basin has stopped reporting', mag: 0, sent: -1 },
+  { text: 'correction to an earlier item: the figure was per hour, not per day', mag: 24, sent: 0 },
+  { text: 'a long thread explains why this was always going to happen', mag: 1, sent: 0 },
+  { text: 'the release was pulled, then restored, within the hour', mag: 2, sent: 0 },
+  { text: 'what you need to know, in four cards', mag: 4, sent: 1 },
+  { text: 'readings resumed; the gap has been interpolated', mag: 0.9, sent: 1 },
+];
+const PULSES = [
+  { label: 'token probability', value: 0.00031 },
+  { label: 'basin level, m', value: 4.21 },
+  { label: 'continental sensor index', value: 4200000 },
+  { label: 'global index', value: 31480 },
+  { label: 'local gesture', value: 1 },
+  { label: 'refresh interval, ms', value: 850 },
+  { label: 'ranking score', value: 0.62 },
+  { label: 'release size, GB', value: 141 },
+  { label: 'retained after truncation, chars', value: 96 },
+];
+const TOKENS = ['⟨sep⟩', '▮▮▮', '§', '∅', '⊥', '…', '[withheld]', '⟨eot⟩', '0x3f', '¶'];
+const SOURCES = ['wire/3', 'timeline', 'expert-thread', 'model-summary', 'sensor:north', 'card-feed'];
+
+const SENTIMENT = { '-1': 'negative', '0': 'neutral', '1': 'positive' };
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = (xs) => xs[Math.floor(Math.random() * xs.length)];
+let nextId = 1;
+const clock0 = Date.now();
+
+function sample(kind) {
+  if (kind === 'pulse') {
+    const p = pick(PULSES);
+    const v = p.value * rnd(0.85, 1.15);
+    return { text: `${p.label}: ${fmt(v)}`, value: v, mag: Math.abs(v), sent: 0 };
+  }
+  if (kind === 'token') {
+    const v = rnd(0.00005, 0.004);
+    return { text: pick(TOKENS), value: v, mag: v, sent: 0 };
+  }
+  const s = pick(SHARDS);
+  return { text: s.text, value: null, mag: s.mag, sent: s.sent };
+}
+
+function makeFragment(origin, override = {}) {
+  const kind = override.kind || pick(['shard', 'shard', 'shard', 'pulse', 'pulse', 'token']);
+  const s = kind === 'gesture' ? { text: override.text, value: 1, mag: 1, sent: 0 } : sample(kind);
+  const now = Date.now();
+  const related = state.fragments.length
+    ? [pick(state.fragments).id, pick(state.fragments).id].filter((v, i, a) => a.indexOf(v) === i)
+    : [];
+  return {
+    id: nextId++,
+    kind, origin,
+    text: s.text, value: s.value, magnitude: s.mag,
+    sentiment: s.sent,
+    source: override.source || pick(SOURCES),
+    score: rnd(0.05, 0.98),          // ranking score the layer sorts by, hidden by default
+    truncation: Math.round(rnd(36, 120)), // characters the card keeps
+    refresh: Math.round(rnd(600, 3200)),  // ms between the card's refreshes
+    threshold: rnd(0.1, 0.55),       // visibility threshold; below it the card is dimmed
+    born: now, life: FRAGMENT_LIFE_MS,
+    resampled: 0,
+    related,
+    scatter: { x: rnd(2, 70), y: rnd(2, 85) },
+    scatter3: { x: rnd(-6, 6), y: rnd(-4, 4), z: rnd(-6, 6) },
+    phase: rnd(0, Math.PI * 2),
+    slot: -1,
+  };
+}
+
+function fmt(v) {
+  if (v === null || v === undefined) return '';
+  if (Math.abs(v) >= 1000) return Math.round(v).toLocaleString('en-US');
+  if (Math.abs(v) < 0.01) return v.toExponential(2);
+  return (+v.toFixed(2)).toString();
+}
+function stamp(ms) {
+  const t = Math.max(0, ms - clock0) / 1000;
+  const m = Math.floor(t / 60), s = Math.floor(t % 60);
+  return `t+${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+/* Slots in the volume: each fragment borrows a shard and returns it on leaving. */
+const freeSlots = Array.from({ length: SHARD_POOL }, (_, i) => SHARD_POOL - 1 - i);
+const slotOwner = new Array(SHARD_POOL).fill(null);
+
+function enter(f) {
+  if (freeSlots.length) { f.slot = freeSlots.pop(); slotOwner[f.slot] = f; }
+  state.fragments.push(f);
+  while (state.fragments.length > MAX_FRAGMENTS) leave(state.fragments[0]);
+}
+function leave(f) {
+  const i = state.fragments.indexOf(f);
+  if (i >= 0) state.fragments.splice(i, 1);
+  if (f.slot >= 0) { slotOwner[f.slot] = null; freeSlots.push(f.slot); f.slot = -1; }
+}
+
+/* Re-sampling under Duration refusal: same slot, new content, no settling. */
+function resample(f) {
+  const s = f.kind === 'gesture' ? { text: f.text, value: 1, mag: 1, sent: 0 } : sample(f.kind);
+  Object.assign(f, {
+    text: s.text, value: s.value, magnitude: s.mag, sentiment: s.sent,
+    score: rnd(0.05, 0.98), threshold: rnd(0.1, 0.55),
+    born: Date.now(), resampled: f.resampled + 1,
+    scatter: { x: rnd(2, 70), y: rnd(2, 85) },
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* The recursive loop: a gesture is logged, and comes back as signal.  */
+/* ------------------------------------------------------------------ */
+function gesture(kind, detail) {
+  const g = { at: Date.now(), kind, detail };
+  state.viewerGestures.push(g);
+  state.framesApplied += 1;
+  setTimeout(() => {
+    enter(makeFragment('gesture', { kind: 'gesture', source: 'viewer', text: `viewer ${kind}: ${detail}` }));
+    notify();
+  }, REENTRY_DELAY_MS);
+  notify();
+}
+
+/* A fragment is framed when the reception layer holds it in a card with its
+   tissue, above its threshold, not decaying, and not filtered away. */
+function matchesFilter(f) {
+  return !state.filter || f.text.toLowerCase().includes(state.filter) || f.source.toLowerCase().includes(state.filter);
+}
+function framed(f, now) {
+  if (has('cut')) return false;
+  if (!matchesFilter(f)) return false;
+  if (f.score < f.threshold) return false;
+  const life = has('refusal') ? REFUSAL_LIFE_MS : f.life;
+  if (has('refusal') && (now - f.born) / life > 0.7) return false;
+  return true;
+}
+
+/* ------------------------------------------------------------------ */
+/* Clocks: the stream, and the decay tick.                             */
+/* ------------------------------------------------------------------ */
+setInterval(() => { enter(makeFragment('stream')); notify(); }, STREAM_INTERVAL_MS);
+
+setInterval(() => {
+  const now = Date.now();
+  for (const f of [...state.fragments]) {
+    const life = has('refusal') ? REFUSAL_LIFE_MS : f.life;
+    if (now - f.born > life) {
+      if (has('refusal')) resample(f); else leave(f);
+    }
+  }
+  state.unframedResidue = state.fragments.filter((f) => !framed(f, now)).length;
+  notify();
+}, TICK_MS);
+
+/* ------------------------------------------------------------------ */
+/* Controls.                                                           */
+/* ------------------------------------------------------------------ */
+for (const b of document.querySelectorAll('button.op')) {
+  b.addEventListener('click', () => {
+    const op = b.dataset.op;
+    const on = !has(op);
+    if (on) state.activeOperators.add(op); else state.activeOperators.delete(op);
+    b.setAttribute('aria-pressed', String(on));
+    document.body.classList.toggle(op, on);
+    document.getElementById('reception').classList.toggle('cut', has('cut'));
+    gesture(on ? 'applied' : 'lifted', op);
+  });
+}
+let filterTimer = 0;
+document.getElementById('filter').addEventListener('input', (e) => {
+  state.filter = e.target.value.trim().toLowerCase();
+  clearTimeout(filterTimer);
+  filterTimer = setTimeout(() => gesture('filtered', state.filter ? `"${state.filter}"` : 'cleared'), 600);
+  notify();
+});
+
+/* ------------------------------------------------------------------ */
+/* Reception layer (D3): cards, tissue, apparatus, collision strip.    */
+/* ------------------------------------------------------------------ */
+const cards = d3.select('#cards');
+const counter = document.getElementById('counter');
+
+function renderReception(st) {
+  const now = Date.now();
+  const data = st.fragments.filter(matchesFilter).slice().sort((a, b) => b.born - a.born);
+  const byId = new Map(st.fragments.map((f) => [f.id, f]));
+
+  const sel = cards.selectAll('.card').data(data, (d) => d.id);
+  const entered = sel.enter().append('div')
+    .attr('class', 'card')
+    .attr('tabindex', 0)
+    .attr('role', 'article')
+    .style('opacity', 0)
+    .on('click', (e, d) => gesture('opened', `#${d.id} ${d.source}`))
+    .on('keydown', (e, d) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); gesture('opened', `#${d.id} ${d.source}`); } });
+  const top = entered.append('div').attr('class', 'tissue top');
+  top.append('span').attr('class', 'src');
+  top.append('span').attr('class', 'time');
+  const body = entered.append('div').attr('class', 'body');
+  body.append('span').attr('class', 'txt');
+  body.append('span').attr('class', 'trunc');
+  const bottom = entered.append('div').attr('class', 'tissue bottom');
+  bottom.append('span').attr('class', 'sent');
+  bottom.append('span').attr('class', 'rel');
+  const app = entered.append('div').attr('class', 'apparatus');
+  const r1 = app.append('div').attr('class', 'row'); r1.append('span').attr('class', 'k').text('ranking');
+  const m1 = r1.append('span').attr('class', 'meter score'); m1.append('i'); m1.append('span').attr('class', 'thr'); r1.append('span').attr('class', 'v score-v');
+  const r2 = app.append('div').attr('class', 'row'); r2.append('span').attr('class', 'k').text('refresh');
+  r2.append('span').attr('class', 'meter timer').append('i'); r2.append('span').attr('class', 'v refresh-v');
+  const r3 = app.append('div').attr('class', 'row'); r3.append('span').attr('class', 'k').text('decay');
+  r3.append('span').attr('class', 'meter timer life').append('i'); r3.append('span').attr('class', 'v life-v');
+  sel.exit().remove();
+
+  const all = entered.merge(sel);
+  all
+    .classed('pos', (d) => d.sentiment > 0)
+    .classed('neg', (d) => d.sentiment < 0)
+    .classed('gesture', (d) => d.kind === 'gesture')
+    .classed('below', (d) => d.score < d.threshold)
+    .classed('fading', (d) => has('refusal') && (now - d.born) / REFUSAL_LIFE_MS > 0.7)
+    .style('opacity', (d) => {
+      if (!has('refusal')) return 1;
+      const a = (now - d.born) / REFUSAL_LIFE_MS;
+      return a > 0.7 ? Math.max(0.15, 1 - (a - 0.7) / 0.3) : 1;
+    })
+    .style('left', (d) => has('cut') ? `${d.scatter.x}%` : null)
+    .style('top', (d) => has('cut') ? `${d.scatter.y}%` : null)
+    .style('transform', (d) => has('cut') ? `rotate(${((d.id * 37) % 11) - 5}deg)` : null)
+    .attr('aria-label', (d) => `${d.source}, ${SENTIMENT[d.sentiment]}, ${d.text}`);
+
+  all.select('.src').text((d) => d.source);
+  all.select('.time').text((d) => stamp(d.born) + (d.resampled ? ` ·${d.resampled}` : ''));
+  all.select('.txt').text((d) => d.text.length > d.truncation ? d.text.slice(0, d.truncation) : d.text);
+  all.select('.trunc').text((d) => d.text.length > d.truncation ? `│ trunc ${d.truncation}ch` : `│ ${d.text.length}/${d.truncation}ch`);
+  all.select('.sent').text((d) => SENTIMENT[d.sentiment]);
+  all.select('.rel').html((d) => d.related.filter((id) => byId.has(id)).map((id) => `<a tabindex="-1">related #${id}</a>`).join(''));
+  all.select('.score i').style('width', (d) => `${d.score * 100}%`);
+  all.select('.score .thr').style('left', (d) => `${d.threshold * 100}%`);
+  all.select('.score-v').text((d) => `${d.score.toFixed(2)} / thr ${d.threshold.toFixed(2)}`);
+  all.select('.timer:not(.life) i').style('width', (d) => `${100 * (1 - ((now - d.born) % d.refresh) / d.refresh)}%`);
+  all.select('.refresh-v').text((d) => `${d.refresh} ms`);
+  all.select('.life i').style('width', (d) => `${100 * Math.max(0, 1 - (now - d.born) / (has('refusal') ? REFUSAL_LIFE_MS : d.life))}%`);
+  all.select('.life-v').text((d) => `${Math.max(0, Math.round(((has('refusal') ? REFUSAL_LIFE_MS : d.life) - (now - d.born)) / 1000))} s`);
+
+  // Keep the timeline in born order when it is a timeline; scattered cards keep their place.
+  if (!has('cut')) all.order();
+
+  counter.textContent = `frames applied ${st.framesApplied} · fragments still unframed ${st.unframedResidue}`;
+  renderCollision(st);
+}
+
+/* Scale collision: one axis, every magnitude on it, relative size preserved.
+   A one-pixel floor exists only so the line can be seen at all. */
+const collisionSvg = d3.select('#collision');
+function renderCollision(st) {
+  if (!has('collision')) { collisionSvg.selectAll('*').remove(); return; }
+  const W = collisionSvg.node().clientWidth || 400;
+  const H = 170;
+  const data = st.fragments.filter(matchesFilter).slice(-12);
+  const maxMag = Math.max(1e-9, d3.max(data, (d) => d.magnitude) || 1);
+  const rowH = Math.min(12, (H - 20) / Math.max(1, data.length));
+  collisionSvg.attr('viewBox', `0 0 ${W} ${H}`);
+  collisionSvg.selectAll('.axis').data([0]).join('text').attr('class', 'axis')
+    .attr('x', 10).attr('y', 12).attr('fill', '#d4af37').attr('font-size', 9).attr('letter-spacing', 1.5)
+    .text(`ONE AXIS · 0 → ${fmt(maxMag)} · RELATIVE SIZE PRESERVED`);
+  const rows = collisionSvg.selectAll('.row').data(data, (d) => d.id);
+  const g = rows.enter().append('g').attr('class', 'row');
+  g.append('rect').attr('height', Math.max(2, rowH - 3)).attr('fill', '#55e2e1').attr('opacity', 0.8);
+  g.append('text').attr('fill', 'rgba(237,242,244,0.7)').attr('font-size', 9).attr('font-family', 'ui-monospace, Menlo, monospace');
+  rows.exit().remove();
+  const all = g.merge(rows);
+  all.attr('transform', (d, i) => `translate(10, ${18 + i * rowH})`);
+  all.select('rect').attr('width', (d) => Math.max(1, (d.magnitude / maxMag) * (W - 20)));
+  all.select('text').attr('x', (d) => Math.max(1, (d.magnitude / maxMag) * (W - 20)) + 4).attr('y', rowH - 3)
+    .text((d) => `${d.source} · ${fmt(d.magnitude)}`);
+}
+subscribe(renderReception);
+
+/* ------------------------------------------------------------------ */
+/* The volume (Babylon.js): one shard per fragment, operators deform.  */
+/* ------------------------------------------------------------------ */
+const canvas = document.getElementById('stage');
+const engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: false, stencil: false });
+const scene = new BABYLON.Scene(engine);
+scene.clearColor = BABYLON.Color4.FromHexString('#0a0b10ff');
+scene.fogMode = BABYLON.Scene.FOGMODE_EXP2; scene.fogDensity = 0.03; scene.fogColor = BABYLON.Color3.FromHexString('#0a0b10');
+
+const camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2.4, 1.2, 15, BABYLON.Vector3.Zero(), scene);
+camera.attachControl(canvas, true);
+camera.lowerRadiusLimit = 7; camera.upperRadiusLimit = 34;
+camera.wheelPrecision = 20; camera.pinchPrecision = 60;
+camera.panningSensibility = 0; camera.inertia = 0.86;
+
+const hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0.2, 1, 0.1), scene);
+hemi.intensity = 0.9; hemi.groundColor = BABYLON.Color3.FromHexString('#1a1430');
+const key = new BABYLON.PointLight('key', new BABYLON.Vector3(6, 8, -4), scene);
+key.intensity = 0.6; key.diffuse = BABYLON.Color3.FromHexString('#d4af37');
+
+// Ground: a faint disc the fragments hang over.
+const ground = BABYLON.MeshBuilder.CreateDisc('ground', { radius: 6.5, tessellation: 64 }, scene);
+ground.rotation.x = Math.PI / 2; ground.position.y = -3.9;
+const gmat = new BABYLON.StandardMaterial('gmat', scene);
+gmat.diffuseColor = BABYLON.Color3.FromHexString('#101220'); gmat.specularColor = BABYLON.Color3.Black();
+gmat.emissiveColor = BABYLON.Color3.FromHexString('#0d0f1a'); gmat.alpha = 0.9;
+ground.material = gmat;
+
+// Apparatus geometry, shown under Expose: a frame round the volume and a
+// threshold plane the shards sit above or below by their ranking.
+const frame = BABYLON.MeshBuilder.CreateBox('frame', { width: 11, height: 7.6, depth: 11 }, scene);
+const fmat = new BABYLON.StandardMaterial('fmat', scene);
+fmat.wireframe = true; fmat.emissiveColor = BABYLON.Color3.FromHexString('#ff626b'); fmat.disableLighting = true; fmat.alpha = 0.5;
+frame.material = fmat; frame.isVisible = false;
+const thrPlane = BABYLON.MeshBuilder.CreateGround('thr', { width: 11, height: 11 }, scene);
+const tmat = new BABYLON.StandardMaterial('tmat', scene);
+tmat.emissiveColor = BABYLON.Color3.FromHexString('#ff626b'); tmat.disableLighting = true; tmat.alpha = 0.12; tmat.backFaceCulling = false;
+thrPlane.material = tmat; thrPlane.isVisible = false;
+const THRESHOLD_SHOWN = 0.35; // the plane sits at this ranking; each card's own threshold is in its apparatus
+
+const shardMesh = BABYLON.MeshBuilder.CreateBox('shard', { size: 0.32 }, scene);
+const sps = new BABYLON.SolidParticleSystem('sps', scene, { updatable: true });
+sps.addShape(shardMesh, SHARD_POOL);
+shardMesh.dispose();
+const mesh = sps.buildMesh();
+mesh.hasVertexAlpha = true;
+const smat = new BABYLON.StandardMaterial('smat', scene);
+smat.specularColor = BABYLON.Color3.FromHexString('#333333');
+smat.emissiveColor = BABYLON.Color3.FromHexString('#1a1c26');
+mesh.material = smat;
+
+const C_AMBER = BABYLON.Color3.FromHexString('#d4af37');
+const C_CYAN = BABYLON.Color3.FromHexString('#55e2e1');
+const C_IVORY = BABYLON.Color3.FromHexString('#e8e4d6');
+const C_VIOLET = BABYLON.Color3.FromHexString('#926ee8');
+const clusterAngle = (src) => (SOURCES.indexOf(src) + 0.5) / SOURCES.length * Math.PI * 2;
+
+sps.initParticles = () => { for (const p of sps.particles) { p.isVisible = false; p.scaling.setAll(0.001); } };
+sps.initParticles(); sps.setParticles();
+
+sps.updateParticle = (p) => {
+  const f = slotOwner[p.idx];
+  if (!f) { p.isVisible = false; return p; }
+  p.isVisible = true;
+  const now = Date.now();
+  const t = now / 1000;
+  const age = (now - f.born) / (has('refusal') ? REFUSAL_LIFE_MS : f.life);
+
+  // Where it wants to be.
+  let tx, ty, tz;
+  if (has('cut')) {
+    tx = f.scatter3.x * 0.8; ty = f.scatter3.y * 0.8; tz = f.scatter3.z * 0.8;
+  } else {
+    const a = (f.source === 'viewer' ? 0 : clusterAngle(f.source)) + t * 0.05;
+    const r = f.source === 'viewer' ? 0.8 : 4.2;
+    const o = ((f.id * 7919) % 100) / 100 * Math.PI * 2;
+    tx = Math.cos(a) * r + Math.cos(o) * 0.9;
+    tz = Math.sin(a) * r + Math.sin(o) * 0.9;
+    ty = ((f.id * 31) % 17) / 17 * 2.4 - 1.2;
+  }
+  if (has('expose')) ty = f.score * 7 - 3.5;      // ranking becomes height
+  if (has('refusal')) {                               // nothing holds still
+    tx += Math.sin(t * 3.1 + f.phase) * 0.35;
+    ty += Math.sin(t * 2.3 + f.phase * 1.7) * 0.3;
+    tz += Math.cos(t * 2.7 + f.phase) * 0.35;
+  }
+  const k = 0.06;
+  p.position.x += (tx - p.position.x) * k;
+  p.position.y += (ty - p.position.y) * k;
+  p.position.z += (tz - p.position.z) * k;
+
+  // How big it is.
+  let s;
+  if (has('collision')) {
+    const maxMag = Math.max(1e-9, ...state.fragments.map((q) => q.magnitude));
+    s = 0.14 + 3.2 * (f.magnitude / maxMag);  // a floor only so the shard is there to orbit
+  } else {
+    s = 1.1 + 0.9 * f.score;
+  }
+  if (f.kind === 'token') s *= 0.6;
+  p.scaling.x += (s - p.scaling.x) * 0.1; p.scaling.y += (s * 0.6 - p.scaling.y) * 0.1; p.scaling.z += (s * 0.25 - p.scaling.z) * 0.1;
+  p.rotation.y += 0.004 + (has('refusal') ? 0.03 : 0);
+  p.rotation.x = Math.sin(t * 0.3 + f.phase) * 0.3;
+
+  // What it looks like.
+  const base = f.kind === 'gesture' ? C_VIOLET : f.sentiment > 0 ? C_AMBER : f.sentiment < 0 ? C_CYAN : C_IVORY;
+  let alpha = 0.95;
+  if (has('expose') && f.score < THRESHOLD_SHOWN) alpha = 0.3;
+  if (has('refusal')) alpha *= Math.max(0.15, 1 - Math.max(0, age - 0.6) / 0.4);
+  if (!matchesFilter(f)) alpha *= 0.2;
+  p.color.copyFromFloats(base.r, base.g, base.b, alpha);
+  return p;
+};
+
+let shardCount = 0;
+engine.runRenderLoop(() => { sps.setParticles(); scene.render(); });
+window.addEventListener('resize', () => engine.resize());
+new ResizeObserver(() => engine.resize()).observe(canvas);
+
+subscribe((st) => {
+  frame.isVisible = has('expose');
+  thrPlane.isVisible = has('expose');
+  thrPlane.position.y = THRESHOLD_SHOWN * 7 - 3.5;
+  shardCount = st.fragments.length;
+  const ops = [...st.activeOperators];
+  document.getElementById('status').textContent =
+    `field · ${shardCount} shards · ${ops.length ? 'operators: ' + ops.join(', ') : 'no operator'} · ${st.viewerGestures.length} gestures logged`;
+});
+
+// Orbiting and zooming are gestures too. They re-enter like any other.
+let down = null;
+canvas.addEventListener('pointerdown', (e) => { down = { x: e.clientX, y: e.clientY }; });
+window.addEventListener('pointerup', (e) => {
+  if (!down) return;
+  const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
+  down = null;
+  if (moved > 6) gesture('orbited', `α ${camera.alpha.toFixed(2)} β ${camera.beta.toFixed(2)}`);
+});
+let zoomTimer = 0;
+canvas.addEventListener('wheel', () => {
+  clearTimeout(zoomTimer);
+  zoomTimer = setTimeout(() => gesture('zoomed', `r ${camera.radius.toFixed(1)}`), 700);
+}, { passive: true });
+
+// Seed the field so the page is not empty on arrival.
+for (let i = 0; i < 9; i++) { const f = makeFragment('stream'); f.born -= (9 - i) * STREAM_INTERVAL_MS; enter(f); }
+notify();
+</script>
+</body>
+</html>
