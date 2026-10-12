@@ -198,6 +198,60 @@ the recordings are on Jeff's machine. What they changed:
 Her op-ed, written in her voice from the three rounds, is in
 `social/2026-10-12-kate-the-unframeable-now/`.
 
+## Sound
+
+Three loops, one per pace, from oscillators and noise: no samples,
+nothing fetched. A D minor pad that does not resolve, a kick, a hat on
+the off-beat, and on a bad day a pulse under it. The quiet evening sits
+at 60 beats a minute, the normal day at 84, the bad day starts at 120.
+Tempo follows a **cortisol** level that rises with every arrival and
+every move and decays slowly, the way a pulse does, and the pad's
+filter opens with it. A move raises it most on a quiet evening, where
+her hands are the only thing that can, and least on a bad day, where
+the feed is the pulse. Arrivals raise it a little.
+
+Alerts: a two-tone phone chime for the asks, higher for work, lower for
+family, three in a row for the group chat, with a low buzz under each,
+the phone against the counter. A soft falling sound for what she'd
+rather, because it doesn't ask. Arrivals come in clumps with uneven
+gaps, and a burst sounds like ding, ding, ding. Pings quieten as they
+pile up, from the dozenth in a minute, and the debrief says when she
+stopped hearing them: the ear leaves before she does.
+
+Rewards and the rest: a pop when one of her moves lands back in the
+feed; a like is a tick and two small notes, nearly nothing, which is
+what makes it cheap; a thunk for a hide or a mute, after which the hat
+drops out and the pad closes for a breath, twelve beats on a quiet
+evening, eight on a normal day, six on a bad one, and the pings come
+through it anyway; a whoosh and a chime for a refresh; clicks for taps,
+a tick for a scroll that is the loudest thing she does on a quiet
+evening. At the end of a session, the only major chord in the piece.
+
+A **♪ sound** pad on the deck turns it off. The debrief says what tempo
+the music ran at when things were quiet and when they weren't, or, on
+a bad day, that it never had a quiet number.
+
+Every sound is logged with its time, and `renderSoundtrack(log,
+seconds, offset)` renders a logged session offline with the same synth,
+as WAV, so a headless recording can have back the sound that was heard.
+That is how Kate's recordings have their soundtracks.
+
+### Three more rounds, with sound
+
+Rounds four to six as Kate, 1:15 on a normal day, 1:30 on a bad day
+with her hands off after forty seconds, 1:45 on a quiet evening, each
+on the build the previous round's complaints had changed. What she said
+was real: telling what had arrived from the sound before looking; the
+pop of her own moves coming back; the relief of a mute; and, on the bad
+day, that when she stopped, the music did not slow down, because the
+feed had not. What she asked for and got: clumped arrivals, the buzz
+under the chime, a like that is nearly silent, a breath after a mute,
+pings that quieten as the ear leaves, her hands as the pulse on a quiet
+evening. What she said at the end: with sound it stopped being a
+diagram and started being a Tuesday; the bad day frightened her and the
+quiet evening convinced her; and being buried politely sounds like a
+feed at 174 beats a minute while her hands are in her lap.
+
 ## Controls
 
 - **Play** (▶, or space): starts the stream. Paused, nothing enters,

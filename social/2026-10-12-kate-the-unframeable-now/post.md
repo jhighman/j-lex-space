@@ -98,6 +98,29 @@ I'm in. There was never an outside to tidy from.
 Try it. Three minutes. Press the thing you'd press anyway, and watch the
 arc.
 
+## Postscript, three rounds later, with sound
+
+They added sound, and I played three more: a normal day, a bad day, a
+quiet evening. I'll keep this short because the recordings say it
+better.
+
+The bad day has a pulse under the music. I did my seven things in forty
+seconds and then put my hands in my lap for fifty, and the pulse stayed
+at 174 beats a minute the whole time, because the feed hadn't stopped.
+On a bad day the tempo isn't your hands. It's the feed. Somewhere
+around the fiftieth ping I stopped hearing them, and the game noticed
+before I did.
+
+The quiet evening is sixty beats a minute, and the mute actually buys
+you twelve seconds of quiet before the little pop arrives to say you
+did it, and the pop is funny instead of accusing, and when I muted the
+group chat the garden came through, six times, which has never once
+happened on my phone because I have never once had a quiet evening on
+it.
+
+With sound it stopped being a diagram and started being a Tuesday. Being
+buried politely has a sound. It's a feed at 174 while you sit still.
+
 ---
 
 ## Short forms
