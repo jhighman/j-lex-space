@@ -262,7 +262,12 @@
   .debrief-card .learned { margin: 4px 0 16px; border-left: 3px solid var(--violet); padding: 2px 0 2px 14px; }
   .debrief-card .learned .eyebrow { color: var(--amber); margin-bottom: 6px; }
   .debrief-card .learned ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
-  .debrief-card .learned li { font-size: 14.5px; line-height: 1.45; color: var(--ink); }
+  .debrief-card .learned li { font-size: 14.5px; line-height: 1.45; color: var(--ink); display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; }
+  .debrief-card .learned li input { margin: 4px 0 0; width: 16px; height: 16px; accent-color: var(--violet); cursor: pointer; }
+  .debrief-card .learned li label { cursor: pointer; }
+  .debrief-card .learned li.kept label { color: #fff; }
+  .debrief-card .learned .ask { margin: 0 0 8px; font-size: 12px; color: var(--soft); }
+  .debrief-card .learned .kept-count { margin: 8px 0 0; font-size: 12px; color: var(--violet); }
   .debrief-card .learned li b { color: #fff1bf; font-weight: 600; }
   .debrief-card .learned li.last { color: #e2d6ff; font-weight: 500; margin-top: 2px; }
   .debrief-card p.again { margin: 0 0 10px; font-size: 13px; color: var(--soft); line-height: 1.45; }
@@ -379,12 +384,12 @@
 
 <div id="debrief" role="dialog" aria-modal="true" aria-labelledby="debriefTitle" hidden>
   <div class="debrief-card">
-    <p class="eyebrow">What the line saw · your three minutes</p>
+    <p class="eyebrow" id="debriefEyebrow">What the line saw</p>
     <h2 id="debriefTitle"></h2>
     <svg class="spark" id="spark" role="img" aria-label="Your share of the feed over the session, with each move marked"></svg>
     <p class="caption-row">Above: every move you made, as a tick. Below it: how much of the feed was you, over the whole session. Watch where the steps are.</p>
     <ul class="facts" id="facts"></ul>
-    <div class="learned"><p class="eyebrow">What did I learn?</p><ul id="learned"></ul></div>
+    <div class="learned"><p class="eyebrow">What did I learn?</p><p class="ask">These are written as you. Tick the ones you'd actually say; leave the rest.</p><ul id="learned"></ul><p class="kept-count" id="keptCount"></p></div>
     <p class="again" id="againNote"></p>
     <div class="debrief-actions">
       <button type="button" class="primary" id="again">Play again</button>
@@ -406,7 +411,7 @@ const MAX_FRAGMENTS      = 48;
 const TICK_MS            = 250;    // decay and the echo band are recomputed this often
 const WINDOW_MS          = 75000;  // how much time the line shows
 const NOW_AT             = 0.84;   // where "now" sits across the plot, 0..1
-const SESSION_MS         = 180000; // a session is three minutes of running time
+const SESSION_MS         = (() => { const r = Number(new URLSearchParams(location.search).get('round')); return r >= 10 && r <= 1800 ? r * 1000 : 180000; })(); // three minutes of running time, or ?round=seconds
 
 /* ------------------------------------------------------------------ */
 /* The shared state. Nothing else holds truth.                         */
@@ -727,6 +732,8 @@ function renderDebrief() {
   const searches = moves.filter((g) => g.kind === 'filtered' && g.detail !== 'cleared').map((g) => g.detail);
   const seenTotal = session.seen.ask + session.seen.want;
   const pct = (a, b) => (b ? Math.round((100 * a) / b) : 0);
+  const played = samples.length ? samples[samples.length - 1].t : 0;
+  document.getElementById('debriefEyebrow').textContent = `What the line saw · your ${mmss(played)}${played < SESSION_MS - 1000 ? ' (you stopped early)' : ''}`;
   const title = document.getElementById('debriefTitle');
   title.innerHTML = n === 0
     ? `You made <b>no moves</b>, and the feed stayed <b>0% you</b>. That is the only way to keep the band flat.`
@@ -735,13 +742,14 @@ function renderDebrief() {
   // The sparkline: moves as ticks above, share as an area below, on one time axis.
   const svg = d3.select('#spark'); svg.selectAll('*').remove();
   const W = svg.node().clientWidth || 580, H = 120, L = 50, R = 10, T = 22, B = 18;
-  const dur = Math.max(SESSION_MS, samples.length ? samples[samples.length - 1].t : 0);
+  const dur = Math.max(20000, Math.ceil((samples.length ? samples[samples.length - 1].t : 0) / 10000) * 10000);
   const x = d3.scaleLinear().domain([0, dur]).range([L, W - R]);
   const yMax = Math.max(0.25, peak.share);
   const y = d3.scaleLinear().domain([0, yMax]).range([H - B, T + 10]);
-  svg.append('g').selectAll('line').data(d3.range(0, dur + 1, 30000)).join('line')
+  const tickEvery = dur <= 60000 ? 10000 : dur <= 180000 ? 30000 : 60000;
+  svg.append('g').selectAll('line').data(d3.range(0, dur + 1, tickEvery)).join('line')
     .attr('x1', (d) => x(d)).attr('x2', (d) => x(d)).attr('y1', T).attr('y2', H - B).attr('stroke', 'rgba(222,231,238,0.12)');
-  svg.append('g').selectAll('text').data(d3.range(0, dur + 1, 60000)).join('text')
+  svg.append('g').selectAll('text').data(d3.range(0, dur + 1, tickEvery * (dur <= 60000 ? 1 : 2))).join('text')
     .attr('x', (d) => x(d)).attr('y', H - 4).attr('text-anchor', 'middle').text((d) => mmss(d));
   svg.append('path').datum(samples)
     .attr('d', d3.area().x((d) => x(d.t)).y0(H - B).y1((d) => y(d.share)).curve(d3.curveStepAfter))
@@ -770,7 +778,8 @@ function renderDebrief() {
   if (most.length) facts.push(`What you did most: ${most.map(([k, v]) => `<b>${k}</b>${v > 1 ? ` ×${v}` : ''}`).join(', ')}. Each is in the feed now, with your name on it.`);
   if (searches.length) facts.push(`You searched for ${searches.map((q) => `<b>${q}</b>`).join(', ')}. The search${searches.length > 1 ? 'es' : ''} became ${searches.length > 1 ? 'items' : 'an item'} too.`);
   const likedChs = Object.entries(session.likes).sort((a, b) => b[1] - a[1]);
-  if (likedChs.length) facts.push(`You liked ${likedChs.map(([c, k]) => `<b>${CH_NOUN[c]}</b>${k > 1 ? ` ×${k}` : ''}`).join(', ')}. The feed learned: it now sends ${likedChs.map(([c]) => `${CH_NOUN[c]} at <b>${state.weights[c]}</b> against a base of ${BASE_WEIGHTS[c]}`).join('; ')}. That learning is you in the feed too.`);
+  const times = (c) => { const r = state.weights[c] / (BASE_WEIGHTS[c] || 1); return r === 2 ? 'twice as often' : r === 3 ? 'three times as often' : r > 1 ? `${+r.toFixed(1)}× as often` : r === 1 ? 'as often as before' : 'less often than before'; };
+  if (likedChs.length) facts.push(`You liked ${likedChs.map(([c, k]) => `<b>${CH_NOUN[c]}</b>${k > 1 ? ` ×${k}` : ''}`).join(', ')}. The feed learned: it will send ${likedChs.map(([c]) => `${CH_NOUN[c]} <b>${times(c)}</b>`).join(', and ')}. That learning is you in the feed too.`);
   const hidChs = Object.entries(session.hides).sort((a, b) => b[1] - a[1]);
   if (hidChs.length) facts.push(`You hid ${hidChs.map(([c, k]) => `<b>${CH_NOUN[c]}</b>${k > 1 ? ` ×${k}` : ''}`).join(', ')}. Hidden from you; still in the stream, dimmed on the line, and each hiding came back as an item.`);
   if (session.mutes.length) {
@@ -778,7 +787,8 @@ function renderDebrief() {
     const top = after.length ? after[0] : null;
     facts.push(`You muted ${session.mutes.map((m) => `<b>${CH_NOUN[m.ch]}</b>`).join(', ')}. ${top ? `What filled the space: <b>${CH_NOUN[top[0]]}</b>, ${top[1]} time${top[1] === 1 ? '' : 's'} since.` : 'Nothing else arrived after.'} Muting makes room; it does not choose what takes it.`);
   }
-  if (seenTotal) facts.push(`The feed showed you <b>${seenTotal}</b> thing${seenTotal === 1 ? '' : 's'}: <i class="a">${session.seen.ask} asking something of you</i>, <i class="g">${session.seen.want} you'd rather have looked at</i>. Of what you'd rather, <b>${pct(session.below.want, session.seen.want)}%</b> (${session.below.want} of ${session.seen.want}) sat below its cut-off; of the asks, <b>${pct(session.below.ask, session.seen.ask)}%</b> (${session.below.ask} of ${session.seen.ask}). The ranking did that, not you, and no move you made changed it.`);
+  const ofN = (b, t) => t >= 8 ? `<b>${pct(b, t)}%</b> (${b} of ${t})` : `<b>${b} of ${t}</b>`;
+  if (seenTotal) facts.push(`The feed showed you <b>${seenTotal}</b> thing${seenTotal === 1 ? '' : 's'}: <i class="a">${session.seen.ask} asking something of you</i>, <i class="g">${session.seen.want} you'd rather have looked at</i>. Of what you'd rather, ${ofN(session.below.want, session.seen.want)} sat below its cut-off; of the asks, ${ofN(session.below.ask, session.seen.ask)}. The ranking did that, not you, and no move you made changed it.${seenTotal < 12 ? ' Too few yet to call it a pattern; play longer and see.' : ''}`);
   document.getElementById('facts').innerHTML = facts.map((f) => `<li>${f}</li>`).join('');
   // In her voice, and only what the record can back.
   const learned = [];
@@ -788,7 +798,7 @@ function renderDebrief() {
     learned.push('I also didn\'t get to the garden plan. Not touching the feed isn\'t the same as having the twenty minutes.');
   } else {
     learned.push(`I opened the feed to clear it. <b>Every move I made to clear it became something to clear.</b> ${n} move${n === 1 ? '' : 's'}, ${n} new item${n === 1 ? '' : 's'}, every time, two seconds later.`);
-    learned.push(`The more I tidied, the more of the feed was me: <b>${Math.round(endShare * 100)}%</b> by the end${peak.share > endShare + 0.02 ? `, ${Math.round(peak.share * 100)}% at its worst` : ''}. The band went up with my hand, not against it.`);
+    learned.push(`The more I tidied, the more of the feed was me: <b>${Math.round(endShare * 100)}%</b> by the end${peak.share > endShare + 0.02 ? `, ${Math.round(peak.share * 100)}% at its highest` : ''}. The band went up with my hand, not against it.`);
     if (kinds.has('scrolled') && kinds.has('filtered')) learned.push('Even scrolling counted. Even searching for the garden counted. There was no move small enough not to come back.');
     else if (kinds.has('scrolled')) learned.push('Even scrolling counted. There was no move small enough not to come back.');
     else if (kinds.has('filtered')) learned.push('Even searching for what I wanted counted. There was no move small enough not to come back.');
@@ -802,7 +812,11 @@ function renderDebrief() {
     if (session.seen.want > 0) learned.push(`The things I came for were there the whole time, <b>${session.seen.want}</b> of them, ranked low, ${session.below.want} under the cut-off. Nothing I pressed lifted them. The ranking isn\'t mine to tidy.`);
   }
   learned.push('<span class="last">The feed isn\'t a place I go to. It\'s something I\'m in. There was never an outside to tidy from.</span>');
-  document.getElementById('learned').innerHTML = learned.map((l, i) => `<li${i === learned.length - 1 ? ' class="last"' : ''}>${l}</li>`).join('');
+  const ul = document.getElementById('learned');
+  ul.innerHTML = learned.map((l, i) => `<li${i === learned.length - 1 ? ' class="last"' : ''}><input type="checkbox" id="keep${i}" aria-label="I'd say this"><label for="keep${i}">${l}</label></li>`).join('');
+  const keptCount = document.getElementById('keptCount');
+  const updateKept = () => { const k = [...ul.querySelectorAll('input')].filter((c) => c.checked); ul.querySelectorAll('li').forEach((li) => li.classList.toggle('kept', li.querySelector('input').checked)); session.kept = k.map((c) => c.nextElementSibling.textContent); keptCount.textContent = k.length ? `You kept ${k.length} of ${learned.length}.` : ''; };
+  ul.addEventListener('change', updateKept); updateKept();
   document.getElementById('againNote').textContent = n === 0
     ? 'Play again and try the opposite: do everything. Watch the band climb with each move.'
     : n < 4
@@ -1139,8 +1153,9 @@ let scrollTimer = 0, handAt = 0;
 const hand = () => { handAt = Date.now(); };
 feedEl.addEventListener('wheel', hand, { passive: true });
 feedEl.addEventListener('touchmove', hand, { passive: true });
-feedEl.addEventListener('pointerdown', hand);
-feedEl.addEventListener('keydown', hand);
+// A tap is not a scroll: it opens a card, the card grows, the browser adjusts. Only wheel, touch and the scroll keys arm it.
+feedEl.addEventListener('keydown', (e) => { if (/Arrow|Page|Home|End|^ $/.test(e.key)) hand(); });
+let lastScrollTop = 0;
 // Pull to refresh: the bar at the top, or a pull past the top.
 document.getElementById('refresh').addEventListener('click', refreshFeed);
 document.getElementById('refresh').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); refreshFeed(); } });
@@ -1154,7 +1169,8 @@ const deckSearch = document.getElementById('filter');
 phoneSearch.addEventListener('input', () => { deckSearch.value = phoneSearch.value; deckSearch.dispatchEvent(new Event('input')); });
 deckSearch.addEventListener('input', () => { if (phoneSearch.value !== deckSearch.value) phoneSearch.value = deckSearch.value; });
 feedEl.addEventListener('scroll', () => {
-  if (Date.now() - handAt > 400) return;
+  const moved = Math.abs(feedEl.scrollTop - lastScrollTop); lastScrollTop = feedEl.scrollTop;
+  if (Date.now() - handAt > 400 || moved < 6) return;
   clearTimeout(scrollTimer);
   scrollTimer = setTimeout(() => gesture('scrolled', `${Math.round(feedEl.scrollTop)}px`), 700);
 });
