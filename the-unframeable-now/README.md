@@ -77,10 +77,37 @@ python3 -m http.server 8000
 
 D3 v7 loads from a CDN; everything else is in `index.html`.
 
-## Controls
+## The session
 
-A welcome card says what this is, what to do, what to watch and what
-you'll find, then one button. **? intro** brings it back.
+The page has a start, an end and a debrief.
+
+- **Start.** The welcome card says what this is, what to do, what to
+  watch and what you'll find, then one button: *Start · three minutes.*
+  Pressing it clears the record, seeds the feed, sets the clock to 3:00
+  and starts the stream. The clock is the stream's own clock, so it stops
+  when you pause; a thin amber bar across the top of the page shows how
+  far through you are. **? intro** brings the card back.
+- **End.** The session ends by itself after three minutes of running
+  time, or when you press **I'm done**. The stream pauses.
+- **Debrief.** A card then says what the line saw, from the session's
+  own record and nothing else: how many moves you made and how many came
+  back (all of them, 2.2 s later, no exceptions); a sparkline of your
+  share of the feed over the whole three minutes with every move as a
+  tick above it, so each step up in the band can be read against the
+  move that caused it; the peak and when; what you did most and what
+  you searched for; and what the feed showed you, split into what asked
+  something of you and what you'd rather have looked at, with the share
+  of each that sat below its cut-off, which is the ranking's bias shown
+  in your own data. Then the premise in a paragraph, and an invitation
+  to play again knowing it: try to keep the band low and notice what
+  that costs, or go the other way and make the feed entirely you. If
+  you made no moves the debrief says so, and that this is the only way
+  to keep the band flat.
+- **Play again** resets everything and starts a new three minutes.
+  **Look at the line** closes the card and leaves the ended session on
+  the line to read.
+
+## Controls
 
 - **Play** (▶, or space): starts the stream. Paused, nothing enters,
   nothing decays and the clock stops.

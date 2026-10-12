@@ -159,8 +159,39 @@
   .welcome-actions button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
   .welcome-card .fine { margin: 14px 0 0; color: var(--soft); font-size: 11px; line-height: 1.45; }
 
+  /* Session clock and debrief. */
+  #progress { position: fixed; left: 0; top: 0; height: 3px; width: 0; background: var(--amber); z-index: 9; transition: width 0.25s linear; }
+  .session { display: flex; align-items: center; gap: 10px; flex: none; }
+  .session .clock { font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: var(--ink); min-width: 6ch; text-align: right; }
+  .session .clock small { color: var(--soft); font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 11px; margin-left: 4px; }
+  .session button { font: inherit; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); background: rgba(255,255,255,0.05); border: 1px solid var(--rule); border-radius: 8px; padding: 7px 11px; cursor: pointer; }
+  .session button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  #debrief { position: fixed; inset: 0; z-index: 21; display: grid; place-items: center; padding: 20px; background: rgba(6,7,11,0.84); backdrop-filter: blur(6px); }
+  #debrief[hidden] { display: none; }
+  .debrief-card { width: min(640px, 100%); max-height: calc(100vh - 40px); overflow: auto; background: #12141c; border: 1px solid rgba(167,136,245,0.5); border-radius: 16px; padding: 24px 26px 20px; box-shadow: 0 30px 80px rgba(0,0,0,0.6); }
+  .debrief-card .eyebrow { color: var(--violet); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; margin: 0 0 8px; }
+  .debrief-card h2 { margin: 0 0 12px; font-size: 21px; font-weight: 650; line-height: 1.25; }
+  .debrief-card h2 b { color: #e2d6ff; }
+  .debrief-card .spark { width: 100%; height: 120px; display: block; margin: 4px 0 6px; }
+  .debrief-card .spark text { font-size: 10px; fill: var(--soft); font-family: ui-monospace, Menlo, monospace; }
+  .debrief-card .spark .lbl { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .debrief-card .caption-row { color: var(--soft); font-size: 11.5px; margin: 0 0 14px; line-height: 1.4; }
+  .debrief-card ul.facts { margin: 0 0 14px; padding: 0; list-style: none; display: grid; gap: 7px; font-size: 13.5px; line-height: 1.45; }
+  .debrief-card ul.facts li { padding-left: 14px; position: relative; }
+  .debrief-card ul.facts li::before { content: ''; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--violet); }
+  .debrief-card ul.facts b { color: #fff1bf; font-weight: 600; }
+  .debrief-card ul.facts i.g { color: var(--want, #7fd1a8); font-style: normal; }
+  .debrief-card ul.facts i.a { color: var(--amber); font-style: normal; }
+  .debrief-card p.premise { margin: 0 0 16px; font-size: 14px; line-height: 1.5; border-left: 3px solid var(--violet); padding-left: 12px; }
+  .debrief-card p.again { margin: 0 0 10px; font-size: 13px; color: var(--soft); line-height: 1.45; }
+  .debrief-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .debrief-actions button { font: inherit; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 10px 18px; cursor: pointer; border: 1px solid var(--rule); color: var(--ink); background: rgba(255,255,255,0.05); }
+  .debrief-actions button.primary { background: var(--violet); border-color: var(--violet); color: var(--void); }
+  .debrief-actions button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
   @media (max-width: 900px) {
     .mark .lede { font-size: 12.5px; }
+    .session .clock small { display: none; }
     .deck { gap: 7px; }
     button.pad { min-width: 0; padding: 7px 10px; }
     button.pad .tech { display: none; }
@@ -178,8 +209,13 @@
     <p class="lede"><b>Ever tidied your feed and watched it get worse?</b> Here's why. Press play, tidy your feed the way you always do, and try to keep the band at the bottom flat.</p>
     <p class="thesis">Every frame applied re-enters as signal.</p>
   </div>
-  <button class="intro-btn" id="introBtn" type="button" title="What is this, and what do I watch?">? intro</button>
+  <div class="session">
+    <span class="clock" id="clock" aria-live="off">3:00<small>left</small></span>
+    <button type="button" id="doneBtn" title="End the session now and see what the line says">I'm done</button>
+    <button class="intro-btn" id="introBtn" type="button" title="What is this, and what do I watch?">? intro</button>
+  </div>
 </header>
+<div id="progress" aria-hidden="true"></div>
 
 <main>
   <svg id="line" role="img" aria-label="The stream as a line over time: your moves above it, each with an arc to where it comes back in; beneath it, the share of the stream that is your own echo."></svg>
@@ -225,8 +261,25 @@
       <dt>What you'll find</dt>
       <dd>You can't keep the band flat. There is no outside to tidy from: every tidy-up, even a search, goes back in. Every real feed does this with your clicks, silently. Here it's drawn.</dd>
     </dl>
-    <div class="welcome-actions"><button type="button" id="start">Start</button></div>
+    <div class="welcome-actions"><button type="button" id="start">Start · three minutes</button></div>
+    <p class="fine" style="margin-top:10px">The session runs three minutes on its own clock, which stops when you pause. It ends by itself, or when you press <b>I'm done</b>. Then the line tells you what it saw.</p>
     <p class="fine">Nothing leaves your machine. The items are invented and name nobody. Press <b>? intro</b> to come back here.</p>
+  </div>
+</div>
+
+<div id="debrief" role="dialog" aria-modal="true" aria-labelledby="debriefTitle" hidden>
+  <div class="debrief-card">
+    <p class="eyebrow">What the line saw · your three minutes</p>
+    <h2 id="debriefTitle"></h2>
+    <svg class="spark" id="spark" role="img" aria-label="Your share of the feed over the session, with each move marked"></svg>
+    <p class="caption-row">Above: every move you made, as a tick. Below it: how much of the feed was you, over the whole session. Watch where the steps are.</p>
+    <ul class="facts" id="facts"></ul>
+    <p class="premise" id="premise"></p>
+    <p class="again" id="againNote"></p>
+    <div class="debrief-actions">
+      <button type="button" class="primary" id="again">Play again</button>
+      <button type="button" id="lookBtn">Look at the line</button>
+    </div>
   </div>
 </div>
 
@@ -243,6 +296,7 @@ const MAX_FRAGMENTS      = 48;
 const TICK_MS            = 250;    // decay and the echo band are recomputed this often
 const WINDOW_MS          = 75000;  // how much time the line shows
 const NOW_AT             = 0.84;   // where "now" sits across the plot, 0..1
+const SESSION_MS         = 180000; // a session is three minutes of running time
 
 /* ------------------------------------------------------------------ */
 /* The shared state. Nothing else holds truth.                         */
@@ -257,6 +311,10 @@ const state = {
   pace: 'steady',
 };
 const has = (op) => state.activeOperators.has(op);
+
+/* One session: three minutes on the stream's own clock, then the debrief.
+   Everything the debrief says comes from what was recorded here. */
+const session = { phase: 'welcome', startedAt: 0, moves: [], samples: [], seen: { ask: 0, want: 0 }, below: { ask: 0, want: 0 }, echoes: 0 };
 
 /* The clock the line runs on. It stops when the stream is paused, so a
    paused picture holds still and can be read. */
@@ -355,7 +413,11 @@ function makeFragment(origin, override = {}) {
   };
 }
 const lifeOf = (f) => has('refusal') ? REFUSAL_LIFE_MS : f.life;
-function enter(f) { state.fragments.push(f); while (state.fragments.length > MAX_FRAGMENTS) state.fragments.shift(); }
+function enter(f) {
+  state.fragments.push(f); while (state.fragments.length > MAX_FRAGMENTS) state.fragments.shift();
+  if (f.kind === 'gesture') session.echoes += 1;
+  else { const k = f.want ? 'want' : 'ask'; session.seen[k] += 1; if (f.score < f.threshold) session.below[k] += 1; }
+}
 function leave(f) { const i = state.fragments.indexOf(f); if (i >= 0) state.fragments.splice(i, 1); }
 function resample(f) {
   const s = f.kind === 'gesture' ? { text: f.text, mag: 1, ch: 'you', want: false } : sample();
@@ -401,6 +463,7 @@ function gesture(kind, detail) {
   const said = GESTURE_TALK[kind] ? GESTURE_TALK[kind](detail) : kind;
   const g = { at: vnow(), kind, detail, said, echoAt: vnow() + REENTRY_DELAY_MS, echo: null };
   state.viewerGestures.push(g);
+  session.moves.push(g);
   setTimeout(() => {
     const f = makeFragment('gesture', { kind: 'gesture', source: 'you', text: `you, ${said}` });
     g.echo = f; enter(f);
@@ -426,6 +489,8 @@ setInterval(() => {
   const n = state.fragments.length;
   const e = state.fragments.filter((f) => f.kind === 'gesture').length;
   state.history.push({ t: now, share: n ? e / n : 0 });
+  session.samples.push({ t: now - session.startedAt, share: n ? e / n : 0 });
+  if (session.phase === 'running' && now - session.startedAt >= SESSION_MS) endSession();
   while (state.history.length && now - state.history[0].t > WINDOW_MS + 2000) state.history.shift();
   // Moves older than the window leave the record the line keeps.
   while (state.viewerGestures.length && now - state.viewerGestures[0].at > WINDOW_MS + 2000) state.viewerGestures.shift();
@@ -443,7 +508,7 @@ function setRunning(on) {
   playBtn.textContent = on ? '❙❙' : '▶';
   say(on ? 'Running. Time moves right; every move you make goes in as a violet mark and comes back as a violet item.' : 'Paused.');
 }
-playBtn.addEventListener('click', () => setRunning(!state.running));
+playBtn.addEventListener('click', () => { if (session.phase === 'done') { debrief.hidden = false; return; } setRunning(!state.running); });
 const OPS = ['cut', 'expose', 'collision', 'refusal'];
 function toggleOp(op) {
   const b = document.querySelector(`button.pad[data-op="${op}"]`);
@@ -474,12 +539,113 @@ for (const b of document.querySelectorAll('.pace button')) {
   });
 }
 const welcome = document.getElementById('welcome');
-document.getElementById('start').addEventListener('click', () => { welcome.hidden = true; playBtn.focus(); });
+const debrief = document.getElementById('debrief');
+const clockEl = document.getElementById('clock');
+const progressEl = document.getElementById('progress');
+function startSession() {
+  // Back to the start state: an empty record, a seeded stream, the clock at 3:00.
+  state.fragments.length = 0; state.viewerGestures.length = 0; state.history.length = 0;
+  state.activeOperators.clear(); state.filter = ''; state.pace = 'steady';
+  for (const b of document.querySelectorAll('button.pad')) b.setAttribute('aria-pressed', 'false');
+  for (const b of document.querySelectorAll('.pace button')) b.setAttribute('aria-pressed', String(b.dataset.pace === 'steady'));
+  document.getElementById('filter').value = '';
+  for (const op of OPS) document.body.classList.remove(op);
+  clockBase = 0; runStart = Date.now(); state.running = false;
+  Object.assign(session, { phase: 'running', startedAt: 0, moves: [], samples: [], seen: { ask: 0, want: 0 }, below: { ask: 0, want: 0 }, echoes: 0 });
+  for (let i = 0; i < 7; i++) { const f = makeFragment('stream'); f.born -= (7 - i) * PACE.steady; enter(f); }
+  session.seen = { ask: 0, want: 0 }; session.below = { ask: 0, want: 0 }; // the seed is not what the feed showed her
+  welcome.hidden = true; debrief.hidden = true;
+  setRunning(true);
+}
+function endSession() {
+  if (session.phase !== 'running') return;
+  setRunning(false);
+  session.phase = 'done';
+  renderDebrief();
+  debrief.hidden = false;
+  document.getElementById('again').focus();
+}
+document.getElementById('start').addEventListener('click', startSession);
+document.getElementById('again').addEventListener('click', startSession);
+document.getElementById('doneBtn').addEventListener('click', () => { if (session.phase === 'running') endSession(); else if (session.phase === 'done') debrief.hidden = false; });
+document.getElementById('lookBtn').addEventListener('click', () => { debrief.hidden = true; });
 document.getElementById('introBtn').addEventListener('click', () => { welcome.hidden = false; document.getElementById('start').focus(); });
+
+const mmss = (ms) => { const t = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+function renderClock() {
+  if (session.phase === 'welcome') { clockEl.innerHTML = '3:00<small>left</small>'; progressEl.style.width = '0'; return; }
+  const el = Math.min(SESSION_MS, vnow() - session.startedAt);
+  clockEl.innerHTML = session.phase === 'done' ? 'done<small>see the line</small>' : `${mmss(SESSION_MS - el)}<small>${state.running ? 'left' : 'paused'}</small>`;
+  progressEl.style.width = `${(el / SESSION_MS) * 100}%`;
+}
+
+/* The debrief: the premise, demonstrated from the session's own record. */
+function renderDebrief() {
+  const moves = session.moves, samples = session.samples;
+  const endShare = samples.length ? samples[samples.length - 1].share : 0;
+  const peak = samples.reduce((a, b) => (b.share > a.share ? b : a), { t: 0, share: 0 });
+  const n = moves.length;
+  const byKind = {};
+  for (const g of moves) byKind[g.said] = (byKind[g.said] || 0) + 1;
+  const most = Object.entries(byKind).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const searches = moves.filter((g) => g.kind === 'filtered' && g.detail !== 'cleared').map((g) => g.detail);
+  const seenTotal = session.seen.ask + session.seen.want;
+  const pct = (a, b) => (b ? Math.round((100 * a) / b) : 0);
+  const title = document.getElementById('debriefTitle');
+  title.innerHTML = n === 0
+    ? `You made <b>no moves</b>, and the feed stayed <b>0% you</b>. That is the only way to keep the band flat.`
+    : `<b>${n} move${n === 1 ? '' : 's'}.</b> ${n === 1 ? 'It' : 'All of them'} came back. By the end, <b>${Math.round(endShare * 100)}%</b> of your feed was you.`;
+
+  // The sparkline: moves as ticks above, share as an area below, on one time axis.
+  const svg = d3.select('#spark'); svg.selectAll('*').remove();
+  const W = svg.node().clientWidth || 580, H = 120, L = 50, R = 10, T = 22, B = 18;
+  const dur = Math.max(SESSION_MS, samples.length ? samples[samples.length - 1].t : 0);
+  const x = d3.scaleLinear().domain([0, dur]).range([L, W - R]);
+  const yMax = Math.max(0.25, peak.share);
+  const y = d3.scaleLinear().domain([0, yMax]).range([H - B, T + 10]);
+  svg.append('g').selectAll('line').data(d3.range(0, dur + 1, 30000)).join('line')
+    .attr('x1', (d) => x(d)).attr('x2', (d) => x(d)).attr('y1', T).attr('y2', H - B).attr('stroke', 'rgba(222,231,238,0.12)');
+  svg.append('g').selectAll('text').data(d3.range(0, dur + 1, 60000)).join('text')
+    .attr('x', (d) => x(d)).attr('y', H - 4).attr('text-anchor', 'middle').text((d) => mmss(d));
+  svg.append('path').datum(samples)
+    .attr('d', d3.area().x((d) => x(d.t)).y0(H - B).y1((d) => y(d.share)).curve(d3.curveStepAfter))
+    .attr('fill', 'rgba(167,136,245,0.3)');
+  svg.append('path').datum(samples)
+    .attr('d', d3.line().x((d) => x(d.t)).y((d) => y(d.share)).curve(d3.curveStepAfter))
+    .attr('fill', 'none').attr('stroke', '#a788f5').attr('stroke-width', 1.5);
+  svg.append('g').selectAll('line').data(moves).join('line')
+    .attr('x1', (g) => x(g.at - session.startedAt)).attr('x2', (g) => x(g.at - session.startedAt)).attr('y1', T - 8).attr('y2', T + 2)
+    .attr('stroke', '#a788f5').attr('stroke-width', 1.5);
+  svg.append('text').attr('class', 'lbl').attr('x', L - 6).attr('y', T - 1).attr('text-anchor', 'end').attr('fill', '#a788f5').text('moves');
+  svg.append('text').attr('class', 'lbl').attr('x', L - 6).attr('y', H - B - 2).attr('text-anchor', 'end').text('0%');
+  svg.append('text').attr('class', 'lbl').attr('x', L - 6).attr('y', T + 14).attr('text-anchor', 'end').text(`${Math.round(yMax * 100)}%`);
+  if (peak.share > 0) {
+    svg.append('circle').attr('cx', x(peak.t)).attr('cy', y(peak.share)).attr('r', 3).attr('fill', '#e2d6ff');
+    svg.append('text').attr('x', Math.min(x(peak.t) + 6, W - 80)).attr('y', y(peak.share) - 6).attr('fill', '#e2d6ff').text(`peak ${Math.round(peak.share * 100)}% at ${mmss(peak.t)}`);
+  }
+
+  const facts = [];
+  if (n > 0) facts.push(`<b>${n} of ${n}</b> moves came back as items, each <b>2.2 seconds</b> later. No exceptions, and nothing you did could stop one.`);
+  if (peak.share > 0) facts.push(`The band peaked at <b>${Math.round(peak.share * 100)}%</b> at ${mmss(peak.t)}. Every step up in it sits just after a tick above it: that is the arc, counted.`);
+  if (most.length) facts.push(`What you did most: ${most.map(([k, v]) => `<b>${k}</b>${v > 1 ? ` ×${v}` : ''}`).join(', ')}. Each is in the feed now, with your name on it.`);
+  if (searches.length) facts.push(`You searched for ${searches.map((q) => `<b>${q}</b>`).join(', ')}. The search${searches.length > 1 ? 'es' : ''} became ${searches.length > 1 ? 'items' : 'an item'} too.`);
+  if (seenTotal) facts.push(`The feed showed you <b>${seenTotal}</b> thing${seenTotal === 1 ? '' : 's'}: <i class="a">${session.seen.ask} asking something of you</i>, <i class="g">${session.seen.want} you'd rather have looked at</i>. Of what you'd rather, <b>${pct(session.below.want, session.seen.want)}%</b> (${session.below.want} of ${session.seen.want}) sat below its cut-off; of the asks, <b>${pct(session.below.ask, session.seen.ask)}%</b> (${session.below.ask} of ${session.seen.ask}). The ranking did that, not you, and no move you made changed it.`);
+  document.getElementById('facts').innerHTML = facts.map((f) => `<li>${f}</li>`).join('');
+  document.getElementById('premise').textContent = n === 0
+    ? 'Which is the premise, from the other side: the only feed with none of you in it is one you never touched. The moment you tidy, you are in it.'
+    : 'There is no outside to tidy from. Each thing you did to the feed became part of the feed, and the more you did, the more of it was you. The quiet things you wanted ranked low and were cut off more often than the things asking for you, and tidying did not change that; it added to the pile. Every real feed does this with your clicks. Here it was drawn.';
+  document.getElementById('againNote').textContent = n === 0
+    ? 'Play again and try the opposite: do everything. Watch the band climb with each move.'
+    : n < 4
+      ? 'Play again knowing this. Try doing more and watch the band climb with every move; or try the one thing that keeps it flat, and notice what that costs you.'
+      : 'Play again knowing this. See how low you can keep the band, and notice what it costs you to do so; or go the other way and make the feed entirely you.';
+}
 document.getElementById('start').focus();
 window.addEventListener('keydown', (e) => {
   if (document.activeElement?.tagName === 'INPUT') return;
-  if (!welcome.hidden) { if (e.key === 'Escape') welcome.hidden = true; return; }
+  if (!welcome.hidden) { if (e.key === 'Escape' && session.phase !== 'welcome') welcome.hidden = true; return; }
+  if (!debrief.hidden) { if (e.key === 'Escape') debrief.hidden = true; return; }
+  if (session.phase === 'done') return;
   if (e.code === 'Space') { e.preventDefault(); setRunning(!state.running); }
   if (/^[1-4]$/.test(e.key)) toggleOp(OPS[+e.key - 1]);
 });
@@ -701,7 +867,7 @@ new ResizeObserver(() => { document.documentElement.style.setProperty('--deck-h'
 
 let last = 0;
 function frame(ts) {
-  if (ts - last > 33) { last = ts; render(); }
+  if (ts - last > 33) { last = ts; render(); renderClock(); }
   requestAnimationFrame(frame);
 }
 // Seed the stream so the line is not empty before play is pressed.
