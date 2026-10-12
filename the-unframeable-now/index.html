@@ -8,237 +8,101 @@
 <style>
   :root {
     --void: #0a0b10;
-    --panel: #0f1118;
     --rule: rgba(222, 231, 238, 0.14);
     --ink: rgba(237, 242, 244, 0.92);
     --soft: rgba(219, 225, 229, 0.58);
+    --faint: rgba(219, 225, 229, 0.32);
     --amber: #d4af37;
     --cyan: #55e2e1;
     --coral: #ff626b;
     --violet: #a788f5;
-    --card: #f4f1ea;
-    --card-ink: #1d1b17;
-    --card-soft: #6b665b;
-    --head-h: 170px;
+    --ivory: #e8e4d6;
     --deck-h: 76px;
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; background: var(--void); color: var(--ink); overflow: hidden; }
-  body {
-    font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    font-size: 14px;
-  }
-  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  body { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 14px; display: grid; grid-template-rows: auto 1fr; }
 
   /* ---------------------------------------------------------------- */
-  /* Full-bleed stage: the volume is the picture, not an afterthought. */
+  /* Header: the pitch in one breath.                                  */
   /* ---------------------------------------------------------------- */
-  #volume { position: fixed; inset: 0; z-index: 1; background: var(--void); }
-  #stage { width: 100%; height: 100%; display: block; outline: none; touch-action: none; }
-  .aside-right {
-    position: fixed; right: 16px; top: calc(var(--head-h) - 20px); z-index: 2; width: 270px;
-    text-align: right; pointer-events: none;
-  }
-  .fieldstat { color: var(--soft); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
-  .reveal {
-    margin: 14px 0 0; color: var(--soft); font-size: 11.5px; line-height: 1.5;
-    opacity: 0; transition: opacity 1.4s ease; border-top: 1px solid var(--rule); padding-top: 10px;
-  }
-  .reveal b { color: #fff1bf; font-weight: 600; }
-  .reveal small { display: block; margin-top: 6px; font-size: 10px; color: var(--soft); opacity: 0.85; }
-  .reveal.show { opacity: 1; }
-  .orbit-hint {
-    position: fixed; right: 16px; bottom: calc(var(--deck-h) + 14px); z-index: 5; color: var(--soft);
-    font-size: 11px; letter-spacing: 0.04em; pointer-events: none; text-align: right;
-    max-width: 220px; transition: opacity 0.6s, bottom 0.15s ease;
-  }
-  .orbit-hint.done { opacity: 0; }
-
-  /* ---------------------------------------------------------------- */
-  /* Header: the pitch in one breath, and the lens picker.             */
-  /* ---------------------------------------------------------------- */
-  header.top {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 6;
-    display: flex; justify-content: space-between; align-items: flex-start; gap: 18px;
-    padding: 16px 18px 40px;
-    background: linear-gradient(to bottom, rgba(10,11,16,0.92) 0%, rgba(10,11,16,0.75) 55%, transparent 100%);
-    pointer-events: none;
-  }
-  header.top > * { pointer-events: auto; }
+  header.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; padding: 16px 20px 6px; }
   .mark h1 { margin: 0; font-size: 21px; font-weight: 650; letter-spacing: 0.005em; }
-  .mark .lede { margin: 5px 0 0; max-width: 48ch; color: var(--soft); font-size: 13px; line-height: 1.45; }
+  .mark .lede { margin: 5px 0 0; max-width: 64ch; color: var(--soft); font-size: 13px; line-height: 1.45; }
   .mark .lede b { color: var(--ink); font-weight: 500; }
-  .lenses { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 9px 0 0; }
-  .lenses .lbl { color: var(--soft); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; margin-right: 4px; }
-  .lenses button {
-    font: inherit; font-size: 12px; color: var(--ink); background: rgba(255,255,255,0.05);
-    border: 1px solid var(--rule); border-radius: 999px; padding: 4px 11px 4px 8px; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .lenses button kbd { font: inherit; font-size: 9px; color: var(--soft); border: 1px solid var(--rule); border-radius: 4px; padding: 0 4px; }
-  .lenses button:hover { border-color: rgba(212,175,55,0.55); }
-  .lenses button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-  .lenses button[aria-pressed="true"] { background: rgba(212,175,55,0.18); color: #fff1bf; border-color: rgba(212,175,55,0.6); }
-  .lenses button[aria-pressed="true"] kbd { color: #fff1bf; border-color: rgba(212,175,55,0.5); }
-  .mark .thesis { margin: 8px 0 0; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
-  .feed-toggle {
-    display: none; font: inherit; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  .mark .thesis { margin: 7px 0 0; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
+  .intro-btn {
+    font: inherit; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; flex: none;
     color: var(--ink); background: rgba(255,255,255,0.05); border: 1px solid var(--rule);
     border-radius: 8px; padding: 7px 11px; cursor: pointer;
   }
-  .gauge {
-    background: rgba(15,17,24,0.72); border: 1px solid var(--rule); border-radius: 10px;
-    padding: 9px 12px; min-width: 210px; backdrop-filter: blur(8px);
-  }
-  .gauge .row { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; color: var(--soft); margin: 2px 0; }
-  .gauge .row b { color: var(--ink); font-weight: 600; }
-  .gauge .row.you { color: var(--violet); }
-  .gauge .bar { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; margin: 6px 0 2px; display: flex; }
-  .gauge .bar i { display: block; height: 100%; background: var(--amber); }
-  .gauge .bar i.hidden-part { background: var(--coral); opacity: 0.75; }
 
   /* ---------------------------------------------------------------- */
-  /* The reception panel: one explication of the field at a time.     */
+  /* The line. One picture: time left to right, the stream as marks,   */
+  /* your moves above it with an arc to where each comes back, and    */
+  /* beneath it the share of the stream that is you.                   */
   /* ---------------------------------------------------------------- */
-  #reception {
-    position: fixed; left: 0; top: 0; bottom: 0; z-index: 3;
-    width: 400px; max-width: 90vw;
-    padding: 150px 0 140px;
-    overflow-y: auto; overflow-x: hidden;
-    background: rgba(13,15,22,0.82); backdrop-filter: blur(12px);
-    border-right: 1px solid var(--rule);
-    transition: transform 0.28s ease, padding-top 0.15s ease;
+  main { position: relative; min-height: 0; padding: 0 0 var(--deck-h); }
+  #line { width: 100%; height: 100%; display: block; }
+  #line text { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; pointer-events: none; }
+  #line .rowlabel { font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; fill: var(--soft); }
+  #line .rowlabel.you { fill: var(--violet); }
+  #line .rownote { font-size: 10.5px; fill: var(--faint); }
+  #line .axis line { stroke: var(--rule); }
+  #line .axis text { font-size: 10px; fill: var(--soft); font-family: ui-monospace, Menlo, monospace; }
+  body.cut #line .axis text { display: none; }
+  #line .nowline { stroke: var(--amber); stroke-width: 1; opacity: 0.55; }
+  #line .nowtext { font-size: 10px; fill: var(--amber); font-family: ui-monospace, Menlo, monospace; }
+  #line .baseline { stroke: var(--rule); }
+  #line .lig { stroke: rgba(237,242,244,0.16); stroke-width: 1; fill: none; }
+  #line .mark { cursor: pointer; }
+  #line .mark:focus-visible { outline: none; }
+  #line .mark .dot { stroke: rgba(10,11,16,0.9); stroke-width: 1; }
+  #line .mark .label { font-size: 11px; fill: var(--ink); }
+  #line .mark .label.src { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; fill: var(--soft); }
+  #line .mark .label.you { fill: #e2d6ff; }
+  #line .thr { stroke: var(--coral); stroke-width: 1.5; }
+  #line .thrstem { stroke: var(--coral); stroke-width: 0.75; stroke-dasharray: 2 2; opacity: 0.7; }
+  #line .life { stroke: var(--cyan); stroke-width: 2; opacity: 0.8; }
+  #line .you-mark { stroke: rgba(10,11,16,0.9); stroke-width: 1; }
+  #line .arc { fill: none; stroke: var(--violet); stroke-width: 1.25; opacity: 0.75; }
+  #line .arc.pending { stroke-dasharray: 3 3; opacity: 0.5; }
+  #line .echo { fill: rgba(167,136,245,0.28); stroke: none; }
+  #line .echoline { fill: none; stroke: var(--violet); stroke-width: 1.5; }
+  #line .readout { font-size: 11.5px; fill: var(--ink); }
+  #line .readout.big { font-size: 16px; font-weight: 650; fill: #e2d6ff; }
+  #line .legend { font-size: 10.5px; fill: var(--soft); }
+  #line .legend .k { fill: var(--amber); }
+  #line .scale rect { fill: rgba(255,255,255,0.08); }
+  #line .scale text { font-size: 10px; fill: var(--soft); font-family: ui-monospace, Menlo, monospace; }
+  .tip {
+    position: fixed; z-index: 8; pointer-events: none; max-width: 320px;
+    background: rgba(18,20,28,0.96); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px;
+    font-size: 12px; line-height: 1.4; color: var(--ink); display: none;
   }
-  #reception.closed { transform: translateX(-100%); }
-  #reception.cut { overflow: hidden; }
-  .feedlabel {
-    position: sticky; top: 0; z-index: 1; margin: 0 0 8px; padding: 0 16px 8px;
-    font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft);
-    background: linear-gradient(to bottom, rgba(13,15,22,1), rgba(13,15,22,0));
-  }
-  #collision { display: none; width: 100%; height: 150px; background: rgba(0,0,0,0.25); border-bottom: 1px solid var(--rule); margin-bottom: 8px; }
-  body.collision #collision { display: block; }
-  #cards { position: relative; padding: 0 14px; min-height: 100%; }
-  #reception.cut #cards { padding: 0; height: 100%; }
-  body:not(.lens-feed) #cards { display: none; }
-  #ground { display: none; width: 100%; overflow: visible; }
-  body:not(.lens-feed) #ground { display: block; }
-
-  .card {
-    position: relative; margin: 0 0 10px; padding: 10px 12px 9px;
-    background: var(--card); color: var(--card-ink);
-    border-radius: 9px; border-left: 4px solid #b9b3a4;
-    font-size: 13px; line-height: 1.4;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
-    transition: transform 0.9s cubic-bezier(.2,.8,.2,1), opacity 0.6s, width 0.6s, box-shadow 0.4s;
-    cursor: pointer;
-  }
-  .card:focus-visible { outline: 2px solid var(--cyan); }
-  .card.pos { border-left-color: #c9a227; }
-  .card.neg { border-left-color: #2ba8b9; }
-  .card.gesture { background: #eee7fb; border-left-color: var(--violet); }
-  .card.gesture.justin { animation: landedcard 1s ease-out; }
-  @keyframes landedcard {
-    0% { box-shadow: 0 0 0 0 rgba(167,136,245,0.9), 0 2px 10px rgba(0,0,0,0.25); }
-    100% { box-shadow: 0 0 0 16px rgba(167,136,245,0), 0 2px 10px rgba(0,0,0,0.25); }
-  }
-  .you-chip {
-    display: inline-block; background: var(--violet); color: #fff; font-weight: 700;
-    font-size: 9px; letter-spacing: 0.08em; border-radius: 4px; padding: 1px 5px; margin-right: 6px;
-  }
-  .tissue { display: flex; gap: 10px; color: var(--card-soft); font-size: 11px; }
-  .tissue .src { font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; }
-  .tissue .time { margin-left: auto; font-family: ui-monospace, Menlo, monospace; }
-  .body { margin: 5px 0 4px; }
-  .body .trunc { display: none; color: var(--coral); font-family: ui-monospace, Menlo, monospace; font-size: 10px; margin-left: 4px; }
-  .tissue.bottom { margin-top: 4px; }
-  .tissue .sent { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
-  .tissue .rel a { color: #5d6a9a; margin-right: 8px; text-decoration: underline; cursor: pointer; }
-  .apparatus { display: none; margin-top: 7px; padding-top: 6px; border-top: 1px dashed #c6c0b1; font-family: ui-monospace, Menlo, monospace; font-size: 10px; color: var(--card-soft); }
-  .apparatus .row { display: flex; align-items: center; gap: 8px; margin: 2px 0; }
-  .apparatus .k { width: 64px; }
-  .apparatus .meter { flex: 1; height: 6px; background: #d9d3c4; border-radius: 3px; position: relative; overflow: hidden; }
-  .apparatus .meter i { position: absolute; left: 0; top: 0; bottom: 0; background: #c9a227; }
-  .apparatus .meter.timer i { background: #2ba8b9; }
-  .apparatus .meter .thr { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--coral); }
-  .apparatus .v { width: 70px; text-align: right; }
-  .card.below { opacity: 0.45; }
-
-  #reception.cut .tissue, #reception.cut .card .rel { display: none; }
-  #reception.cut .card { position: absolute; width: 180px; border-left-color: #b9b3a4; border-radius: 3px; margin: 0; }
-  body.expose .card { outline: 1px dashed var(--coral); outline-offset: 3px; }
-  body.expose .apparatus, body.expose .body .trunc { display: block; }
-  body.expose .body .trunc { display: inline; }
-  @keyframes shiver { 0% { transform: translate(0, 0); } 25% { transform: translate(0.6px, -0.6px); } 50% { transform: translate(-0.6px, 0.6px); } 75% { transform: translate(0.6px, 0.6px); } 100% { transform: translate(0, 0); } }
-  body.refusal .card { animation: shiver 1.1s infinite linear; }
-  body.refusal .card.fading { opacity: 0.25; }
+  .tip .t { color: var(--soft); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+  .tip.you { border-color: rgba(167,136,245,0.6); }
 
   /* ---------------------------------------------------------------- */
-  /* The ground (SVG): the trail, the tissue, the bed. Same fragments. */
-  /* ---------------------------------------------------------------- */
-  #ground text { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; pointer-events: none; }
-  #ground .src { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; fill: var(--soft); }
-  #ground .txt { font-size: 11.5px; fill: var(--ink); }
-  #ground g.item { cursor: pointer; transition: transform 0.9s cubic-bezier(.2,.8,.2,1), opacity 0.5s; }
-  #ground g.item:focus-visible { outline: 2px solid var(--cyan); }
-  #ground g.glyph { transition: transform 0.5s; }
-  #ground .chip rect { fill: var(--violet); }
-  #ground .chip text { fill: #fff; font-size: 8px; font-weight: 700; letter-spacing: 0.08em; text-anchor: middle; }
-  #ground .ring { fill: none; stroke: var(--violet); stroke-width: 2; opacity: 0; }
-  #ground .justin .ring { animation: ringout 1.2s ease-out; }
-  @keyframes ringout { 0% { opacity: 0.9; transform: scale(0.6); } 100% { opacity: 0; transform: scale(2.6); } }
-  #ground .exposering { fill: none; stroke: var(--coral); stroke-width: 1; stroke-dasharray: 3 3; display: none; }
-  body.expose #ground .exposering { display: block; }
-  #ground .app { display: none; }
-  body.expose #ground .app { display: block; }
-  #ground .m-bg { fill: rgba(255,255,255,0.12); }
-  #ground .m-score { fill: var(--amber); }
-  #ground .m-thr { fill: var(--coral); }
-  #ground .m-life { fill: var(--cyan); }
-  #ground .m-v { font-size: 8px; fill: var(--soft); font-family: ui-monospace, Menlo, monospace; }
-  body.refusal #ground g.jit { animation: shiver 1.1s infinite linear; }
-  #ground .tie { fill: none; stroke-linecap: round; stroke-linejoin: round; transition: opacity 0.6s; }
-  /* trail: ants on a scent line */
-  .lens-trail #ground .tie.wide { stroke: #c9a86a; stroke-width: 18; opacity: 0.10; }
-  .lens-trail #ground .tie.thin { stroke: var(--amber); stroke-width: 1.5; stroke-dasharray: 3 5; opacity: 0.55; }
-  .lens-trail #ground .scent { fill: var(--c); opacity: 0.28; }
-  .lens-trail #ground .gesture .scent { opacity: 0.6; }
-  .lens-trail #ground .seg { fill: #2b1f12; stroke: #0a0b10; stroke-width: 0.4; }
-  .lens-trail #ground .legs { stroke: #2b1f12; stroke-width: 1; fill: none; }
-  /* body: cells along a vessel */
-  .lens-body #ground .tie.wide { stroke: #a84a5c; stroke-width: 28; opacity: 0.18; }
-  .lens-body #ground .tie.thin { stroke: #ff8fa3; stroke-width: 1; stroke-dasharray: 2 4; opacity: 0.35; }
-  .lens-body #ground .cell { fill: var(--c); fill-opacity: 0.85; stroke: rgba(255,255,255,0.5); stroke-width: 1; }
-  .lens-body #ground .nucleus { fill: rgba(60,10,30,0.6); }
-  .lens-body #ground .gesture .cell { stroke: var(--violet); stroke-width: 2; }
-  /* garden: plants in a row of soil */
-  .lens-garden #ground .tie.wide { stroke: #5a3f22; stroke-width: 30; opacity: 0.45; stroke-linecap: butt; }
-  .lens-garden #ground .tie.thin { stroke: #8a6b3f; stroke-width: 1; stroke-dasharray: 1 6; opacity: 0.5; }
-  .lens-garden #ground .stem { stroke: #5f9b4a; stroke-width: 2; }
-  .lens-garden #ground .leaf { fill: #6fbf64; }
-  .lens-garden #ground .bloom { fill: var(--c); }
-  .lens-garden #ground .gesture .stem { stroke: var(--violet); }
-
-  /* ---------------------------------------------------------------- */
-  /* Caption pill: one plain sentence for whatever just happened.      */
+  /* Caption: one sentence when an operator or the pace changes.       */
   /* ---------------------------------------------------------------- */
   .caption {
     position: fixed; left: 50%; bottom: calc(var(--deck-h) + 14px); transform: translateX(-50%); z-index: 5;
-    padding: 9px 18px; border: 1px solid rgba(212,175,55,0.35); border-radius: 999px;
-    background: rgba(11,12,19,0.88); color: #fff1bf; font-size: 13px; letter-spacing: 0.01em;
+    padding: 8px 16px; border: 1px solid rgba(212,175,55,0.35); border-radius: 999px;
+    background: rgba(11,12,19,0.9); color: #fff1bf; font-size: 12.5px;
     white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis;
-    backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.4s, bottom 0.15s ease;
+    opacity: 0; transition: opacity 0.4s, bottom 0.15s ease;
   }
   .caption.show { opacity: 1; }
 
   /* ---------------------------------------------------------------- */
-  /* The deck: a transport and four pads, not toggle checkboxes.       */
+  /* The deck: a transport and four pads.                              */
   /* ---------------------------------------------------------------- */
   .deck {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
     display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px;
     padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px));
-    background: linear-gradient(to top, rgba(10,11,16,0.95) 0%, rgba(10,11,16,0.85) 65%, transparent 100%);
+    background: linear-gradient(to top, rgba(10,11,16,0.97) 0%, rgba(10,11,16,0.9) 70%, transparent 100%);
   }
   .play {
     width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
@@ -246,211 +110,99 @@
     cursor: pointer; flex: none;
   }
   .play[aria-pressed="true"] { background: transparent; color: var(--ink); border-color: var(--rule); }
-  .startnote { font-size: 11px; color: var(--amber); letter-spacing: 0.04em; margin-right: 2px; animation: nudge 1.4s ease-in-out infinite; }
-  .startnote.hide { display: none; }
-  @keyframes nudge { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
-
   button.pad {
     font: inherit; color: var(--ink); background: rgba(255,255,255,0.045); border: 1px solid var(--rule);
     border-radius: 10px; padding: 8px 14px; cursor: pointer; min-width: 128px;
     display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.2;
   }
   button.pad:hover { border-color: rgba(212, 175, 55, 0.55); }
-  button.pad:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  button.pad:focus-visible, .play:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
   button.pad .verb { font-size: 12.5px; font-weight: 650; }
   button.pad .tech { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); }
   button.pad[aria-pressed="true"] { background: var(--amber); border-color: var(--amber); }
   button.pad[aria-pressed="true"] .verb, button.pad[aria-pressed="true"] .tech { color: var(--void); }
   button.pad.landed { animation: landed 0.45s ease-out; }
-  @keyframes landed {
-    0% { background: var(--amber); border-color: var(--amber); transform: scale(1.05); }
-    100% { transform: scale(1); }
-  }
-
-  .filterwrap { display: flex; align-items: center; gap: 6px; }
+  @keyframes landed { 0% { background: var(--amber); border-color: var(--amber); transform: scale(1.05); } 100% { transform: scale(1); } }
   .filterwrap input {
     font: inherit; font-size: 12px; color: var(--ink); background: rgba(255,255,255,0.05);
     border: 1px solid var(--rule); border-radius: 999px; padding: 9px 13px; width: 160px;
   }
   .filterwrap input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
   .filterwrap input::placeholder { color: var(--soft); }
-
-  /* ---------------------------------------------------------------- */
-  /* Welcome and walkthrough: what this is, what to do, what to look  */
-  /* for. The walkthrough advances on what the viewer actually does.   */
-  /* ---------------------------------------------------------------- */
-  #welcome {
-    position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px;
-    background: rgba(6,7,11,0.78); backdrop-filter: blur(6px);
-  }
-  #welcome[hidden] { display: none; }
-  .welcome-card {
-    width: min(560px, 100%); max-height: calc(100vh - 40px); overflow: auto;
-    background: #12141c; border: 1px solid rgba(212,175,55,0.35); border-radius: 16px;
-    padding: 26px 28px 22px; box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-  }
-  .welcome-card .eyebrow { color: var(--amber); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; margin: 0 0 8px; }
-  .welcome-card h2 { margin: 0 0 14px; font-size: 22px; font-weight: 650; line-height: 1.25; }
-  .welcome-card dl { margin: 0 0 16px; display: grid; grid-template-columns: max-content 1fr; gap: 9px 14px; font-size: 13.5px; line-height: 1.45; }
-  .welcome-card dt { color: var(--amber); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; padding-top: 3px; white-space: nowrap; }
-  .welcome-card dd { margin: 0; color: var(--ink); }
-  .welcome-card dd b { color: #fff1bf; font-weight: 600; }
-  .welcome-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 6px; }
-  .welcome-actions button {
-    font: inherit; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 10px 18px; cursor: pointer;
-    border: 1px solid var(--rule); color: var(--ink); background: rgba(255,255,255,0.05);
-  }
-  .welcome-actions button.primary { background: var(--amber); border-color: var(--amber); color: var(--void); }
-  .welcome-actions button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-  .welcome-card .fine { margin: 14px 0 0; color: var(--soft); font-size: 11px; line-height: 1.45; }
-
-  .coach {
-    position: fixed; left: 50%; bottom: calc(var(--deck-h) + 64px); transform: translateX(-50%); z-index: 7;
-    width: min(460px, calc(100vw - 24px));
-    background: rgba(18,20,28,0.94); border: 1px solid rgba(212,175,55,0.45); border-radius: 14px;
-    padding: 13px 16px 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
-    transition: bottom 0.15s ease;
-  }
-  .coach[hidden] { display: none; }
-  .coach .step { color: var(--amber); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; display: flex; justify-content: space-between; gap: 10px; }
-  .coach .step .trace { color: var(--violet); letter-spacing: 0.06em; text-transform: none; font-size: 11px; }
-  .coach h3 { margin: 5px 0 4px; font-size: 15px; font-weight: 650; }
-  .coach p { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--ink); }
-  .coach .ack { margin-top: 8px; font-size: 12px; color: #9be3a1; min-height: 1.2em; }
-  .coach .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; }
-  .coach button {
-    font: inherit; font-size: 11.5px; border-radius: 999px; padding: 6px 12px; cursor: pointer;
-    border: 1px solid var(--rule); color: var(--ink); background: rgba(255,255,255,0.05);
-  }
-  .coach button.next { background: var(--amber); border-color: var(--amber); color: var(--void); font-weight: 600; }
-  .coach button.next:disabled { opacity: 0.35; cursor: default; }
-  .coach button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-
-  .intro-btn {
-    font: inherit; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--ink); background: rgba(255,255,255,0.05); border: 1px solid var(--rule);
-    border-radius: 8px; padding: 7px 11px; cursor: pointer;
-  }
   .pace { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--rule); border-radius: 999px; padding: 3px; }
   .pace .lbl { color: var(--soft); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 0 6px 0 8px; }
   .pace button { font: inherit; font-size: 11px; color: var(--soft); background: transparent; border: 0; border-radius: 999px; padding: 5px 10px; cursor: pointer; }
   .pace button[aria-pressed="true"] { background: rgba(212,175,55,0.18); color: #fff1bf; }
   .pace button:focus-visible { outline: 2px solid var(--cyan); }
 
+  /* ---------------------------------------------------------------- */
+  /* Welcome: what this is, what to watch, what you'll find.           */
+  /* ---------------------------------------------------------------- */
+  #welcome { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: rgba(6,7,11,0.8); backdrop-filter: blur(6px); }
+  #welcome[hidden] { display: none; }
+  .welcome-card {
+    width: min(540px, 100%); max-height: calc(100vh - 40px); overflow: auto;
+    background: #12141c; border: 1px solid rgba(212,175,55,0.35); border-radius: 16px;
+    padding: 24px 26px 20px; box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  }
+  .welcome-card .eyebrow { color: var(--amber); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; margin: 0 0 8px; }
+  .welcome-card h2 { margin: 0 0 14px; font-size: 21px; font-weight: 650; line-height: 1.25; }
+  .welcome-card dl { margin: 0 0 16px; display: grid; grid-template-columns: max-content 1fr; gap: 9px 14px; font-size: 13.5px; line-height: 1.45; }
+  .welcome-card dt { color: var(--amber); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; padding-top: 3px; white-space: nowrap; }
+  .welcome-card dd { margin: 0; }
+  .welcome-card dd b { color: #fff1bf; font-weight: 600; }
+  .welcome-card dd i.v { color: var(--violet); font-style: normal; font-weight: 600; }
+  .welcome-actions button {
+    font: inherit; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 10px 18px; cursor: pointer;
+    background: var(--amber); border: 1px solid var(--amber); color: var(--void);
+  }
+  .welcome-actions button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  .welcome-card .fine { margin: 14px 0 0; color: var(--soft); font-size: 11px; line-height: 1.45; }
+
   @media (max-width: 900px) {
-    .feed-toggle { display: inline-block; }
-    .welcome-card { padding: 20px 18px 18px; }
-    .welcome-card dl { grid-template-columns: 1fr; gap: 4px 0; }
-    .welcome-card dt { padding-top: 6px; }
-    .coach { bottom: calc(var(--deck-h) + 56px); }
-    .pace .lbl { display: none; }
-    #reception { width: 86vw; }
-    .mark .lede { max-width: 38ch; }
-    .gauge { display: none; }
-    .aside-right { width: 180px; }
-    .reveal { font-size: 10.5px; }
-    .caption { max-width: calc(100vw - 20px); }
+    .mark .lede { font-size: 12.5px; }
     .deck { gap: 7px; }
     button.pad { min-width: 0; padding: 7px 10px; }
     button.pad .tech { display: none; }
-    .lenses button kbd { display: none; }
+    .pace .lbl { display: none; }
+    .welcome-card dl { grid-template-columns: 1fr; gap: 4px 0; }
+    .welcome-card dt { padding-top: 6px; }
   }
 </style>
 </head>
-<body class="lens-feed">
-
-<section id="volume" aria-label="The field: fragments as shards in a volume">
-  <canvas id="stage" tabindex="0" aria-label="Three-dimensional field of fragments. Drag to orbit, scroll or pinch to zoom."></canvas>
-</section>
-<div class="aside-right">
-  <div class="fieldstat" id="status">field · 0 shards</div>
-  <p class="reveal" id="reveal">A physicist had a word for a whole you can't step outside of. <b>David Bohm</b> called it the <b>implicate order</b>: each lens here is one unfolding of it, and every move you make folds back in.<small>Bohm, <i>Wholeness and the Implicate Order</i> (1980), read as a figure for one state and its renderings, not as a physics claim.</small></p>
-</div>
-<div class="orbit-hint" id="orbitHint">drag to orbit · scroll to zoom — that counts as a gesture too</div>
+<body>
 
 <header class="top">
   <div class="mark">
     <h1>The Unframeable Now</h1>
-    <p class="lede"><b>Ever tidied your feed and watched it get worse?</b> Here's why. Press play, tidy it the way you'd tidy any feed, and try to leave no trace of yourself in it.</p>
-    <nav class="lenses" id="lenses" aria-label="Lens: the same field, four ways">
-      <span class="lbl">one field, four ways</span>
-      <button type="button" data-lens="feed" aria-pressed="true"><kbd>1</kbd>Feed</button>
-      <button type="button" data-lens="trail" aria-pressed="false"><kbd>2</kbd>Trail</button>
-      <button type="button" data-lens="body" aria-pressed="false"><kbd>3</kbd>Body</button>
-      <button type="button" data-lens="garden" aria-pressed="false"><kbd>4</kbd>Garden</button>
-    </nav>
+    <p class="lede"><b>Ever tidied your feed and watched it get worse?</b> Here's why. Press play, tidy the stream the way you'd tidy any feed, and try to keep the band at the bottom flat.</p>
     <p class="thesis">Every frame applied re-enters as signal.</p>
   </div>
-  <div style="display:flex; gap:10px; align-items:flex-start;">
-    <button class="intro-btn" id="introBtn" type="button" title="What is this, and how do I play it?">? intro</button>
-    <button class="feed-toggle" id="feedToggle" type="button" aria-pressed="true" aria-controls="reception">Panel ▾</button>
-    <div class="gauge" role="status" aria-live="polite" aria-label="How much of the field is actually showing">
-      <div class="row"><span id="g-shown-l">showing, tidied</span><b id="g-shown">0</b></div>
-      <div class="bar"><i id="g-shown-bar" style="width:0%"></i><i class="hidden-part" id="g-hidden-bar" style="width:0%"></i></div>
-      <div class="row"><span id="g-hidden-l">pushed out of frame</span><b id="g-hidden">0</b></div>
-      <div class="row you"><span id="g-acts-l">your own moves, fed back</span><b id="g-acts">0</b></div>
-    </div>
-  </div>
+  <button class="intro-btn" id="introBtn" type="button" title="What is this, and what do I watch?">? intro</button>
 </header>
 
-<section id="reception" aria-label="Reception layer: the field, as one lens shows it">
-  <p class="feedlabel" id="feedlabel">the tidy feed</p>
-  <svg id="collision" aria-label="Scale collision: every magnitude on one axis, relative size preserved"></svg>
-  <div id="cards"></div>
-  <svg id="ground" aria-label="The same fragments, drawn by the current lens"></svg>
-</section>
+<main>
+  <svg id="line" role="img" aria-label="The stream as a line over time: your moves above it, each with an arc to where it comes back in; beneath it, the share of the stream that is your own echo."></svg>
+  <div class="tip" id="tip"></div>
+</main>
 
 <p class="caption" id="caption" aria-live="polite"></p>
 
-<div id="welcome" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
-  <div class="welcome-card">
-    <p class="eyebrow">The Unframeable Now · a two-minute experiment</p>
-    <h2 id="welcomeTitle">Try to tidy a feed without leaving a trace of yourself in it.</h2>
-    <dl>
-      <dt>What this is</dt>
-      <dd>A fake news feed with real feed machinery: a ranking, a cut-off, a refresh clock, “related” links. Nothing in it is real. The shape is.</dd>
-      <dt>What you do</dt>
-      <dd>Tidy it the way you tidy any feed: search, cut the clutter, change how you look at it. The pads at the bottom are your tools.</dd>
-      <dt>What you'll find</dt>
-      <dd><b>Every tidy-up comes back into the feed as one more item.</b> You can't clean a stream from outside it, because there is no outside. A counter keeps score of your trace. It only goes up.</dd>
-      <dt>Why it matters</dt>
-      <dd>Every real feed does this with your clicks, silently. Here you can watch it happen, slowly, to you.</dd>
-    </dl>
-    <div class="welcome-actions">
-      <button type="button" class="primary" id="tourStart">Walk me through it · 2 min</button>
-      <button type="button" id="tourSkip">Just let me play</button>
-    </div>
-    <p class="fine">Nothing leaves your machine. The items are invented and name nobody. Press <b>? intro</b> at the top right to come back here.</p>
-  </div>
-</div>
-
-<div class="coach" id="coach" hidden role="region" aria-live="polite" aria-label="Walkthrough">
-  <div class="step"><span id="coachStep">step 1 of 6</span><span class="trace" id="coachTrace">your trace: 0</span></div>
-  <h3 id="coachTitle"></h3>
-  <p id="coachBody"></p>
-  <div class="ack" id="coachAck"></div>
-  <div class="row">
-    <button type="button" id="coachQuit">Leave the walkthrough</button>
-    <button type="button" class="next" id="coachNext" disabled>Next</button>
-  </div>
-</div>
-
 <div class="deck" role="group" aria-label="Transport and operators">
-  <span class="startnote" id="startNote">press play</span>
-  <button class="play" id="play" type="button" aria-pressed="false" aria-label="Play the feed" title="Start or pause the feed (space)">▶</button>
-  <button class="pad" type="button" data-op="cut" aria-pressed="false" title="Remove the connective tissue; only discontinuous fragments remain">
+  <button class="play" id="play" type="button" aria-pressed="false" aria-label="Play the stream" title="Start or pause the stream (space)">▶</button>
+  <button class="pad" type="button" data-op="cut" aria-pressed="false" title="Remove the connective tissue: the links between items and the timestamps (1)">
     <span class="verb">Cut the ties</span><span class="tech">cut</span>
   </button>
-  <button class="pad" type="button" data-op="expose" aria-pressed="false" title="Render ranking, truncation, refresh and visibility threshold as geometry">
+  <button class="pad" type="button" data-op="expose" aria-pressed="false" title="Draw each item's own cut-off and how long it has left (2)">
     <span class="verb">Show the machine</span><span class="tech">expose apparatus</span>
   </button>
-  <button class="pad" type="button" data-op="collision" aria-pressed="false" title="Place signals of different magnitude in one coordinate system, size preserved">
+  <button class="pad" type="button" data-op="collision" aria-pressed="false" title="Size every item by its magnitude on one shared scale (3)">
     <span class="verb">One ruler for everything</span><span class="tech">scale collision</span>
   </button>
-  <button class="pad" type="button" data-op="refusal" aria-pressed="false" title="Nothing settles; fragments decay, re-enter, are re-sampled">
+  <button class="pad" type="button" data-op="refusal" aria-pressed="false" title="Nothing settles: items fade and are re-sampled back to now (4)">
     <span class="verb">Never let it settle</span><span class="tech">duration refusal</span>
   </button>
-  <span class="filterwrap"><input id="filter" type="search" placeholder="search the field…" aria-label="Filter fragments by text"></span>
+  <span class="filterwrap"><input id="filter" type="search" placeholder="search the stream…" aria-label="Filter items by text"></span>
   <span class="pace" role="group" aria-label="Pace of the stream">
     <span class="lbl">pace</span>
     <button type="button" data-pace="calm" aria-pressed="false" title="A new item every six seconds">calm</button>
@@ -459,77 +211,57 @@
   </span>
 </div>
 
-<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<div id="welcome" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+  <div class="welcome-card">
+    <p class="eyebrow">The Unframeable Now · a two-minute experiment</p>
+    <h2 id="welcomeTitle">Try to tidy a stream without leaving a trace of yourself in it.</h2>
+    <dl>
+      <dt>What this is</dt>
+      <dd>A fake news stream with real feed machinery: a ranking, a cut-off, a lifetime, links between items. Nothing in it is real. The shape is.</dd>
+      <dt>What you do</dt>
+      <dd>Tidy it the way you tidy any feed: search, cut the clutter, size things up. The pads at the bottom are your tools.</dd>
+      <dt>What to watch</dt>
+      <dd>Time runs left to right. <b>Every move you make is a <i class="v">violet</i> mark above the stream, with an arc to where it comes back into the stream two seconds later.</b> The band at the bottom is how much of the stream is you.</dd>
+      <dt>What you'll find</dt>
+      <dd>You can't keep the band flat. There is no outside to tidy from: every tidy-up, even a search, goes back in. Every real feed does this with your clicks, silently. Here it's drawn.</dd>
+    </dl>
+    <div class="welcome-actions"><button type="button" id="start">Start</button></div>
+    <p class="fine">Nothing leaves your machine. The items are invented and name nobody. Press <b>? intro</b> to come back here.</p>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script>
 /* ------------------------------------------------------------------ */
-/* Tuning. Change these to change the pace of the piece.               */
+/* Tuning.                                                             */
 /* ------------------------------------------------------------------ */
-const PACE = { calm: 6500, steady: 3600, busy: 1400 }; // ms between fragments; the deck chooses
-const STREAM_INTERVAL_MS = PACE.steady; // the seed spacing, and the default pace
-const FRAGMENT_LIFE_MS   = 32000;  // how long a fragment lasts in the default layer
-const REFUSAL_LIFE_MS    = 6500;   // under Duration refusal, how long before it is re-sampled
-const REENTRY_DELAY_MS   = 2200;   // a viewer gesture comes back as a fragment after this
-const MAX_FRAGMENTS      = 48;     // oldest fragments leave when this is exceeded
-const SHARD_POOL         = 320;    // shards in the volume; fragments borrow one each
-const TICK_MS            = 250;    // how often decay and the 2D layer are recomputed
+const PACE = { calm: 6500, steady: 3600, busy: 1400 }; // ms between items; the deck chooses
+const FRAGMENT_LIFE_MS   = 32000;  // how long an item lasts
+const REFUSAL_LIFE_MS    = 6500;   // under Never let it settle, how long before it is re-sampled
+const REENTRY_DELAY_MS   = 2200;   // a move comes back as an item after this
+const MAX_FRAGMENTS      = 48;
+const TICK_MS            = 250;    // decay and the echo band are recomputed this often
+const WINDOW_MS          = 75000;  // how much time the line shows
+const NOW_AT             = 0.84;   // where "now" sits across the plot, 0..1
 
 /* ------------------------------------------------------------------ */
-/* The lenses. One state underneath; each lens is one unfolding of it. */
-/* The nouns change, the palette changes, the shape of a fragment      */
-/* changes. Nothing in the state does.                                 */
-/* ------------------------------------------------------------------ */
-const LENSES = {
-  feed: {
-    name: 'Feed', panel: 'the tidy feed',
-    shown: 'showing, tidied', hidden: 'pushed out of frame', acts: 'your own moves, fed back',
-    back: (said) => `That's you: ${said} just came back as a new card.`,
-    pos: '#d4af37', neg: '#55e2e1', neu: '#e8e4d6', you: '#a788f5',
-    ground: '#101220', shape: (s) => [s, s * 0.6, s * 0.25],
-  },
-  trail: {
-    name: 'Trail', panel: 'the trail · an ant can\'t read it without laying more scent',
-    shown: 'on the trail', hidden: 'off the trail', acts: 'your steps, laid down as scent',
-    back: (said) => `That's you: ${said} is scent on the trail now, and the next ant follows it.`,
-    pos: '#ffb347', neg: '#8fd3c7', neu: '#e8dcc0', you: '#a788f5',
-    ground: '#2b2416', shape: (s) => [s * 0.9, s * 0.12, s * 0.9],
-  },
-  body: {
-    name: 'Body', panel: 'the tissue',
-    shown: 'cells in line', hidden: 'cells out of line', acts: 'your responses, now signal',
-    back: (said) => `That's you: ${said} is a signal now, and the next cell answers it.`,
-    pos: '#ff8fa3', neg: '#7fc8ff', neu: '#f3dcd4', you: '#a788f5',
-    ground: '#2a1118', shape: (s) => [s * 0.55, s * 0.55, s * 0.55],
-  },
-  garden: {
-    name: 'Garden', panel: 'the bed',
-    shown: 'in the row', hidden: 'out of the row', acts: 'your weeding, now growing',
-    back: (said) => `That's you: ${said} is growing in the bed now.`,
-    pos: '#e6c84f', neg: '#7aa6ff', neu: '#8fcf7a', you: '#a788f5',
-    ground: '#1e1a0f', shape: (s) => [s * 0.14, s * 1.4, s * 0.14],
-  },
-};
-const LENS_ORDER = ['feed', 'trail', 'body', 'garden'];
-
-/* ------------------------------------------------------------------ */
-/* The shared state. Both layers subscribe; nothing else holds truth.  */
+/* The shared state. Nothing else holds truth.                         */
 /* ------------------------------------------------------------------ */
 const state = {
-  fragments: [],              // what is in the field right now
+  fragments: [],              // what is in the stream right now
   activeOperators: new Set(), // 'cut' | 'expose' | 'collision' | 'refusal'
-  viewerGestures: [],         // every gesture the viewer has made, in order
-  unframedResidue: 0,         // fragments the reception layer is not holding in a frame
-  framesApplied: 0,           // gestures that framed or filtered: the counter's left side
+  viewerGestures: [],         // every move, in order: { at, kind, detail, said, echoAt, echo }
+  history: [],                // { t, share } samples for the echo band
   filter: '',
   running: false,
-  lens: 'feed',               // which unfolding the panel and the volume are showing
-  pace: 'steady',             // how often the stream delivers
+  pace: 'steady',
 };
-const listeners = [];
-function subscribe(fn) { listeners.push(fn); }
-function notify() { for (const fn of listeners) fn(state); }
 const has = (op) => state.activeOperators.has(op);
-const L = () => LENSES[state.lens];
+
+/* The clock the line runs on. It stops when the stream is paused, so a
+   paused picture holds still and can be read. */
+let clockBase = 0, runStart = 0;
+const vnow = () => clockBase + (state.running ? Date.now() - runStart : 0);
 
 /* ------------------------------------------------------------------ */
 /* The stream: a simulated pool. No real people or organisations.      */
@@ -565,54 +297,11 @@ const PULSES = [
 ];
 const TOKENS = ['⟨sep⟩', '▮▮▮', '§', '∅', '⊥', '…', '[withheld]', '⟨eot⟩', '0x3f', '¶'];
 const SOURCES = ['wire/3', 'timeline', 'expert-thread', 'model-summary', 'sensor:north', 'card-feed'];
-
 const SENTIMENT = { '-1': 'negative', '0': 'neutral', '1': 'positive' };
+const COLOR = { '-1': '#55e2e1', '0': '#e8e4d6', '1': '#d4af37', you: '#a788f5' };
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = (xs) => xs[Math.floor(Math.random() * xs.length)];
 let nextId = 1;
-const clock0 = Date.now();
-
-function sample(kind) {
-  if (kind === 'pulse') {
-    const p = pick(PULSES);
-    const v = p.value * rnd(0.85, 1.15);
-    return { text: `${p.label}: ${fmt(v)}`, value: v, mag: Math.abs(v), sent: 0 };
-  }
-  if (kind === 'token') {
-    const v = rnd(0.00005, 0.004);
-    return { text: pick(TOKENS), value: v, mag: v, sent: 0 };
-  }
-  const s = pick(SHARDS);
-  return { text: s.text, value: null, mag: s.mag, sent: s.sent };
-}
-
-function makeFragment(origin, override = {}) {
-  const kind = override.kind || pick(['shard', 'shard', 'shard', 'pulse', 'pulse', 'token']);
-  const s = kind === 'gesture' ? { text: override.text, value: 1, mag: 1, sent: 0 } : sample(kind);
-  const now = Date.now();
-  const related = state.fragments.length
-    ? [pick(state.fragments).id, pick(state.fragments).id].filter((v, i, a) => a.indexOf(v) === i)
-    : [];
-  return {
-    id: nextId++,
-    kind, origin,
-    text: s.text, value: s.value, magnitude: s.mag,
-    sentiment: s.sent,
-    source: override.source || pick(SOURCES),
-    score: rnd(0.05, 0.98),          // ranking score the layer sorts by, hidden by default
-    truncation: Math.round(rnd(36, 120)), // characters the card keeps
-    refresh: Math.round(rnd(600, 3200)),  // ms between the card's refreshes
-    threshold: rnd(0.1, 0.55),       // visibility threshold; below it the card is dimmed
-    born: now, life: FRAGMENT_LIFE_MS,
-    resampled: 0,
-    related,
-    scatter: { x: rnd(2, 70), y: rnd(2, 85) },
-    scatter3: { x: rnd(-6, 6), y: rnd(-4, 4), z: rnd(-6, 6) },
-    phase: rnd(0, Math.PI * 2),
-    slot: -1,
-    justIn: kind === 'gesture',
-  };
-}
 
 function fmt(v) {
   if (v === null || v === undefined) return '';
@@ -620,694 +309,366 @@ function fmt(v) {
   if (Math.abs(v) < 0.01) return v.toExponential(2);
   return (+v.toFixed(2)).toString();
 }
-function stamp(ms) {
-  const t = Math.max(0, ms - clock0) / 1000;
-  const m = Math.floor(t / 60), s = Math.floor(t % 60);
-  return `t+${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+function sample(kind) {
+  if (kind === 'pulse') { const p = pick(PULSES); const v = p.value * rnd(0.85, 1.15); return { text: `${p.label}: ${fmt(v)}`, mag: Math.abs(v), sent: 0 }; }
+  if (kind === 'token') { const v = rnd(0.00005, 0.004); return { text: pick(TOKENS), mag: v, sent: 0 }; }
+  const s = pick(SHARDS); return { text: s.text, mag: s.mag, sent: s.sent };
 }
-const trunc = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+function makeFragment(origin, override = {}) {
+  const kind = override.kind || pick(['shard', 'shard', 'shard', 'pulse', 'pulse', 'token']);
+  const s = kind === 'gesture' ? { text: override.text, mag: 1, sent: 0 } : sample(kind);
+  const related = state.fragments.length
+    ? [pick(state.fragments).id, pick(state.fragments).id].filter((v, i, a) => a.indexOf(v) === i) : [];
+  return {
+    id: nextId++, kind, origin,
+    text: s.text, magnitude: s.mag, sentiment: s.sent,
+    source: override.source || pick(SOURCES),
+    score: rnd(0.05, 0.98),           // the ranking: where it sits on the stream's axis
+    threshold: rnd(0.1, 0.55),        // its own cut-off; below it the feed dims it
+    born: vnow(), life: FRAGMENT_LIFE_MS,
+    resampled: 0, related,
+    scatterY: rnd(0.05, 0.95),        // where it falls when the ties are cut
+    vy: null,                         // current vertical fraction, eased toward its target
+  };
+}
 const lifeOf = (f) => has('refusal') ? REFUSAL_LIFE_MS : f.life;
-
-/* Slots in the volume: each fragment borrows a shard and returns it on leaving. */
-const freeSlots = Array.from({ length: SHARD_POOL }, (_, i) => SHARD_POOL - 1 - i);
-const slotOwner = new Array(SHARD_POOL).fill(null);
-
-function enter(f) {
-  if (freeSlots.length) { f.slot = freeSlots.pop(); slotOwner[f.slot] = f; }
-  state.fragments.push(f);
-  while (state.fragments.length > MAX_FRAGMENTS) leave(state.fragments[0]);
-}
-function leave(f) {
-  const i = state.fragments.indexOf(f);
-  if (i >= 0) state.fragments.splice(i, 1);
-  if (f.slot >= 0) { slotOwner[f.slot] = null; freeSlots.push(f.slot); f.slot = -1; }
-}
-
-/* Re-sampling under Duration refusal: same slot, new content, no settling. */
+function enter(f) { state.fragments.push(f); while (state.fragments.length > MAX_FRAGMENTS) state.fragments.shift(); }
+function leave(f) { const i = state.fragments.indexOf(f); if (i >= 0) state.fragments.splice(i, 1); }
 function resample(f) {
-  const s = f.kind === 'gesture' ? { text: f.text, value: 1, mag: 1, sent: 0 } : sample(f.kind);
-  Object.assign(f, {
-    text: s.text, value: s.value, magnitude: s.mag, sentiment: s.sent,
-    score: rnd(0.05, 0.98), threshold: rnd(0.1, 0.55),
-    born: Date.now(), resampled: f.resampled + 1,
-    scatter: { x: rnd(2, 70), y: rnd(2, 85) },
-  });
+  const s = f.kind === 'gesture' ? { text: f.text, mag: 1, sent: 0 } : sample(f.kind);
+  Object.assign(f, { text: s.text, magnitude: s.mag, sentiment: s.sent, score: rnd(0.05, 0.98), threshold: rnd(0.1, 0.55), born: vnow(), resampled: f.resampled + 1, scatterY: rnd(0.05, 0.95) });
 }
+function matchesFilter(f) { return !state.filter || f.text.toLowerCase().includes(state.filter) || f.source.toLowerCase().includes(state.filter); }
 
 /* ------------------------------------------------------------------ */
-/* Plain-English captions: one sentence for whatever just happened.    */
+/* Captions: one sentence when an operator or the pace changes.        */
 /* ------------------------------------------------------------------ */
 const captionEl = document.getElementById('caption');
 let captionTimer = 0;
-function say(text, holdMs = 3200) {
-  captionEl.textContent = text;
-  captionEl.classList.add('show');
-  clearTimeout(captionTimer);
-  captionTimer = setTimeout(() => captionEl.classList.remove('show'), holdMs);
+function say(text, holdMs = 3600) {
+  captionEl.textContent = text; captionEl.classList.add('show');
+  clearTimeout(captionTimer); captionTimer = setTimeout(() => captionEl.classList.remove('show'), holdMs);
 }
 const OP_TALK = {
-  cut:      { on: 'Cutting the ties. No source, no timestamp, no links — just loose fragments now.', off: 'Ties restored. It looks tidy again.' },
-  expose:   { on: 'Showing the machine. The ranking score, the refresh clock and the cut-off were always real — now you can see them.', off: 'Machine hidden again. It never stopped running.' },
-  collision:{ on: 'One ruler for everything now. A single click and a global index sit at their true relative size.', off: 'Back to separate scales — easier to read, harder to compare honestly.' },
-  refusal:  { on: 'Nothing is allowed to settle. Everything ages out and gets replaced before you can trust it.', off: 'Things can settle again.' },
+  cut:      { on: 'Ties cut: the links between items and the timestamps are gone, and ranking no longer holds anything in place.', off: 'Ties restored.' },
+  expose:   { on: 'The machine, drawn: each item’s own cut-off in red, and in blue how long it has left. These were always there.', off: 'Machine hidden again. It never stopped running.' },
+  collision:{ on: 'One ruler: every item sized by its magnitude on one shared scale. A token probability next to a continental index.', off: 'Back to one size each — easier to read, harder to compare honestly.' },
+  refusal:  { on: 'Nothing settles: every item fades and is re-sampled back to now before you can trust it.', off: 'Things can settle again.' },
 };
 
 /* ------------------------------------------------------------------ */
-/* The recursive loop: a gesture is logged, and comes back as signal.  */
+/* The loop: a move is logged, and comes back as an item. The line     */
+/* draws the arc from the one to the other.                            */
 /* ------------------------------------------------------------------ */
 const GESTURE_TALK = {
   applied: (d) => `turning on “${d}”`,
   lifted: (d) => `turning off “${d}”`,
   filtered: (d) => d === 'cleared' ? 'clearing the search' : `searching for ${d}`,
   opened: () => 'picking one out',
-  orbit: () => 'looking from a new angle',
-  zoom: () => 'zooming the field',
-  lens: (d) => `looking through the ${d} lens`,
+  paced: (d) => `setting the pace to ${d}`,
 };
 function gesture(kind, detail) {
-  const g = { at: Date.now(), kind, detail };
+  const said = GESTURE_TALK[kind] ? GESTURE_TALK[kind](detail) : kind;
+  const g = { at: vnow(), kind, detail, said, echoAt: vnow() + REENTRY_DELAY_MS, echo: null };
   state.viewerGestures.push(g);
-  state.framesApplied += 1;
-  const said = (GESTURE_TALK[kind] ? GESTURE_TALK[kind](detail) : kind);
   setTimeout(() => {
-    enter(makeFragment('gesture', { kind: 'gesture', source: 'viewer', text: `you, ${said}` }));
-    say(L().back(said));
-    notify();
-    tourEvent({ type: 'reentry', kind, detail });
+    const f = makeFragment('gesture', { kind: 'gesture', source: 'you', text: `you, ${said}` });
+    g.echo = f; enter(f);
   }, REENTRY_DELAY_MS);
-  notify();
-  tourEvent({ type: 'gesture', kind, detail });
-}
-
-/* A fragment is framed when the reception layer holds it in a card with its
-   tissue, above its threshold, not decaying, and not filtered away. */
-function matchesFilter(f) {
-  return !state.filter || f.text.toLowerCase().includes(state.filter) || f.source.toLowerCase().includes(state.filter);
-}
-function framed(f, now) {
-  if (has('cut')) return false;
-  if (!matchesFilter(f)) return false;
-  if (f.score < f.threshold) return false;
-  if (has('refusal') && (now - f.born) / lifeOf(f) > 0.7) return false;
-  return true;
 }
 
 /* ------------------------------------------------------------------ */
-/* Clocks: the stream, and the decay tick. Both respect play/pause.    */
+/* Clocks.                                                             */
 /* ------------------------------------------------------------------ */
 function streamTick() {
-  if (state.running) { enter(makeFragment('stream')); notify(); }
+  if (state.running) enter(makeFragment('stream'));
   setTimeout(streamTick, PACE[state.pace]);
 }
 setTimeout(streamTick, PACE[state.pace]);
 
 setInterval(() => {
   if (!state.running) return;
-  const now = Date.now();
+  const now = vnow();
   for (const f of [...state.fragments]) {
-    if (now - f.born > lifeOf(f)) {
-      if (has('refusal')) resample(f); else leave(f);
-    }
-    if (f.justIn && now - f.born > 1600) f.justIn = false;
+    if (now - f.born > lifeOf(f)) { if (has('refusal')) resample(f); else leave(f); }
   }
-  state.unframedResidue = state.fragments.filter((f) => !framed(f, now)).length;
-  notify();
+  // The band: of what is in the stream right now, how much is you.
+  const n = state.fragments.length;
+  const e = state.fragments.filter((f) => f.kind === 'gesture').length;
+  state.history.push({ t: now, share: n ? e / n : 0 });
+  while (state.history.length && now - state.history[0].t > WINDOW_MS + 2000) state.history.shift();
+  // Moves older than the window leave the record the line keeps.
+  while (state.viewerGestures.length && now - state.viewerGestures[0].at > WINDOW_MS + 2000) state.viewerGestures.shift();
 }, TICK_MS);
 
 /* ------------------------------------------------------------------ */
 /* Controls.                                                           */
 /* ------------------------------------------------------------------ */
 const playBtn = document.getElementById('play');
-const startNote = document.getElementById('startNote');
 function setRunning(on) {
+  if (on && !state.running) runStart = Date.now();
+  if (!on && state.running) clockBase += Date.now() - runStart;
   state.running = on;
   playBtn.setAttribute('aria-pressed', String(on));
   playBtn.textContent = on ? '❙❙' : '▶';
-  startNote.classList.add('hide');
-  say(on ? 'Running. Everything in the field is live, including what you do to it.' : 'Paused.');
-  if (on) tourEvent({ type: 'play' });
+  say(on ? 'Running. Time moves right; every move you make goes in as a violet mark and comes back as a violet item.' : 'Paused.');
 }
 playBtn.addEventListener('click', () => setRunning(!state.running));
-
-const reception = document.getElementById('reception');
-const feedlabel = document.getElementById('feedlabel');
-const reveal = document.getElementById('reveal');
-let lensSwitches = 0;
-function setLens(name, viaKey = false) {
-  if (!LENSES[name] || name === state.lens) return;
-  const prev = state.lens;
-  state.lens = name;
-  document.body.classList.remove('lens-' + prev);
-  document.body.classList.add('lens-' + name);
-  for (const b of document.querySelectorAll('#lenses button')) b.setAttribute('aria-pressed', String(b.dataset.lens === name));
-  feedlabel.textContent = L().panel;
-  document.getElementById('g-shown-l').textContent = L().shown;
-  document.getElementById('g-hidden-l').textContent = L().hidden;
-  document.getElementById('g-acts-l').textContent = L().acts;
-  lensSwitches += 1;
-  say('Same field. Only the nouns changed.', 3600);
-  if (lensSwitches === 1) setTimeout(() => reveal.classList.add('show'), 1800);
-  gesture('lens', L().name.toLowerCase());
-  notify();
-  tourEvent({ type: 'lens', detail: name });
+const OPS = ['cut', 'expose', 'collision', 'refusal'];
+function toggleOp(op) {
+  const b = document.querySelector(`button.pad[data-op="${op}"]`);
+  const on = !has(op);
+  if (on) state.activeOperators.add(op); else state.activeOperators.delete(op);
+  b.setAttribute('aria-pressed', String(on));
+  b.classList.remove('landed'); requestAnimationFrame(() => b.classList.add('landed'));
+  document.body.classList.toggle(op, on);
+  say(OP_TALK[op][on ? 'on' : 'off']);
+  gesture(on ? 'applied' : 'lifted', op);
 }
-for (const b of document.querySelectorAll('#lenses button')) {
-  b.addEventListener('click', () => setLens(b.dataset.lens));
-}
-window.addEventListener('keydown', (e) => {
-  if (document.activeElement?.tagName === 'INPUT') return;
-  if (!document.getElementById('welcome').hidden) { if (e.key === 'Escape') closeWelcome(false); return; }
-  if (e.code === 'Space') { e.preventDefault(); setRunning(!state.running); }
-  if (/^[1-4]$/.test(e.key)) setLens(LENS_ORDER[+e.key - 1], true);
-});
-
-for (const b of document.querySelectorAll('button.pad')) {
-  b.addEventListener('click', () => {
-    const op = b.dataset.op;
-    const on = !has(op);
-    if (on) state.activeOperators.add(op); else state.activeOperators.delete(op);
-    b.setAttribute('aria-pressed', String(on));
-    b.classList.remove('landed'); requestAnimationFrame(() => b.classList.add('landed'));
-    document.body.classList.toggle(op, on);
-    reception.classList.toggle('cut', has('cut'));
-    say(OP_TALK[op][on ? 'on' : 'off']);
-    gesture(on ? 'applied' : 'lifted', op);
-  });
-}
+for (const b of document.querySelectorAll('button.pad')) b.addEventListener('click', () => toggleOp(b.dataset.op));
 let filterTimer = 0;
 document.getElementById('filter').addEventListener('input', (e) => {
   state.filter = e.target.value.trim().toLowerCase();
   clearTimeout(filterTimer);
   filterTimer = setTimeout(() => {
-    say(state.filter ? `Filtering for “${state.filter}”. What doesn't match fades out — it's still there.` : 'Filter cleared.');
+    say(state.filter ? `Filtering for “${state.filter}”. What doesn’t match dims — it is still in the stream.` : 'Filter cleared.');
     gesture('filtered', state.filter ? `"${state.filter}"` : 'cleared');
   }, 600);
-  notify();
 });
-
-const feedToggle = document.getElementById('feedToggle');
-feedToggle.addEventListener('click', () => {
-  const closed = reception.classList.toggle('closed');
-  feedToggle.setAttribute('aria-pressed', String(!closed));
-  feedToggle.textContent = closed ? 'Panel ▸' : 'Panel ▾';
-});
-
-/* ------------------------------------------------------------------ */
-/* The gauge, shared by every lens.                                    */
-/* ------------------------------------------------------------------ */
-function renderGauge(st, data, now) {
-  const shownNow = data.filter((f) => framed(f, now)).length;
-  document.getElementById('g-shown').textContent = shownNow;
-  document.getElementById('g-hidden').textContent = st.unframedResidue;
-  document.getElementById('g-acts').textContent = st.viewerGestures.length;
-  const total = Math.max(1, shownNow + st.unframedResidue);
-  document.getElementById('g-shown-bar').style.width = `${(shownNow / total) * 100}%`;
-  document.getElementById('g-hidden-bar').style.width = `${(st.unframedResidue / total) * 100}%`;
-}
-
-/* ------------------------------------------------------------------ */
-/* Reception layer, lens 1 (D3 + DOM): cards, tissue, apparatus.       */
-/* ------------------------------------------------------------------ */
-const cards = d3.select('#cards');
-
-function renderCards(st, data, now) {
-  const byId = new Map(st.fragments.map((f) => [f.id, f]));
-
-  const sel = cards.selectAll('.card').data(data, (d) => d.id);
-  const entered = sel.enter().append('div')
-    .attr('class', 'card')
-    .attr('tabindex', 0)
-    .attr('role', 'article')
-    .style('opacity', 0)
-    .on('click', (e, d) => gesture('opened', `#${d.id} ${d.source}`))
-    .on('keydown', (e, d) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); gesture('opened', `#${d.id} ${d.source}`); } });
-  const top = entered.append('div').attr('class', 'tissue top');
-  top.append('span').attr('class', 'you-chip').style('display', 'none').text('you');
-  top.append('span').attr('class', 'src');
-  top.append('span').attr('class', 'time');
-  const body = entered.append('div').attr('class', 'body');
-  body.append('span').attr('class', 'txt');
-  body.append('span').attr('class', 'trunc');
-  const bottom = entered.append('div').attr('class', 'tissue bottom');
-  bottom.append('span').attr('class', 'sent');
-  bottom.append('span').attr('class', 'rel');
-  const app = entered.append('div').attr('class', 'apparatus');
-  const r1 = app.append('div').attr('class', 'row'); r1.append('span').attr('class', 'k').text('ranking');
-  const m1 = r1.append('span').attr('class', 'meter score'); m1.append('i'); m1.append('span').attr('class', 'thr'); r1.append('span').attr('class', 'v score-v');
-  const r2 = app.append('div').attr('class', 'row'); r2.append('span').attr('class', 'k').text('refresh');
-  r2.append('span').attr('class', 'meter timer').append('i'); r2.append('span').attr('class', 'v refresh-v');
-  const r3 = app.append('div').attr('class', 'row'); r3.append('span').attr('class', 'k').text('decay');
-  r3.append('span').attr('class', 'meter timer life').append('i'); r3.append('span').attr('class', 'v life-v');
-  sel.exit().remove();
-
-  const all = entered.merge(sel);
-  all
-    .classed('pos', (d) => d.sentiment > 0)
-    .classed('neg', (d) => d.sentiment < 0)
-    .classed('gesture', (d) => d.kind === 'gesture')
-    .classed('justin', (d) => !!d.justIn)
-    .classed('below', (d) => d.score < d.threshold)
-    .classed('fading', (d) => has('refusal') && (now - d.born) / REFUSAL_LIFE_MS > 0.7)
-    .style('opacity', (d) => {
-      if (!has('refusal')) return 1;
-      const a = (now - d.born) / REFUSAL_LIFE_MS;
-      return a > 0.7 ? Math.max(0.15, 1 - (a - 0.7) / 0.3) : 1;
-    })
-    .style('left', (d) => has('cut') ? `${d.scatter.x}%` : null)
-    .style('top', (d) => has('cut') ? `${d.scatter.y}%` : null)
-    .style('transform', (d) => has('cut') ? `rotate(${((d.id * 37) % 11) - 5}deg)` : null)
-    .attr('aria-label', (d) => `${d.kind === 'gesture' ? 'your own action, fed back. ' : ''}${d.source}, ${SENTIMENT[d.sentiment]}, ${d.text}`);
-
-  all.select('.you-chip').style('display', (d) => d.kind === 'gesture' ? 'inline-block' : 'none');
-  all.select('.src').text((d) => d.source);
-  all.select('.time').text((d) => stamp(d.born) + (d.resampled ? ` ·${d.resampled}` : ''));
-  all.select('.txt').text((d) => d.text.length > d.truncation ? d.text.slice(0, d.truncation) : d.text);
-  all.select('.trunc').text((d) => d.text.length > d.truncation ? `│ trunc ${d.truncation}ch` : `│ ${d.text.length}/${d.truncation}ch`);
-  all.select('.sent').text((d) => SENTIMENT[d.sentiment]);
-  all.select('.rel').html((d) => d.related.filter((id) => byId.has(id)).map((id) => `<a tabindex="-1">related #${id}</a>`).join(''));
-  all.select('.score i').style('width', (d) => `${d.score * 100}%`);
-  all.select('.score .thr').style('left', (d) => `${d.threshold * 100}%`);
-  all.select('.score-v').text((d) => `${d.score.toFixed(2)} / thr ${d.threshold.toFixed(2)}`);
-  all.select('.timer:not(.life) i').style('width', (d) => `${100 * (1 - ((now - d.born) % d.refresh) / d.refresh)}%`);
-  all.select('.refresh-v').text((d) => `${d.refresh} ms`);
-  all.select('.life i').style('width', (d) => `${100 * Math.max(0, 1 - (now - d.born) / lifeOf(d))}%`);
-  all.select('.life-v').text((d) => `${Math.max(0, Math.round((lifeOf(d) - (now - d.born)) / 1000))} s`);
-
-  // Keep the timeline in born order when it is a timeline; scattered cards keep their place.
-  if (!has('cut')) all.order();
-}
-
-/* ------------------------------------------------------------------ */
-/* Reception layer, lenses 2–4 (D3 + SVG): the same fragments, as      */
-/* ants on a trail, cells along a vessel, plants in a row. The tidy    */
-/* order is a line in born order; the operators do to it exactly what  */
-/* they do to the cards.                                               */
-/* ------------------------------------------------------------------ */
-const groundSvg = d3.select('#ground');
-const RH = 56;
-const colorFor = (d) => d.kind === 'gesture' ? L().you : d.sentiment > 0 ? L().pos : d.sentiment < 0 ? L().neg : L().neu;
-
-function drawGlyph(g, lens) {
-  g.selectAll('*').remove();
-  g.attr('data-lens', lens);
-  if (lens === 'trail') {
-    g.append('circle').attr('class', 'scent').attr('r', 14);
-    g.append('path').attr('class', 'legs').attr('d', 'M-4,-3 l-3,-4 M-4,3 l-3,4 M1,-3 l0,-5 M1,3 l0,5 M5,-3 l3,-4 M5,3 l3,4 M10,-2 l4,-3 M10,2 l4,3');
-    g.append('ellipse').attr('class', 'seg').attr('cx', -6).attr('rx', 4.2).attr('ry', 3);
-    g.append('ellipse').attr('class', 'seg').attr('cx', 0).attr('rx', 3).attr('ry', 2.5);
-    g.append('ellipse').attr('class', 'seg').attr('cx', 6.5).attr('rx', 4.5).attr('ry', 3.2);
-  } else if (lens === 'body') {
-    g.append('circle').attr('class', 'cell').attr('r', 11);
-    g.append('circle').attr('class', 'nucleus').attr('r', 4).attr('cx', 2).attr('cy', -1);
-  } else if (lens === 'garden') {
-    g.append('line').attr('class', 'stem').attr('x1', 0).attr('y1', 14).attr('x2', 0).attr('y2', -14);
-    g.append('ellipse').attr('class', 'leaf').attr('cx', -6).attr('cy', 3).attr('rx', 6).attr('ry', 3).attr('transform', 'rotate(-30 -6 3)');
-    g.append('ellipse').attr('class', 'leaf').attr('cx', 6).attr('cy', -3).attr('rx', 6).attr('ry', 3).attr('transform', 'rotate(30 6 -3)');
-    g.append('circle').attr('class', 'bloom').attr('cy', -16).attr('r', 6);
-  }
-}
-
-function renderGround(st, data, now) {
-  const lens = st.lens;
-  const W = reception.clientWidth || 400;
-  const padTop = parseFloat(reception.style.paddingTop) || 150;
-  const visibleH = Math.max(240, reception.clientHeight - padTop - 140);
-  const H = has('cut') ? visibleH : Math.max(visibleH, 40 + data.length * RH);
-  groundSvg.attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
-  const maxMag = Math.max(1e-9, d3.max(data, (d) => d.magnitude) || 1);
-
-  const pts = data.map((d, i) => {
-    if (has('cut')) return { x: 30 + d.scatter.x / 100 * (W - 110), y: 24 + d.scatter.y / 100 * (H - 48), rot: ((d.id * 37) % 11) - 5 };
-    const x = lens === 'trail' ? 64 + 26 * Math.sin(i * 0.8 + 0.4) : 64;
-    return { x, y: 36 + i * RH, rot: 0 };
-  });
-  // Ants walk toward the newest end of the trail: each faces the one before it.
-  const heading = (i) => {
-    if (lens !== 'trail' || has('cut') || i === 0) return -90;
-    const a = pts[i], b = pts[i - 1];
-    return Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
-  };
-
-  // The tie: one path through the tidy positions. Cut removes it.
-  const line = d3.line().x((p) => p.x).y((p) => p.y).curve(d3.curveCatmullRom.alpha(0.6));
-  const tieData = (has('cut') || pts.length < 2) ? [] : [pts];
-  groundSvg.selectAll('path.tie.wide').data(tieData).join('path').attr('class', 'tie wide').attr('d', line).lower();
-  groundSvg.selectAll('path.tie.thin').data(tieData).join('path').attr('class', 'tie thin').attr('d', line).lower();
-
-  const sel = groundSvg.selectAll('g.item').data(data, (d) => d.id);
-  const entered = sel.enter().append('g')
-    .attr('class', 'item')
-    .attr('tabindex', 0)
-    .attr('role', 'img')
-    .on('click', (e, d) => gesture('opened', `#${d.id} ${d.source}`))
-    .on('keydown', (e, d) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); gesture('opened', `#${d.id} ${d.source}`); } });
-  entered.append('circle').attr('class', 'ring').attr('r', 14);
-  entered.append('circle').attr('class', 'exposering').attr('r', 17);
-  entered.append('g').attr('class', 'jit').append('g').attr('class', 'glyph').each(function () { drawGlyph(d3.select(this), lens); });
-  entered.append('text').attr('class', 'src').attr('x', 24).attr('y', -5);
-  entered.append('text').attr('class', 'txt').attr('x', 24).attr('y', 9);
-  const chip = entered.append('g').attr('class', 'chip');
-  chip.append('rect').attr('x', 24).attr('y', -13).attr('width', 26).attr('height', 12).attr('rx', 3);
-  chip.append('text').attr('x', 37).attr('y', -4).text('you');
-  const app = entered.append('g').attr('class', 'app');
-  app.append('rect').attr('class', 'm-bg').attr('x', 24).attr('y', 15).attr('width', 60).attr('height', 4);
-  app.append('rect').attr('class', 'm-score').attr('x', 24).attr('y', 15).attr('height', 4);
-  app.append('rect').attr('class', 'm-thr').attr('y', 13).attr('width', 1.5).attr('height', 8);
-  app.append('rect').attr('class', 'm-bg').attr('x', 24).attr('y', 22).attr('width', 60).attr('height', 4);
-  app.append('rect').attr('class', 'm-life').attr('x', 24).attr('y', 22).attr('height', 4);
-  app.append('text').attr('class', 'm-v m-sv').attr('x', 88).attr('y', 19);
-  app.append('text').attr('class', 'm-v m-lv').attr('x', 88).attr('y', 26);
-  sel.exit().remove();
-
-  const all = entered.merge(sel);
-  // A glyph drawn under one lens is redrawn when the lens changes; nothing else about the item does.
-  all.select('g.glyph').each(function () { const g = d3.select(this); if (g.attr('data-lens') !== lens) drawGlyph(g, lens); });
-  all
-    .attr('class', (d) => `item ${d.sentiment > 0 ? 'pos' : d.sentiment < 0 ? 'neg' : 'neu'}${d.kind === 'gesture' ? ' gesture' : ''}${d.justIn ? ' justin' : ''}${d.score < d.threshold ? ' below' : ''}`)
-    .attr('aria-label', (d) => `${d.kind === 'gesture' ? 'your own action, fed back. ' : ''}${d.source}, ${SENTIMENT[d.sentiment]}, ${d.text}`)
-    .style('--c', (d) => colorFor(d))
-    .style('transform', (d, i) => `translate(${pts[i].x}px, ${pts[i].y}px) rotate(${pts[i].rot}deg)`)
-    .style('opacity', (d) => {
-      let o = 1;
-      if (has('refusal')) { const a = (now - d.born) / REFUSAL_LIFE_MS; if (a > 0.7) o = Math.max(0.15, 1 - (a - 0.7) / 0.3); }
-      if (d.score < d.threshold) o *= 0.5;
-      if (!matchesFilter(d)) o *= 0.2;
-      return o;
-    });
-  all.select('g.glyph').style('transform', (d, i) => {
-    let k = has('collision') ? 0.25 + 1.6 * (d.magnitude / maxMag) : 0.8 + 0.5 * d.score;
-    if (d.kind === 'token') k *= 0.7;
-    if (d.kind === 'gesture' && d.justIn) k *= 1.25;
-    return `rotate(${heading(i)}deg) scale(${k})`;
-  });
-  all.select('text.src')
-    .attr('x', (d) => d.kind === 'gesture' ? 54 : 24)
-    .text((d) => has('cut') ? '' : d.source + (d.resampled ? ` ·${d.resampled}` : ''));
-  all.select('text.txt').text((d) => trunc(d.text, has('cut') ? 22 : 36));
-  all.select('g.chip').style('display', (d) => d.kind === 'gesture' ? null : 'none');
-  all.select('.m-score').attr('width', (d) => 60 * d.score);
-  all.select('.m-thr').attr('x', (d) => 24 + 60 * d.threshold);
-  all.select('.m-life').attr('width', (d) => 60 * Math.max(0, 1 - (now - d.born) / lifeOf(d)));
-  all.select('.m-sv').text((d) => `${d.score.toFixed(2)} / thr ${d.threshold.toFixed(2)}`);
-  all.select('.m-lv').text((d) => `${Math.max(0, Math.round((lifeOf(d) - (now - d.born)) / 1000))} s`);
-  if (!has('cut')) all.order();
-}
-
-function renderReception(st) {
-  const now = Date.now();
-  const data = st.fragments.filter(matchesFilter).slice().sort((a, b) => b.born - a.born);
-  if (st.lens === 'feed') renderCards(st, data, now); else renderGround(st, data, now);
-  renderGauge(st, data, now);
-  renderCollision(st);
-}
-
-/* Scale collision: one axis, every magnitude on it, relative size preserved.
-   A one-pixel floor exists only so the line can be seen at all. */
-const collisionSvg = d3.select('#collision');
-function renderCollision(st) {
-  if (!has('collision')) { collisionSvg.selectAll('*').remove(); return; }
-  const W = collisionSvg.node().clientWidth || 360;
-  const H = 150;
-  const data = st.fragments.filter(matchesFilter).slice(-10);
-  const maxMag = Math.max(1e-9, d3.max(data, (d) => d.magnitude) || 1);
-  const rowH = Math.min(12, (H - 20) / Math.max(1, data.length));
-  collisionSvg.attr('viewBox', `0 0 ${W} ${H}`);
-  collisionSvg.selectAll('.axis').data([0]).join('text').attr('class', 'axis')
-    .attr('x', 10).attr('y', 12).attr('fill', '#d4af37').attr('font-size', 9).attr('letter-spacing', 1.5)
-    .text(`ONE RULER · 0 → ${fmt(maxMag)} · TRUE RELATIVE SIZE`);
-  const rows = collisionSvg.selectAll('.row').data(data, (d) => d.id);
-  const g = rows.enter().append('g').attr('class', 'row');
-  g.append('rect').attr('height', Math.max(2, rowH - 3)).attr('fill', '#55e2e1').attr('opacity', 0.8);
-  g.append('text').attr('fill', 'rgba(237,242,244,0.7)').attr('font-size', 9).attr('font-family', 'ui-monospace, Menlo, monospace');
-  rows.exit().remove();
-  const all = g.merge(rows);
-  all.attr('transform', (d, i) => `translate(10, ${18 + i * rowH})`);
-  all.select('rect').attr('width', (d) => Math.max(1, (d.magnitude / maxMag) * (W - 20)));
-  all.select('text').attr('x', (d) => Math.max(1, (d.magnitude / maxMag) * (W - 20)) + 4).attr('y', rowH - 3)
-    .text((d) => `${d.source} · ${fmt(d.magnitude)}`);
-}
-subscribe(renderReception);
-
-/* ------------------------------------------------------------------ */
-/* The volume (Babylon.js): one shard per fragment, operators deform,  */
-/* and the lens sets the shard's shape and colour. Positions never     */
-/* change with the lens: switch, and every shard is where it was.      */
-/* ------------------------------------------------------------------ */
-const canvas = document.getElementById('stage');
-const engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: false, stencil: false });
-const scene = new BABYLON.Scene(engine);
-scene.clearColor = BABYLON.Color4.FromHexString('#0a0b10ff');
-scene.fogMode = BABYLON.Scene.FOGMODE_EXP2; scene.fogDensity = 0.028; scene.fogColor = BABYLON.Color3.FromHexString('#0a0b10');
-
-const camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2.4, 1.2, 16, BABYLON.Vector3.Zero(), scene);
-camera.attachControl(canvas, true);
-camera.lowerRadiusLimit = 7; camera.upperRadiusLimit = 36;
-camera.wheelPrecision = 20; camera.pinchPrecision = 60;
-camera.panningSensibility = 0; camera.inertia = 0.86;
-
-const hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0.2, 1, 0.1), scene);
-hemi.intensity = 0.95; hemi.groundColor = BABYLON.Color3.FromHexString('#1a1430');
-const key = new BABYLON.PointLight('key', new BABYLON.Vector3(6, 8, -4), scene);
-key.intensity = 0.65; key.diffuse = BABYLON.Color3.FromHexString('#d4af37');
-
-// Ground: a faint disc the fragments hang over. Its colour follows the lens.
-const ground = BABYLON.MeshBuilder.CreateDisc('ground', { radius: 7, tessellation: 64 }, scene);
-ground.rotation.x = Math.PI / 2; ground.position.y = -3.9;
-const gmat = new BABYLON.StandardMaterial('gmat', scene);
-gmat.diffuseColor = BABYLON.Color3.FromHexString('#101220'); gmat.specularColor = BABYLON.Color3.Black();
-gmat.emissiveColor = BABYLON.Color3.FromHexString('#0d0f1a'); gmat.alpha = 0.92;
-ground.material = gmat;
-const groundTarget = BABYLON.Color3.FromHexString('#101220');
-
-// Apparatus geometry, shown under Expose: a frame round the volume and a
-// threshold plane the shards sit above or below by their ranking.
-const frame = BABYLON.MeshBuilder.CreateBox('frame', { width: 11.5, height: 7.8, depth: 11.5 }, scene);
-const fmat = new BABYLON.StandardMaterial('fmat', scene);
-fmat.wireframe = true; fmat.emissiveColor = BABYLON.Color3.FromHexString('#ff626b'); fmat.disableLighting = true; fmat.alpha = 0.5;
-frame.material = fmat; frame.isVisible = false;
-const thrPlane = BABYLON.MeshBuilder.CreateGround('thr', { width: 11.5, height: 11.5 }, scene);
-const tmat = new BABYLON.StandardMaterial('tmat', scene);
-tmat.emissiveColor = BABYLON.Color3.FromHexString('#ff626b'); tmat.disableLighting = true; tmat.alpha = 0.12; tmat.backFaceCulling = false;
-thrPlane.material = tmat; thrPlane.isVisible = false;
-const THRESHOLD_SHOWN = 0.35; // the plane sits at this ranking; each card's own threshold is in its apparatus
-
-const shardMesh = BABYLON.MeshBuilder.CreateBox('shard', { size: 0.32 }, scene);
-const sps = new BABYLON.SolidParticleSystem('sps', scene, { updatable: true });
-sps.addShape(shardMesh, SHARD_POOL);
-shardMesh.dispose();
-const mesh = sps.buildMesh();
-mesh.hasVertexAlpha = true;
-const smat = new BABYLON.StandardMaterial('smat', scene);
-smat.specularColor = BABYLON.Color3.FromHexString('#333333');
-smat.emissiveColor = BABYLON.Color3.FromHexString('#1a1c26');
-mesh.material = smat;
-
-const colorCache = new Map();
-const c3 = (hex) => { let c = colorCache.get(hex); if (!c) { c = BABYLON.Color3.FromHexString(hex); colorCache.set(hex, c); } return c; };
-const clusterAngle = (src) => (SOURCES.indexOf(src) + 0.5) / SOURCES.length * Math.PI * 2;
-
-sps.initParticles = () => { for (const p of sps.particles) { p.isVisible = false; p.scaling.setAll(0.001); } };
-sps.initParticles(); sps.setParticles();
-
-sps.updateParticle = (p) => {
-  const f = slotOwner[p.idx];
-  if (!f) { p.isVisible = false; return p; }
-  p.isVisible = true;
-  const now = Date.now();
-  const t = now / 1000;
-  const age = (now - f.born) / lifeOf(f);
-  const lens = L();
-
-  // Where it wants to be. The lens has no say in this.
-  let tx, ty, tz;
-  if (has('cut')) {
-    tx = f.scatter3.x * 0.8; ty = f.scatter3.y * 0.8; tz = f.scatter3.z * 0.8;
-  } else {
-    const a = (f.source === 'viewer' ? 0 : clusterAngle(f.source)) + t * 0.05;
-    const r = f.source === 'viewer' ? 0.8 : 4.2;
-    const o = ((f.id * 7919) % 100) / 100 * Math.PI * 2;
-    tx = Math.cos(a) * r + Math.cos(o) * 0.9;
-    tz = Math.sin(a) * r + Math.sin(o) * 0.9;
-    ty = ((f.id * 31) % 17) / 17 * 2.4 - 1.2;
-  }
-  if (has('expose')) ty = f.score * 7 - 3.5;      // ranking becomes height
-  if (has('refusal')) {                               // nothing holds still
-    tx += Math.sin(t * 2.1 + f.phase) * 0.2;
-    ty += Math.sin(t * 1.6 + f.phase * 1.7) * 0.16;
-    tz += Math.cos(t * 1.9 + f.phase) * 0.2;
-  }
-  const k = 0.04;
-  p.position.x += (tx - p.position.x) * k;
-  p.position.y += (ty - p.position.y) * k;
-  p.position.z += (tz - p.position.z) * k;
-
-  // How big it is. The lens sets the shape; the operators set the size.
-  let s;
-  if (has('collision')) {
-    const maxMag = Math.max(1e-9, ...state.fragments.map((q) => q.magnitude));
-    s = 0.14 + 3.2 * (f.magnitude / maxMag);  // a floor only so the shard is there to orbit
-  } else {
-    s = 1.1 + 0.9 * f.score;
-  }
-  if (f.kind === 'token') s *= 0.6;
-  if (f.kind === 'gesture') s *= (now - f.born < 1600) ? 1.5 - 0.5 * ((now - f.born) / 1600) : 1; // a fresh gesture arrives larger, settles to size
-  const [sx, sy, sz] = lens.shape(s);
-  p.scaling.x += (sx - p.scaling.x) * 0.1; p.scaling.y += (sy - p.scaling.y) * 0.1; p.scaling.z += (sz - p.scaling.z) * 0.1;
-  p.rotation.y += 0.002 + (has('refusal') ? 0.012 : 0);
-  p.rotation.x = Math.sin(t * 0.3 + f.phase) * (state.lens === 'garden' ? 0.08 : 0.3);
-
-  // What it looks like. The lens sets the palette; the gesture colour never changes.
-  const base = c3(f.kind === 'gesture' ? lens.you : f.sentiment > 0 ? lens.pos : f.sentiment < 0 ? lens.neg : lens.neu);
-  let alpha = 0.95;
-  if (has('expose') && f.score < THRESHOLD_SHOWN) alpha = 0.3;
-  if (has('refusal')) alpha *= Math.max(0.15, 1 - Math.max(0, age - 0.6) / 0.4);
-  if (!matchesFilter(f)) alpha *= 0.2;
-  if (f.kind === 'gesture' && now - f.born < 1600) alpha = Math.min(1, alpha * 1.3); // a fresh gesture glows brighter for a beat
-  p.color.copyFromFloats(base.r, base.g, base.b, alpha);
-  return p;
-};
-
-engine.runRenderLoop(() => {
-  BABYLON.Color3.LerpToRef(gmat.diffuseColor, groundTarget, 0.05, gmat.diffuseColor);
-  gmat.emissiveColor.copyFrom(gmat.diffuseColor).scaleInPlace(0.7);
-  sps.setParticles(); scene.render();
-});
-window.addEventListener('resize', () => engine.resize());
-new ResizeObserver(() => engine.resize()).observe(canvas);
-
-subscribe((st) => {
-  frame.isVisible = has('expose');
-  thrPlane.isVisible = has('expose');
-  thrPlane.position.y = THRESHOLD_SHOWN * 7 - 3.5;
-  groundTarget.copyFrom(c3(L().ground));
-  const ops = [...st.activeOperators];
-  document.getElementById('status').textContent =
-    `field · ${st.fragments.length} shards · ${L().name.toLowerCase()} lens · ${ops.length ? ops.join(', ') : 'no operator on'} · ${st.running ? 'running' : 'paused'}`;
-});
-
-// Orbiting and zooming are gestures too. They re-enter like any other.
-const orbitHint = document.getElementById('orbitHint');
-let down = null;
-canvas.addEventListener('pointerdown', (e) => { down = { x: e.clientX, y: e.clientY }; });
-window.addEventListener('pointerup', (e) => {
-  if (!down) return;
-  const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
-  down = null;
-  if (moved > 6) { gesture('orbit', `α ${camera.alpha.toFixed(2)} β ${camera.beta.toFixed(2)}`); orbitHint.classList.add('done'); }
-});
-let zoomTimer = 0;
-canvas.addEventListener('wheel', () => {
-  clearTimeout(zoomTimer);
-  zoomTimer = setTimeout(() => { gesture('zoom', `r ${camera.radius.toFixed(1)}`); orbitHint.classList.add('done'); }, 700);
-}, { passive: true });
-
-// The header's height varies with viewport width (the lede rewraps), and the
-// deck's row count varies too (three rows once "press play" disappears, or
-// on narrow screens). Both are watched rather than measured once, so the
-// panel, the right-hand aside and the floating caption never collide with them.
-const headerEl = document.querySelector('header.top');
-const deckEl = document.querySelector('.deck');
-new ResizeObserver(() => {
-  reception.style.paddingTop = (headerEl.offsetHeight + 16) + 'px';
-  document.documentElement.style.setProperty('--head-h', headerEl.offsetHeight + 'px');
-}).observe(headerEl);
-new ResizeObserver(() => { document.documentElement.style.setProperty('--deck-h', deckEl.offsetHeight + 'px'); }).observe(deckEl);
-
-/* ------------------------------------------------------------------ */
-/* Pace: how often the stream delivers. Slower is easier on the eye   */
-/* and makes the loop legible; busy is what a real feed does.         */
-/* ------------------------------------------------------------------ */
 for (const b of document.querySelectorAll('.pace button')) {
   b.addEventListener('click', () => {
     state.pace = b.dataset.pace;
     for (const o of document.querySelectorAll('.pace button')) o.setAttribute('aria-pressed', String(o === b));
-    say({ calm: 'Calm: a new item every six seconds or so.', steady: 'Steady: a new item every few seconds.', busy: 'Busy: a new item every second and a half — this is what a real feed feels like.' }[state.pace]);
+    say({ calm: 'Calm: a new item every six seconds or so.', steady: 'Steady: a new item every few seconds.', busy: 'Busy: a new item every second and a half — what a real feed feels like.' }[state.pace]);
+    gesture('paced', state.pace);
   });
 }
-
-/* ------------------------------------------------------------------ */
-/* Welcome and walkthrough. The walkthrough does not narrate; it       */
-/* waits for the viewer to do the thing, then says what just happened. */
-/* ------------------------------------------------------------------ */
 const welcome = document.getElementById('welcome');
-const coach = document.getElementById('coach');
-const TOUR = [
-  { title: 'Press play.',
-    body: 'The feed starts. Each card is an invented news item with the machinery a real feed has: a source, a time, a ranking, a cut-off, “related” links.',
-    ack: 'Running. Nothing is real; the shape is.',
-    wait: (e) => e.type === 'play' },
-  { title: 'Search for a word.',
-    body: 'Type something in the search box at the bottom — try “index”. Searching is tidying: you keep some, hide the rest.',
-    ack: 'Searched. Now watch the top of the panel.',
-    wait: (e) => e.type === 'gesture' && e.kind === 'filtered' && e.detail !== 'cleared' },
-  { title: 'Watch the top of the panel.',
-    body: 'In a moment a purple card marked “you” arrives. That is your search, served back to you as an item. The feed logged what you did and made it content.',
-    ack: 'There it is. Your search is an item in the feed now. That is the whole idea.',
-    wait: (e) => e.type === 'reentry' && e.kind === 'filtered' },
-  { title: 'Press “Cut the ties”.',
-    body: 'Cut removes the feed’s framing — source, time, links — and leaves the fragments. Watch the counter: nothing is “tidied” any more, and your cut is on its way back as an item too.',
-    ack: 'Cut. Even taking the framing off is a move, and it comes back.',
-    wait: (e) => e.type === 'gesture' && e.kind === 'applied' && e.detail === 'cut' },
-  { title: 'Put the ties back, then press 2.',
-    body: 'Press Cut again to restore the line. Then one more thing: the same field can be shown as an ant trail, because ants have exactly this problem — an ant can’t read the trail without laying more scent. Press 2, or the Trail pill, and find your search in it. It is an ant now.',
-    ack: 'Same field. Only the nouns changed. Your search is an ant.',
-    wait: (e) => e.type === 'lens' && e.detail === 'trail' },
-  { title: 'That’s the whole thing.',
-    body: 'You cannot tidy a stream from outside it, because there is no outside: every move you make, even looking, goes back in. Play with the other pads and lenses; the note on the right says where the idea comes from.',
-    ack: '',
-    wait: null },
-];
-const tour = { active: false, step: 0, done: false, timer: 0 };
+document.getElementById('start').addEventListener('click', () => { welcome.hidden = true; playBtn.focus(); });
+document.getElementById('introBtn').addEventListener('click', () => { welcome.hidden = false; document.getElementById('start').focus(); });
+document.getElementById('start').focus();
+window.addEventListener('keydown', (e) => {
+  if (document.activeElement?.tagName === 'INPUT') return;
+  if (!welcome.hidden) { if (e.key === 'Escape') welcome.hidden = true; return; }
+  if (e.code === 'Space') { e.preventDefault(); setRunning(!state.running); }
+  if (/^[1-4]$/.test(e.key)) toggleOp(OPS[+e.key - 1]);
+});
 
-function closeWelcome(startTour) {
-  welcome.hidden = true;
-  if (startTour) { tour.active = true; tour.step = 0; tour.done = false; showStep(); }
-  else { tour.active = false; coach.hidden = true; }
+/* ------------------------------------------------------------------ */
+/* The line (D3 + SVG), redrawn every frame so time actually moves.    */
+/*                                                                     */
+/*   you      ●────╮              a move, and the arc to its echo      */
+/*                 ↓                                                   */
+/*   stream  ··●·●·◆·●····▶ now   items by arrival; height = ranking   */
+/*   echo    ░░░░▓▓▓▓▓▓▓▓▓        share of the stream that is you      */
+/* ------------------------------------------------------------------ */
+const svg = d3.select('#line');
+const tip = document.getElementById('tip');
+const M = { left: 232, right: 26, top: 18, bottom: 34 };
+const ROW = { you: 0.17, streamTop: 0.26, streamBot: 0.70, echoTop: 0.78, echoBot: 1.0 }; // fractions of plot height
+const gAxis = svg.append('g').attr('class', 'axis');
+const gLig = svg.append('g');
+const gEcho = svg.append('g');
+const gArcs = svg.append('g');
+const gMarks = svg.append('g');
+const gYou = svg.append('g');
+const gChrome = svg.append('g');
+const gLegend = svg.append('g').attr('class', 'legend');
+
+// Labels that stand still.
+const rowYou = gChrome.append('text').attr('class', 'rowlabel you').text('you');
+const rowYouNote = gChrome.append('text').attr('class', 'rownote').text('each move → where it comes back');
+const rowStream = gChrome.append('text').attr('class', 'rowlabel').text('the stream');
+const rowStreamNote = gChrome.append('text').attr('class', 'rownote').text('items by arrival · height = ranking');
+const rowEcho = gChrome.append('text').attr('class', 'rowlabel you').text('your echo');
+const rowEchoNote = gChrome.append('text').attr('class', 'rownote').text('share of the stream that is you');
+const readoutBig = gChrome.append('text').attr('class', 'readout big').attr('text-anchor', 'end');
+const readoutSmall = gChrome.append('text').attr('class', 'readout').attr('text-anchor', 'end');
+const nowLine = gChrome.append('line').attr('class', 'nowline');
+const nowText = gChrome.append('text').attr('class', 'nowtext').attr('text-anchor', 'middle').text('now');
+const baseline = gChrome.append('line').attr('class', 'baseline');
+const scaleG = gLegend.append('g').attr('class', 'scale');
+const legendText = gLegend.append('text');
+
+const trunc = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+function showTip(e, f) {
+  clearTimeout(tipTimer);
+  tip.style.display = 'block';
+  tip.className = 'tip' + (f.kind === 'gesture' ? ' you' : '');
+  const ago = Math.round((vnow() - f.born) / 1000);
+  tip.innerHTML = `<div class="t">${f.kind === 'gesture' ? 'your move, back as an item' : f.source} · ${ago}s ago · ranked ${f.score.toFixed(2)} · cut-off ${f.threshold.toFixed(2)}${f.resampled ? ` · re-sampled ×${f.resampled}` : ''}</div>${f.text}`;
+  const x = Math.min(window.innerWidth - 340, e.clientX + 14), y = Math.max(8, e.clientY - 48);
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
 }
-function showStep() {
-  const s = TOUR[tour.step];
-  coach.hidden = false;
-  document.getElementById('coachStep').textContent = `step ${tour.step + 1} of ${TOUR.length}`;
-  document.getElementById('coachTitle').textContent = s.title;
-  document.getElementById('coachBody').textContent = s.body;
-  document.getElementById('coachAck').textContent = '';
-  document.getElementById('coachTrace').textContent = `your trace: ${state.viewerGestures.length}`;
-  const next = document.getElementById('coachNext');
-  tour.done = !s.wait;
-  next.disabled = !tour.done;
-  next.textContent = s.wait ? 'Next' : 'Finish';
+let tipTimer = 0;
+function hideTip() { clearTimeout(tipTimer); tipTimer = setTimeout(() => { tip.style.display = 'none'; }, 500); }
+function showTipText(e, head, body, you) {
+  clearTimeout(tipTimer);
+  tip.style.display = 'block'; tip.className = 'tip' + (you ? ' you' : '');
+  tip.innerHTML = `<div class="t">${head}</div>${body}`;
+  tip.style.left = Math.min(window.innerWidth - 340, e.clientX + 14) + 'px'; tip.style.top = Math.max(8, e.clientY - 48) + 'px';
 }
-function advance() {
-  clearTimeout(tour.timer);
-  if (tour.step >= TOUR.length - 1) { tour.active = false; coach.hidden = true; return; }
-  tour.step += 1;
-  showStep();
-}
-function tourEvent(e) {
-  if (!tour.active) return;
-  document.getElementById('coachTrace').textContent = `your trace: ${state.viewerGestures.length}`;
-  const s = TOUR[tour.step];
-  if (!tour.done && s.wait && s.wait(e)) {
-    tour.done = true;
-    document.getElementById('coachAck').textContent = '✓ ' + s.ack;
-    document.getElementById('coachNext').disabled = false;
-    tour.timer = setTimeout(advance, 2600);
-    return;
+
+function render() {
+  const now = vnow();
+  const W = svg.node().clientWidth || 800, H = svg.node().clientHeight || 500;
+  M.left = W < 760 ? 92 : 232;
+  const pw = W - M.left - M.right, ph = H - M.top - M.bottom;
+  const x = (t) => M.left + ((t - (now - WINDOW_MS * NOW_AT)) / WINDOW_MS + 0) * pw;
+  const xNow = x(now);
+  const yYou = M.top + ph * ROW.you;
+  const yTop = M.top + ph * ROW.streamTop, yBot = M.top + ph * ROW.streamBot;
+  const yEchoTop = M.top + ph * ROW.echoTop, yEchoBot = M.top + ph * ROW.echoBot;
+  const yOf = (f) => yTop + (1 - f.vy) * (yBot - yTop);
+  const fr = state.fragments;
+  const byId = new Map(fr.map((f) => [f.id, f]));
+  const maxMag = Math.max(1e-9, d3.max(fr, (f) => f.magnitude) || 1);
+
+  // Ease each item toward where it belongs: its ranking, or, with the ties cut, wherever it fell.
+  for (const f of fr) {
+    const target = has('cut') ? f.scatterY : f.score;
+    if (f.vy === null) f.vy = target; else f.vy += (target - f.vy) * 0.08;
   }
-  // Already done and waiting out the pause: let the next step's event count.
-  const n = TOUR[tour.step + 1];
-  if (tour.done && n && n.wait && n.wait(e)) { advance(); tourEvent(e); }
-}
-document.getElementById('tourStart').addEventListener('click', () => closeWelcome(true));
-document.getElementById('tourSkip').addEventListener('click', () => closeWelcome(false));
-document.getElementById('coachNext').addEventListener('click', advance);
-document.getElementById('coachQuit').addEventListener('click', () => { tour.active = false; coach.hidden = true; });
-document.getElementById('introBtn').addEventListener('click', () => { welcome.hidden = false; document.getElementById('tourStart').focus(); });
-document.getElementById('tourStart').focus();
+  const radius = (f) => {
+    let r = f.kind === 'token' ? 3 : 4;
+    if (has('collision')) r = 1 + 16 * Math.sqrt(f.magnitude / maxMag); // area ∝ magnitude; a one-pixel floor so the smallest exists at all
+    return r;
+  };
+  const alpha = (f) => {
+    let a = 1;
+    const age = (now - f.born) / lifeOf(f);
+    if (has('refusal')) a *= Math.max(0.12, 1 - Math.max(0, age - 0.5) / 0.5);
+    else a *= Math.max(0.35, 1 - Math.max(0, age - 0.8) / 0.2);
+    if (!matchesFilter(f)) a *= 0.18;
+    if (f.score < f.threshold) a *= 0.55;
+    return a;
+  };
 
-// Seed the field so the page is not empty before play is pressed.
-for (let i = 0; i < 9; i++) { const f = makeFragment('stream'); f.born -= (9 - i) * STREAM_INTERVAL_MS; enter(f); }
-notify();
+  // Axis: a tick every 15 s. The labels are the feed's timestamps, and Cut removes them.
+  const ticks = [];
+  const t0 = Math.ceil((now - WINDOW_MS * NOW_AT) / 15000) * 15000;
+  for (let t = t0; t <= now + WINDOW_MS * (1 - NOW_AT); t += 15000) ticks.push(t);
+  const tk = gAxis.selectAll('g.tick').data(ticks, (d) => d);
+  const tkE = tk.enter().append('g').attr('class', 'tick');
+  tkE.append('line'); tkE.append('text').attr('text-anchor', 'middle');
+  tk.exit().remove();
+  const tkA = tkE.merge(tk).attr('transform', (d) => `translate(${x(d)},0)`);
+  tkA.select('line').attr('y1', yTop - 6).attr('y2', yEchoBot + 4);
+  tkA.select('text').attr('y', yEchoBot + 16).text((d) => { const s = Math.round((d - now) / 1000); return s === 0 ? '' : (s > 0 ? '+' : '−') + Math.abs(s) + ' s'; });
+  nowLine.attr('x1', xNow).attr('x2', xNow).attr('y1', yYou - 14).attr('y2', yEchoBot + 4);
+  nowText.attr('x', xNow).attr('y', yEchoBot + 16);
+  baseline.attr('x1', M.left).attr('x2', W - M.right).attr('y1', yBot + 1).attr('y2', yBot + 1);
+
+  rowYou.attr('x', M.left - 12).attr('y', yYou + 4).attr('text-anchor', 'end');
+  rowYouNote.attr('x', M.left - 12).attr('y', yYou + 18).attr('text-anchor', 'end').style('display', W < 760 ? 'none' : null);
+  rowStream.attr('x', M.left - 12).attr('y', (yTop + yBot) / 2).attr('text-anchor', 'end');
+  rowStreamNote.attr('x', M.left - 12).attr('y', (yTop + yBot) / 2 + 14).attr('text-anchor', 'end').style('display', W < 760 ? 'none' : null);
+  rowEcho.attr('x', M.left - 12).attr('y', (yEchoTop + yEchoBot) / 2 + 2).attr('text-anchor', 'end');
+  rowEchoNote.attr('x', M.left - 12).attr('y', (yEchoTop + yEchoBot) / 2 + 16).attr('text-anchor', 'end').style('display', W < 760 ? 'none' : null);
+
+  // Ligatures: the links between items. The connective tissue; Cut removes it.
+  const ligs = has('cut') ? [] : fr.flatMap((f) => f.related.filter((id) => byId.has(id)).map((id) => ({ a: f, b: byId.get(id), k: `${f.id}-${id}` })));
+  gLig.selectAll('line').data(ligs, (d) => d.k).join('line').attr('class', 'lig')
+    .attr('x1', (d) => x(d.a.born)).attr('y1', (d) => yOf(d.a)).attr('x2', (d) => x(d.b.born)).attr('y2', (d) => yOf(d.b))
+    .attr('opacity', (d) => Math.min(alpha(d.a), alpha(d.b)));
+
+  // The echo band: the share of the stream that is you, over time. The thesis, as a shape.
+  const hist = state.history.filter((h) => h.t >= now - WINDOW_MS * NOW_AT - 1000);
+  const area = d3.area().x((h) => x(h.t)).y0(yEchoBot).y1((h) => yEchoBot - h.share * (yEchoBot - yEchoTop)).curve(d3.curveStepAfter);
+  const lineTop = d3.line().x((h) => x(h.t)).y((h) => yEchoBot - h.share * (yEchoBot - yEchoTop)).curve(d3.curveStepAfter);
+  gEcho.selectAll('path.echo').data([hist]).join('path').attr('class', 'echo').attr('d', area);
+  gEcho.selectAll('path.echoline').data([hist]).join('path').attr('class', 'echoline').attr('d', lineTop);
+  const share = hist.length ? hist[hist.length - 1].share : 0;
+  readoutBig.attr('x', W - M.right).attr('y', yEchoTop - 6).text(`${Math.round(share * 100)}% of the stream is you`);
+  readoutSmall.attr('x', W - M.right).attr('y', M.top + 10).text(`${state.viewerGestures.length} moves on the line · ${fr.length} items in the stream · ${state.running ? 'running' : 'paused'}`);
+
+  // Your moves, and the arc from each to its echo.
+  const gs = state.viewerGestures.filter((g) => x(g.at) > M.left - 20);
+  const you = gYou.selectAll('g.yg').data(gs, (g) => g.at);
+  const youE = you.enter().append('g').attr('class', 'yg');
+  youE.append('circle').attr('class', 'you-mark').attr('r', 4.5).attr('fill', COLOR.you);
+  youE.append('circle').attr('class', 'hit').attr('r', 12).attr('fill', 'transparent');
+  youE.append('text').attr('class', 'label you').attr('text-anchor', 'middle').style('font-size', '10.5px').style('fill', '#e2d6ff');
+  youE.on('mousemove', (e, g) => showTipText(e, 'your move · ' + Math.round((now - g.at) / 1000) + 's ago', g.said, true)).on('mouseleave', hideTip);
+  you.exit().remove();
+  const youA = youE.merge(you).attr('transform', (g) => `translate(${x(g.at)},${yYou})`);
+  const lastMoves = new Set(gs.slice(-3).map((g) => g.at));
+  youA.select('text').attr('y', (g, i) => -9 - (i % 3) * 11).text((g) => lastMoves.has(g.at) ? trunc(g.said, 26) : '');
+  const arcs = gArcs.selectAll('path.arc').data(gs, (g) => g.at);
+  arcs.exit().remove();
+  arcs.enter().append('path').attr('class', 'arc').merge(arcs)
+    .classed('pending', (g) => !g.echo || !byId.has(g.echo.id))
+    .attr('d', (g) => {
+      const x1 = x(g.at), y1 = yYou + 5;
+      const tx = g.echo && byId.has(g.echo.id) ? x(g.echo.born) : x(g.echoAt);
+      const ty = g.echo && byId.has(g.echo.id) ? yOf(g.echo) - radius(g.echo) - 1 : yTop;
+      const cx = (x1 + tx) / 2, cy = y1 + 6;
+      return `M${x1},${y1} Q${cx},${cy} ${tx},${ty}`;
+    });
+
+  // The stream. Newest few carry their text; your echoes always do; everything has a tooltip.
+  const newest = new Set(fr.filter((f) => f.kind !== 'gesture').slice(-3).map((f) => f.id));
+  const latestEchoes = new Set(fr.filter((f) => f.kind === 'gesture').slice(-3).map((f) => f.id));
+  const nearRight = (f) => x(f.born) > W - 250;
+  const marks = gMarks.selectAll('g.mark').data(fr, (f) => f.id);
+  const mE = marks.enter().append('g').attr('class', 'mark').attr('tabindex', 0)
+    .on('mousemove', (e, f) => showTip(e, f)).on('mouseleave', hideTip)
+    .on('click', (e, f) => { gesture('opened', `#${f.id}`); hideTip(); });
+  mE.append('circle').attr('class', 'hit').attr('r', 11).attr('fill', 'transparent');
+  mE.append('line').attr('class', 'thrstem');
+  mE.append('line').attr('class', 'thr');
+  mE.append('line').attr('class', 'life');
+  mE.append('path').attr('class', 'dot');
+  mE.append('text').attr('class', 'label src').attr('x', 7).attr('y', -6);
+  mE.append('text').attr('class', 'label').attr('x', 7).attr('y', 4);
+  marks.exit().remove();
+  const mA = mE.merge(marks).attr('transform', (f) => `translate(${x(f.born)},${yOf(f)})`).attr('opacity', alpha);
+  mA.select('.dot')
+    .attr('d', (f) => { const r = radius(f); return f.kind === 'gesture' ? `M0,${-r * 1.3} L${r * 1.3},0 L0,${r * 1.3} L${-r * 1.3},0 Z` : `M${-r},0 A${r},${r} 0 1,0 ${r},0 A${r},${r} 0 1,0 ${-r},0`; })
+    .attr('fill', (f) => f.kind === 'gesture' ? COLOR.you : COLOR[f.sentiment]);
+  const exposed = has('expose');
+  mA.select('.thr').style('display', exposed ? null : 'none')
+    .attr('x1', -5).attr('x2', 5).attr('y1', (f) => (f.score - f.threshold) * (yBot - yTop) * (has('cut') ? 0 : 1)).attr('y2', (f) => (f.score - f.threshold) * (yBot - yTop) * (has('cut') ? 0 : 1));
+  mA.select('.thrstem').style('display', exposed && !has('cut') ? null : 'none')
+    .attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', (f) => (f.score - f.threshold) * (yBot - yTop));
+  mA.select('.life').style('display', exposed ? null : 'none')
+    .attr('x1', (f) => radius(f) + 2).attr('x2', (f) => radius(f) + 2 + 26 * Math.max(0, 1 - (now - f.born) / lifeOf(f))).attr('y1', 0).attr('y2', 0);
+  const labelled = (f) => latestEchoes.has(f.id) || newest.has(f.id);
+  const lx = (f) => nearRight(f) ? -(radius(f) + 5) : radius(f) + (exposed ? 32 : 5);
+  const anchor = (f) => nearRight(f) ? 'end' : 'start';
+  mA.select('.label.src').attr('x', lx).attr('text-anchor', anchor)
+    .text((f) => labelled(f) && !exposed ? (f.kind === 'gesture' ? 'you' : has('cut') ? '' : f.source) : '');
+  mA.select('.label:not(.src)').classed('you', (f) => f.kind === 'gesture')
+    .attr('x', lx).attr('text-anchor', anchor)
+    .text((f) => labelled(f) ? trunc(f.text, W < 760 ? 22 : 40) : '');
+
+  // The legend for One ruler: the scale the marks are on.
+  if (has('collision')) {
+    scaleG.style('display', null); legendText.style('display', null);
+    const r = 1 + 16;
+    scaleG.selectAll('*').remove();
+    scaleG.append('circle').attr('cx', M.left + 12 + r).attr('cy', yTop - 14).attr('r', r).attr('fill', 'rgba(255,255,255,0.08)');
+    scaleG.append('circle').attr('cx', M.left + 12 + r).attr('cy', yTop - 14).attr('r', 1).attr('fill', 'rgba(255,255,255,0.5)');
+    scaleG.append('text').attr('x', M.left + 12 + r * 2 + 8).attr('y', yTop - 10).text(`area ∝ magnitude · outer = ${fmt(maxMag)} · centre dot = the one-pixel floor`);
+    legendText.attr('x', W - M.right).attr('y', yTop - 10).attr('text-anchor', 'end').text('');
+  } else if (exposed) {
+    scaleG.style('display', 'none'); legendText.style('display', null);
+    legendText.attr('x', M.left).attr('y', yTop - 10).attr('text-anchor', 'start').text('red tick = that item’s own cut-off, with a stem from where it sits · blue = how long it has left');
+  } else { scaleG.style('display', 'none'); legendText.style('display', 'none'); }
+}
+
+// The deck wraps on narrow screens; the line's bottom clearance follows it.
+const deckEl = document.querySelector('.deck');
+new ResizeObserver(() => { document.documentElement.style.setProperty('--deck-h', deckEl.offsetHeight + 'px'); }).observe(deckEl);
+
+let last = 0;
+function frame(ts) {
+  if (ts - last > 33) { last = ts; render(); }
+  requestAnimationFrame(frame);
+}
+// Seed the stream so the line is not empty before play is pressed.
+for (let i = 0; i < 7; i++) { const f = makeFragment('stream'); f.born -= (7 - i) * PACE.steady; enter(f); }
+requestAnimationFrame(frame);
 </script>
 </body>
 </html>

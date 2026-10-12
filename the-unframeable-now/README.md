@@ -8,78 +8,54 @@ is left. Every gesture the viewer makes, including the suspending, is
 logged and comes back into the stream as one more fragment. The caption
 on the page is the claim: *every frame applied re-enters as signal.*
 
-One process (Claude, working with Jeff) built it from the brief in one
-pass. It exists so that a different reader, first of all the brief's
-author, can say where it is wrong.
+One process (Claude, working with Jeff) built it. It exists so that a
+different reader, first of all the brief's author, can say where it is
+wrong.
 
-Rebuilt as a player, in the house style of `visualizer-demo/`: the 3D
-field is full-bleed behind everything, the feed floats over it as a
-panel, a transport (press play) starts the stream instead of it running
-on arrival, and the four operators are pads with a plain-language verb
-first and the technical term underneath. A caption pill narrates each
-move in one sentence, and a "you" gesture — a click, a search, an
-orbit — gets a visible badge and glow where it lands back in the feed,
-so the loop the piece is about is something a viewer can actually watch
-happen to their own actions, not just read a caption about.
+## The line
 
-## Welcome, walkthrough, pace
+The page is one picture. Time runs left to right, "now" a little right
+of centre so there is room for what has just arrived. Three rows share
+the axis:
 
-The page opens on a welcome card that says in four lines what this is
-(a fake feed with real feed machinery), what you do (tidy it), what
-you'll find (every tidy-up comes back as one more item; a counter keeps
-score of your trace and only goes up), and why it matters (every real
-feed does this silently). The stated game is *try to tidy a feed
-without leaving a trace of yourself in it*, which cannot be won, and
-losing it is the lesson. Two buttons: a two-minute walkthrough, or just
-play. **? intro** at the top right brings the card back.
+```
+you      ●────╮              a move, and the arc to its echo
+              ↓
+stream  ··●·●·◆·●····▶ now   items by arrival; height = ranking
+echo    ░░░░▓▓▓▓▓▓▓▓▓        share of the stream that is you
+```
 
-The walkthrough is a six-step coach card that does not narrate ahead
-of the viewer: each step names one thing to do (press play; search for
-a word; watch the top of the panel; press Cut; put the ties back and
-press 2) and waits for the viewer to actually do it, then acknowledges
-in one line what just happened. The ant does not appear until step
-five, and arrives with its reason attached — ants have exactly this
-problem, an ant can't read the trail without laying more scent — so
-it earns its place rather than being assumed interesting. The card
-shows the viewer's trace count the whole way.
+- **The stream.** Every item is a mark at the moment it arrived, placed
+  vertically by its ranking score, coloured by sentiment (amber positive,
+  cyan negative, ivory neutral). Thin lines join an item to the items its
+  "related" links point at. The newest three carry their text; everything
+  has a tooltip with its source, age, ranking and cut-off.
+- **You.** Every move the viewer makes is a violet mark on the row above,
+  at the moment it was made, with an arc down to the moment its echo
+  lands in the stream as a violet diamond, 2.2 s later. While the echo is
+  on its way the arc is dashed. The arc is the claim drawn: *this thing
+  you did, came back as that.*
+- **Your echo.** Beneath the stream, a band: the share of the items in
+  the stream right now that are the viewer's own echoes, sampled four
+  times a second. It widens for as long as the viewer keeps tidying. The
+  number at its right says it in words: *30% of the stream is you.* The
+  band is the thesis as a shape, and the game the welcome card sets, to
+  keep it flat, cannot be won.
 
-The stream has a **pace** control in the deck: calm (an item every six
-seconds or so), steady (every few seconds, the default), busy (every
-second and a half, which is what a real feed feels like). Shard easing,
-drift and the Never-let-it-settle jitter were all slowed so the loop
-is something the eye can follow.
+The clock the line runs on stops when the stream is paused, so a paused
+picture holds still and can be read.
 
-## One field, four ways
-
-Four **lenses** over one state — Feed, Trail, Body, Garden (keys 1–4).
-The state object does not change with the lens; nothing in it does.
-What changes is the nouns, the palette, and the shape of a fragment:
-
-| lens | the panel shows | a fragment is | the volume draws |
-|---|---|---|---|
-| Feed | the tidy feed: cards with source, time, sentiment, links | a card | a slab |
-| Trail | ants in a line on a scent path, each carrying its headline | an ant, and its scent | a flat scent patch on sand |
-| Body | cells along a vessel | a cell | a cell-sized cube on tissue |
-| Garden | plants in a row of soil | a plant | a stalk over soil |
-
-Switching lens is itself a framing gesture, so it is logged and comes
-back as a fragment like any other — *you, looking through the trail
-lens* arrives as an ant two seconds later, and if you switch again it
-is there in the next lens as a cell. Every shard in the volume keeps
-its position across a switch; only its shape and colour change, and
-the violet of a gesture never changes at all, so a viewer can follow
-their own click from one world into the next. The caption on a switch
-is the whole argument: *Same field. Only the nouns changed.* The
-operators do to ants, cells and plants exactly what they do to cards:
-Cut scatters them and removes the line; Show the machine draws the
-ranking meter, threshold and decay clock beside each; One ruler sizes
-them by magnitude; Never let it settle makes them shiver and fade.
-
-After the first switch, a note fades in on the right: a physicist had
-a word for a whole you can't step outside of. David Bohm called it the
-implicate order; each lens is one unfolding (his *explicate* order) of
-it, and every move folds back in. The page carries this as a figure,
-not a claim — see the citation posture below.
+Why a line and not the volume the brief asked for: the volume encoded
+source as angle, score as size, sentiment as colour and a random jitter
+as position, and a reader could read none of it. The claim of the piece
+is a relation between two moments, a cause and its return, and nothing
+in the volume drew it. On a time axis the arc from a move to its echo is
+the single most important mark on the page, and the echo band makes the
+accumulation visible without a counter. The four lenses that preceded
+this (feed, ant trail, body, garden) were a skin swap over the same
+unreadable picture and are retired for the same reason; the ant has
+left the page. This is the reading of the piece under Tufte's rule that
+the graphic should show the relation, not label it.
 
 ## Run it
 
@@ -90,68 +66,55 @@ python3 -m http.server 8000
 # then http://localhost:8000/the-unframeable-now/
 ```
 
-Babylon.js and D3 v7 load from a CDN; everything else is in `index.html`.
+D3 v7 loads from a CDN; everything else is in `index.html`.
 
 ## Controls
 
-- **Play** (▶, or space): starts the stream. Paused, nothing enters and
-  nothing decays, so the field holds still to look at.
-- **Pace** (calm / steady / busy): how often the stream delivers.
-- **Cut the ties** *(cut)*: removes the connective tissue. Cards lose their
-  timestamp, source, sentiment and links, and scatter across the panel;
-  shards scatter in the volume.
-- **Show the machine** *(expose apparatus)*: draws the machinery round each
-  fragment. Ranking score as a meter with its visibility threshold marked,
-  the truncation boundary in characters, the refresh interval as a draining
-  timer, and the decay clock. In the volume, ranking becomes height, a
-  frame bounds the field, and a plane marks the threshold shards sit above
-  or below.
-- **One ruler for everything** *(scale collision)*: a strip appears with one
-  axis, and every fragment's magnitude is drawn on it at its true relative
-  size: a token probability beside a continental sensor index. Shards take
-  the same scale. A one-pixel floor exists so the smallest can be seen at
-  all; it is the only concession.
-- **Never let it settle** *(duration refusal)*: nothing settles. Fragments
-  live a few seconds, fade, and are re-sampled in place (the `·n` after a
-  timestamp counts how many times); cards shiver and shards never stop
-  moving.
-- **Search the feed** *(filter)*: keeps only fragments whose text or source
-  contains the typed string. Filtering is a gesture, so it re-enters too.
-- **Orbit and zoom** on the volume: drag and scroll, or touch. Each is a
-  gesture, and each re-enters.
-- Clicking or pressing Enter on a card opens nothing; it is logged as a
-  gesture and comes back.
+A welcome card says what this is, what to do, what to watch and what
+you'll find, then one button. **? intro** brings it back.
 
-Every gesture gets a plain-English line in the caption pill above the
-deck, and when it re-enters as a fragment the card carries a small
-**you** badge and a brief glow, and its shard in the volume is a
-distinct colour (violet) and a beat brighter on arrival — the point is
-to make "that's your own click, back as signal" something a viewer
-sees happen, not just a sentence they read.
-
-The gauge at the top right reads *showing, tidied* (fragments the
-reception layer is currently holding in a frame) against *pushed out of
-frame* (cut, filtered out, below threshold, or decaying) and *your own
-moves, fed back* (gestures logged so far).
+- **Play** (▶, or space): starts the stream. Paused, nothing enters,
+  nothing decays and the clock stops.
+- **Pace** (calm / steady / busy): how often the stream delivers, an
+  item every six seconds, every few seconds, or every second and a half.
+  Changing it is a move, so it echoes.
+- **Cut the ties** *(cut, key 1)*: removes the connective tissue. The
+  lines between related items go, the timestamps on the axis go, and
+  ranking no longer holds anything in place: each item drifts to wherever
+  it falls.
+- **Show the machine** *(expose apparatus, key 2)*: draws each item's own
+  cut-off as a red tick with a dashed stem from where the item sits, and
+  a blue line for how long it has left. These were always there.
+- **One ruler for everything** *(scale collision, key 3)*: sizes every
+  item by its magnitude on one shared scale, area proportional to
+  magnitude, with a one-pixel floor so the smallest exists at all. A
+  legend shows the scale. A token probability sits next to a continental
+  sensor index at their true relative size.
+- **Never let it settle** *(duration refusal, key 4)*: nothing settles.
+  Items fade over a short life and are re-sampled back to now, so the
+  right edge fills with things that will not stay still.
+- **Search the stream**: keeps only items whose text or source contains
+  the typed string; what doesn't match dims but stays. Searching is a
+  move, so it echoes.
+- **Clicking an item** opens nothing; it is logged as a move and comes
+  back.
 
 ## State
 
-One object, in `index.html`, that both layers subscribe to:
+One object, in `index.html`:
 
 ```js
 state = {
-  fragments,        // what is in the field now; each has text, source, sentiment,
-                    // magnitude, score, truncation, refresh, threshold, born, slot…
+  fragments,        // what is in the stream now; each has text, source, sentiment,
+                    // magnitude, score, threshold, born, related, scatterY…
   activeOperators,  // a Set of 'cut' | 'expose' | 'collision' | 'refusal'
-  viewerGestures,   // every gesture, in order: { at, kind, detail }
-  unframedResidue,  // recomputed each tick
-  framesApplied,    // the gesture count
-  filter,
+  viewerGestures,   // every move on the line: { at, kind, detail, said, echoAt, echo }
+  history,          // { t, share } samples for the echo band
+  filter, running, pace,
 }
 ```
 
-Nothing is stored anywhere else; the D3 layer and the Babylon layer each
-re-read the state when `notify()` runs.
+The line is redrawn from it about thirty times a second.
 
 ## Where to tune
 
@@ -159,14 +122,15 @@ The constants at the top of the script in `index.html`:
 
 | constant | what it sets |
 |---|---|
-| `STREAM_INTERVAL_MS` | how often a fragment enters |
-| `FRAGMENT_LIFE_MS` | how long one lasts in the default layer |
-| `REFUSAL_LIFE_MS` | how long before Duration refusal re-samples it |
-| `REENTRY_DELAY_MS` | how long after a gesture it comes back as signal |
-| `MAX_FRAGMENTS` | how many the field holds before the oldest leaves |
-| `SHARD_POOL` | shards built in the volume (fragments borrow one each) |
+| `PACE` | the three stream intervals the deck offers |
+| `FRAGMENT_LIFE_MS` | how long an item lasts |
+| `REFUSAL_LIFE_MS` | how long before Never-let-it-settle re-samples it |
+| `REENTRY_DELAY_MS` | how long after a move its echo arrives |
+| `MAX_FRAGMENTS` | how many the stream holds before the oldest leaves |
+| `WINDOW_MS` | how much time the line shows |
+| `NOW_AT` | where "now" sits across the plot |
 
-The fragment pool (`SHARDS`, `PULSES`, `TOKENS`, `SOURCES`) is invented and
+The item pool (`SHARDS`, `PULSES`, `TOKENS`, `SOURCES`) is invented and
 names no real person or organisation.
 
 ## Citation posture
@@ -176,12 +140,8 @@ and withheld closure (Bürger, Foster) under the technical conditions of
 contemporary event streams (Chun, Bucher), such that viewer framing
 gestures re-enter as further signal. The full list is in the issue.
 
-The lenses add one figure and name it as a figure: Bohm's implicate and
-explicate order (*Wholeness and the Implicate Order*, 1980), read as a
-picture of one shared state and its several renderings, not as a
-physics claim. The implicate order is an interpretation, not a tested
-result, and the suggestion elsewhere that latent spaces are an empirical
-way to study it is an inference; neither is asserted here. The ant
-trail is stigmergy (Grassé, 1959) and is the one analogy on the page
-with a literature of its own; the immune, garden and traffic readings
-are everyday pictures, offered as such.
+Earlier cuts of this page carried Bohm's implicate and explicate order as
+a figure for one state and its renderings, and an ant trail (stigmergy)
+as the opening analogy. Both are retired from the page: the line shows
+the relation directly and needs neither. They remain in the repository's
+history, and the reasoning in the commits.
