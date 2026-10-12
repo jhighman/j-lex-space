@@ -175,7 +175,7 @@
 <header class="top">
   <div class="mark">
     <h1>The Unframeable Now</h1>
-    <p class="lede"><b>Ever tidied your feed and watched it get worse?</b> Here's why. Press play, tidy the stream the way you'd tidy any feed, and try to keep the band at the bottom flat.</p>
+    <p class="lede"><b>Ever tidied your feed and watched it get worse?</b> Here's why. Press play, tidy your feed the way you always do, and try to keep the band at the bottom flat.</p>
     <p class="thesis">Every frame applied re-enters as signal.</p>
   </div>
   <button class="intro-btn" id="introBtn" type="button" title="What is this, and what do I watch?">? intro</button>
@@ -202,7 +202,7 @@
   <button class="pad" type="button" data-op="refusal" aria-pressed="false" title="Nothing settles: items fade and are re-sampled back to now (4)">
     <span class="verb">Never let it settle</span><span class="tech">duration refusal</span>
   </button>
-  <span class="filterwrap"><input id="filter" type="search" placeholder="search the stream…" aria-label="Filter items by text"></span>
+  <span class="filterwrap"><input id="filter" type="search" placeholder="search… try garden" aria-label="Filter items by text"></span>
   <span class="pace" role="group" aria-label="Pace of the stream">
     <span class="lbl">pace</span>
     <button type="button" data-pace="calm" aria-pressed="false" title="A new item every six seconds">calm</button>
@@ -214,12 +214,12 @@
 <div id="welcome" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
   <div class="welcome-card">
     <p class="eyebrow">The Unframeable Now · a two-minute experiment</p>
-    <h2 id="welcomeTitle">Try to tidy a stream without leaving a trace of yourself in it.</h2>
+    <h2 id="welcomeTitle">Try to tidy your feed without leaving a trace of yourself in it.</h2>
     <dl>
       <dt>What this is</dt>
-      <dd>A fake news stream with real feed machinery: a ranking, a cut-off, a lifetime, links between items. Nothing in it is real. The shape is.</dd>
+      <dd>Your feed, invented but true to shape. The group chat, the news, work after hours, the school portal, all asking. Underneath them, what you'd rather be looking at: the garden, a painter's half-finished canvas, a record you keep meaning to play. Real feed machinery runs it: a ranking that favours whatever asks something of you, a cut-off, a lifetime, links.</dd>
       <dt>What you do</dt>
-      <dd>Tidy it the way you tidy any feed: search, cut the clutter, size things up. The pads at the bottom are your tools.</dd>
+      <dd>Tidy it the way you always do: search for the garden, cut the clutter, size things up. The pads at the bottom are your tools.</dd>
       <dt>What to watch</dt>
       <dd>Time runs left to right. <b>Every move you make is a <i class="v">violet</i> mark above the stream, with an arc to where it comes back into the stream two seconds later.</b> The band at the bottom is how much of the stream is you.</dd>
       <dt>What you'll find</dt>
@@ -266,39 +266,55 @@ const vnow = () => clockBase + (state.running ? Date.now() - runStart : 0);
 /* ------------------------------------------------------------------ */
 /* The stream: a simulated pool. No real people or organisations.      */
 /* ------------------------------------------------------------------ */
-const SHARDS = [
-  { text: 'levee gauge crossed stage three at 04:12', mag: 3, sent: -1 },
-  { text: 'weights released under a permissive licence; checksum pending', mag: 141, sent: 1 },
-  { text: 'council vote deferred for the third time this quarter', mag: 3, sent: -1 },
-  { text: 'an aggregated feed reports a cascade in the eastern relay', mag: 12, sent: -1 },
-  { text: 'summary: sentiment broadly negative, confidence moderate', mag: 0.55, sent: -1 },
-  { text: 'thread: nobody is talking about the pressure readings', mag: 1, sent: 0 },
-  { text: 'a border post changed hands overnight, sources unverified', mag: 1, sent: -1 },
-  { text: 'model output: the situation is developing', mag: 0.5, sent: 0 },
-  { text: 'tile 44 of 120 re-rendered after the correction', mag: 44, sent: 0 },
-  { text: 'the index closed up on thin volume', mag: 31480, sent: 1 },
-  { text: 'the sensor at the north basin has stopped reporting', mag: 0, sent: -1 },
-  { text: 'correction to an earlier item: the figure was per hour, not per day', mag: 24, sent: 0 },
-  { text: 'a long thread explains why this was always going to happen', mag: 1, sent: 0 },
-  { text: 'the release was pulled, then restored, within the hour', mag: 2, sent: 0 },
-  { text: 'what you need to know, in four cards', mag: 4, sent: 1 },
-  { text: 'readings resumed; the gap has been interpolated', mag: 0.9, sent: 1 },
+/* Seven channels. Four ask something of her; three are what she'd rather
+   be looking at. The ranking favours the asks, as engagement-ranked feeds
+   do: that is a modelling choice, and the README says so. Invented, and
+   names nobody. */
+const WANTS = new Set(['garden', 'art', 'music']);
+const CHANNEL_WEIGHTS = [['social', 3], ['news', 3], ['work', 2], ['family', 2], ['garden', 1], ['art', 1], ['music', 1]];
+const ITEMS = [
+  { ch: 'social', text: 'Group chat: 47 new messages, mostly about the venue', mag: 47 },
+  { ch: 'social', text: 'Someone you went to school with has a new job title' },
+  { ch: 'social', text: 'The lake-house photos, 14 of them. You are in none', mag: 14 },
+  { ch: 'social', text: 'A reel you watched twice is back with a new caption' },
+  { ch: 'social', text: 'Likes on the photo you nearly didn’t post: 41', mag: 41 },
+  { ch: 'social', text: '“Thinking of you” from someone who means it, sent to nine people', mag: 9 },
+  { ch: 'social', text: 'Unread: 312', mag: 312 },
+  { ch: 'news',   text: 'Breaking: the thing from this morning has a second update' },
+  { ch: 'news',   text: 'Explainer: what the rate decision means for you. It doesn’t say' },
+  { ch: 'news',   text: 'Live blog, 1,200 updates, refreshed', mag: 1200 },
+  { ch: 'news',   text: 'A columnist is disappointed in everyone' },
+  { ch: 'news',   text: 'Poll: 52% say the number went up, 48% say down', mag: 52 },
+  { ch: 'news',   text: 'This clip has 12,400 views and no source', mag: 12400 },
+  { ch: 'work',   text: 'Slack, 6:48 pm: “quick question”' },
+  { ch: 'work',   text: 'Calendar moved your 1:1 into the hour you had blocked' },
+  { ch: 'work',   text: 'A deck needs eyes before the stand-up' },
+  { ch: 'work',   text: 'Reply-all, 23 deep, about the thread', mag: 23 },
+  { ch: 'work',   text: 'Seven meetings tomorrow, no breaks', mag: 7 },
+  { ch: 'work',   text: 'Your out-of-office is on. Three people replied to it anyway', mag: 3 },
+  { ch: 'family', text: 'Mum: “did you see what I sent?”' },
+  { ch: 'family', text: 'School portal: a form is due Friday. Again' },
+  { ch: 'family', text: 'Your sister sent a screenshot, no context' },
+  { ch: 'family', text: 'Dentist: confirm by replying YES' },
+  { ch: 'family', text: 'One text from your daughter: “ok”', mag: 1 },
+  { ch: 'family', text: 'The shared calendar has a new colour and nobody said' },
+  { ch: 'garden', text: 'The dahlias want lifting before the first frost' },
+  { ch: 'garden', text: 'An allotment diary, week 31: the squash, at last' },
+  { ch: 'garden', text: 'A thread on overwintering salvias. 300 replies, all kind', mag: 300 },
+  { ch: 'garden', text: 'The seed catalogue came. Paper' },
+  { ch: 'garden', text: 'Two hours of light left and the bed is half dug', mag: 2 },
+  { ch: 'art',    text: 'A painter you follow posted a half-finished canvas and a question' },
+  { ch: 'art',    text: 'The gallery’s late opening is Thursday. You said you’d go' },
+  { ch: 'art',    text: 'The print you nearly bought is back. One left', mag: 1 },
+  { ch: 'art',    text: 'Her sketchbook: a doorway, done in eleven minutes', mag: 11 },
+  { ch: 'art',    text: 'Life drawing on Wednesday has a space' },
+  { ch: 'music',  text: 'The record you keep putting off is 41 minutes. You have 40', mag: 41 },
+  { ch: 'music',  text: 'A friend’s playlist, titled “for the drive”' },
+  { ch: 'music',  text: 'Rehearsal moved to Tuesday. Bring the second part' },
+  { ch: 'music',  text: 'A live take of a song you love, filmed on a phone, perfect' },
+  { ch: 'music',  text: 'Her new single is three minutes long and you have listened nine times', mag: 9 },
 ];
-const PULSES = [
-  { label: 'token probability', value: 0.00031 },
-  { label: 'basin level, m', value: 4.21 },
-  { label: 'continental sensor index', value: 4200000 },
-  { label: 'global index', value: 31480 },
-  { label: 'local gesture', value: 1 },
-  { label: 'refresh interval, ms', value: 850 },
-  { label: 'ranking score', value: 0.62 },
-  { label: 'release size, GB', value: 141 },
-  { label: 'retained after truncation, chars', value: 96 },
-];
-const TOKENS = ['⟨sep⟩', '▮▮▮', '§', '∅', '⊥', '…', '[withheld]', '⟨eot⟩', '0x3f', '¶'];
-const SOURCES = ['wire/3', 'timeline', 'expert-thread', 'model-summary', 'sensor:north', 'card-feed'];
-const SENTIMENT = { '-1': 'negative', '0': 'neutral', '1': 'positive' };
-const COLOR = { '-1': '#55e2e1', '0': '#e8e4d6', '1': '#d4af37', you: '#a788f5' };
+const COLOR = { ask: '#d4af37', want: '#7fd1a8', you: '#a788f5' };
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = (xs) => xs[Math.floor(Math.random() * xs.length)];
 let nextId = 1;
@@ -309,21 +325,28 @@ function fmt(v) {
   if (Math.abs(v) < 0.01) return v.toExponential(2);
   return (+v.toFixed(2)).toString();
 }
-function sample(kind) {
-  if (kind === 'pulse') { const p = pick(PULSES); const v = p.value * rnd(0.85, 1.15); return { text: `${p.label}: ${fmt(v)}`, mag: Math.abs(v), sent: 0 }; }
-  if (kind === 'token') { const v = rnd(0.00005, 0.004); return { text: pick(TOKENS), mag: v, sent: 0 }; }
-  const s = pick(SHARDS); return { text: s.text, mag: s.mag, sent: s.sent };
+function pickChannel() {
+  const total = CHANNEL_WEIGHTS.reduce((a, [, w]) => a + w, 0);
+  let r = Math.random() * total;
+  for (const [c, w] of CHANNEL_WEIGHTS) { if ((r -= w) < 0) return c; }
+  return 'social';
 }
+function sample() {
+  const ch = pickChannel();
+  const it = pick(ITEMS.filter((i) => i.ch === ch));
+  return { text: it.text, mag: it.mag ?? 1, ch, want: WANTS.has(ch) };
+}
+const rank = (want) => want ? rnd(0.05, 0.62) : rnd(0.35, 0.98);
 function makeFragment(origin, override = {}) {
-  const kind = override.kind || pick(['shard', 'shard', 'shard', 'pulse', 'pulse', 'token']);
-  const s = kind === 'gesture' ? { text: override.text, mag: 1, sent: 0 } : sample(kind);
+  const kind = override.kind || 'item';
+  const s = kind === 'gesture' ? { text: override.text, mag: 1, ch: 'you', want: false } : sample();
   const related = state.fragments.length
     ? [pick(state.fragments).id, pick(state.fragments).id].filter((v, i, a) => a.indexOf(v) === i) : [];
   return {
     id: nextId++, kind, origin,
-    text: s.text, magnitude: s.mag, sentiment: s.sent,
-    source: override.source || pick(SOURCES),
-    score: rnd(0.05, 0.98),           // the ranking: where it sits on the stream's axis
+    text: s.text, magnitude: s.mag, want: s.want,
+    source: override.source || s.ch,
+    score: rank(s.want),              // the ranking: where it sits on the stream's axis
     threshold: rnd(0.1, 0.55),        // its own cut-off; below it the feed dims it
     born: vnow(), life: FRAGMENT_LIFE_MS,
     resampled: 0, related,
@@ -335,8 +358,8 @@ const lifeOf = (f) => has('refusal') ? REFUSAL_LIFE_MS : f.life;
 function enter(f) { state.fragments.push(f); while (state.fragments.length > MAX_FRAGMENTS) state.fragments.shift(); }
 function leave(f) { const i = state.fragments.indexOf(f); if (i >= 0) state.fragments.splice(i, 1); }
 function resample(f) {
-  const s = f.kind === 'gesture' ? { text: f.text, mag: 1, sent: 0 } : sample(f.kind);
-  Object.assign(f, { text: s.text, magnitude: s.mag, sentiment: s.sent, score: rnd(0.05, 0.98), threshold: rnd(0.1, 0.55), born: vnow(), resampled: f.resampled + 1, scatterY: rnd(0.05, 0.95) });
+  const s = f.kind === 'gesture' ? { text: f.text, mag: 1, ch: 'you', want: false } : sample();
+  Object.assign(f, { text: s.text, magnitude: s.mag, want: s.want, source: s.ch, score: rank(s.want), threshold: rnd(0.1, 0.55), born: vnow(), resampled: f.resampled + 1, scatterY: rnd(0.05, 0.95) });
 }
 function matchesFilter(f) { return !state.filter || f.text.toLowerCase().includes(state.filter) || f.source.toLowerCase().includes(state.filter); }
 
@@ -352,7 +375,7 @@ function say(text, holdMs = 3600) {
 const OP_TALK = {
   cut:      { on: 'Ties cut: the links between items and the timestamps are gone, and ranking no longer holds anything in place.', off: 'Ties restored.' },
   expose:   { on: 'The machine, drawn: each item’s own cut-off in red, and in blue how long it has left. These were always there.', off: 'Machine hidden again. It never stopped running.' },
-  collision:{ on: 'One ruler: every item sized by its magnitude on one shared scale. A token probability next to a continental index.', off: 'Back to one size each — easier to read, harder to compare honestly.' },
+  collision:{ on: 'One ruler: every item sized by its magnitude on one shared scale. One text from your daughter next to a live blog with 1,200 updates.', off: 'Back to one size each — easier to read, harder to compare honestly.' },
   refusal:  { on: 'Nothing settles: every item fades and is re-sampled back to now before you can trust it.', off: 'Things can settle again.' },
 };
 
@@ -482,6 +505,13 @@ const rowStream = gChrome.append('text').attr('class', 'rowlabel').text('the str
 const rowStreamNote = gChrome.append('text').attr('class', 'rownote').text('items by arrival · height = ranking');
 const rowEcho = gChrome.append('text').attr('class', 'rowlabel you').text('your echo');
 const rowEchoNote = gChrome.append('text').attr('class', 'rownote').text('share of the stream that is you');
+const kindLegend = gChrome.append('g').attr('class', 'legend');
+kindLegend.append('circle').attr('r', 4).attr('fill', COLOR.ask);
+kindLegend.append('text').attr('x', 9).attr('y', 4).text('asking something of you');
+kindLegend.append('circle').attr('cx', 182).attr('r', 4).attr('fill', COLOR.want);
+kindLegend.append('text').attr('x', 191).attr('y', 4).text('what you’d rather be looking at');
+kindLegend.append('circle').attr('cx', 388).attr('r', 4).attr('fill', COLOR.you);
+kindLegend.append('text').attr('x', 397).attr('y', 4).text('you, fed back');
 const readoutBig = gChrome.append('text').attr('class', 'readout big').attr('text-anchor', 'end');
 const readoutSmall = gChrome.append('text').attr('class', 'readout').attr('text-anchor', 'end');
 const nowLine = gChrome.append('line').attr('class', 'nowline');
@@ -496,7 +526,7 @@ function showTip(e, f) {
   tip.style.display = 'block';
   tip.className = 'tip' + (f.kind === 'gesture' ? ' you' : '');
   const ago = Math.round((vnow() - f.born) / 1000);
-  tip.innerHTML = `<div class="t">${f.kind === 'gesture' ? 'your move, back as an item' : f.source} · ${ago}s ago · ranked ${f.score.toFixed(2)} · cut-off ${f.threshold.toFixed(2)}${f.resampled ? ` · re-sampled ×${f.resampled}` : ''}</div>${f.text}`;
+  tip.innerHTML = `<div class="t">${f.kind === 'gesture' ? 'your move, back as an item' : (f.want ? 'what you’d rather · ' : 'asking · ') + f.source} · ${ago}s ago · ranked ${f.score.toFixed(2)} · cut-off ${f.threshold.toFixed(2)}${f.resampled ? ` · re-sampled ×${f.resampled}` : ''}</div>${f.text}`;
   const x = Math.min(window.innerWidth - 340, e.clientX + 14), y = Math.max(8, e.clientY - 48);
   tip.style.left = x + 'px'; tip.style.top = y + 'px';
 }
@@ -530,7 +560,7 @@ function render() {
     if (f.vy === null) f.vy = target; else f.vy += (target - f.vy) * 0.08;
   }
   const radius = (f) => {
-    let r = f.kind === 'token' ? 3 : 4;
+    let r = 4;
     if (has('collision')) r = 1 + 16 * Math.sqrt(f.magnitude / maxMag); // area ∝ magnitude; a one-pixel floor so the smallest exists at all
     return r;
   };
@@ -580,6 +610,7 @@ function render() {
   gEcho.selectAll('path.echoline').data([hist]).join('path').attr('class', 'echoline').attr('d', lineTop);
   const share = hist.length ? hist[hist.length - 1].share : 0;
   readoutBig.attr('x', W - M.right).attr('y', yEchoTop - 6).text(`${Math.round(share * 100)}% of the stream is you`);
+  kindLegend.attr('transform', `translate(${M.left},${M.top + 6})`).style('display', W < 760 ? 'none' : null);
   readoutSmall.attr('x', W - M.right).attr('y', M.top + 10).text(`${state.viewerGestures.length} moves on the line · ${fr.length} items in the stream · ${state.running ? 'running' : 'paused'}`);
 
   // Your moves, and the arc from each to its echo.
@@ -625,7 +656,7 @@ function render() {
   const mA = mE.merge(marks).attr('transform', (f) => `translate(${x(f.born)},${yOf(f)})`).attr('opacity', alpha);
   mA.select('.dot')
     .attr('d', (f) => { const r = radius(f); return f.kind === 'gesture' ? `M0,${-r * 1.3} L${r * 1.3},0 L0,${r * 1.3} L${-r * 1.3},0 Z` : `M${-r},0 A${r},${r} 0 1,0 ${r},0 A${r},${r} 0 1,0 ${-r},0`; })
-    .attr('fill', (f) => f.kind === 'gesture' ? COLOR.you : COLOR[f.sentiment]);
+    .attr('fill', (f) => f.kind === 'gesture' ? COLOR.you : f.want ? COLOR.want : COLOR.ask);
   const exposed = has('expose');
   mA.select('.thr').style('display', exposed ? null : 'none')
     .attr('x1', -5).attr('x2', 5).attr('y1', (f) => (f.score - f.threshold) * (yBot - yTop) * (has('cut') ? 0 : 1)).attr('y2', (f) => (f.score - f.threshold) * (yBot - yTop) * (has('cut') ? 0 : 1));

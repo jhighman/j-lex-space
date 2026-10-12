@@ -26,10 +26,19 @@ echo    ░░░░▓▓▓▓▓▓▓▓▓        share of the stream that 
 ```
 
 - **The stream.** Every item is a mark at the moment it arrived, placed
-  vertically by its ranking score, coloured by sentiment (amber positive,
-  cyan negative, ivory neutral). Thin lines join an item to the items its
-  "related" links point at. The newest three carry their text; everything
-  has a tooltip with its source, age, ranking and cut-off.
+  vertically by its ranking score. It is her feed: seven channels, of
+  which four ask something of her (social, news, work, family; amber)
+  and three are what she would rather be looking at (garden, art, music;
+  green). The asks arrive about three times as often, and the ranking
+  favours them, as engagement-ranked feeds do: an ask ranks between 0.35
+  and 0.98, a want between 0.05 and 0.62, so the garden sits low and
+  more often falls under its cut-off. That is a modelling choice, stated
+  here and in the source; it is what the picture claims about feeds. Thin
+  lines join an item to the items its "related" links point at. The
+  newest three carry their text; everything has a tooltip with its
+  channel, age, ranking and cut-off. Magnitudes, for One ruler, are the
+  numbers the items carry: 312 unread, 12,400 views, one text from a
+  daughter.
 - **You.** Every move the viewer makes is a violet mark on the row above,
   at the moment it was made, with an arc down to the moment its echo
   lands in the stream as a violet diamond, 2.2 s later. While the echo is
@@ -130,8 +139,10 @@ The constants at the top of the script in `index.html`:
 | `WINDOW_MS` | how much time the line shows |
 | `NOW_AT` | where "now" sits across the plot |
 
-The item pool (`SHARDS`, `PULSES`, `TOKENS`, `SOURCES`) is invented and
-names no real person or organisation.
+The item pool (`ITEMS`, with `WANTS` and `CHANNEL_WEIGHTS` beside it) is
+invented and names no real person or organisation. The brief's numeric
+pulses and abstract tokens are folded into it as the numbers a feed
+actually carries.
 
 ## Citation posture
 
