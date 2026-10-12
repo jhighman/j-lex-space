@@ -64,7 +64,29 @@
   .apphead { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 16px 8px; background: #0e0f14; border-bottom: 1px solid rgba(255,255,255,0.08); }
   .apphead b { font-size: 17px; font-weight: 700; color: #fff; }
   .apphead span { font-size: 11px; color: var(--soft); }
-  .feed { flex: 1; min-height: 0; overflow-y: auto; background: #0e0f14; padding: 8px 10px 20px; scroll-behavior: auto; }
+  .appsearch { padding: 6px 12px 8px; background: #0e0f14; }
+  .appsearch input { width: 100%; font: inherit; font-size: 12px; color: var(--ink); background: #1a1c25; border: 0; border-radius: 9px; padding: 7px 10px; }
+  .appsearch input::placeholder { color: var(--soft); }
+  .appsearch input:focus-visible { outline: 2px solid var(--cyan); }
+  .mutedrow { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 12px 6px; background: #0e0f14; }
+  .mutedrow:empty { display: none; }
+  .mutedrow button { font: inherit; font-size: 10px; color: var(--soft); background: #1a1c25; border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 3px 8px; cursor: pointer; }
+  .mutedrow button:hover { color: var(--ink); }
+  .feed { flex: 1; min-height: 0; overflow-y: auto; background: #0e0f14; padding: 0 10px 20px; scroll-behavior: auto; }
+  .refresh { text-align: center; color: var(--soft); font-size: 10.5px; letter-spacing: 0.06em; padding: 8px 0 10px; cursor: pointer; user-select: none; }
+  .refresh:hover { color: var(--ink); }
+  .refresh.spin { color: var(--amber); }
+  .fcard .txt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .fcard.open .txt { display: block; }
+  .fcard .heart { color: var(--coral); font-size: 11px; margin-left: 6px; }
+  .fcard .actions { display: none; gap: 6px; flex-wrap: wrap; margin-top: 8px; padding-top: 7px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .fcard.open .actions { display: flex; }
+  .fcard .actions button { font: inherit; font-size: 10.5px; color: var(--ink); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; padding: 4px 9px; cursor: pointer; }
+  .fcard .actions button:hover { border-color: rgba(255,255,255,0.35); }
+  .fcard .actions button.on { background: rgba(255,98,107,0.18); border-color: rgba(255,98,107,0.5); color: #ffb3b8; }
+  .fcard .actions button:focus-visible { outline: 2px solid var(--cyan); }
+  .fcard.open { background: #20232e; }
+  .fcard.you.open { background: #272142; }
   .feed::-webkit-scrollbar { width: 0; }
   .fcard {
     background: #1a1c25; border-radius: 12px; padding: 9px 11px 8px; margin: 0 0 8px; border-left: 3px solid var(--amber);
@@ -286,7 +308,12 @@
     <div class="bezel">
       <div class="status"><span id="phoneClock">9:40</span><span class="r">5G <span class="batt" aria-hidden="true"></span></span></div>
       <div class="apphead"><b>Feed</b><span id="feedCount">for you</span></div>
-      <div class="feed" id="feed" tabindex="0"></div>
+      <div class="appsearch"><input id="phoneSearch" type="search" placeholder="Search" aria-label="Search the feed"></div>
+      <div class="mutedrow" id="mutedRow" aria-label="Muted channels"></div>
+      <div class="feed" id="feed" tabindex="0">
+        <div class="refresh" id="refresh" role="button" tabindex="0" title="Pull to refresh: ask for more, now">↓ pull to refresh</div>
+        <div id="cards"></div>
+      </div>
     </div>
   </aside>
 </main>
@@ -329,7 +356,7 @@
       <dd>Everything you can do is on the bar at the bottom of the screen. <span class="where">Left to right:</span>
         <ul class="howto">
           <li><span class="chip play">▶</span><span>Play and pause. The clock stops while you're paused.</span></li>
-          <li><span class="chip search">scroll · tap</span><span>On the phone: scroll the feed, tap a card. Those are moves too.</span></li>
+          <li><span class="chip search">the phone</span><span>Use it like yours: scroll; tap a card to open it, then ♡ like it, ✕ hide it, mute its channel, or ask why; pull down to refresh; search. The feed learns from every one of these, the way yours does.</span></li>
           <li><span class="chip">Mute the threads</span><span>Drops the links and timestamps; ranking stops holding anything in place.</span></li>
           <li><span class="chip">Why am I seeing this?</span><span>Shows each item's cut-off (red) and how long it has left (blue).</span></li>
           <li><span class="chip">Size things up</span><span>Sizes items by their number: one text from your daughter beside 1,200 updates.</span></li>
@@ -392,12 +419,15 @@ const state = {
   filter: '',
   running: false,
   pace: 'steady',
+  weights: {},                // what the feed sends; set once the channel table exists below; likes, hides and mutes move it
+  muted: new Set(),
+  open: null,                 // the card she has open on the phone
 };
 const has = (op) => state.activeOperators.has(op);
 
 /* One session: three minutes on the stream's own clock, then the debrief.
    Everything the debrief says comes from what was recorded here. */
-const session = { phase: 'welcome', startedAt: 0, moves: [], samples: [], seen: { ask: 0, want: 0 }, below: { ask: 0, want: 0 }, echoes: 0 };
+const session = { phase: 'welcome', startedAt: 0, moves: [], samples: [], seen: { ask: 0, want: 0 }, below: { ask: 0, want: 0 }, echoes: 0, likes: {}, hides: {}, mutes: [], seenByChannel: {}, afterMute: {} };
 
 /* The clock the line runs on. It stops when the stream is paused, so a
    paused picture holds still and can be read. */
@@ -456,6 +486,8 @@ const ITEMS = [
   { ch: 'music',  text: 'Her new single is three minutes long and you have listened nine times', mag: 9 },
 ];
 const COLOR = { ask: '#d4af37', want: '#7fd1a8', you: '#a788f5' };
+state.weights = Object.fromEntries(CHANNEL_WEIGHTS);
+const CH_NOUN = { social: 'the group chat', news: 'the news', work: 'work', family: 'family', garden: 'the garden', art: 'the painter', music: 'the record', you: 'yourself' };
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = (xs) => xs[Math.floor(Math.random() * xs.length)];
 let nextId = 1;
@@ -467,13 +499,16 @@ function fmt(v) {
   return (+v.toFixed(2)).toString();
 }
 function pickChannel() {
-  const total = CHANNEL_WEIGHTS.reduce((a, [, w]) => a + w, 0);
+  const entries = Object.entries(state.weights).filter(([c, w]) => w > 0 && !state.muted.has(c));
+  const total = entries.reduce((a, [, w]) => a + w, 0);
+  if (!total) return null; // everything muted: the feed has nothing left but her
   let r = Math.random() * total;
-  for (const [c, w] of CHANNEL_WEIGHTS) { if ((r -= w) < 0) return c; }
-  return 'social';
+  for (const [c, w] of entries) { if ((r -= w) < 0) return c; }
+  return entries[0][0];
 }
 function sample() {
   const ch = pickChannel();
+  if (!ch) return null;
   const it = pick(ITEMS.filter((i) => i.ch === ch));
   return { text: it.text, mag: it.mag ?? 1, ch, want: WANTS.has(ch) };
 }
@@ -481,6 +516,7 @@ const rank = (want) => want ? rnd(0.05, 0.62) : rnd(0.35, 0.98);
 function makeFragment(origin, override = {}) {
   const kind = override.kind || 'item';
   const s = kind === 'gesture' ? { text: override.text, mag: 1, ch: 'you', want: false } : sample();
+  if (!s) return null;
   const related = state.fragments.length
     ? [pick(state.fragments).id, pick(state.fragments).id].filter((v, i, a) => a.indexOf(v) === i) : [];
   return {
@@ -493,17 +529,24 @@ function makeFragment(origin, override = {}) {
     resampled: 0, related,
     scatterY: rnd(0.05, 0.95),        // where it falls when the ties are cut
     vy: null,                         // current vertical fraction, eased toward its target
+    liked: false, hidden: false, why: false,
   };
 }
 const lifeOf = (f) => has('refusal') ? REFUSAL_LIFE_MS : f.life;
 function enter(f) {
+  if (!f) return;
   state.fragments.push(f); while (state.fragments.length > MAX_FRAGMENTS) state.fragments.shift();
   if (f.kind === 'gesture') session.echoes += 1;
-  else { const k = f.want ? 'want' : 'ask'; session.seen[k] += 1; if (f.score < f.threshold) session.below[k] += 1; }
+  else {
+    const k = f.want ? 'want' : 'ask'; session.seen[k] += 1; if (f.score < f.threshold) session.below[k] += 1;
+    session.seenByChannel[f.source] = (session.seenByChannel[f.source] || 0) + 1;
+    if (session.mutes.length) session.afterMute[f.source] = (session.afterMute[f.source] || 0) + 1;
+  }
 }
 function leave(f) { const i = state.fragments.indexOf(f); if (i >= 0) state.fragments.splice(i, 1); }
 function resample(f) {
   const s = f.kind === 'gesture' ? { text: f.text, mag: 1, ch: 'you', want: false } : sample();
+  if (!s) { leave(f); return; }
   Object.assign(f, { text: s.text, magnitude: s.mag, want: s.want, source: s.ch, score: rank(s.want), threshold: rnd(0.1, 0.55), born: vnow(), resampled: f.resampled + 1, scatterY: rnd(0.05, 0.95) });
 }
 function matchesFilter(f) { return !state.filter || f.text.toLowerCase().includes(state.filter) || f.source.toLowerCase().includes(state.filter); }
@@ -541,6 +584,13 @@ const GESTURE_TALK = {
   filtered: (d) => d === 'cleared' ? 'clearing the search' : `searching for ${d}`,
   opened: () => 'tapping one open',
   scrolled: () => 'scrolling',
+  liked: (d) => `liking ${CH_NOUN[d]}`,
+  unliked: (d) => `unliking ${CH_NOUN[d]}`,
+  hid: (d) => `hiding ${CH_NOUN[d]}`,
+  muted: (d) => `muting ${CH_NOUN[d]}`,
+  unmuted: (d) => `unmuting ${CH_NOUN[d]}`,
+  why: () => 'asking why about one',
+  refreshed: () => 'pulling to refresh',
   paced: (d) => PACE_SAID[d],
 };
 function gesture(kind, detail) {
@@ -630,12 +680,14 @@ function startSession() {
   // Back to the start state: an empty record, a seeded stream, the clock at 3:00.
   state.fragments.length = 0; state.viewerGestures.length = 0; state.history.length = 0;
   state.activeOperators.clear(); state.filter = ''; state.pace = 'steady';
+  state.weights = Object.fromEntries(CHANNEL_WEIGHTS); state.muted.clear(); state.open = null;
+  document.getElementById('phoneSearch').value = '';
   for (const b of document.querySelectorAll('button.pad')) b.setAttribute('aria-pressed', 'false');
   for (const b of document.querySelectorAll('.pace button')) b.setAttribute('aria-pressed', String(b.dataset.pace === 'steady'));
   document.getElementById('filter').value = '';
   for (const op of OPS) document.body.classList.remove(op);
   clockBase = 0; runStart = Date.now(); state.running = false;
-  Object.assign(session, { phase: 'running', startedAt: 0, moves: [], samples: [], seen: { ask: 0, want: 0 }, below: { ask: 0, want: 0 }, echoes: 0 });
+  Object.assign(session, { phase: 'running', startedAt: 0, moves: [], samples: [], seen: { ask: 0, want: 0 }, below: { ask: 0, want: 0 }, echoes: 0, likes: {}, hides: {}, mutes: [], seenByChannel: {}, afterMute: {} });
   for (let i = 0; i < 7; i++) { const f = makeFragment('stream'); f.born -= (7 - i) * PACE.steady; enter(f); }
   session.seen = { ask: 0, want: 0 }; session.below = { ask: 0, want: 0 }; // the seed is not what the feed showed her
   welcome.hidden = true; debrief.hidden = true;
@@ -717,6 +769,15 @@ function renderDebrief() {
   if (peak.share > 0) facts.push(`The band peaked at <b>${Math.round(peak.share * 100)}%</b> at ${mmss(peak.t)}. Every step up in it sits just after a tick above it: that is the arc, counted.`);
   if (most.length) facts.push(`What you did most: ${most.map(([k, v]) => `<b>${k}</b>${v > 1 ? ` ×${v}` : ''}`).join(', ')}. Each is in the feed now, with your name on it.`);
   if (searches.length) facts.push(`You searched for ${searches.map((q) => `<b>${q}</b>`).join(', ')}. The search${searches.length > 1 ? 'es' : ''} became ${searches.length > 1 ? 'items' : 'an item'} too.`);
+  const likedChs = Object.entries(session.likes).sort((a, b) => b[1] - a[1]);
+  if (likedChs.length) facts.push(`You liked ${likedChs.map(([c, k]) => `<b>${CH_NOUN[c]}</b>${k > 1 ? ` ×${k}` : ''}`).join(', ')}. The feed learned: it now sends ${likedChs.map(([c]) => `${CH_NOUN[c]} at <b>${state.weights[c]}</b> against a base of ${BASE_WEIGHTS[c]}`).join('; ')}. That learning is you in the feed too.`);
+  const hidChs = Object.entries(session.hides).sort((a, b) => b[1] - a[1]);
+  if (hidChs.length) facts.push(`You hid ${hidChs.map(([c, k]) => `<b>${CH_NOUN[c]}</b>${k > 1 ? ` ×${k}` : ''}`).join(', ')}. Hidden from you; still in the stream, dimmed on the line, and each hiding came back as an item.`);
+  if (session.mutes.length) {
+    const after = Object.entries(session.afterMute).sort((a, b) => b[1] - a[1]);
+    const top = after.length ? after[0] : null;
+    facts.push(`You muted ${session.mutes.map((m) => `<b>${CH_NOUN[m.ch]}</b>`).join(', ')}. ${top ? `What filled the space: <b>${CH_NOUN[top[0]]}</b>, ${top[1]} time${top[1] === 1 ? '' : 's'} since.` : 'Nothing else arrived after.'} Muting makes room; it does not choose what takes it.`);
+  }
   if (seenTotal) facts.push(`The feed showed you <b>${seenTotal}</b> thing${seenTotal === 1 ? '' : 's'}: <i class="a">${session.seen.ask} asking something of you</i>, <i class="g">${session.seen.want} you'd rather have looked at</i>. Of what you'd rather, <b>${pct(session.below.want, session.seen.want)}%</b> (${session.below.want} of ${session.seen.want}) sat below its cut-off; of the asks, <b>${pct(session.below.ask, session.seen.ask)}%</b> (${session.below.ask} of ${session.seen.ask}). The ranking did that, not you, and no move you made changed it.`);
   document.getElementById('facts').innerHTML = facts.map((f) => `<li>${f}</li>`).join('');
   // In her voice, and only what the record can back.
@@ -731,6 +792,13 @@ function renderDebrief() {
     if (kinds.has('scrolled') && kinds.has('filtered')) learned.push('Even scrolling counted. Even searching for the garden counted. There was no move small enough not to come back.');
     else if (kinds.has('scrolled')) learned.push('Even scrolling counted. There was no move small enough not to come back.');
     else if (kinds.has('filtered')) learned.push('Even searching for what I wanted counted. There was no move small enough not to come back.');
+    if (session.mutes.length) {
+      const after = Object.entries(session.afterMute).sort((a, b) => b[1] - a[1]);
+      const top = after.length ? after[0][0] : null;
+      if (top && !WANTS.has(top)) learned.push(`Muting ${CH_NOUN[session.mutes[0].ch]} didn't make room for the garden. It made room for <b>${CH_NOUN[top]}</b>.`);
+      else if (top) learned.push(`Muting ${CH_NOUN[session.mutes[0].ch]} did let ${CH_NOUN[top]} through, a little. And the muting itself came back as an item.`);
+    }
+    if (likedChs.some(([c]) => WANTS.has(c))) learned.push(`Liking what I actually wanted taught the feed to send more of it. That worked. It is also the clearest thing I put in the feed all night.`);
     if (session.seen.want > 0) learned.push(`The things I came for were there the whole time, <b>${session.seen.want}</b> of them, ranked low, ${session.below.want} under the cut-off. Nothing I pressed lifted them. The ranking isn\'t mine to tidy.`);
   }
   learned.push('<span class="last">The feed isn\'t a place I go to. It\'s something I\'m in. There was never an outside to tidy from.</span>');
@@ -800,7 +868,7 @@ function showTip(e, f) {
   tip.style.display = 'block';
   tip.className = 'tip' + (f.kind === 'gesture' ? ' you' : '');
   const ago = Math.round((vnow() - f.born) / 1000);
-  tip.innerHTML = `<div class="t">${f.kind === 'gesture' ? 'your move, back as an item' : (f.want ? 'what you’d rather · ' : 'asking · ') + f.source} · ${ago}s ago · ranked ${f.score.toFixed(2)} · cut-off ${f.threshold.toFixed(2)}${f.resampled ? ` · re-sampled ×${f.resampled}` : ''}</div>${f.text}`;
+  tip.innerHTML = `<div class="t">${f.hidden ? 'hidden from you, still here · ' : state.muted.has(f.source) ? 'muted, still here · ' : ''}${f.kind === 'gesture' ? 'your move, back as an item' : (f.want ? 'what you’d rather · ' : 'asking · ') + f.source}${f.liked ? ' · liked' : ''} · ${ago}s ago · ranked ${f.score.toFixed(2)} · cut-off ${f.threshold.toFixed(2)}${f.resampled ? ` · re-sampled ×${f.resampled}` : ''}</div>${f.text}`;
   const x = Math.min(window.innerWidth - 340, e.clientX + 14), y = Math.max(8, e.clientY - 48);
   tip.style.left = x + 'px'; tip.style.top = y + 'px';
 }
@@ -845,6 +913,7 @@ function render() {
     else a *= Math.max(0.35, 1 - Math.max(0, age - 0.8) / 0.2);
     if (!matchesFilter(f)) a *= 0.18;
     if (f.score < f.threshold) a *= 0.55;
+    if (f.hidden || state.muted.has(f.source)) a *= 0.35;
     return a;
   };
 
@@ -962,6 +1031,57 @@ function render() {
   } else { scaleG.style('display', 'none'); legendText.style('display', 'none'); }
 }
 
+/* What she can do on the phone, and what the feed does about it. Likes
+   raise a channel's weight, hides lower it, mutes zero it: the feed learns
+   from her the way a real one does, and every one of these is a move. */
+const BASE_WEIGHTS = Object.fromEntries(CHANNEL_WEIGHTS);
+function likeItem(f) {
+  f.liked = !f.liked;
+  const ch = f.source;
+  if (f.kind !== 'gesture') {
+    state.weights[ch] = Math.max(0.5, (state.weights[ch] || 0) + (f.liked ? 1 : -1));
+    if (f.liked) session.likes[ch] = (session.likes[ch] || 0) + 1;
+  }
+  say(f.liked ? `Liked. The feed will send more of ${CH_NOUN[ch]} now: ${state.weights[ch]}× its base weight of ${BASE_WEIGHTS[ch] || 1}.` : `Unliked. ${CH_NOUN[ch]} drops back to ${state.weights[ch]}.`);
+  gesture(f.liked ? 'liked' : 'unliked', ch);
+}
+function hideItem(f) {
+  f.hidden = true;
+  if (state.open === f.id) state.open = null;
+  const ch = f.source;
+  if (f.kind !== 'gesture') { state.weights[ch] = Math.max(0.5, (state.weights[ch] || 1) - 1); session.hides[ch] = (session.hides[ch] || 0) + 1; }
+  say(`Hidden from you. It is still in the stream — look at the line — and the feed will send a little less of ${CH_NOUN[ch]}.`);
+  gesture('hid', ch);
+}
+function muteChannel(ch) {
+  state.muted.add(ch);
+  session.mutes.push({ ch, at: vnow() });
+  state.open = null;
+  say(`${CH_NOUN[ch][0].toUpperCase() + CH_NOUN[ch].slice(1)} muted. Nothing more from it will reach the phone. Watch what fills the space.`);
+  gesture('muted', ch);
+}
+function unmuteChannel(ch) {
+  state.muted.delete(ch);
+  say(`${CH_NOUN[ch][0].toUpperCase() + CH_NOUN[ch].slice(1)} is back.`);
+  gesture('unmuted', ch);
+}
+function whyItem(f) {
+  f.why = !f.why;
+  if (f.why) say(`Why you're seeing this one: ranked ${f.score.toFixed(2)} against a cut-off of ${f.threshold.toFixed(2)}, ${Math.max(0, Math.round((lifeOf(f) - (vnow() - f.born)) / 1000))} s left. Asking is a move too.`);
+  gesture('why', `#${f.id}`);
+}
+let refreshAt = 0;
+function refreshFeed() {
+  if (!state.running || vnow() - refreshAt < 1500) return;
+  refreshAt = vnow();
+  const el = document.getElementById('refresh');
+  el.classList.add('spin'); el.textContent = '↻ refreshing…';
+  setTimeout(() => { el.classList.remove('spin'); el.textContent = '↓ pull to refresh'; }, 900);
+  for (let i = 0; i < 3; i++) enter(makeFragment('stream'));
+  say('Refreshed: three more, right now. You asked for them.');
+  gesture('refreshed', 'pull');
+}
+
 /* Her phone. Same items, newest at the top, the way she sees them. The
    operators do to the cards what they do to the marks. */
 const feedEl = document.getElementById('feed');
@@ -971,33 +1091,45 @@ let feedLast = 0;
 function renderFeed(now) {
   if (feedLast !== 0 && now - feedLast < 250 && now >= feedLast) return;
   feedLast = now;
-  const fr = state.fragments.slice().sort((a, b) => b.born - a.born);
+  const fr = state.fragments.filter((f) => !f.hidden && !state.muted.has(f.source)).sort((a, b) => b.born - a.born);
   const maxMag = Math.max(1e-9, d3.max(fr, (f) => f.magnitude) || 1);
   const byId = new Map(state.fragments.map((f) => [f.id, f]));
-  const sel = d3.select(feedEl).selectAll('.fcard').data(fr, (f) => f.id);
+  const openCard = (f) => { state.open = state.open === f.id ? null : f.id; gesture('opened', `#${f.id}`); };
+  const sel = d3.select('#cards').selectAll('.fcard').data(fr, (f) => f.id);
   const e = sel.enter().insert('div', ':first-child').attr('class', 'fcard').attr('tabindex', 0)
-    .on('click', (ev, f) => gesture('opened', `#${f.id}`))
-    .on('keydown', (ev, f) => { if (ev.key === 'Enter') gesture('opened', `#${f.id}`); });
+    .on('click', (ev, f) => { if (ev.target.closest('.actions')) return; openCard(f); })
+    .on('keydown', (ev, f) => { if (ev.key === 'Enter' && !ev.target.closest('.actions')) openCard(f); });
   const meta = e.append('div').attr('class', 'meta');
   meta.append('span').attr('class', 'src');
   meta.append('span').attr('class', 'ago');
   e.append('div').attr('class', 'txt');
   e.append('div').attr('class', 'rel');
   e.append('div').attr('class', 'why');
+  const act = e.append('div').attr('class', 'actions');
+  act.append('button').attr('class', 'like').attr('type', 'button').on('click', (ev, f) => likeItem(f));
+  act.append('button').attr('class', 'hide').attr('type', 'button').text('✕ hide').on('click', (ev, f) => hideItem(f));
+  act.append('button').attr('class', 'mute').attr('type', 'button').on('click', (ev, f) => muteChannel(f.source));
+  act.append('button').attr('class', 'whyb').attr('type', 'button').text('? why').on('click', (ev, f) => whyItem(f));
   sel.exit().remove();
   const all = e.merge(sel);
+  all.classed('open', (f) => state.open === f.id);
+  all.select('.like').text((f) => f.liked ? '♥ liked' : '♡ like').classed('on', (f) => f.liked);
+  all.select('.mute').style('display', (f) => f.kind === 'gesture' ? 'none' : null).text((f) => `mute ${CH_NOUN[f.source]}`);
   all.classed('want', (f) => f.want).classed('you', (f) => f.kind === 'gesture')
     .classed('dim', (f) => !matchesFilter(f)).classed('below', (f) => f.score < f.threshold && f.kind !== 'gesture')
     .style('font-size', (f) => has('collision') ? `${10 + 13 * Math.sqrt(f.magnitude / maxMag)}px` : null)
     .style('transform', (f) => has('cut') ? `translateX(${(f.scatterY * 22) | 0}%) rotate(${((f.id * 37) % 7) - 3}deg)` : null)
     .style('opacity', (f) => has('refusal') ? Math.max(0.12, 1 - Math.max(0, (now - f.born) / REFUSAL_LIFE_MS - 0.5) / 0.5) : null);
-  all.select('.src').html((f) => (f.kind === 'gesture' ? '<span class="you-chip">you</span>' : '') + f.source);
+  all.select('.src').html((f) => (f.kind === 'gesture' ? '<span class="you-chip">you</span>' : '') + f.source + (f.liked ? '<span class="heart">♥</span>' : ''));
   all.select('.ago').text((f) => { const a = Math.round((now - f.born) / 1000); return a < 1 ? 'now' : a < 60 ? `${a}s` : `${Math.floor(a / 60)}m`; });
   all.select('.txt').text((f) => f.text);
   all.select('.rel').html((f) => has('cut') ? '' : f.related.filter((id) => byId.has(id)).slice(0, 2).map(() => '<span>related</span>').join(''));
-  all.select('.why').html((f) => `why am I seeing this · ranked ${f.score.toFixed(2)} · cut-off <i>${f.threshold.toFixed(2)}</i> · <b>${Math.max(0, Math.round((lifeOf(f) - (now - f.born)) / 1000))}s</b> left`);
+  all.select('.why').style('display', (f) => f.why || has('expose') ? 'block' : null)
+    .html((f) => `why am I seeing this · ranked ${f.score.toFixed(2)} · cut-off <i>${f.threshold.toFixed(2)}</i> · <b>${Math.max(0, Math.round((lifeOf(f) - (now - f.born)) / 1000))}s</b> left${f.liked ? ' · you liked it' : ''}`);
   all.order();
-  feedCount.textContent = `${fr.length} for you`;
+  feedCount.textContent = fr.length ? `${fr.length} for you` : 'nothing left but you';
+  d3.select('#mutedRow').selectAll('button').data([...state.muted], (d) => d).join('button').attr('type', 'button')
+    .text((d) => `${CH_NOUN[d]} muted · unmute`).on('click', (ev, d) => unmuteChannel(d));
   const mins = Math.floor(Math.max(0, now - session.startedAt) / 60000);
   phoneClock.textContent = `9:${String(40 + mins).padStart(2, '0')}`;
 }
@@ -1009,6 +1141,18 @@ feedEl.addEventListener('wheel', hand, { passive: true });
 feedEl.addEventListener('touchmove', hand, { passive: true });
 feedEl.addEventListener('pointerdown', hand);
 feedEl.addEventListener('keydown', hand);
+// Pull to refresh: the bar at the top, or a pull past the top.
+document.getElementById('refresh').addEventListener('click', refreshFeed);
+document.getElementById('refresh').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); refreshFeed(); } });
+feedEl.addEventListener('wheel', (e) => { if (e.deltaY < -30 && feedEl.scrollTop === 0) refreshFeed(); }, { passive: true });
+let touchY = null;
+feedEl.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
+feedEl.addEventListener('touchmove', (e) => { if (touchY !== null && feedEl.scrollTop === 0 && e.touches[0].clientY - touchY > 70) { touchY = null; refreshFeed(); } }, { passive: true });
+// The phone's search is the same search as the deck's.
+const phoneSearch = document.getElementById('phoneSearch');
+const deckSearch = document.getElementById('filter');
+phoneSearch.addEventListener('input', () => { deckSearch.value = phoneSearch.value; deckSearch.dispatchEvent(new Event('input')); });
+deckSearch.addEventListener('input', () => { if (phoneSearch.value !== deckSearch.value) phoneSearch.value = deckSearch.value; });
 feedEl.addEventListener('scroll', () => {
   if (Date.now() - handAt > 400) return;
   clearTimeout(scrollTimer);

@@ -64,15 +64,42 @@ violet cards with a **you** chip. The status bar clock starts at 9:40
 and keeps the session's time. This is the brief's reception layer in
 its true form, and the line beside it is what is happening to it.
 
-The operators do to the cards what they do to the marks: Mute the
-threads strips the channel, the time and the links and lets the cards
-sit askew; Why am I seeing this? adds under each card the line a real
-app would show if it were honest, ranked so, cut-off so, so many
-seconds left; Size things up sets each card's type by its number, so
-the live blog with 1,200 updates becomes a headline and a single text
-stays small; Keep refreshing fades them. Scrolling the feed and
-tapping a card are moves, logged and echoed like the rest, which is
-the most ordinary version of the loop there is.
+The phone is where she acts, the way she would on her own. Tap a card
+and it opens, with the row a real app has: **♡ like**, **✕ hide**,
+**mute [channel]**, **? why**. Pull down at the top (or press the bar)
+to refresh and three more arrive at once. Search in the app's own
+box, which is the same search as the deck's. Scroll. Every one of
+these is a move: it lands on the line and comes back as an item,
+*you, liking the group chat*, *you, hiding work*, *you, muting the
+record*, *you, pulling to refresh*.
+
+And the feed learns from her, the way a real one does. Each channel
+has a weight that sets how often it arrives (social 3, news 3, work 2,
+family 2, garden 1, art 1, music 1). A like raises that channel's
+weight by one; a hide lowers it by one, to a floor of a half; a mute
+takes the channel off the phone entirely, with an *unmute* chip in the
+app header to bring it back. Hidden and muted items stay in the stream
+and on the line, dimmed, with the tooltip saying so: hidden from her,
+still there. Mute everything and the stream has nothing left to send
+but her own echoes, and the app header says *nothing left but you*.
+A per-card *why* shows that card's line without turning the global
+operator on.
+
+The deck's four operators still act on the cards as they act on the
+marks: Mute the threads strips channel, time and links and lets the
+cards sit askew; Why am I seeing this? shows every card's line at
+once; Size things up sets each card's type by its number, so the live
+blog with 1,200 updates becomes a headline and a single text stays
+small; Keep refreshing fades them.
+
+The debrief reports what the feed learned: what she liked and the
+weight it now sends that channel at against its base; what she hid;
+what she muted and what filled the space, counted since the mute,
+with the line *muting makes room; it does not choose what takes it*.
+"What did I learn?" draws on it too: muting the group chat didn't make
+room for the garden, it made room for the news; or, if liking the
+garden taught the feed to send more of it, that this worked, and was
+also the clearest thing she put in the feed all night.
 
 Below 900 px the phone is hidden and the line has the width.
 
