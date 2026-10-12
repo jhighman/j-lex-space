@@ -741,7 +741,9 @@ function renderDebrief() {
   const title = document.getElementById('debriefTitle');
   title.innerHTML = n === 0
     ? `You made <b>no moves</b>, and the feed stayed <b>0% you</b>. That is the only way to keep the band flat.`
-    : `<b>${n} move${n === 1 ? '' : 's'}.</b> ${n === 1 ? 'It' : 'All of them'} came back. By the end, <b>${Math.round(endShare * 100)}%</b> of your feed was you.`;
+    : endShare === 0
+      ? `<b>${n} move${n === 1 ? '' : 's'}.</b> ${n === 1 ? 'It' : 'All of them'} came back, and then ${n === 1 ? 'it' : 'they'} aged out, as everything in the feed does after ${Math.round(FRAGMENT_LIFE_MS / 1000)} seconds. By the end, <b>none</b> of your feed was you. It had been <b>${Math.round(peak.share * 100)}%</b>.`
+      : `<b>${n} move${n === 1 ? '' : 's'}.</b> ${n === 1 ? 'It' : 'All of them'} came back. By the end, <b>${Math.round(endShare * 100)}%</b> of your feed was you.`;
 
   // The sparkline: moves as ticks above, share as an area below, on one time axis.
   const svg = d3.select('#spark'); svg.selectAll('*').remove();
@@ -787,7 +789,7 @@ function renderDebrief() {
     const tLast = lastMove.at - session.startedAt;
     const atLast = samples.reduce((a, b) => (b.t <= tLast + 2500 ? b : a), samples[0]).share;
     if (played - tLast > 10000 && atLast > endShare + 0.05) {
-      facts.push(`After your last move at <b>${mmss(tLast)}</b> the band fell from <b>${Math.round(atLast * 100)}%</b> to <b>${Math.round(endShare * 100)}%</b>. Not because anything of yours was removed: the feed kept coming and buried you. Stopping doesn't take you out; it changes the proportions.`);
+      facts.push(`After your last move at <b>${mmss(tLast)}</b> the band fell from <b>${Math.round(atLast * 100)}%</b> to <b>${Math.round(endShare * 100)}%</b>. Not because anything of yours was removed: the feed kept coming and buried you${endShare === 0 ? `, and after ${Math.round(FRAGMENT_LIFE_MS / 1000)} seconds each of your echoes aged out, as every item does` : ''}. Stopping doesn't take you out; it changes the proportions.`);
       session.fell = { tLast, atLast };
     } else session.fell = null;
   } else session.fell = null;
@@ -811,7 +813,9 @@ function renderDebrief() {
     learned.push('I also didn\'t get to the garden plan. Not touching the feed isn\'t the same as having the twenty minutes.');
   } else {
     learned.push(`I opened the feed to clear it. <b>Every move I made to clear it became something to clear.</b> ${n} move${n === 1 ? '' : 's'}, ${n} new item${n === 1 ? '' : 's'}, every time, two seconds later.`);
-    learned.push(`The more I tidied, the more of the feed was me: <b>${Math.round(endShare * 100)}%</b> by the end${peak.share > endShare + 0.02 ? `, ${Math.round(peak.share * 100)}% at its highest` : ''}. The band went up with my hand, not against it.`);
+    learned.push(endShare === 0
+      ? `The more I tidied, the more of the feed was me: <b>${Math.round(peak.share * 100)}%</b> at its highest. The band went up with my hand, not against it, and came down only when I stopped and the feed kept going.`
+      : `The more I tidied, the more of the feed was me: <b>${Math.round(endShare * 100)}%</b> by the end${peak.share > endShare + 0.02 ? `, ${Math.round(peak.share * 100)}% at its highest` : ''}. The band went up with my hand, not against it.`);
     if (kinds.has('scrolled') && kinds.has('filtered')) learned.push('Even scrolling counted. Even searching for the garden counted. There was no move small enough not to come back.');
     else if (kinds.has('scrolled')) learned.push('Even scrolling counted. There was no move small enough not to come back.');
     else if (kinds.has('filtered')) learned.push('Even searching for what I wanted counted. There was no move small enough not to come back.');
