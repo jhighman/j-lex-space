@@ -42,8 +42,52 @@
   /* your moves above it with an arc to where each comes back, and    */
   /* beneath it the share of the stream that is you.                   */
   /* ---------------------------------------------------------------- */
-  main { position: relative; min-height: 0; padding: 0 0 var(--deck-h); }
+  main { position: relative; min-height: 0; padding: 0 0 var(--deck-h); display: grid; grid-template-columns: minmax(0, 1fr) 332px; gap: 0; }
+  .stage { position: relative; min-width: 0; min-height: 0; }
   #line { width: 100%; height: 100%; display: block; }
+
+  /* ---------------------------------------------------------------- */
+  /* Her phone: the feed as she sees it. The line is what is happening */
+  /* to it. Same items, same moves; scrolling and tapping count too.    */
+  /* ---------------------------------------------------------------- */
+  .phone { display: flex; align-items: center; justify-content: center; padding: 6px 18px 10px 6px; min-height: 0; }
+  .bezel {
+    width: 296px; height: 100%; max-height: 640px; border-radius: 40px; background: #000;
+    border: 9px solid #1c1e27; box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.05);
+    display: flex; flex-direction: column; overflow: hidden; position: relative;
+  }
+  .bezel::before { content: ''; position: absolute; left: 50%; top: 10px; width: 92px; height: 24px; transform: translateX(-50%); background: #000; border-radius: 14px; z-index: 2; }
+  .status { display: flex; justify-content: space-between; align-items: center; padding: 14px 22px 4px; font-size: 12px; font-weight: 600; color: #fff; background: #0e0f14; }
+  .status .r { display: flex; gap: 5px; align-items: center; font-size: 10px; font-weight: 500; letter-spacing: 0.02em; }
+  .status .batt { width: 22px; height: 10px; border: 1px solid rgba(255,255,255,0.6); border-radius: 3px; position: relative; }
+  .status .batt::after { content: ''; position: absolute; left: 1px; top: 1px; bottom: 1px; width: 60%; background: #fff; border-radius: 1px; }
+  .apphead { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 16px 8px; background: #0e0f14; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .apphead b { font-size: 17px; font-weight: 700; color: #fff; }
+  .apphead span { font-size: 11px; color: var(--soft); }
+  .feed { flex: 1; min-height: 0; overflow-y: auto; background: #0e0f14; padding: 8px 10px 20px; scroll-behavior: auto; }
+  .feed::-webkit-scrollbar { width: 0; }
+  .fcard {
+    background: #1a1c25; border-radius: 12px; padding: 9px 11px 8px; margin: 0 0 8px; border-left: 3px solid var(--amber);
+    font-size: 12.5px; line-height: 1.35; color: var(--ink); transition: opacity 0.5s, transform 0.6s, font-size 0.4s; cursor: pointer;
+  }
+  .fcard.want { border-left-color: #7fd1a8; }
+  .fcard.you { border-left-color: var(--violet); background: #211d33; }
+  .fcard.dim { opacity: 0.22; }
+  .fcard.below { opacity: 0.55; }
+  .fcard .meta { display: flex; justify-content: space-between; gap: 8px; font-size: 10px; color: var(--soft); margin-bottom: 3px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .fcard .meta .you-chip { background: var(--violet); color: #fff; font-weight: 700; border-radius: 4px; padding: 0 5px; margin-right: 6px; }
+  .fcard .rel { margin-top: 4px; font-size: 10.5px; color: #8d9bd6; }
+  .fcard .rel span { margin-right: 8px; text-decoration: underline; }
+  .fcard .why { display: none; margin-top: 5px; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.14); font-size: 10px; color: var(--soft); font-family: ui-monospace, Menlo, monospace; }
+  body.expose .fcard .why { display: block; }
+  body.expose .fcard .why i { color: var(--coral); font-style: normal; } body.expose .fcard .why b { color: var(--cyan); font-weight: 500; }
+  body.cut .fcard .meta, body.cut .fcard .rel { display: none; }
+  body.cut .fcard { border-left-color: #3a3d4a; border-radius: 4px; width: 78%; }
+  body.refusal .fcard { animation: shimmer 1.1s infinite linear; }
+  @keyframes shimmer { 0% { transform: translateX(0); } 50% { transform: translateX(0.6px); } 100% { transform: translateX(0); } }
+
+  @media (max-width: 1100px) { main { grid-template-columns: minmax(0, 1fr) 300px; } .bezel { width: 268px; } }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } .phone { display: none; } }
   #line text { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; pointer-events: none; }
   #line .rowlabel { font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; fill: var(--soft); }
   #line .rowlabel.you { fill: var(--violet); }
@@ -229,8 +273,17 @@
 <div id="progress" aria-hidden="true"></div>
 
 <main>
-  <svg id="line" role="img" aria-label="The stream as a line over time: your moves above it, each with an arc to where it comes back in; beneath it, the share of the stream that is your own echo."></svg>
-  <div class="tip" id="tip"></div>
+  <div class="stage">
+    <svg id="line" role="img" aria-label="The stream as a line over time: your moves above it, each with an arc to where it comes back in; beneath it, the share of the stream that is your own echo."></svg>
+    <div class="tip" id="tip"></div>
+  </div>
+  <aside class="phone" aria-label="Your phone: the feed as you see it">
+    <div class="bezel">
+      <div class="status"><span id="phoneClock">9:40</span><span class="r">5G <span class="batt" aria-hidden="true"></span></span></div>
+      <div class="apphead"><b>Feed</b><span id="feedCount">for you</span></div>
+      <div class="feed" id="feed" tabindex="0"></div>
+    </div>
+  </aside>
 </main>
 
 <p class="caption" id="caption" aria-live="polite"></p>
@@ -271,6 +324,7 @@
       <dd>Everything you can do is on the bar at the bottom of the screen. <span class="where">Left to right:</span>
         <ul class="howto">
           <li><span class="chip play">▶</span><span>Play and pause. The clock stops while you're paused.</span></li>
+          <li><span class="chip search">scroll · tap</span><span>On the phone: scroll the feed, tap a card. Those are moves too.</span></li>
           <li><span class="chip">Mute the threads</span><span>Drops the links and timestamps; ranking stops holding anything in place.</span></li>
           <li><span class="chip">Why am I seeing this?</span><span>Shows each item's cut-off (red) and how long it has left (blue).</span></li>
           <li><span class="chip">Size things up</span><span>Sizes items by their number: one text from your daughter beside 1,200 updates.</span></li>
@@ -278,10 +332,10 @@
           <li><span class="chip search">search… try garden</span><span>Type a word. Matches stay bright; the rest dims but stays.</span></li>
           <li><span class="chip pace">pace</span><span>Quiet evening, normal day, or bad day: one thing every second and a half.</span></li>
         </ul>
-        <span class="where">Press a pad again to turn it off. Clicking any item on the line counts too. Every one of these is a move.</span>
+        <span class="where">Press a pad again to turn it off. Every one of these is a move.</span>
       </dd>
       <dt>What to watch</dt>
-      <dd>Time runs left to right. <b>Every move you make is a <i class="v">violet</i> mark above the stream, with an arc to where it comes back into the stream two seconds later.</b> The band at the bottom is how much of the stream is you.</dd>
+      <dd>Your phone, on the right, is the feed as you see it. The line, on the left, is what is happening to it: time runs left to right, and <b>every move you make is a <i class="v">violet</i> mark above the stream, with an arc to where it comes back into the feed two seconds later.</b> The band at the bottom is how much of the feed is you.</dd>
       <dt>What you'll find</dt>
       <dd>You can't keep the band flat. There is no outside to tidy from: every tidy-up, even a search, goes back in. Every real feed does this with your clicks, silently. Here it's drawn.</dd>
     </dl>
@@ -480,7 +534,8 @@ const GESTURE_TALK = {
   applied: (d) => DOING[d][0],
   lifted: (d) => DOING[d][1],
   filtered: (d) => d === 'cleared' ? 'clearing the search' : `searching for ${d}`,
-  opened: () => 'picking one out',
+  opened: () => 'tapping one open',
+  scrolled: () => 'scrolling',
   paced: (d) => PACE_SAID[d],
 };
 function gesture(kind, detail) {
@@ -810,7 +865,7 @@ function render() {
   const share = hist.length ? hist[hist.length - 1].share : 0;
   readoutBig.attr('x', W - M.right).attr('y', yEchoTop - 6).text(`${Math.round(share * 100)}% of the stream is you`);
   kindLegend.attr('transform', `translate(${M.left},${M.top + 6})`).style('display', W < 760 ? 'none' : null);
-  readoutSmall.attr('x', W - M.right).attr('y', M.top + 10).text(`${state.viewerGestures.length} moves on the line · ${fr.length} items in the stream · ${state.running ? 'running' : 'paused'}`);
+  readoutSmall.attr('x', W - M.right).attr('y', M.top + 10).text(`${state.viewerGestures.length} move${state.viewerGestures.length === 1 ? '' : 's'} on the line · ${fr.length} item${fr.length === 1 ? '' : 's'} in the stream · ${state.running ? 'running' : 'paused'}`);
 
   // Your moves, and the arc from each to its echo.
   const gs = state.viewerGestures.filter((g) => x(g.at) > M.left - 20);
@@ -887,13 +942,61 @@ function render() {
   } else { scaleG.style('display', 'none'); legendText.style('display', 'none'); }
 }
 
+/* Her phone. Same items, newest at the top, the way she sees them. The
+   operators do to the cards what they do to the marks. */
+const feedEl = document.getElementById('feed');
+const feedCount = document.getElementById('feedCount');
+const phoneClock = document.getElementById('phoneClock');
+let feedLast = 0;
+function renderFeed(now) {
+  if (feedLast !== 0 && now - feedLast < 250 && now >= feedLast) return;
+  feedLast = now;
+  const fr = state.fragments.slice().sort((a, b) => b.born - a.born);
+  const maxMag = Math.max(1e-9, d3.max(fr, (f) => f.magnitude) || 1);
+  const byId = new Map(state.fragments.map((f) => [f.id, f]));
+  const sel = d3.select(feedEl).selectAll('.fcard').data(fr, (f) => f.id);
+  const e = sel.enter().insert('div', ':first-child').attr('class', 'fcard').attr('tabindex', 0)
+    .on('click', (ev, f) => gesture('opened', `#${f.id}`))
+    .on('keydown', (ev, f) => { if (ev.key === 'Enter') gesture('opened', `#${f.id}`); });
+  const meta = e.append('div').attr('class', 'meta');
+  meta.append('span').attr('class', 'src');
+  meta.append('span').attr('class', 'ago');
+  e.append('div').attr('class', 'txt');
+  e.append('div').attr('class', 'rel');
+  e.append('div').attr('class', 'why');
+  sel.exit().remove();
+  const all = e.merge(sel);
+  all.classed('want', (f) => f.want).classed('you', (f) => f.kind === 'gesture')
+    .classed('dim', (f) => !matchesFilter(f)).classed('below', (f) => f.score < f.threshold && f.kind !== 'gesture')
+    .style('font-size', (f) => has('collision') ? `${10 + 13 * Math.sqrt(f.magnitude / maxMag)}px` : null)
+    .style('transform', (f) => has('cut') ? `translateX(${(f.scatterY * 22) | 0}%) rotate(${((f.id * 37) % 7) - 3}deg)` : null)
+    .style('opacity', (f) => has('refusal') ? Math.max(0.12, 1 - Math.max(0, (now - f.born) / REFUSAL_LIFE_MS - 0.5) / 0.5) : null);
+  all.select('.src').html((f) => (f.kind === 'gesture' ? '<span class="you-chip">you</span>' : '') + f.source);
+  all.select('.ago').text((f) => { const a = Math.round((now - f.born) / 1000); return a < 1 ? 'now' : a < 60 ? `${a}s` : `${Math.floor(a / 60)}m`; });
+  all.select('.txt').text((f) => f.text);
+  all.select('.rel').html((f) => has('cut') ? '' : f.related.filter((id) => byId.has(id)).slice(0, 2).map(() => '<span>related</span>').join(''));
+  all.select('.why').html((f) => `why am I seeing this · ranked ${f.score.toFixed(2)} · cut-off <i>${f.threshold.toFixed(2)}</i> · <b>${Math.max(0, Math.round((lifeOf(f) - (now - f.born)) / 1000))}s</b> left`);
+  all.order();
+  feedCount.textContent = `${fr.length} for you`;
+  const mins = Math.floor(Math.max(0, now - session.startedAt) / 60000);
+  phoneClock.textContent = `9:${String(40 + mins).padStart(2, '0')}`;
+}
+let scrollTimer = 0, scrollArmed = false;
+feedEl.addEventListener('scroll', () => {
+  if (!scrollArmed) return;
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(() => gesture('scrolled', `${Math.round(feedEl.scrollTop)}px`), 700);
+});
+feedEl.addEventListener('pointerdown', () => { scrollArmed = true; });
+feedEl.addEventListener('wheel', () => { scrollArmed = true; }, { passive: true });
+
 // The deck wraps on narrow screens; the line's bottom clearance follows it.
 const deckEl = document.querySelector('.deck');
 new ResizeObserver(() => { document.documentElement.style.setProperty('--deck-h', deckEl.offsetHeight + 'px'); }).observe(deckEl);
 
 let last = 0;
 function frame(ts) {
-  if (ts - last > 33) { last = ts; render(); renderClock(); }
+  if (ts - last > 33) { last = ts; render(); renderClock(); renderFeed(vnow()); }
   requestAnimationFrame(frame);
 }
 // Seed the stream so the line is not empty before play is pressed.

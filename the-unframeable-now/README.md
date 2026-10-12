@@ -54,6 +54,28 @@ echo    ░░░░▓▓▓▓▓▓▓▓▓        share of the stream that 
 The clock the line runs on stops when the stream is paused, so a paused
 picture holds still and can be read.
 
+## Her phone
+
+Beside the line, on wider screens, a phone shows the feed as she sees
+it: the same items, newest at the top, each a card with its channel,
+how long ago, its text, and its "related" links, amber-edged for the
+asks and green for what she'd rather; her own moves come back as
+violet cards with a **you** chip. The status bar clock starts at 9:40
+and keeps the session's time. This is the brief's reception layer in
+its true form, and the line beside it is what is happening to it.
+
+The operators do to the cards what they do to the marks: Mute the
+threads strips the channel, the time and the links and lets the cards
+sit askew; Why am I seeing this? adds under each card the line a real
+app would show if it were honest, ranked so, cut-off so, so many
+seconds left; Size things up sets each card's type by its number, so
+the live blog with 1,200 updates becomes a headline and a single text
+stays small; Keep refreshing fades them. Scrolling the feed and
+tapping a card are moves, logged and echoed like the rest, which is
+the most ordinary version of the loop there is.
+
+Below 900 px the phone is hidden and the line has the width.
+
 Why a line and not the volume the brief asked for: the volume encoded
 source as angle, score as size, sentiment as colour and a random jitter
 as position, and a reader could read none of it. The claim of the piece
