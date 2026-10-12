@@ -607,7 +607,7 @@ function gesture(kind, detail) {
   const g = { at: vnow(), kind, detail, said, echoAt: vnow() + REENTRY_DELAY_MS, echo: null };
   state.viewerGestures.push(g);
   session.moves.push(g);
-  cortisolAdd(0.08);
+  cortisolAdd({ calm: 0.14, steady: 0.08, busy: 0.06 }[state.pace]);
   sfx({ liked: 'like', unliked: 'click', hid: 'thunk', muted: 'thunk', unmuted: 'click', refreshed: 'refresh', opened: 'click', scrolled: 'tick', applied: 'clack', lifted: 'clack', filtered: 'type', why: 'click', paced: 'clack' }[kind] || 'click');
   setTimeout(() => {
     const f = makeFragment('gesture', { kind: 'gesture', source: 'you', text: `you, ${said}` });
@@ -1269,7 +1269,7 @@ function synth(ctx, dest, kind, t, o = {}) {
     case 'thunk': { const n = g(0.3); env(n, 0.3, 0.18); osc('sine', 160, n, 0.18, 70); const n2 = g(0.15); env(n2, 0.15, 0.1); noise(n2, 0.1, 300); break; } // hide, mute: relief
     case 'refresh': { const n = g(0.12); env(n, 0.12, 0.5); const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 2; f.frequency.setValueAtTime(400, t); f.frequency.exponentialRampToValueAtTime(3000, t + 0.45); f.connect(n); noise(f, 0.5); const n2 = g(0.1); n2.gain.setValueAtTime(0.0001, t + 0.45); n2.gain.exponentialRampToValueAtTime(0.1, t + 0.46); n2.gain.exponentialRampToValueAtTime(0.0001, t + 0.9); const x = ctx.createOscillator(); x.type = 'sine'; x.frequency.value = 1318; x.connect(n2); x.start(t + 0.45); x.stop(t + 0.95); break; }
     case 'click': { const n = g(0.08); env(n, 0.08, 0.02); noise(n, 0.02, 3000, 800); break; }
-    case 'tick': { const n = g(0.03); env(n, 0.03, 0.015); noise(n, 0.015, 5000, 2000); break; }
+    case 'tick': { const v = o.pace === 'calm' ? 0.07 : o.pace === 'busy' ? 0.02 : 0.035; const n = g(v); env(n, v, 0.015); noise(n, 0.015, 5000, 2000); break; } // the loudest thing on a quiet evening
     case 'clack': { const n = g(0.12); env(n, 0.12, 0.05); noise(n, 0.05, 2000, 300); break; }
     case 'type': { const n = g(0.05); env(n, 0.05, 0.03); noise(n, 0.03, 4000, 1500); break; }
     case 'resolve': { [50, 57, 62, 66].forEach((m, i) => { const tt = t + i * 0.12; const n = ctx.createGain(); n.gain.setValueAtTime(0.0001, tt); n.gain.exponentialRampToValueAtTime(0.1, tt + 0.03); n.gain.exponentialRampToValueAtTime(0.0001, tt + 2.2); n.connect(dest); const x = ctx.createOscillator(); x.type = 'triangle'; x.frequency.value = NOTE(m); x.connect(n); x.start(tt); x.stop(tt + 2.3); }); break; } // D major, at the end: the only resolution in the piece, and it is the debrief's
@@ -1297,8 +1297,8 @@ function sfx(kind, src) {
     if (gain < 0.55 && !SOUND.habituatedAt && session.phase === 'running') SOUND.habituatedAt = vnow();
   } // a burst is ding, ding, ding, not a wall, and a wall is not heard
   if (kind === 'thunk') { SOUND.relief = at + 60 / bpmNow() * ({ calm: 12, steady: 8, busy: 6 }[state.pace]); SOUND.cortisol = Math.max(0, SOUND.cortisol - 0.15); } // mute, hide: the music breathes; longer on a quiet evening, barely on a bad day
-  soundLog(kind, { src, at: at - now, gain });
-  if (SOUND.on) synth(SOUND.ctx, SOUND.master, kind, at, { src, gain });
+  soundLog(kind, { src, at: at - now, gain, pace: state.pace });
+  if (SOUND.on) synth(SOUND.ctx, SOUND.master, kind, at, { src, gain, pace: state.pace });
 }
 function scheduleBeats() {
   if (!SOUND.ctx || !SOUND.running) return;
@@ -1344,7 +1344,7 @@ async function renderSoundtrack(log, durationSec, offsetSec = 0) {
       synth(ctx, master, 'kick', t); if (!e.r) synth(ctx, master, 'hat', t + 30 / e.bpm, { accent: e.i % 2 === 0 });
       if (e.i % 8 === 0) synth(ctx, master, 'pad', t, { chord: CHORD[e.pace], cortisol: e.r ? 0 : e.c, dur: 8 * 60 / e.bpm });
       if (e.pace === 'busy' || e.c > 0.6) synth(ctx, master, 'pulse', t + 60 / e.bpm * 0.5);
-    } else synth(ctx, master, e.kind, t, { src: e.src, gain: e.gain });
+    } else synth(ctx, master, e.kind, t, { src: e.src, gain: e.gain, pace: e.pace });
   }
   const buf = await ctx.startRendering();
   const L = buf.getChannelData(0), R = buf.getChannelData(1), len = buf.length;
