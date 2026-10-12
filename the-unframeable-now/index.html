@@ -190,24 +190,24 @@
 
 <div class="deck" role="group" aria-label="Transport and operators">
   <button class="play" id="play" type="button" aria-pressed="false" aria-label="Play the stream" title="Start or pause the stream (space)">▶</button>
-  <button class="pad" type="button" data-op="cut" aria-pressed="false" title="Remove the connective tissue: the links between items and the timestamps (1)">
-    <span class="verb">Cut the ties</span><span class="tech">cut</span>
+  <button class="pad" type="button" data-op="cut" aria-pressed="false" title="Mute the threads: the links between items and the timestamps go, and ranking stops holding anything in place (1)">
+    <span class="verb">Mute the threads</span><span class="tech">cut</span>
   </button>
-  <button class="pad" type="button" data-op="expose" aria-pressed="false" title="Draw each item's own cut-off and how long it has left (2)">
-    <span class="verb">Show the machine</span><span class="tech">expose apparatus</span>
+  <button class="pad" type="button" data-op="expose" aria-pressed="false" title="Why am I seeing this? Each item's own cut-off, and how long it has left (2)">
+    <span class="verb">Why am I seeing this?</span><span class="tech">expose apparatus</span>
   </button>
-  <button class="pad" type="button" data-op="collision" aria-pressed="false" title="Size every item by its magnitude on one shared scale (3)">
-    <span class="verb">One ruler for everything</span><span class="tech">scale collision</span>
+  <button class="pad" type="button" data-op="collision" aria-pressed="false" title="Size things up: every item by its number, on one shared scale (3)">
+    <span class="verb">Size things up</span><span class="tech">scale collision</span>
   </button>
-  <button class="pad" type="button" data-op="refusal" aria-pressed="false" title="Nothing settles: items fade and are re-sampled back to now (4)">
-    <span class="verb">Never let it settle</span><span class="tech">duration refusal</span>
+  <button class="pad" type="button" data-op="refusal" aria-pressed="false" title="Keep refreshing: nothing settles, items fade and are pulled back to now (4)">
+    <span class="verb">Keep refreshing</span><span class="tech">duration refusal</span>
   </button>
   <span class="filterwrap"><input id="filter" type="search" placeholder="search… try garden" aria-label="Filter items by text"></span>
   <span class="pace" role="group" aria-label="Pace of the stream">
     <span class="lbl">pace</span>
-    <button type="button" data-pace="calm" aria-pressed="false" title="A new item every six seconds">calm</button>
-    <button type="button" data-pace="steady" aria-pressed="true" title="A new item every three or four seconds">steady</button>
-    <button type="button" data-pace="busy" aria-pressed="false" title="A new item every second and a half, like a real feed">busy</button>
+    <button type="button" data-pace="calm" aria-pressed="false" title="Something every six seconds or so">quiet evening</button>
+    <button type="button" data-pace="steady" aria-pressed="true" title="Something every few seconds">normal day</button>
+    <button type="button" data-pace="busy" aria-pressed="false" title="Something every second and a half">bad day</button>
   </span>
 </div>
 
@@ -219,7 +219,7 @@
       <dt>What this is</dt>
       <dd>Your feed, invented but true to shape. The group chat, the news, work after hours, the school portal, all asking. Underneath them, what you'd rather be looking at: the garden, a painter's half-finished canvas, a record you keep meaning to play. Real feed machinery runs it: a ranking that favours whatever asks something of you, a cut-off, a lifetime, links.</dd>
       <dt>What you do</dt>
-      <dd>Tidy it the way you always do: search for the garden, cut the clutter, size things up. The pads at the bottom are your tools.</dd>
+      <dd>Tidy it the way you always do: search for the garden, mute the threads, ask why you're seeing this, size things up, keep refreshing. The pads at the bottom are what you'd press anyway.</dd>
       <dt>What to watch</dt>
       <dd>Time runs left to right. <b>Every move you make is a <i class="v">violet</i> mark above the stream, with an arc to where it comes back into the stream two seconds later.</b> The band at the bottom is how much of the stream is you.</dd>
       <dt>What you'll find</dt>
@@ -373,22 +373,29 @@ function say(text, holdMs = 3600) {
   clearTimeout(captionTimer); captionTimer = setTimeout(() => captionEl.classList.remove('show'), holdMs);
 }
 const OP_TALK = {
-  cut:      { on: 'Ties cut: the links between items and the timestamps are gone, and ranking no longer holds anything in place.', off: 'Ties restored.' },
-  expose:   { on: 'The machine, drawn: each item’s own cut-off in red, and in blue how long it has left. These were always there.', off: 'Machine hidden again. It never stopped running.' },
-  collision:{ on: 'One ruler: every item sized by its magnitude on one shared scale. One text from your daughter next to a live blog with 1,200 updates.', off: 'Back to one size each — easier to read, harder to compare honestly.' },
-  refusal:  { on: 'Nothing settles: every item fades and is re-sampled back to now before you can trust it.', off: 'Things can settle again.' },
+  cut:      { on: 'Threads muted: the links between items and the timestamps are gone, and nothing is held in place by its ranking any more.', off: 'Threads back.' },
+  expose:   { on: 'Why you’re seeing this: each item’s own cut-off in red, and in blue how long it has left. These were always there.', off: 'Hidden again. It never stopped running.' },
+  collision:{ on: 'To scale: every item sized by its number. One text from your daughter beside a live blog with 1,200 updates.', off: 'Back to one size each — easier to read, harder to compare honestly.' },
+  refusal:  { on: 'Refreshing: nothing settles. Every item fades and is pulled back to now before you can trust it.', off: 'You can stop refreshing.' },
 };
 
 /* ------------------------------------------------------------------ */
 /* The loop: a move is logged, and comes back as an item. The line     */
 /* draws the arc from the one to the other.                            */
 /* ------------------------------------------------------------------ */
+const DOING = {
+  cut: ['muting the threads', 'unmuting the threads'],
+  expose: ['asking why you’re seeing this', 'done asking why'],
+  collision: ['sizing things up', 'back to one size'],
+  refusal: ['refreshing', 'not refreshing'],
+};
+const PACE_SAID = { calm: 'calling it a quiet evening', steady: 'calling it a normal day', busy: 'calling it a bad day' };
 const GESTURE_TALK = {
-  applied: (d) => `turning on “${d}”`,
-  lifted: (d) => `turning off “${d}”`,
+  applied: (d) => DOING[d][0],
+  lifted: (d) => DOING[d][1],
   filtered: (d) => d === 'cleared' ? 'clearing the search' : `searching for ${d}`,
   opened: () => 'picking one out',
-  paced: (d) => `setting the pace to ${d}`,
+  paced: (d) => PACE_SAID[d],
 };
 function gesture(kind, detail) {
   const said = GESTURE_TALK[kind] ? GESTURE_TALK[kind](detail) : kind;
@@ -462,7 +469,7 @@ for (const b of document.querySelectorAll('.pace button')) {
   b.addEventListener('click', () => {
     state.pace = b.dataset.pace;
     for (const o of document.querySelectorAll('.pace button')) o.setAttribute('aria-pressed', String(o === b));
-    say({ calm: 'Calm: a new item every six seconds or so.', steady: 'Steady: a new item every few seconds.', busy: 'Busy: a new item every second and a half — what a real feed feels like.' }[state.pace]);
+    say({ calm: 'A quiet evening: something every six seconds or so.', steady: 'A normal day: something every few seconds.', busy: 'A bad day: something every second and a half. This is what it feels like.' }[state.pace]);
     gesture('paced', state.pace);
   });
 }

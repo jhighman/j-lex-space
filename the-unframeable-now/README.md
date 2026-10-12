@@ -84,24 +84,29 @@ you'll find, then one button. **? intro** brings it back.
 
 - **Play** (▶, or space): starts the stream. Paused, nothing enters,
   nothing decays and the clock stops.
-- **Pace** (calm / steady / busy): how often the stream delivers, an
-  item every six seconds, every few seconds, or every second and a half.
-  Changing it is a move, so it echoes.
-- **Cut the ties** *(cut, key 1)*: removes the connective tissue. The
-  lines between related items go, the timestamps on the axis go, and
-  ranking no longer holds anything in place: each item drifts to wherever
-  it falls.
-- **Show the machine** *(expose apparatus, key 2)*: draws each item's own
-  cut-off as a red tick with a dashed stem from where the item sits, and
-  a blue line for how long it has left. These were always there.
-- **One ruler for everything** *(scale collision, key 3)*: sizes every
-  item by its magnitude on one shared scale, area proportional to
-  magnitude, with a one-pixel floor so the smallest exists at all. A
-  legend shows the scale. A token probability sits next to a continental
-  sensor index at their true relative size.
-- **Never let it settle** *(duration refusal, key 4)*: nothing settles.
-  Items fade over a short life and are re-sampled back to now, so the
-  right edge fills with things that will not stay still.
+The four operators from the brief are on the deck under the names of
+the gestures a person actually makes on a feed, with the brief's term
+in small type beneath each, so the lineage stays visible.
+
+- **Pace** (quiet evening / normal day / bad day): how often the feed
+  delivers, something every six seconds, every few seconds, or every
+  second and a half. Changing it is a move, so it echoes.
+- **Mute the threads** *(cut, key 1)*: removes the connective tissue.
+  The lines between related items go, the timestamps on the axis go,
+  and ranking no longer holds anything in place: each item drifts to
+  wherever it falls.
+- **Why am I seeing this?** *(expose apparatus, key 2)*: draws each
+  item's own cut-off as a red tick with a dashed stem from where the
+  item sits, and a blue line for how long it has left. These were
+  always there.
+- **Size things up** *(scale collision, key 3)*: sizes every item by its
+  number on one shared scale, area proportional to magnitude, with a
+  one-pixel floor so the smallest exists at all. A legend shows the
+  scale. One text from her daughter sits beside a clip with 12,400 views
+  at their true relative size.
+- **Keep refreshing** *(duration refusal, key 4)*: nothing settles. Items
+  fade over a short life and are pulled back to now, so the right edge
+  fills with things that will not stay still.
 - **Search the stream**: keeps only items whose text or source contains
   the typed string; what doesn't match dims but stays. Searching is a
   move, so it echoes.
