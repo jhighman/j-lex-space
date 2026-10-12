@@ -22,14 +22,38 @@ orbit — gets a visible badge and glow where it lands back in the feed,
 so the loop the piece is about is something a viewer can actually watch
 happen to their own actions, not just read a caption about.
 
+## Welcome, walkthrough, pace
+
+The page opens on a welcome card that says in four lines what this is
+(a fake feed with real feed machinery), what you do (tidy it), what
+you'll find (every tidy-up comes back as one more item; a counter keeps
+score of your trace and only goes up), and why it matters (every real
+feed does this silently). The stated game is *try to tidy a feed
+without leaving a trace of yourself in it*, which cannot be won, and
+losing it is the lesson. Two buttons: a two-minute walkthrough, or just
+play. **? intro** at the top right brings the card back.
+
+The walkthrough is a six-step coach card that does not narrate ahead
+of the viewer: each step names one thing to do (press play; search for
+a word; watch the top of the panel; press Cut; put the ties back and
+press 2) and waits for the viewer to actually do it, then acknowledges
+in one line what just happened. The ant does not appear until step
+five, and arrives with its reason attached — ants have exactly this
+problem, an ant can't read the trail without laying more scent — so
+it earns its place rather than being assumed interesting. The card
+shows the viewer's trace count the whole way.
+
+The stream has a **pace** control in the deck: calm (an item every six
+seconds or so), steady (every few seconds, the default), busy (every
+second and a half, which is what a real feed feels like). Shard easing,
+drift and the Never-let-it-settle jitter were all slowed so the loop
+is something the eye can follow.
+
 ## One field, four ways
 
-The page opens on a line a person already believes before the feed is
-mentioned: *an ant can't read the trail without laying more of it.
-Neither can you read a feed.* Then it offers four **lenses** over one
-state — Feed, Trail, Body, Garden (keys 1–4). The state object does not
-change with the lens; nothing in it does. What changes is the nouns,
-the palette, and the shape of a fragment:
+Four **lenses** over one state — Feed, Trail, Body, Garden (keys 1–4).
+The state object does not change with the lens; nothing in it does.
+What changes is the nouns, the palette, and the shape of a fragment:
 
 | lens | the panel shows | a fragment is | the volume draws |
 |---|---|---|---|
@@ -72,6 +96,7 @@ Babylon.js and D3 v7 load from a CDN; everything else is in `index.html`.
 
 - **Play** (▶, or space): starts the stream. Paused, nothing enters and
   nothing decays, so the field holds still to look at.
+- **Pace** (calm / steady / busy): how often the stream delivers.
 - **Cut the ties** *(cut)*: removes the connective tissue. Cards lose their
   timestamp, source, sentiment and links, and scatter across the panel;
   shards scatter in the volume.
