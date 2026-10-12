@@ -350,7 +350,7 @@
 
 <div id="welcome" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
   <div class="welcome-card">
-    <p class="eyebrow">The Unframeable Now · a three-minute experiment</p>
+    <p class="eyebrow" id="welcomeEyebrow">The Unframeable Now · a three-minute experiment</p>
     <h2 id="welcomeTitle">Try to tidy your feed without leaving a trace of yourself in it.</h2>
     <dl>
       <dt>Who you are</dt>
@@ -679,6 +679,10 @@ for (const b of document.querySelectorAll('.pace button')) {
 }
 const welcome = document.getElementById('welcome');
 const debrief = document.getElementById('debrief');
+{ const m = Math.round(SESSION_MS / 60000), sec = Math.round(SESSION_MS / 1000);
+  const words = SESSION_MS % 60000 === 0 ? (m === 1 ? 'one minute' : m === 2 ? 'two minutes' : m === 3 ? 'three minutes' : `${m} minutes`) : `${sec} seconds`;
+  document.getElementById('welcomeEyebrow').textContent = `The Unframeable Now · a ${words.replace('one minute', 'one-minute').replace('three minutes', 'three-minute').replace('two minutes', 'two-minute').replace(/^(\d+) seconds$/, '$1-second').replace(/^(\d+) minutes$/, '$1-minute')} experiment`;
+  document.getElementById('start').textContent = `Start · ${words}`; }
 const clockEl = document.getElementById('clock');
 const progressEl = document.getElementById('progress');
 function startSession() {
@@ -778,6 +782,15 @@ function renderDebrief() {
   if (most.length) facts.push(`What you did most: ${most.map(([k, v]) => `<b>${k}</b>${v > 1 ? ` ×${v}` : ''}`).join(', ')}. Each is in the feed now, with your name on it.`);
   if (searches.length) facts.push(`You searched for ${searches.map((q) => `<b>${q}</b>`).join(', ')}. The search${searches.length > 1 ? 'es' : ''} became ${searches.length > 1 ? 'items' : 'an item'} too.`);
   const likedChs = Object.entries(session.likes).sort((a, b) => b[1] - a[1]);
+  const lastMove = moves.length ? moves[moves.length - 1] : null;
+  if (lastMove && samples.length) {
+    const tLast = lastMove.at - session.startedAt;
+    const atLast = samples.reduce((a, b) => (b.t <= tLast + 2500 ? b : a), samples[0]).share;
+    if (played - tLast > 10000 && atLast > endShare + 0.05) {
+      facts.push(`After your last move at <b>${mmss(tLast)}</b> the band fell from <b>${Math.round(atLast * 100)}%</b> to <b>${Math.round(endShare * 100)}%</b>. Not because anything of yours was removed: the feed kept coming and buried you. Stopping doesn't take you out; it changes the proportions.`);
+      session.fell = { tLast, atLast };
+    } else session.fell = null;
+  } else session.fell = null;
   const times = (c) => { const r = state.weights[c] / (BASE_WEIGHTS[c] || 1); return r === 2 ? 'twice as often' : r === 3 ? 'three times as often' : r > 1 ? `${+r.toFixed(1)}× as often` : r === 1 ? 'as often as before' : 'less often than before'; };
   if (likedChs.length) facts.push(`You liked ${likedChs.map(([c, k]) => `<b>${CH_NOUN[c]}</b>${k > 1 ? ` ×${k}` : ''}`).join(', ')}. The feed learned: it will send ${likedChs.map(([c]) => `${CH_NOUN[c]} <b>${times(c)}</b>`).join(', and ')}. That learning is you in the feed too.`);
   const hidChs = Object.entries(session.hides).sort((a, b) => b[1] - a[1]);
@@ -809,6 +822,7 @@ function renderDebrief() {
       else if (top) learned.push(`Muting ${CH_NOUN[session.mutes[0].ch]} did let ${CH_NOUN[top]} through, a little. And the muting itself came back as an item.`);
     }
     if (likedChs.some(([c]) => WANTS.has(c))) learned.push(`Liking what I actually wanted taught the feed to send more of it. That worked. It is also the clearest thing I put in the feed all night.`);
+    if (session.fell) learned.push(`When I stopped, the band went down, but nothing of mine went away. The feed just kept coming over the top of it. Doing nothing isn't tidying either; it's being buried politely.`);
     if (session.seen.want > 0) learned.push(`The things I came for were there the whole time, <b>${session.seen.want}</b> of them, ranked low, ${session.below.want} under the cut-off. Nothing I pressed lifted them. The ranking isn\'t mine to tidy.`);
   }
   learned.push('<span class="last">The feed isn\'t a place I go to. It\'s something I\'m in. There was never an outside to tidy from.</span>');
