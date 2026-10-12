@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>ARAPAHOE — 8:13 Resonance Funnel</title>
+  <style>
+    :root {
+      --void: #0a0b10;
+      --amber: #d4af37;
+      --coral: #ff626b;
+      --cyan: #55e2e1;
+      --panel: rgba(12, 13, 20, 0.72);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--void);
+    }
+
+    body {
+      color: rgba(244, 240, 224, 0.88);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    #stage {
+      position: fixed;
+      inset: 0;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    #stage:active { cursor: grabbing; }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+
+    .readout {
+      position: fixed;
+      top: 28px;
+      left: 32px;
+      z-index: 2;
+      pointer-events: none;
+      user-select: none;
+      text-shadow: 0 0 22px rgba(85, 226, 225, 0.18);
+    }
+
+    .readout__eyebrow {
+      color: rgba(212, 175, 55, 0.82);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .readout__value {
+      margin-top: 6px;
+      color: rgba(237, 242, 244, 0.86);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+    }
+
+    .control {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 3;
+      width: min(430px, calc(100vw - 48px));
+      padding: 12px 15px 13px;
+      transform: translateX(-50%);
+      border: 1px solid rgba(222, 231, 238, 0.16);
+      border-radius: 13px;
+      background: linear-gradient(105deg, rgba(11, 12, 19, 0.90), rgba(13, 15, 24, 0.62));
+      box-shadow: 0 12px 46px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255,255,255,0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .control__labels {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 9px;
+      color: rgba(219, 225, 229, 0.58);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .control__labels strong {
+      color: rgba(212, 175, 55, 0.9);
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 16px;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      cursor: ew-resize;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--coral) 0%, var(--amber) 53%, rgba(85, 226, 225, 0.8) 100%);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.28);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--coral) 0%, var(--amber) 53%, rgba(85, 226, 225, 0.8) 100%);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.28);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 15px;
+      height: 15px;
+      margin-top: -5.5px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid rgba(255, 241, 191, 0.92);
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.12), 0 0 19px rgba(212, 175, 55, 0.78);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 15px;
+      height: 15px;
+      border: 1px solid rgba(255, 241, 191, 0.92);
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.12), 0 0 19px rgba(212, 175, 55, 0.78);
+    }
+
+    .motion-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .motion-toggle {
+      min-width: 176px;
+      padding: 7px 12px;
+      border: 1px solid rgba(85, 226, 225, 0.28);
+      border-radius: 999px;
+      background: rgba(18, 33, 40, 0.56);
+      color: rgba(202, 240, 237, 0.78);
+      font: 700 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .motion-toggle:hover,
+    .motion-toggle:focus-visible {
+      border-color: rgba(212, 175, 55, 0.72);
+      background: rgba(58, 49, 21, 0.5);
+      color: rgba(255, 239, 176, 0.95);
+      outline: none;
+    }
+
+    .motion-toggle:active { transform: scale(0.97); }
+
+    .hint {
+      position: fixed;
+      right: 32px;
+      bottom: 33px;
+      z-index: 2;
+      pointer-events: none;
+      color: rgba(218, 226, 230, 0.36);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    @media (max-width: 600px) {
+      .readout { top: 18px; left: 20px; }
+      .hint { display: none; }
+      .control { bottom: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main id="stage" aria-label="Interactive 8 to 13 orbital resonance funnel. Drag to orbit, scroll to zoom, and use the slider to fold the field into depth."></main>
+
+  <div class="readout" aria-hidden="true">
+    <div class="readout__eyebrow">ARAPAHOE / resonance field</div>
+    <div class="readout__value">Earth : Venus&nbsp;&nbsp;8 : 13</div>
+  </div>
+
+    <div class="control">
+    <div class="control__labels">
+      <span>Planar trace</span>
+      <strong id="morphValue">fold 0.00</strong>
+      <span>Invariant funnel</span>
+      </div>
+    <input id="funnelMorph" type="range" min="0" max="1" step="0.001" value="0.58" aria-label="Morph orbital resonance field from a flat plane to a three-dimensional invariant funnel" />
+      <div class="motion-row">
+        <button id="motionToggle" class="motion-toggle" type="button" aria-pressed="true">Cinematic Drift · On</button>
+      </div>
+    </div>
+
+  <div class="hint" aria-hidden="true">drag to orbit · scroll to zoom</div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/controls/OrbitControls.js";
+    import { RoomEnvironment } from "https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/environments/RoomEnvironment.js";
+
+    const stage = document.querySelector("#stage");
+    const slider = document.querySelector("#funnelMorph");
+    const morphValue = document.querySelector("#morphValue");
+    const motionToggle = document.querySelector("#motionToggle");
+
+    const TAU = Math.PI * 2;
+    const OUTER_RADIUS = 5.15;
+    const INNER_RADIUS = 3.1;
+    // Deliberately bounded geometry keeps the animation budget low enough for 60 FPS browsers.
+    const TRACE_COUNT = 88;
+    const CURVE_SEGMENTS = 14;
+    const RING_SEGMENTS = 180;
+    const FUNNEL_DEPTH = 7.25;
+    const FUNNEL_THROAT = 0.3;
+    const colors = {
+      void: new THREE.Color("#0a0b10"),
+      cyan: new THREE.Color("#55e2e1"),
+      cyanDeep: new THREE.Color("#2ba8b9"),
+      amber: new THREE.Color("#d4af37"),
+      coral: new THREE.Color("#ff626b"),
+      ivory: new THREE.Color("#fff7d3"),
+      violet: new THREE.Color("#926ee8"),
+      lavender: new THREE.Color("#d8c7ff"),
+      periwinkle: new THREE.Color("#98a9ff"),
+      blush: new THREE.Color("#f0b1d1"),
+      poppy: new THREE.Color("#ff7c94"),
+    };
+
+    const searchParameters = new URLSearchParams(window.location.search);
+    const foldParameter = Number(searchParameters.get("fold"));
+    let targetMorph = searchParameters.has("fold") && Number.isFinite(foldParameter)
+      ? THREE.MathUtils.clamp(foldParameter, 0, 1)
+      : Number(slider.value);
+    let morph = targetMorph;
+    let phase = 0;
+    let audioImpulse = 0.34;
+    let externalImpulse = 0;
+    slider.value = targetMorph.toFixed(3);
+    morphValue.textContent = `fold ${targetMorph.toFixed(2)}`;
+
+    // Future audio/data adapter: a host may call this without changing the visual contract.
+    window.ARAPAHOE_RESONANCE = {
+      setImpulse(value) {
+        externalImpulse = THREE.MathUtils.clamp(Number(value) || 0, 0, 1);
+      },
+    };
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(colors.void, 1);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.18;
+    stage.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2("#0a0b10", 0.055);
+
+    // A compact studio environment gives the physical glass a real reflection source.
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmremGenerator.fromScene(new RoomEnvironment(renderer)).texture;
+    pmremGenerator.dispose();
+
+    const camera = new THREE.PerspectiveCamera(37, window.innerWidth / window.innerHeight, 0.1, 100);
+    // ~55° above the orbital plane: the rim stays legible while the throat remains visibly recessed.
+    camera.position.set(7.0, -9.4, 13.5);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.055;
+    controls.enablePan = false;
+    controls.minDistance = 8.1;
+    controls.maxDistance = 26;
+    controls.target.set(0, 0, -3.15);
+    controls.autoRotate = false;
+
+    let cinematicDrift = true;
+    const cameraGoal = new THREE.Vector3();
+    const targetGoal = new THREE.Vector3();
+
+    function updateMotionToggle() {
+      motionToggle.textContent = cinematicDrift ? "Cinematic Drift · On" : "Manual Orbit · On";
+      motionToggle.setAttribute("aria-pressed", String(cinematicDrift));
+    }
+
+    motionToggle.addEventListener("click", () => {
+      cinematicDrift = !cinematicDrift;
+      updateMotionToggle();
+    });
+
+    // Manual orbit remains available at any time; touching the scene pauses the camera drift.
+    controls.addEventListener("start", () => {
+      if (cinematicDrift) {
+        cinematicDrift = false;
+        updateMotionToggle();
+      }
+    });
+
+    const resonance = new THREE.Group();
+    resonance.rotation.x = -0.05;
+    scene.add(resonance);
+
+    const ambient = new THREE.HemisphereLight("#c3b7ff", "#090810", 0.58);
+    scene.add(ambient);
+
+    const keyLight = new THREE.PointLight("#d4af37", 7.0, 28, 2);
+    keyLight.position.set(-2.5, 3.1, 5.2);
+    scene.add(keyLight);
+
+    const rimLight = new THREE.PointLight("#4fdbe0", 5.0, 24, 2);
+    rimLight.position.set(5.5, -3.0, 2.0);
+    scene.add(rimLight);
+
+    const blushLight = new THREE.PointLight("#ff8fb8", 4.2, 24, 2);
+    blushLight.position.set(-5.2, -1.8, 4.8);
+    scene.add(blushLight);
+
+    function smoothstep(edge0, edge1, value) {
+      const x = THREE.MathUtils.clamp((value - edge0) / (edge1 - edge0), 0, 1);
+      return x * x * (3 - 2 * x);
+    }
+
+    /**
+     * The key geometry transform. The outer radius stays at z≈0, while every
+     * point toward the centre is drawn backwards along -Z. This is deliberately
+     * based on radial distance, so lines bend into a real funnel rather than
+     * simply rotate as a flat disc.
+     */
+    function funnelPoint(x, y, bias = 0) {
+      const radius = Math.sqrt(x * x + y * y);
+      const normalizedRadius = THREE.MathUtils.clamp(radius / OUTER_RADIUS, 0, 1);
+      const inward = Math.pow(1 - normalizedRadius, 1.12);
+      const depth = -morph * FUNNEL_DEPTH * inward;
+      const pinch = 1 - morph * 0.25 * inward;
+      // Toroidal helium bulge: zero at the rim and throat, strongest through the living body.
+      const bodyRadius = THREE.MathUtils.clamp((normalizedRadius - 0.055) / 0.945, 0, 1);
+      const bulgeProfile = Math.pow(Math.sin(Math.PI * bodyRadius), 1.08);
+      const livingBulge = 1 + audioImpulse * 0.14 * Math.sin(normalizedRadius * 13 - phase * 7);
+      const bulge = (0.14 + morph * 1.62) * bulgeProfile * livingBulge;
+      const radialScale = pinch + bulge / Math.max(radius, 0.75);
+      return new THREE.Vector3(x * radialScale, y * radialScale, depth + bulge * 0.3 + bias * morph);
+    }
+
+    // Allocation-free version for the thousands of animated star particles.
+    function writeFunnelPosition(attribute, index, x, y, bias = 0) {
+      const radius = Math.sqrt(x * x + y * y);
+      const normalizedRadius = THREE.MathUtils.clamp(radius / OUTER_RADIUS, 0, 1);
+      const inward = Math.pow(1 - normalizedRadius, 1.12);
+      const depth = -morph * FUNNEL_DEPTH * inward;
+      const pinch = 1 - morph * 0.25 * inward;
+      const bodyRadius = THREE.MathUtils.clamp((normalizedRadius - 0.055) / 0.945, 0, 1);
+      const bulgeProfile = Math.pow(Math.sin(Math.PI * bodyRadius), 1.08);
+      const livingBulge = 1 + audioImpulse * 0.14 * Math.sin(normalizedRadius * 13 - phase * 7);
+      const bulge = (0.14 + morph * 1.62) * bulgeProfile * livingBulge;
+      const radialScale = pinch + bulge / Math.max(radius, 0.75);
+      attribute.setXYZ(index, x * radialScale, y * radialScale, depth + bulge * 0.3 + bias * morph);
+    }
+
+    function createGlowTexture() {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 128;
+      const context = canvas.getContext("2d");
+      const gradient = context.createRadialGradient(64, 64, 0, 64, 64, 64);
+      gradient.addColorStop(0, "rgba(255, 250, 215, 1)");
+      gradient.addColorStop(0.10, "rgba(255, 235, 149, 0.98)");
+      gradient.addColorStop(0.28, "rgba(212, 175, 55, 0.56)");
+      gradient.addColorStop(0.58, "rgba(212, 175, 55, 0.12)");
+      gradient.addColorStop(1, "rgba(212, 175, 55, 0)");
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, 128, 128);
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      return texture;
+    }
+
+    const glowTexture = createGlowTexture();
+
+    function createGlow(color, scale = 0.38, opacity = 1) {
+      const material = new THREE.SpriteMaterial({
+        map: glowTexture,
+        color,
+        transparent: true,
+        opacity,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      });
+      const sprite = new THREE.Sprite(material);
+      sprite.scale.setScalar(scale);
+      return sprite;
+    }
+
+    function createLine(capacity, color, opacity, blending = THREE.AdditiveBlending) {
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(capacity * 3), 3));
+      const material = new THREE.LineBasicMaterial({
+        color,
+        transparent: true,
+        opacity,
+        fog: true,
+        depthWrite: false,
+        blending,
+      });
+      const line = new THREE.Line(geometry, material);
+      line.frustumCulled = false;
+      resonance.add(line);
+      return line;
+    }
+
+    function writePoints(geometry, points) {
+      const position = geometry.attributes.position;
+      for (let i = 0; i < points.length; i += 1) {
+        position.setXYZ(i, points[i].x, points[i].y, points[i].z);
+      }
+      position.needsUpdate = true;
+    }
+
+    function ringPoint(radius, theta, offset = 0) {
+      return funnelPoint(radius * Math.cos(theta), radius * Math.sin(theta), offset);
+    }
+
+    // A real annular funnel: its rim stays high while an open throat falls to the closure node.
+    const FUNNEL_ROWS = 24;
+    const FUNNEL_COLUMNS = 80;
+    const funnelVertexCount = (FUNNEL_ROWS + 1) * (FUNNEL_COLUMNS + 1);
+    const funnelGeometry = new THREE.BufferGeometry();
+    const funnelPositions = new Float32Array(funnelVertexCount * 3);
+    const funnelColors = new Float32Array(funnelVertexCount * 3);
+    const funnelIndices = [];
+    const surfaceColor = new THREE.Color();
+
+    for (let row = 0; row <= FUNNEL_ROWS; row += 1) {
+      for (let column = 0; column <= FUNNEL_COLUMNS; column += 1) {
+        const current = row * (FUNNEL_COLUMNS + 1) + column;
+        const radialMix = row / FUNNEL_ROWS;
+        surfaceColor.lerpColors(colors.amber, colors.cyanDeep, radialMix);
+        const brightness = 0.34 + radialMix * 0.42;
+        funnelColors[current * 3] = surfaceColor.r * brightness;
+        funnelColors[current * 3 + 1] = surfaceColor.g * brightness;
+        funnelColors[current * 3 + 2] = surfaceColor.b * brightness;
+      }
+    }
+
+    for (let row = 0; row < FUNNEL_ROWS; row += 1) {
+      for (let column = 0; column < FUNNEL_COLUMNS; column += 1) {
+        const a = row * (FUNNEL_COLUMNS + 1) + column;
+        const b = a + FUNNEL_COLUMNS + 1;
+        funnelIndices.push(a, b, a + 1, b, b + 1, a + 1);
+      }
+    }
+
+    funnelGeometry.setAttribute("position", new THREE.BufferAttribute(funnelPositions, 3));
+    funnelGeometry.setAttribute("color", new THREE.BufferAttribute(funnelColors, 3));
+    funnelGeometry.setIndex(funnelIndices);
+
+    const funnelMaterial = new THREE.MeshPhysicalMaterial({
+      color: "#cbb9ff",
+      metalness: 0.08,
+      roughness: 0.13,
+      transmission: 0.7,
+      thickness: 0.45,
+      ior: 1.42,
+      reflectivity: 0.9,
+      clearcoat: 0.92,
+      clearcoatRoughness: 0.08,
+      sheen: 0.8,
+      sheenColor: "#ffd1e3",
+      sheenRoughness: 0.28,
+      iridescence: 1.0,
+      iridescenceIOR: 1.3,
+      iridescenceThicknessRange: [100, 400],
+      transparent: true,
+      opacity: 0.8,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+
+    const funnelMembrane = new THREE.Mesh(funnelGeometry, funnelMaterial);
+    funnelMembrane.renderOrder = -2;
+    funnelMembrane.frustumCulled = false;
+    resonance.add(funnelMembrane);
+
+    const glassSheenMaterial = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      uniforms: {
+        uMorph: { value: morph },
+        uTime: { value: 0 },
+        uImpulse: { value: audioImpulse },
+        uCamera: { value: camera.position.clone() },
+      },
+      vertexShader: `
+        varying vec3 vWorldPosition;
+        varying vec3 vNormal;
+        varying float vDepth;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+          vWorldPosition = worldPosition.xyz;
+          vDepth = clamp(-position.z / 8.0, 0.0, 1.0);
+          gl_Position = projectionMatrix * viewMatrix * worldPosition;
+        }
+      `,
+      fragmentShader: `
+        uniform float uMorph;
+        uniform float uTime;
+        uniform float uImpulse;
+        uniform vec3 uCamera;
+        varying vec3 vWorldPosition;
+        varying vec3 vNormal;
+        varying float vDepth;
+        void main() {
+          vec3 viewDirection = normalize(uCamera - vWorldPosition);
+          float fresnel = pow(1.0 - abs(dot(normalize(vNormal), viewDirection)), 2.25);
+          float azimuth = atan(vWorldPosition.y, vWorldPosition.x);
+          float silk = 0.5 + 0.5 * sin(azimuth * 2.0 + vWorldPosition.z * 1.35 + uTime * 0.42);
+          float sweep = pow(max(0.0, sin(vWorldPosition.x * 1.1 - vWorldPosition.y * 0.82 + uTime * 0.68)), 8.0);
+          vec3 lavender = vec3(0.69, 0.61, 1.0);
+          vec3 periwinkle = vec3(0.39, 0.52, 1.0);
+          vec3 blush = vec3(1.0, 0.53, 0.72);
+          vec3 poppy = vec3(1.0, 0.29, 0.43);
+          vec3 silkBand = mix(lavender, periwinkle, silk);
+          silkBand = mix(silkBand, blush, smoothstep(0.58, 0.95, silk));
+          vec3 iridescence = mix(silkBand, poppy, pow(fresnel, 1.55) * 0.72);
+          vec3 pearlescent = iridescence * (0.42 + fresnel * 1.45) + vec3(1.0, 0.84, 0.93) * sweep * 0.72;
+          float depthFade = mix(1.0, 0.56, vDepth);
+          pearlescent += vec3(0.2, 0.15, 0.34) * uImpulse * (0.25 + fresnel * 0.75);
+          float alpha = (0.12 + fresnel * 0.3 + sweep * 0.16) * (0.36 + uMorph * 0.64 + uImpulse * 0.08) * depthFade;
+          gl_FragColor = vec4(pearlescent, alpha);
+        }
+      `,
+    });
+
+    const glassSheen = new THREE.Mesh(funnelGeometry, glassSheenMaterial);
+    glassSheen.renderOrder = 3;
+    glassSheen.frustumCulled = false;
+    resonance.add(glassSheen);
+
+    function updateFunnelMembrane() {
+      const position = funnelGeometry.attributes.position;
+      for (let row = 0; row <= FUNNEL_ROWS; row += 1) {
+        const radius = FUNNEL_THROAT + (OUTER_RADIUS - FUNNEL_THROAT) * (row / FUNNEL_ROWS);
+        for (let column = 0; column <= FUNNEL_COLUMNS; column += 1) {
+          const index = row * (FUNNEL_COLUMNS + 1) + column;
+          const theta = (column / FUNNEL_COLUMNS) * TAU;
+          const point = ringPoint(radius, theta, -0.05);
+          position.setXYZ(index, point.x, point.y, point.z);
+        }
+      }
+      position.needsUpdate = true;
+      funnelGeometry.computeVertexNormals();
+      funnelGeometry.attributes.normal.needsUpdate = true;
+      // Keep the veil visibly pearlescent while allowing the resonance lattice to stay readable.
+      funnelMaterial.opacity = 0.36 + morph * 0.3;
+      glassSheenMaterial.uniforms.uMorph.value = morph;
+    }
+
+    const outerRing = createLine(RING_SEGMENTS + 1, colors.coral, 0.72);
+    const innerRing = createLine(RING_SEGMENTS + 1, colors.amber, 0.64);
+    const auraRing = createLine(RING_SEGMENTS + 1, colors.cyan, 0.23);
+    const funnelContours = [];
+    for (let index = 0; index < 10; index += 1) {
+      const mix = index / 9;
+      const lineColor = new THREE.Color().lerpColors(colors.amber, colors.cyanDeep, mix);
+      const line = createLine(RING_SEGMENTS + 1, lineColor, 0.028 + mix * 0.052);
+      funnelContours.push({ line, radius: OUTER_RADIUS * (0.13 + mix * 0.76) });
+    }
+
+    function updateRings(time) {
+      const outer = [];
+      const inner = [];
+      const aura = [];
+      for (let i = 0; i <= RING_SEGMENTS; i += 1) {
+        const t = (i / RING_SEGMENTS) * TAU;
+        outer.push(ringPoint(OUTER_RADIUS, t, 0.02));
+        inner.push(ringPoint(INNER_RADIUS, t, -0.85));
+        aura.push(ringPoint(OUTER_RADIUS + 0.12 + Math.sin(t * 5 + time * 0.7) * 0.014, t, 0.03));
+      }
+      writePoints(outerRing.geometry, outer);
+      writePoints(innerRing.geometry, inner);
+      writePoints(auraRing.geometry, aura);
+      updateFunnelMembrane();
+      funnelContours.forEach(({ line, radius }) => {
+        const contour = [];
+        for (let i = 0; i <= RING_SEGMENTS; i += 1) {
+          contour.push(ringPoint(radius, (i / RING_SEGMENTS) * TAU, -0.03));
+        }
+        writePoints(line.geometry, contour);
+      });
+    }
+
+    const traceLines = [];
+    for (let index = 0; index < TRACE_COUNT; index += 1) {
+      const mix = index / (TRACE_COUNT - 1);
+      const color = new THREE.Color().lerpColors(colors.cyanDeep, colors.amber, Math.pow(mix, 1.6));
+      if (index % 19 === 0) color.lerp(colors.coral, 0.52);
+      const opacity = 0.05 + 0.105 * Math.sin(Math.PI * mix);
+      const line = createLine(CURVE_SEGMENTS + 1, color, opacity);
+      traceLines.push({ line, offset: mix * TAU, baseOpacity: opacity });
+    }
+
+    function updateTraces(time) {
+      for (let i = 0; i < traceLines.length; i += 1) {
+        const trace = traceLines[i];
+        // Each chord uses the same clock as the two moving orbit markers.
+        // Their angles are therefore always a true 8:13 harmonic pair.
+        const param = trace.offset + phase;
+        const earthAngle = 8 * param;
+        const venusAngle = 13 * param;
+        const a = new THREE.Vector2(OUTER_RADIUS * Math.cos(earthAngle), OUTER_RADIUS * Math.sin(earthAngle));
+        const b = new THREE.Vector2(INNER_RADIUS * Math.cos(venusAngle), INNER_RADIUS * Math.sin(venusAngle));
+        const points = [];
+        for (let j = 0; j <= CURVE_SEGMENTS; j += 1) {
+          const u = j / CURVE_SEGMENTS;
+          const arc = Math.sin(Math.PI * u) * 0.21;
+          const x = THREE.MathUtils.lerp(a.x, b.x, u);
+          const y = THREE.MathUtils.lerp(a.y, b.y, u);
+          points.push(funnelPoint(x, y, -arc));
+        }
+        writePoints(trace.line.geometry, points);
+        const breathing = 0.72 + 0.28 * (0.5 + 0.5 * Math.sin(time * 1.25 + trace.offset * 3));
+        trace.line.material.opacity = trace.baseOpacity * breathing;
+      }
+    }
+
+    // Five conjunction sites: an exact 13:8 relative cycle has a 5-fold recurrence.
+    const pentagram = createLine(6, colors.ivory, 0.54);
+    const pentagramHalo = createLine(6, colors.amber, 0.18);
+    const pentagramOrder = [0, 2, 4, 1, 3, 0];
+
+    function updatePentagram(time) {
+      const rotation = phase * 0.16;
+      const primary = [];
+      const halo = [];
+      pentagramOrder.forEach((index) => {
+        const theta = rotation + index * TAU / 5 - Math.PI / 2;
+        primary.push(ringPoint(OUTER_RADIUS * 0.865, theta, 0.09));
+        halo.push(ringPoint(OUTER_RADIUS * 0.865 + 0.02, theta, 0.11));
+      });
+      writePoints(pentagram.geometry, primary);
+      writePoints(pentagramHalo.geometry, halo);
+    }
+
+    const conjunctionGroup = new THREE.Group();
+    resonance.add(conjunctionGroup);
+    const conjunctions = [];
+    const intersections = [];
+    const mirrorSheens = [];
+
+    for (let i = 0; i < 5; i += 1) {
+      const node = createGlow(colors.amber, 0.42, 0.98);
+      conjunctionGroup.add(node);
+      conjunctions.push({ node, index: i });
+
+      const sheen = createGlow(colors.ivory, 0.6, 0.28);
+      conjunctionGroup.add(sheen);
+      mirrorSheens.push({ node: sheen, index: i, radius: OUTER_RADIUS * 0.865, offset: 0 });
+
+      const innerNode = createGlow(colors.amber, 0.27, 0.62);
+      conjunctionGroup.add(innerNode);
+      intersections.push({ node: innerNode, index: i });
+
+      const innerSheen = createGlow(colors.ivory, 0.4, 0.18);
+      conjunctionGroup.add(innerSheen);
+      mirrorSheens.push({ node: innerSheen, index: i, radius: OUTER_RADIUS * 0.33, offset: 0.5 });
+    }
+
+    function updateGoldNodes() {
+      const rotation = phase * 0.16;
+      conjunctions.forEach(({ node, index }) => {
+        const theta = rotation + index * TAU / 5 - Math.PI / 2;
+        node.position.copy(ringPoint(OUTER_RADIUS * 0.865, theta, 0.18));
+        const scale = 0.33 + 0.14 * (0.5 + 0.5 * Math.sin(phase * 15 + index));
+        node.scale.setScalar(scale);
+        node.material.opacity = 0.72 + 0.26 * (0.5 + 0.5 * Math.sin(phase * 18 + index));
+      });
+
+      intersections.forEach(({ node, index }) => {
+        const theta = rotation + (index + 0.5) * TAU / 5 - Math.PI / 2;
+        node.position.copy(ringPoint(OUTER_RADIUS * 0.33, theta, -0.12));
+        const scale = 0.18 + 0.10 * (0.5 + 0.5 * Math.sin(phase * 18 + index * 1.7));
+        node.scale.setScalar(scale);
+        const depthFade = 0.32 + 0.68 * THREE.MathUtils.clamp((node.position.z + FUNNEL_DEPTH) / FUNNEL_DEPTH, 0, 1);
+        node.material.opacity = depthFade * (0.38 + 0.42 * (0.5 + 0.5 * Math.sin(phase * 17 + index)));
+      });
+
+      mirrorSheens.forEach(({ node, index, radius, offset }) => {
+        const theta = rotation + (index + offset) * TAU / 5 - Math.PI / 2;
+        node.position.copy(ringPoint(radius, theta, 0.23));
+        const depthFade = 0.28 + 0.72 * THREE.MathUtils.clamp((node.position.z + FUNNEL_DEPTH) / FUNNEL_DEPTH, 0, 1);
+        const flash = Math.pow(0.5 + 0.5 * Math.sin(phase * 21 + index * 2.11 + offset), 7);
+        node.material.opacity = depthFade * (0.06 + flash * 0.52);
+        node.scale.setScalar(0.18 + flash * (offset ? 0.32 : 0.52));
+      });
+    }
+
+    const earthMarker = createGlow(colors.cyan, 0.53, 0.95);
+    const venusMarker = createGlow(colors.amber, 0.46, 0.94);
+    resonance.add(earthMarker, venusMarker);
+
+    const radialThreads = [];
+    for (let i = 0; i < 5; i += 1) {
+      const thread = createLine(25, colors.coral, 0.10);
+      radialThreads.push({ thread, index: i });
+    }
+
+    function updateThreads(time) {
+      radialThreads.forEach(({ thread, index }) => {
+        const theta = phase * 0.16 + index * TAU / 5 - Math.PI / 2;
+        const points = [];
+        for (let step = 0; step <= 24; step += 1) {
+          const u = step / 24;
+          const r = THREE.MathUtils.lerp(OUTER_RADIUS * 0.865, OUTER_RADIUS * 0.14, u);
+          const bend = theta + Math.sin(u * Math.PI) * 0.12 * Math.sin(time * 0.6 + index);
+          points.push(ringPoint(r, bend, 0.04));
+        }
+        writePoints(thread.geometry, points);
+        thread.material.opacity = 0.035 + morph * 0.18;
+      });
+    }
+
+    const coreCorona = createGlow(colors.amber, 2.7, 0.14);
+    const coreHalo = createGlow(colors.ivory, 1.68, 0.22);
+    const core = createGlow(colors.amber, 1.16, 0.42);
+    const closureIris = new THREE.Mesh(
+      new THREE.SphereGeometry(0.18, 24, 18),
+      new THREE.MeshPhysicalMaterial({
+        color: "#ffe28c",
+        emissive: "#d4af37",
+        emissiveIntensity: 1.5,
+        roughness: 0.18,
+        metalness: 0.22,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.08,
+      }),
+    );
+    core.position.set(0, 0, -0.1);
+    coreCorona.material.depthTest = false;
+    coreHalo.material.depthTest = false;
+    core.material.depthTest = false;
+    coreCorona.renderOrder = 4;
+    coreHalo.renderOrder = 5;
+    core.renderOrder = 6;
+    closureIris.renderOrder = 7;
+    resonance.add(coreCorona, coreHalo, core, closureIris);
+
+    const coreLight = new THREE.PointLight("#d4af37", 3.4, 12, 2);
+    resonance.add(coreLight);
+
+    function updateMarkers() {
+      const earthAngle = phase * 8;
+      const venusAngle = phase * 13;
+      earthMarker.position.copy(ringPoint(OUTER_RADIUS, earthAngle, 0.15));
+      venusMarker.position.copy(ringPoint(INNER_RADIUS, venusAngle, 0.18));
+      const center = funnelPoint(0, 0, -0.12);
+      coreCorona.position.copy(center);
+      coreHalo.position.copy(center);
+      core.position.copy(center);
+      closureIris.position.copy(center);
+      coreLight.position.copy(center);
+      const corePulse = 0.84 + 0.16 * (0.5 + 0.5 * Math.sin(phase * 15));
+      core.scale.setScalar((0.96 + morph * 1.04) * corePulse);
+      coreHalo.scale.setScalar((1.32 + morph * 1.65) * corePulse);
+      coreCorona.scale.setScalar((1.85 + morph * 2.65) * corePulse);
+      closureIris.scale.setScalar(0.9 + morph * 1.65);
+      closureIris.material.emissiveIntensity = 1.25 + morph * 3.2 + corePulse + audioImpulse * 3.4;
+      core.material.opacity = 0.44 + morph * 0.46;
+      coreHalo.material.opacity = 0.13 + morph * 0.34 + audioImpulse * 0.12;
+      coreCorona.material.opacity = 0.06 + morph * 0.27 + audioImpulse * 0.16;
+      coreLight.intensity = 1.7 + morph * 7.1 + corePulse * 1.2 + audioImpulse * 4.8;
+    }
+
+    // Sparse points retain the Globe reference's quiet, particulate field.
+    const dustCount = 720;
+    const dustGeometry = new THREE.BufferGeometry();
+    const dustPositions = new Float32Array(dustCount * 3);
+    const dustColors = new Float32Array(dustCount * 3);
+    const dustColor = new THREE.Color();
+    for (let i = 0; i < dustCount; i += 1) {
+      const angle = Math.random() * TAU;
+      const radius = 0.7 + Math.pow(Math.random(), 0.56) * (OUTER_RADIUS + 2.6);
+      dustPositions[i * 3] = Math.cos(angle) * radius;
+      dustPositions[i * 3 + 1] = Math.sin(angle) * radius;
+      dustPositions[i * 3 + 2] = -3 - Math.random() * 4.2;
+      dustColor.lerpColors(colors.cyanDeep, colors.violet, Math.random());
+      dustColors[i * 3] = dustColor.r;
+      dustColors[i * 3 + 1] = dustColor.g;
+      dustColors[i * 3 + 2] = dustColor.b;
+    }
+    dustGeometry.setAttribute("position", new THREE.BufferAttribute(dustPositions, 3));
+    dustGeometry.setAttribute("color", new THREE.BufferAttribute(dustColors, 3));
+    const dust = new THREE.Points(dustGeometry, new THREE.PointsMaterial({
+      size: 0.028,
+      transparent: true,
+      opacity: 0.32,
+      vertexColors: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    }));
+    resonance.add(dust);
+
+    // A particle field on the inner wall: stars orbit elliptically while falling into the closure throat.
+    const STAR_COUNT = 1850;
+    const starGeometry = new THREE.BufferGeometry();
+    const starPositions = new Float32Array(STAR_COUNT * 3);
+    const starColors = new Float32Array(STAR_COUNT * 3);
+    const starRadius = new Float32Array(STAR_COUNT);
+    const starAngle = new Float32Array(STAR_COUNT);
+    const starSpin = new Float32Array(STAR_COUNT);
+    const starFall = new Float32Array(STAR_COUNT);
+    const starLane = new Float32Array(STAR_COUNT);
+    const starColor = new THREE.Color();
+
+    for (let index = 0; index < STAR_COUNT; index += 1) {
+      const outerBias = Math.pow(Math.random(), 0.48);
+      starRadius[index] = FUNNEL_THROAT * 1.35 + (OUTER_RADIUS * 0.9 - FUNNEL_THROAT * 1.35) * outerBias;
+      starAngle[index] = Math.random() * TAU;
+      starSpin[index] = 0.26 + Math.random() * 0.76;
+      starFall[index] = 0.045 + Math.random() * 0.12;
+      starLane[index] = Math.random() * TAU;
+      const warmth = Math.random();
+      starColor.lerpColors(colors.periwinkle, colors.ivory, warmth);
+      if (warmth > 0.78) starColor.lerp(colors.amber, 0.55);
+      starColors[index * 3] = starColor.r;
+      starColors[index * 3 + 1] = starColor.g;
+      starColors[index * 3 + 2] = starColor.b;
+    }
+
+    starGeometry.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
+    starGeometry.setAttribute("color", new THREE.BufferAttribute(starColors, 3));
+    const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({
+      size: 0.022,
+      transparent: true,
+      opacity: 0.93,
+      vertexColors: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      sizeAttenuation: true,
+    }));
+    stars.renderOrder = 1;
+    resonance.add(stars);
+
+    // Faint ribbons make the stars' elliptical inward paths legible at a glance.
+    const STAR_TRAIL_COUNT = 18;
+    const STAR_TRAIL_SEGMENTS = 44;
+    const starTrails = [];
+    for (let index = 0; index < STAR_TRAIL_COUNT; index += 1) {
+      const trailColor = new THREE.Color().lerpColors(colors.periwinkle, colors.blush, index / (STAR_TRAIL_COUNT - 1));
+      if (index % 5 === 0) trailColor.lerp(colors.amber, 0.48);
+      const trail = createLine(STAR_TRAIL_SEGMENTS + 1, trailColor, 0.09);
+      trail.renderOrder = 2;
+      starTrails.push({ trail, lane: (index / STAR_TRAIL_COUNT) * TAU });
+    }
+
+    function updateStarVortex(delta, time) {
+      const position = starGeometry.attributes.position;
+      const pull = 1 + audioImpulse * 3.6;
+      const spinBoost = 1 + audioImpulse * 2.2;
+
+      for (let index = 0; index < STAR_COUNT; index += 1) {
+        starAngle[index] += delta * starSpin[index] * spinBoost;
+        starRadius[index] -= delta * starFall[index] * pull;
+
+        if (starRadius[index] < FUNNEL_THROAT * 1.15) {
+          starRadius[index] = OUTER_RADIUS * (0.67 + Math.random() * 0.23);
+          starAngle[index] += Math.PI * (0.5 + Math.random());
+        }
+
+        const ellipse = 1 + 0.21 * Math.sin(starAngle[index] * 2 + starLane[index] + time * 0.22);
+        const x = starRadius[index] * Math.cos(starAngle[index]) * ellipse;
+        const y = starRadius[index] * Math.sin(starAngle[index]) / ellipse;
+        writeFunnelPosition(position, index, x, y, -0.16 - morph * 0.2);
+      }
+
+      position.needsUpdate = true;
+      stars.material.size = 0.025 + audioImpulse * 0.038;
+      stars.material.opacity = 0.74 + audioImpulse * 0.26;
+    }
+
+    function updateStarTrails(time) {
+      starTrails.forEach(({ trail, lane }, trailIndex) => {
+        const points = [];
+        for (let step = 0; step <= STAR_TRAIL_SEGMENTS; step += 1) {
+          const u = step / STAR_TRAIL_SEGMENTS;
+          const radius = THREE.MathUtils.lerp(OUTER_RADIUS * 0.84, FUNNEL_THROAT * 1.2, Math.pow(u, 0.76));
+          const angle = lane + phase * (0.9 + audioImpulse * 1.1)
+            + u * TAU * (1.6 + (trailIndex % 4) * 0.22)
+            + Math.sin(time * 0.45 + trailIndex) * 0.16;
+          const ellipse = 1 + 0.18 * Math.sin(u * TAU + lane);
+          points.push(funnelPoint(
+            radius * Math.cos(angle) * ellipse,
+            radius * Math.sin(angle) / ellipse,
+            -0.12 - u * 0.22,
+          ));
+        }
+        writePoints(trail.geometry, points);
+        trail.material.opacity = 0.075 + audioImpulse * 0.26;
+      });
+    }
+
+    slider.addEventListener("input", (event) => {
+      targetMorph = Number(event.target.value);
+      morphValue.textContent = `fold ${targetMorph.toFixed(2)}`;
+    });
+
+    function resize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }
+
+    window.addEventListener("resize", resize);
+
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = Math.min(clock.getDelta(), 0.05);
+      morph = THREE.MathUtils.damp(morph, targetMorph, 5.2, delta);
+      phase += delta * 0.14;
+      const time = clock.elapsedTime;
+
+      // Fictitious orchestral input until audio data is connected; external impulses take priority.
+      const simulatedImpulse = 0.24 + 0.22 * (0.5 + 0.5 * Math.sin(time * 1.3))
+        + 0.1 * (0.5 + 0.5 * Math.sin(time * 3.7 + 1.1));
+      externalImpulse = THREE.MathUtils.damp(externalImpulse, 0, 0.72, delta);
+      audioImpulse = THREE.MathUtils.damp(audioImpulse, Math.max(simulatedImpulse, externalImpulse), 2.4, delta);
+
+      glassSheenMaterial.uniforms.uTime.value = time;
+      glassSheenMaterial.uniforms.uImpulse.value = audioImpulse;
+      glassSheenMaterial.uniforms.uCamera.value.copy(camera.position);
+
+      updateRings(time);
+      updateTraces(time);
+      updatePentagram(time);
+      updateGoldNodes();
+      updateThreads(time);
+      updateMarkers();
+      updateStarVortex(delta, time);
+      updateStarTrails(time);
+
+      // Coin-spin precession: a slow Z spin with an independent wobble on X and Y.
+      resonance.rotation.z = time * 0.032 + Math.sin(time * 0.21) * 0.045;
+      resonance.rotation.x = -0.03 - morph * 0.052 + Math.sin(time * 0.56) * 0.105 + Math.sin(time * 0.19) * 0.028;
+      resonance.rotation.y = Math.cos(time * 0.43 + 0.8) * 0.1 + Math.sin(time * 0.17) * 0.032;
+      dust.rotation.z = -time * 0.006;
+
+      if (cinematicDrift) {
+        cameraGoal.set(
+          7.0 + Math.sin(time * 0.23) * 1.15,
+          -9.4 + Math.cos(time * 0.18) * 0.92,
+          13.5 + Math.sin(time * 0.14) * 0.62,
+        );
+        targetGoal.set(0, 0, -2.7 - morph * 1.25);
+        const cameraEase = 1 - Math.exp(-delta * 0.9);
+        camera.position.lerp(cameraGoal, cameraEase);
+        controls.target.lerp(targetGoal, cameraEase);
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
