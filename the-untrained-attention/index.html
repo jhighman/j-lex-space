@@ -77,7 +77,7 @@
   .note { color: var(--soft); font-size: 12px; margin: 0; }
   .volume { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); padding: 14px; }
   .volume-head { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  #stage3d { width: 100%; height: 380px; display: block; border-radius: 8px; background: #07080c; touch-action: none; outline: none; }
+  #stage3d { width: 100%; height: min(62vh, 600px); display: block; border-radius: 8px; background: #07080c; touch-action: none; outline: none; }
   .match { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--soft); transition: box-shadow 0.3s, border-color 0.3s, color 0.3s; }
   .match.lit { color: #e8ffff; border-color: var(--cyan); box-shadow: 0 0 18px rgba(85,226,225,0.45); }
   .match.pulse { animation: pulse 0.7s ease-out; }
@@ -93,7 +93,7 @@
   footer a { color: var(--amber); }
   @media (max-width: 900px) {
     .paths { grid-template-columns: 1fr; }
-    #stage3d { height: 300px; }
+    #stage3d { height: 340px; }
   }
   @media (max-width: 520px) {
     .visual { grid-template-columns: 1fr; }
@@ -104,7 +104,7 @@
 <main>
   <div class="eyebrow">j-lex-space / the untrained attention</div>
   <h1>The Untrained Attention</h1>
-  <p class="lede">One attention head, two routes to the same map. On the left its weights are learned by gradient descent, step after step, against a loss. On the right the identical map is assembled by a short, fixed program with no data and no loss. The volume below holds both results so they can be laid over each other.</p>
+  <p class="lede">One attention head, two routes to the same map. On the left its weights are learned by gradient descent, step after step, against a loss. On the right the identical map is assembled by a short, fixed program with no data and no loss. The volume holds both results so they can be laid over each other: the learned field throws off sparks while it descends, and the constructed one rises in one motion.</p>
 
   <div class="bar" role="group" aria-label="Global controls">
     <label>sequence n <input id="n" type="range" min="6" max="12" step="1" value="8" aria-label="Sequence length"> <output id="nOut">8</output></label>
@@ -124,6 +124,14 @@
       </span>
     </label>
   </div>
+
+  <section class="volume" aria-label="Shared volume">
+    <div class="volume-head">
+      <span class="readout" id="volumeNote">Both results as height fields. Drag to orbit, scroll or pinch to zoom.</span>
+      <span class="match" id="match" role="status">constructed path not yet run</span>
+    </div>
+    <canvas id="stage3d" tabindex="0" aria-label="Three-dimensional view of the two attention matrices"></canvas>
+  </section>
 
   <section class="paths">
     <article class="path" id="learned" aria-labelledby="learnedTitle">
@@ -162,14 +170,6 @@
         <button type="button" id="showOps" aria-pressed="false">Show intermediate ops</button>
       </div>
     </article>
-  </section>
-
-  <section class="volume" aria-label="Shared volume">
-    <div class="volume-head">
-      <span class="readout" id="volumeNote">Both results as height fields. Drag to orbit, scroll or pinch to zoom.</span>
-      <span class="match" id="match" role="status">constructed path not yet run</span>
-    </div>
-    <canvas id="stage3d" tabindex="0" aria-label="Three-dimensional view of the two attention matrices"></canvas>
   </section>
 
   <footer>
@@ -383,89 +383,172 @@
   const canvas = document.getElementById("stage3d");
   const engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: false, stencil: false });
   const scene = new BABYLON.Scene(engine);
-  scene.clearColor = BABYLON.Color4.FromHexString("#07080cff");
-  const camera = new BABYLON.ArcRotateCamera("cam", -Math.PI / 2.6, Math.PI / 3.1, 30, new BABYLON.Vector3(0, 1, 0), scene);
+  const hex = (h) => BABYLON.Color3.FromHexString(h);
+  const VOID = hex("#07080c");
+  scene.clearColor = new BABYLON.Color4(VOID.r, VOID.g, VOID.b, 1);
+  scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+  scene.fogDensity = 0.011;
+  scene.fogColor = VOID;
+  const camera = new BABYLON.ArcRotateCamera("cam", -Math.PI / 2.6, Math.PI / 3.3, 30, new BABYLON.Vector3(0, 1.2, 0), scene);
   camera.attachControl(canvas, true);
-  camera.lowerRadiusLimit = 6; camera.upperRadiusLimit = 60;
-  camera.wheelPrecision = 20; camera.pinchPrecision = 60;
-  camera.lowerBetaLimit = 0.15; camera.upperBetaLimit = Math.PI / 2 - 0.05;
+  camera.lowerRadiusLimit = 8; camera.upperRadiusLimit = 80;
+  camera.lowerBetaLimit = 0.15; camera.upperBetaLimit = Math.PI / 2.05;
+  camera.wheelPrecision = 30; camera.pinchPrecision = 60; camera.panningSensibility = 0;
+  // a slow idle orbit when nobody is dragging, so the fields are seen from every side
+  camera.useAutoRotationBehavior = true;
+  camera.autoRotationBehavior.idleRotationSpeed = 0.07;
+  camera.autoRotationBehavior.idleRotationWaitTime = 2500;
+  camera.autoRotationBehavior.idleRotationSpinupTime = 2500;
   const hemi = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0.3, 1, 0.2), scene);
-  hemi.intensity = 0.85; hemi.groundColor = new BABYLON.Color3(0.05, 0.05, 0.08);
+  hemi.intensity = 0.55; hemi.groundColor = new BABYLON.Color3(0.05, 0.05, 0.08);
   const sun = new BABYLON.DirectionalLight("sun", new BABYLON.Vector3(-0.6, -1, 0.4), scene);
-  sun.intensity = 0.5;
+  sun.intensity = 0.4;
+  const glow = new BABYLON.GlowLayer("glow", scene, { blurKernelSize: 48 });
+  glow.intensity = 0.5;
 
-  const matLearned = new BABYLON.StandardMaterial("mLearned", scene);
-  const matConstructed = new BABYLON.StandardMaterial("mConstructed", scene);
-  const matDiff = new BABYLON.StandardMaterial("mDiff", scene);
-  for (const m of [matLearned, matConstructed, matDiff]) { m.specularColor = new BABYLON.Color3(0.08, 0.08, 0.08); }
-  matConstructed.diffuseColor = BABYLON.Color3.FromHexString("#2ba8b9");
-  matConstructed.emissiveColor = BABYLON.Color3.FromHexString("#0d3a40");
-  matDiff.diffuseColor = BABYLON.Color3.FromHexString("#ff626b");
-  matDiff.emissiveColor = BABYLON.Color3.FromHexString("#3a0f14");
-  const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 80, height: 80 }, scene);
+  // a faint grid on the ground, so depth reads
+  {
+    const lines = []; const R = 36, step = 2;
+    for (let x = -R; x <= R; x += step) lines.push([new BABYLON.Vector3(x, 0, -R), new BABYLON.Vector3(x, 0, R)]);
+    for (let z = -R; z <= R; z += step) lines.push([new BABYLON.Vector3(-R, 0, z), new BABYLON.Vector3(R, 0, z)]);
+    const grid = BABYLON.MeshBuilder.CreateLineSystem("grid", { lines }, scene);
+    grid.color = new BABYLON.Color3(0.16, 0.19, 0.27); grid.alpha = 0.35; grid.isPickable = false;
+  }
+  const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 120, height: 120 }, scene);
   const groundMat = new BABYLON.StandardMaterial("ground", scene);
-  groundMat.diffuseColor = new BABYLON.Color3(0.04, 0.045, 0.06); groundMat.specularColor = BABYLON.Color3.Black();
-  ground.material = groundMat; ground.position.y = -0.01;
+  groundMat.diffuseColor = new BABYLON.Color3(0.03, 0.035, 0.05); groundMat.specularColor = BABYLON.Color3.Black();
+  ground.material = groundMat; ground.position.y = -0.02; ground.isPickable = false;
+
+  // a soft round sprite for the sparks, drawn here rather than fetched
+  const sparkTex = new BABYLON.DynamicTexture("spark", { width: 64, height: 64 }, scene, false);
+  {
+    const c = sparkTex.getContext();
+    const g = c.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.35, "rgba(255,220,160,0.8)"); g.addColorStop(1, "rgba(255,120,60,0)");
+    c.fillStyle = g; c.fillRect(0, 0, 64, 64); sparkTex.update(); sparkTex.hasAlpha = true;
+  }
+  // The iterative cloud of updates: sparks thrown off the learned field while it
+  // descends, dense while the loss is high and dying away as it settles. The
+  // constructed field never has any; that is the point of the picture.
+  const sparks = new BABYLON.ParticleSystem("sparks", 900, scene);
+  sparks.particleTexture = sparkTex;
+  sparks.emitter = new BABYLON.Vector3(0, 0, 0);
+  sparks.minEmitBox = new BABYLON.Vector3(-1, 0, -1); sparks.maxEmitBox = new BABYLON.Vector3(1, 2, 1);
+  sparks.color1 = new BABYLON.Color4(1, 0.55, 0.25, 0.9); sparks.color2 = new BABYLON.Color4(1, 0.82, 0.35, 0.8);
+  sparks.colorDead = new BABYLON.Color4(0.3, 0.1, 0.02, 0);
+  sparks.minSize = 0.12; sparks.maxSize = 0.38; sparks.minLifeTime = 0.35; sparks.maxLifeTime = 0.9;
+  sparks.direction1 = new BABYLON.Vector3(-1.2, 3, -1.2); sparks.direction2 = new BABYLON.Vector3(1.2, 6, 1.2);
+  sparks.minEmitPower = 0.6; sparks.maxEmitPower = 1.6; sparks.gravity = new BABYLON.Vector3(0, -7, 0);
+  sparks.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE; sparks.emitRate = 0; sparks.start();
+
+  // the ring that runs out across the ground when the two fields first agree
+  const ring = BABYLON.MeshBuilder.CreateTorus("ring", { diameter: 2, thickness: 0.12, tessellation: 72 }, scene);
+  const ringMat = new BABYLON.StandardMaterial("ring", scene);
+  ringMat.emissiveColor = hex("#55e2e1"); ringMat.diffuseColor = BABYLON.Color3.Black(); ringMat.disableLighting = true;
+  ring.material = ringMat; ring.isVisible = false; ring.isPickable = false; ring.position.y = 0.06;
 
   const H = 6;                 // height of a bar whose value is Amax
   const DIFF_GAIN = 10;        // the difference field is drawn this many times taller than the values
+  const PAL = {
+    warmLow: hex("#3a1208"), warmHigh: hex("#ff9a4a"),       // the learned field while hot
+    settledLow: hex("#2a2006"), settledHigh: hex("#ffd98a"), // the learned field once it has cooled
+    coolLow: hex("#062226"), coolHigh: hex("#7df5f3"),       // the constructed field
+    diffLow: hex("#2a0a0e"), diffHigh: hex("#ff7a86"),       // the difference field
+  };
   let bars = { learned: [], constructed: [], diff: [] };
   let barsN = 0;
   function rebuildBars(n) {
-    for (const key of Object.keys(bars)) { for (const b of bars[key]) b.dispose(); bars[key] = []; }
-    const make = (name, mat) => {
+    for (const key of Object.keys(bars)) { for (const b of bars[key]) { b.material.dispose(); b.dispose(); } bars[key] = []; }
+    const make = (name, base) => {
       const list = [];
       for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
-        const b = BABYLON.MeshBuilder.CreateBox(name + i + "_" + j, { size: 0.82 }, scene);
-        b.material = mat; b.isPickable = false; list.push(b);
+        const b = BABYLON.MeshBuilder.CreateBox(name + i + "_" + j, { size: 0.84 }, scene);
+        const m = new BABYLON.StandardMaterial(name + i + "_" + j, scene);
+        m.specularColor = new BABYLON.Color3(0.1, 0.1, 0.12); m.diffuseColor = base; m.emissiveColor = base.scale(0.3);
+        b.material = m; b.isPickable = false;
+        b.metadata = { i, j, cur: 0.03, target: 0.03, riseAt: 0 };   // each bar eases toward its own height
+        list.push(b);
       }
       return list;
     };
-    bars.learned = make("L", matLearned);
-    bars.constructed = make("C", matConstructed);
-    bars.diff = make("D", matDiff);
+    bars.learned = make("L", PAL.warmHigh);
+    bars.constructed = make("C", PAL.coolHigh);
+    bars.diff = make("D", PAL.diffHigh);
     barsN = n;
-    camera.target = new BABYLON.Vector3(0, 1, 0);
-    camera.radius = 9 + n * 1.5;
+    camera.target = new BABYLON.Vector3(0, 0.8, 0);
+    camera.radius = 12 + n * 1.9;
+    sparks.minEmitBox = new BABYLON.Vector3(-n / 2, 0.5, -n / 2); sparks.maxEmitBox = new BABYLON.Vector3(n / 2, H * 0.5, n / 2);
   }
-  function placeBars(list, M, offsetX, alphaScale) {
+  function tint(b, low, high, t, alpha) {
+    const m = b.material;
+    m.diffuseColor = BABYLON.Color3.Lerp(low, high, t);
+    m.emissiveColor = BABYLON.Color3.Lerp(low.scale(0.6), high, t).scale(0.5 + 0.5 * t);   // the tall cells glow
+    m.alpha = alpha;
+  }
+  function placeBars(list, M, offsetX, gain, low, high, alpha = 1) {
     const n = barsN; let idx = 0;
     for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
       const b = list[idx++];
       const v = M ? M[i][j] : 0;
-      const h = Math.max(0.03, (v / Amax) * H * alphaScale);
-      b.scaling.y = h; b.position.set(offsetX + (j - (n - 1) / 2), h / 2, (i - (n - 1) / 2));
+      const h = Math.max(0.03, (v / Amax) * H * gain);
+      b.metadata.target = h;
+      b.position.x = offsetX + (j - (n - 1) / 2); b.position.z = (i - (n - 1) / 2);
       b.isVisible = !!M;
+      if (M) tint(b, low, high, clamp01(h / H), alpha);
     }
   }
+  let wasBuiltKey = "";
   function layoutVolume() {
     const n = barsN; const gap = n / 2 + 1.2;
     const showL = state.mode !== "constructed", showC = state.mode !== "learned";
     const built = state.stage === LAST;
     const Ldisp = displayedLearned();
-    if (state.view === "difference") {
-      placeBars(bars.learned, null, 0, 1); placeBars(bars.constructed, null, 0, 1);
-      const D = built ? Ldisp.map((r, i) => r.map((x, j) => Math.abs(x - At[i][j]))) : null;
-      placeBars(bars.diff, D, 0, DIFF_GAIN);   // differences are small; drawn taller, and the label says so
-    } else {
-      placeBars(bars.diff, null, 0, 1);
-      const side = state.view === "side";
-      placeBars(bars.learned, showL ? Ldisp : null, side && showC ? -gap : 0, 1);
-      placeBars(bars.constructed, showC && built ? At : null, side && showL ? gap : 0, 1);
-      matConstructed.alpha = state.view === "overlay" && showL ? 0.55 : 1;
-    }
     const c = coolness();
-    matLearned.diffuseColor = BABYLON.Color3.Lerp(BABYLON.Color3.FromHexString("#ff7a3d"), BABYLON.Color3.FromHexString("#d4af37"), c);
-    matLearned.emissiveColor = BABYLON.Color3.Lerp(BABYLON.Color3.FromHexString("#4a1a0a"), BABYLON.Color3.FromHexString("#3a2e08"), c);
-  }
-  // a brief cyan pulse through the constructed bars when the match first lights
-  let pulseT = 0;
-  scene.onBeforeRenderObservable.add(() => {
-    if (pulseT > 0) {
-      pulseT = Math.max(0, pulseT - engine.getDeltaTime() / 700);
-      const k = Math.sin(pulseT * Math.PI);
-      matConstructed.emissiveColor = BABYLON.Color3.Lerp(BABYLON.Color3.FromHexString("#0d3a40"), BABYLON.Color3.FromHexString("#55e2e1"), k);
+    const lowL = BABYLON.Color3.Lerp(PAL.warmLow, PAL.settledLow, c), highL = BABYLON.Color3.Lerp(PAL.warmHigh, PAL.settledHigh, c);
+    let learnedX = 0, constructedX = 0;
+    if (state.view === "difference") {
+      placeBars(bars.learned, null, 0, 1, lowL, highL); placeBars(bars.constructed, null, 0, 1, PAL.coolLow, PAL.coolHigh);
+      const D = built ? Ldisp.map((r, i) => r.map((x, j) => Math.abs(x - At[i][j]))) : null;
+      placeBars(bars.diff, D, 0, DIFF_GAIN, PAL.diffLow, PAL.diffHigh);   // differences are small; drawn taller, and the label says so
+    } else {
+      placeBars(bars.diff, null, 0, 1, PAL.diffLow, PAL.diffHigh);
+      const side = state.view === "side";
+      learnedX = side && showC ? -gap : 0; constructedX = side && showL ? gap : 0;
+      placeBars(bars.learned, showL ? Ldisp : null, learnedX, 1, lowL, highL);
+      placeBars(bars.constructed, showC && built ? At : null, constructedX, 1, PAL.coolLow, PAL.coolHigh, state.view === "overlay" && showL ? 0.6 : 1);
     }
+    sparks.emitter.x = learnedX; ring.position.x = constructedX;
+    // when the construction lands, its bars rise from the ground in one wave across the field
+    const key = built ? `${state.n}:${state.d}` : "";
+    if (built && key !== wasBuiltKey) {
+      const t0 = performance.now();
+      for (const b of bars.constructed) { b.metadata.cur = 0.03; b.metadata.riseAt = t0 + (b.metadata.i + b.metadata.j) * 28; }
+    }
+    wasBuiltKey = key;
+  }
+  let pulseT = 0, ringT = 0;
+  scene.onBeforeRenderObservable.add(() => {
+    const now = performance.now(), dt = engine.getDeltaTime();
+    const heat = state.playing ? 1 - coolness() : 0;
+    // bars ease toward their heights; the learned ones shiver while the descent is hot
+    for (const key of Object.keys(bars)) for (const b of bars[key]) {
+      if (!b.isVisible) continue;
+      const md = b.metadata;
+      if (now < md.riseAt) { b.scaling.y = 0.03; b.position.y = 0.015; continue; }
+      md.cur += (md.target - md.cur) * 0.2;
+      let h = md.cur;
+      if (key === "learned" && heat > 0) h *= 1 + heat * 0.12 * Math.sin(now / 60 + md.i * 1.7 + md.j * 2.3);
+      b.scaling.y = h; b.position.y = h / 2;
+    }
+    const sparking = state.playing && state.mode !== "constructed" && state.view !== "difference";
+    sparks.emitRate = sparking ? 40 + 700 * heat * heat : 0;
+    // the match: the glow swells once, and a ring runs out across the ground from the constructed field
+    if (pulseT > 0) { pulseT = Math.max(0, pulseT - dt / 900); glow.intensity = 0.5 + 1.2 * Math.sin(pulseT * Math.PI); }
+    if (ringT > 0) {
+      ringT = Math.max(0, ringT - dt / 1400);
+      const sc = 1 + (1 - ringT) * barsN * 1.6;
+      ring.scaling.set(sc, 1, sc); ringMat.alpha = ringT * ringT; ring.isVisible = true;
+    } else ring.isVisible = false;
   });
   engine.runRenderLoop(() => scene.render());
   window.addEventListener("resize", () => engine.resize());
@@ -533,7 +616,7 @@
     matchEl.textContent = !built ? "constructed path not yet run"
       : matchNow ? `match: within ${TOL} at step ${fmtInt(s.steps)}`
       : `learned path is ${s.maxDiff.toFixed(3)} away`;
-    if (matchNow && !wasMatch) { pulseT = 1; matchEl.classList.remove("pulse"); void matchEl.offsetWidth; matchEl.classList.add("pulse"); }
+    if (matchNow && !wasMatch) { pulseT = 1; ringT = 1; matchEl.classList.remove("pulse"); void matchEl.offsetWidth; matchEl.classList.add("pulse"); }
     wasMatch = matchNow;
 
     // global controls

@@ -6,8 +6,11 @@ them down a loss, step after step, until the attention map matches a
 target. On the right, an algorithmic simulator: the same target map is
 assembled by a short fixed trace of elementary operations, with no data
 and no loss. The volume below holds both results as height fields so
-they can be set side by side, laid over each other, or differenced. When
-they agree within tolerance the match indicator lights.
+they can be set side by side, laid over each other, or differenced. The
+learned field throws off sparks while it descends, dense while the loss
+is high and dying away as it cools; the constructed field rises in one
+wave and never sparks. When they agree within tolerance the match
+indicator lights, the glow swells, and a ring runs out across the ground.
 
 The piece illustrates the distinction in Dutta, Chakrabarty, Ansari and
 Das, *On the Existence of Universal Simulators of Attention*
