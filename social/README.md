@@ -8,6 +8,10 @@ has. One folder per increment, named by date and subject, holding:
   the channel.
 - `post.md` — short forms ready to paste, with the tags, and a log of
   where and when each was posted.
+- `article.html` — the article and the short forms as one page, no
+  scripts and nothing fetched, so it can be opened from the folder or
+  put on any channel as it stands. Written by hand; keep it in step
+  with `article.md` when that changes.
 - whatever a reader needs to run the thing being talked about: here, a
   standalone build of the Visualizer Demo and the score it plays.
 

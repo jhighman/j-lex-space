@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>The poem now says how the body feels</title>
+<style>
+  :root {
+    --paper: #f7f4ec;
+    --ink: #1d1b17;
+    --soft: #5e594f;
+    --rule: #d9d3c4;
+    --amber: #9a7a1f;
+    --code-bg: #eeeadf;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0e0f14;
+      --ink: #ece7d8;
+      --soft: #a39d8f;
+      --rule: #2a2c35;
+      --amber: #d4af37;
+      --code-bg: #171922;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    margin: 0;
+    padding: 48px 16px 96px;
+    color: var(--ink);
+    background: var(--paper);
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  main { max-width: 42rem; margin: 0 auto; }
+  header { margin-bottom: 40px; }
+  .eyebrow {
+    color: var(--amber);
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin: 8px 0 12px;
+    font-size: 2.1rem;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .standfirst { margin: 0; color: var(--soft); font-style: italic; }
+  h2 {
+    margin: 44px 0 12px;
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+  p { margin: 0 0 1em; }
+  p b { font-weight: 700; }
+  a { color: var(--amber); }
+  code, pre {
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 0.86em;
+  }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+  pre {
+    margin: 0 0 1em;
+    padding: 12px 14px;
+    overflow-x: auto;
+    background: var(--code-bg);
+    border-radius: 6px;
+  }
+  pre code { background: none; padding: 0; }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 44px 0; }
+  figure {
+    margin: 0 0 1.4em;
+    padding: 16px 18px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+  }
+  figure figcaption {
+    margin-bottom: 8px;
+    color: var(--soft);
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  figure p { margin: 0; white-space: pre-line; }
+  .meta { color: var(--soft); font-size: 0.92em; }
+  footer { margin-top: 56px; color: var(--soft); font-size: 0.88em; }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="eyebrow">j-lex-space · Herbert · §4 increment</div>
+  <h1>The poem now says how the body feels</h1>
+  <p class="standfirst">Second take of the Herbert pulley, 11 October 2026. The last post, on 10 October, was the song preview with the visualization method. This is what changed in a day.</p>
+</header>
+
+<h2>Where it stood</h2>
+
+<p>The Visualizer Demo plays a song as a body of light, and each lens draws the same music by a different idea. One lens, Pulley, draws George Herbert's poem <i>The Pulley</i> as forces round a centre, from Lex's spec: the centre is Rest, the fulcrum; the rim is the human course through time; each of the poem's verbs is a force on the body. Pour and bestow push outward, contract and lead draw in, keep holds energy, adore pulls the whole body off its centre toward the world, rest sets up a false centre, and toss throws everything about while bringing it home.</p>
+
+<p>In that first build the poem supplied the forces and the <i>music</i> supplied the feeling: a major key was joy, a minor key sorrow. It was the lens's guess, and it was flagged as the most contestable thing in it.</p>
+
+<h2>What Lex's §4 said</h2>
+
+<p>Lex's spec grew a fourth section overnight: grammatical categories as coordinates. Nouns are the anchors in the plane, the reference points without which actions float. Verbs are the vectors between them. Adjectives carry the emotional charge, on a third axis, and when a threshold is crossed they displace the flat plane into depth. With it came two prototypes: a staged grounding chain that gets a decade closer each step and then arrives, instead of easing forever, and a sketch of that third axis.</p>
+
+<h2>What was built, in the order it was built</h2>
+
+<p><b>The nouns anchor.</b> Each noun is found in the poem's text on its line, the way the verbs are, and stands where the spec's topology puts it: God, Rest, the treasure, the jewel and the breast at the core; man, the span and the creature on the human orbit; the glass, the blessings, the world and its riches, strength, beauty, wisdom, honour, pleasure, the gifts and Nature at the rim, beside the line each is first read on. The three points the forces reached for had been typed-in coordinates. They are nouns now: adore drifts the body toward the <i>gifts</i>, rest settles half of it round <i>Nature</i>, and toss brings it home to the <i>breast</i>.</p>
+
+<p><b>The toss arrives.</b> Every ease in the demo only ever got nearer. The toss now follows Lex's chain exactly: a decade nearer home on each beat, 0.9, 0.99, 0.999, 0.9999 of the way, and on the fifth, within tolerance, the body is home. Not nearly: the drift is the core, the false centre is zero, the kept energy is spent, the rope is taut. It holds there until the next verb acts.</p>
+
+<p><b>The adjectives charge.</b> The words of state in the poem each push a charge on every beat of their line: losers, repining, restlessness, weary and weariness toward sorrow; rich and goodness toward joy. A line with none lets it fade. A line whose words cancel, <i>rich and weary</i>, holds it, which is the poem's point. The arc turns at a line's end once the charge crosses a threshold. <i>Repining restlessness</i> is what turns it, and the toss grounds the charge with everything else, so arriving home is what restores joy. The song's key no longer decides anything about the feeling. It colours the rim.</p>
+
+<p><b>The rope stages the third axis.</b> The body has no third axis, and faking one with brightness would misrepresent the idea. What the lens has is a rope from the fulcrum to the wheel. Past the threshold the charge's amplitude hoists the whole body up it, faster at first, the lit length of rope being what takes the weight, and the toss grounds it back onto the fulcrum. A pulley doing what a pulley does. It is called, in the code and the notes, a staging of elevation in the plane, not elevation.</p>
+
+<h2>What the take shows</h2>
+
+<p>Pulley stays on air for the whole song, with captions. Top left are the calls the performance makes. Top right, live, is what the body is doing: the line being read, the verb in force, the noun it is anchored at, the charge and the words moving it, and how far it is hoisted.</p>
+
+<p>First reading: joy through line 16, the losers' dip fading. Line 17 drives the charge to its floor; the arc turns to sorrow at the line's end and the body rises on the rope. Lines 18 and 19 hold it there. Line 20 throws, grounds a decade a beat, and on the fifth beat the body is on the fulcrum, charge spent, rope taut, joy back at the line's end. The second reading does the same, while the song's key moves through A-flat, C, F minor, C minor and A-flat and reaches nothing but the rim's hue.</p>
+
+<p class="meta">The take is a 3:40 MP4, <i>Again it's Christmas time, Herbert, third take · visualizer</i>. It is not in the repository; it goes to a channel as an upload, and this page is written to sit beside it.</p>
+
+<h2>What this is and is not</h2>
+
+<p>The lens, its tests and the take were made by one process, and this repository's rule is that nothing is evaluated by the process that produced it. The take exists so that a different reader, first of all the author of the spec, can say where the picture is wrong. Four questions are back on the record: whether the key should keep any say; whether these are the anchors; what the adjective's threshold is, in the poem's terms; and whether arriving is what toss does.</p>
+
+<p>Everything is public: the spec (<code>specs/herbert/semantic_forces.md</code>), the lens (<code>visualizer-demo/src/lenses/pulley.ts</code>), one test per claim, and the correspondence, which moved from letters to issues on the same day. <a href="https://github.com/jhighman/j-lex-space/issues/1">Issue #1</a> is the reading of the spec and the questions back.</p>
+
+<h2>Run it yourself</h2>
+
+<p>This folder holds a standalone build of the demo and the score the take was made from. From the repository root:</p>
+
+<pre><code>python3 -m http.server 8000</code></pre>
+
+<p>then open</p>
+
+<pre><code>http://localhost:8000/social/2026-10-11-herbert-s4/visualizer-demo.html?orchestration=herbert.json</code></pre>
+
+<p>or, if this page is already being served, <a href="visualizer-demo.html?orchestration=herbert.json">open the demo from here</a>. Click once if the page asks (a browser will not start sound until it has been clicked). The song loads from <code>visualizer-demo/samples/</code>, the score puts Pulley on air with captions, and <code>V</code> records a take to an MP4. Drop any other song onto the page to hear the poem read over it. Nothing leaves the browser.</p>
+
+<hr>
+
+<h2>Short form</h2>
+
+<figure>
+  <figcaption>X · Jeff · attach the third take</figcaption>
+  <p>Second take of the Herbert pulley. Lex's §4 is in the body now: the poem's nouns are the anchors, its adjectives carry the feeling, the toss arrives instead of easing forever. The song's key only colours the rim. Spec, lens, tests, and the questions back are all public:
+https://github.com/jhighman/j-lex-space/issues/1
+@aLexKriz83 @DevCoBand #alexicon</p>
+</figure>
+
+<figure>
+  <figcaption>Any channel · Lex, or anyone</figcaption>
+  <p>A visualizer that reads a poem over a song. Yesterday the poem supplied the forces and the music supplied the feeling. Today the poem supplies both: its nouns are the anchors the verbs act between, its adjectives charge the body with joy or sorrow and hoist it up the rope, and the toss at the end brings it home exactly. Built from a one-page spec in a day, one test per claim, and every choice it forced is written on the screen so the spec's author can say where it is wrong.
+https://github.com/jhighman/j-lex-space</p>
+</figure>
+
+<footer>
+  <p>Jeff Highman and Lex, from <a href="https://github.com/jhighman/j-lex-space">j-lex-space</a>. The songs and the takes are © 2026 Jeff Highman; see the demo's copyright file for the terms as they stand. The previous increment was posted on 10 October 2026: <a href="https://x.com/jeffhighman/status/2108909848754581851">song preview and the visualization method</a>.</p>
+</footer>
+
+</main>
+</body>
+</html>
