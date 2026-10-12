@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>The Untrained Attention</title>
+<style>
+  :root {
+    --void: #0a0b10;
+    --panel: #10121a;
+    --line: rgba(222, 231, 238, 0.14);
+    --ink: rgba(237, 242, 244, 0.88);
+    --soft: rgba(219, 225, 229, 0.58);
+    --amber: #d4af37;
+    --cyan: #55e2e1;
+    --warm: #ff7a3d;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--void); color: var(--ink); }
+  body {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 24px 16px 96px;
+  }
+  main { max-width: 1180px; margin: 0 auto; }
+  .eyebrow {
+    color: var(--amber); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+  }
+  h1 { margin: 6px 0 4px; font-size: 22px; font-weight: 500; letter-spacing: 0.02em; }
+  .lede { margin: 0 0 18px; color: var(--soft); max-width: 70ch; }
+  .bar {
+    display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center;
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
+    background: var(--panel); margin-bottom: 16px;
+  }
+  .bar label, .ctl label { display: inline-flex; align-items: center; gap: 8px; color: var(--soft); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .bar output { color: var(--ink); min-width: 2ch; }
+  input[type="range"] { accent-color: var(--amber); width: 120px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg button { border: 0; border-right: 1px solid var(--line); }
+  .seg button:last-child { border-right: 0; }
+  button {
+    font: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink); background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+    border-radius: 8px; padding: 7px 12px; cursor: pointer;
+  }
+  button:hover { background: rgba(255,255,255,0.08); }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  button[aria-pressed="true"] { background: rgba(212,175,55,0.18); color: #fff1bf; border-color: rgba(212,175,55,0.5); }
+  .seg button[aria-pressed="true"] { background: rgba(212,175,55,0.18); }
+  .paths { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .path {
+    border: 1px solid var(--line); border-radius: 12px; background: var(--panel);
+    padding: 14px; display: grid; grid-template-rows: auto auto 1fr auto; gap: 10px;
+  }
+  .path h2 { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  .path h2 small { font-weight: 400; color: var(--soft); letter-spacing: 0.04em; text-transform: none; margin-left: 8px; }
+  #learned h2 { color: var(--warm); }
+  #constructed h2 { color: var(--cyan); }
+  .path.dim { opacity: 0.45; }
+  .visual { display: grid; grid-template-columns: minmax(160px, 260px) 1fr; gap: 14px; align-items: start; }
+  .heat { width: 100%; aspect-ratio: 1; display: block; border: 1px solid var(--line); border-radius: 6px; background: #07080c; }
+  .readout { color: var(--soft); font-size: 12px; white-space: pre-line; }
+  .readout b { color: var(--ink); font-weight: 500; }
+  .ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .loss { width: 100%; height: 90px; display: block; }
+  .stages { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+  .stages li { padding: 4px 8px; border-radius: 6px; color: var(--soft); border: 1px solid transparent; display: flex; justify-content: space-between; gap: 8px; }
+  .stages li .op { color: var(--ink); }
+  .stages li.done { border-color: rgba(85,226,225,0.18); }
+  .stages li.now { border-color: rgba(85,226,225,0.6); background: rgba(85,226,225,0.08); color: var(--cyan); }
+  .stages li.now .op { color: #e8ffff; }
+  .stages li .k { opacity: 0.6; }
+  .note { color: var(--soft); font-size: 12px; margin: 0; }
+  .volume { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); padding: 14px; }
+  .volume-head { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  #stage3d { width: 100%; height: 380px; display: block; border-radius: 8px; background: #07080c; touch-action: none; outline: none; }
+  .match { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--soft); transition: box-shadow 0.3s, border-color 0.3s, color 0.3s; }
+  .match.lit { color: #e8ffff; border-color: var(--cyan); box-shadow: 0 0 18px rgba(85,226,225,0.45); }
+  .match.pulse { animation: pulse 0.7s ease-out; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(85,226,225,0.9); } 100% { box-shadow: 0 0 0 26px rgba(85,226,225,0); } }
+  .caption {
+    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 5;
+    padding: 9px 16px; border: 1px solid rgba(212,175,55,0.35); border-radius: 999px;
+    background: rgba(11,12,19,0.9); color: #fff1bf; font-size: 12px; letter-spacing: 0.06em;
+    white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis;
+    backdrop-filter: blur(8px);
+  }
+  footer { margin-top: 18px; color: var(--soft); font-size: 11px; }
+  footer a { color: var(--amber); }
+  @media (max-width: 900px) {
+    .paths { grid-template-columns: 1fr; }
+    #stage3d { height: 300px; }
+  }
+  @media (max-width: 520px) {
+    .visual { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">j-lex-space / the untrained attention</div>
+  <h1>The Untrained Attention</h1>
+  <p class="lede">One attention head, two routes to the same map. On the left its weights are learned by gradient descent, step after step, against a loss. On the right the identical map is assembled by a short, fixed program with no data and no loss. The volume below holds both results so they can be laid over each other.</p>
+
+  <div class="bar" role="group" aria-label="Global controls">
+    <label>sequence n <input id="n" type="range" min="6" max="12" step="1" value="8" aria-label="Sequence length"> <output id="nOut">8</output></label>
+    <label>head dim d <input id="d" type="range" min="4" max="16" step="1" value="8" aria-label="Head dimension"> <output id="dOut">8</output></label>
+    <label>show in volume
+      <span class="seg" role="group" aria-label="Which path the volume shows">
+        <button type="button" data-mode="learned" aria-pressed="false">Learned</button>
+        <button type="button" data-mode="both" aria-pressed="true">Both</button>
+        <button type="button" data-mode="constructed" aria-pressed="false">Constructed</button>
+      </span>
+    </label>
+    <label>arrangement
+      <span class="seg" role="group" aria-label="Arrangement of the two surfaces">
+        <button type="button" data-view="side" aria-pressed="true">Side by side</button>
+        <button type="button" data-view="overlay" aria-pressed="false">Overlay</button>
+        <button type="button" data-view="difference" aria-pressed="false">Difference</button>
+      </span>
+    </label>
+  </div>
+
+  <section class="paths">
+    <article class="path" id="learned" aria-labelledby="learnedTitle">
+      <h2 id="learnedTitle">Learned <small>Q and K start random; descend the loss</small></h2>
+      <div class="visual">
+        <svg class="heat" id="heatLearned" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="Learned attention matrix"></svg>
+        <div>
+          <div class="readout" id="learnedReadout" aria-live="polite"></div>
+          <svg class="loss" id="lossCurve" viewBox="0 0 300 90" preserveAspectRatio="none" role="img" aria-label="Loss over gradient steps"></svg>
+          <label style="display:flex;gap:8px;align-items:center;color:var(--soft);font-size:11px;text-transform:uppercase;letter-spacing:.08em">scrub <input id="scrub" type="range" min="0" max="0" step="1" value="0" style="flex:1" aria-label="Scrub through the recorded learning steps"></label>
+        </div>
+      </div>
+      <p class="note">Gradient of the per-row KL divergence through the softmax, taken by hand (see <code>gradientStep</code>). Plain gradient descent, no momentum, no noise added.</p>
+      <div class="ctl">
+        <button type="button" id="play" aria-pressed="false">Play</button>
+        <button type="button" id="stepLearned">Step</button>
+        <button type="button" id="resetLearned">Reset</button>
+        <label>speed <input id="speed" type="range" min="1" max="24" step="1" value="6" aria-label="Gradient steps per frame"> <output id="speedOut">6</output>/frame</label>
+      </div>
+    </article>
+
+    <article class="path" id="constructed" aria-labelledby="constructedTitle">
+      <h2 id="constructedTitle">Algorithmic simulator <small>the same map, by construction</small></h2>
+      <div class="visual">
+        <svg class="heat" id="heatConstructed" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="Constructed matrix at the current stage"></svg>
+        <div>
+          <div class="readout" id="constructedReadout" aria-live="polite"></div>
+          <ol class="stages" id="stages" aria-label="Construction stages"></ol>
+        </div>
+      </div>
+      <p class="note">No loss and no data: a fixed trace of elementary operations that ends at the target. In the paper the simulator is itself a transformer, so this is attention simulating attention.</p>
+      <div class="ctl">
+        <button type="button" id="construct">Construct</button>
+        <button type="button" id="stepConstructed">Step</button>
+        <button type="button" id="resetConstructed">Reset</button>
+        <button type="button" id="showOps" aria-pressed="false">Show intermediate ops</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="volume" aria-label="Shared volume">
+    <div class="volume-head">
+      <span class="readout" id="volumeNote">Both results as height fields. Drag to orbit, scroll or pinch to zoom.</span>
+      <span class="match" id="match" role="status">constructed path not yet run</span>
+    </div>
+    <canvas id="stage3d" tabindex="0" aria-label="Three-dimensional view of the two attention matrices"></canvas>
+  </section>
+
+  <footer>
+    Built from Lex's brief, <a href="https://github.com/jhighman/j-lex-space/issues/7">issue #7</a>. The result it illustrates: Dutta, Chakrabarty, Ansari and Das, <i>On the Existence of Universal Simulators of Attention</i>, arXiv:2506.18739. This page is an illustration of the distinction, not the paper's construction.
+  </footer>
+</main>
+
+<div class="caption" aria-hidden="true">The same attention map can be constructed, not only learned.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  // ---------- one state object; every view subscribes ----------
+  const state = {
+    mode: "both",          // "learned" | "both" | "constructed": what the volume shows
+    view: "side",          // "side" | "overlay" | "difference"
+    steps: 0,              // gradient steps taken on the learned path
+    matrixMatch: false,    // learned and constructed agree within TOL
+    showOps: false,        // reveal the construction stages one by one
+    n: 8,                  // sequence length
+    d: 8,                  // head dimension
+    playing: false,
+    speed: 6,              // gradient steps per animation frame
+    stage: -1,             // -1 = not constructed; 0..STAGES.length-1 = last stage shown
+    scrub: null,           // null = live; otherwise an index into the snapshots
+    loss: NaN,
+    maxDiff: NaN,
+  };
+  const listeners = [];
+  const subscribe = (f) => listeners.push(f);
+  const update = (patch) => { Object.assign(state, patch); for (const f of listeners) f(state); };
+
+  // Change these to tune the learned path.
+  const LR = 1.0;          // learning rate of plain gradient descent
+  const TOL = 0.002;       // max |A_learned - A_target| that counts as a match
+  const SNAP_EVERY = 4;    // record a snapshot of the matrix every this many steps
+  const TARGET_SEED = 7;   // the target head is fixed by this seed
+  const INIT_SEED = 11;    // the learned head's random start
+
+  // ---------- small linear algebra ----------
+  function rng(seed) {
+    return function () {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function gauss(r) {
+    let u = 0, v = 0;
+    while (u === 0) u = r();
+    while (v === 0) v = r();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  const matrix = (rows, cols, fill) => Array.from({ length: rows }, () => Float64Array.from({ length: cols }, fill));
+  const copy = (M) => M.map((r) => Float64Array.from(r));
+
+  function scoresRaw(Q, K) {              // Q Kᵀ
+    const n = Q.length, d = Q[0].length;
+    return Array.from({ length: n }, (_, i) => Float64Array.from({ length: n }, (_, j) => {
+      let s = 0; for (let k = 0; k < d; k++) s += Q[i][k] * K[j][k]; return s;
+    }));
+  }
+  const scale = (S, f) => S.map((r) => r.map((x) => x * f));
+  const rowMax = (S) => S.map((r) => Math.max(...r));
+  const shiftRows = (S) => { const m = rowMax(S); return S.map((r, i) => r.map((x) => x - m[i])); };
+  const expAll = (S) => S.map((r) => r.map(Math.exp));
+  const rowSum = (E) => E.map((r) => r.reduce((a, b) => a + b, 0));
+  const normalise = (E) => { const z = rowSum(E); return E.map((r, i) => r.map((x) => x / z[i])); };
+  const softmaxRows = (S) => normalise(expAll(shiftRows(S)));
+  const attention = (Q, K, d) => softmaxRows(scale(scoresRaw(Q, K), 1 / Math.sqrt(d)));
+
+  // ---------- the target head, and the learned head ----------
+  let Qt, Kt, At, Amax;     // target projections and attention map
+  let Q, K, A;              // the learned projections and their current map
+  let lossHistory = [];     // loss per step, for the curve
+  let snapshots = [];       // { step, A } every SNAP_EVERY steps, for the scrub
+  let loss0 = 1;            // loss at step 0, for the warm-to-cool colouring
+
+  function buildTarget(n, d) {
+    const r = rng(TARGET_SEED);
+    Qt = matrix(n, d, () => gauss(r) * 1.4);
+    Kt = matrix(n, d, () => gauss(r) * 1.4);
+    At = attention(Qt, Kt, d);
+    Amax = Math.max(...At.map((row) => Math.max(...row)));
+  }
+  function resetLearned() {
+    const r = rng(INIT_SEED);
+    Q = matrix(state.n, state.d, () => gauss(r) * 0.3);
+    K = matrix(state.n, state.d, () => gauss(r) * 0.3);
+    A = attention(Q, K, state.d);
+    const { loss, maxDiff } = measure(A);
+    loss0 = loss;
+    lossHistory = [loss];
+    snapshots = [{ step: 0, A: copy(A) }];
+    update({ steps: 0, loss, maxDiff, playing: false, scrub: null });
+  }
+  function measure(M) {
+    // per-row KL(target ‖ learned), averaged over rows; and the largest cell difference
+    const n = M.length; let loss = 0, maxDiff = 0;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      loss += At[i][j] * Math.log(At[i][j] / M[i][j]);
+      maxDiff = Math.max(maxDiff, Math.abs(M[i][j] - At[i][j]));
+    }
+    return { loss: loss / n, maxDiff };
+  }
+
+  // One step of gradient descent on the KL loss, with the gradient through the
+  // softmax written out by hand: for row-wise softmax A = softmax(S) and
+  // L = (1/n) Σ_i KL(At_i ‖ A_i), the gradient on the scores is
+  // dL/dS_ij = (A_ij − At_ij) / n. Then S = Q Kᵀ / √d gives
+  // dL/dQ = (dL/dS) K / √d and dL/dK = (dL/dS)ᵀ Q / √d.
+  function gradientStep() {
+    const n = state.n, d = state.d, rd = Math.sqrt(d);
+    const dS = A.map((r, i) => r.map((a, j) => (a - At[i][j]) / n));
+    const dQ = matrix(n, d, () => 0), dK = matrix(n, d, () => 0);
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      const g = dS[i][j] / rd;
+      for (let k = 0; k < d; k++) { dQ[i][k] += g * K[j][k]; dK[j][k] += g * Q[i][k]; }
+    }
+    for (let i = 0; i < n; i++) for (let k = 0; k < d; k++) { Q[i][k] -= LR * dQ[i][k]; K[i][k] -= LR * dK[i][k]; }
+    A = attention(Q, K, d);
+    const m = measure(A);
+    lossHistory.push(m.loss);
+    state.steps += 1;                       // counted here, so several steps per frame all count
+    if (state.steps % SNAP_EVERY === 0) snapshots.push({ step: state.steps, A: copy(A) });
+    return { steps: state.steps, ...m };
+  }
+
+  // ---------- the construction: a fixed trace of elementary operations ----------
+  const STAGES = [
+    { op: "load Q",          k: "n×d", mat: () => Qt },
+    { op: "load K",          k: "n×d", mat: () => Kt },
+    { op: "Q Kᵀ",            k: "n×n", mat: () => scoresRaw(Qt, Kt) },
+    { op: "scale by 1/√d",   k: "n×n", mat: () => scale(scoresRaw(Qt, Kt), 1 / Math.sqrt(state.d)) },
+    { op: "shift by row max",k: "n×n", mat: () => shiftRows(scale(scoresRaw(Qt, Kt), 1 / Math.sqrt(state.d))) },
+    { op: "exp",             k: "n×n", mat: () => expAll(shiftRows(scale(scoresRaw(Qt, Kt), 1 / Math.sqrt(state.d)))) },
+    { op: "row sums",        k: "n×1", mat: () => rowSum(expAll(shiftRows(scale(scoresRaw(Qt, Kt), 1 / Math.sqrt(state.d))))).map((z) => Float64Array.of(z)) },
+    { op: "normalise",       k: "n×n", mat: () => At },
+  ];
+  const LAST = STAGES.length - 1;
+  let constructTimer = null;
+  function stopConstructing() { if (constructTimer) { clearInterval(constructTimer); constructTimer = null; } }
+  function construct() {
+    stopConstructing();
+    if (!state.showOps) { update({ stage: LAST }); return; }
+    update({ stage: 0 });
+    constructTimer = setInterval(() => {
+      if (state.stage >= LAST) { stopConstructing(); return; }
+      update({ stage: state.stage + 1 });
+    }, 450);
+  }
+
+  // ---------- colour ----------
+  const hotRamp = d3.interpolateRgbBasis(["#150c0a", "#8c2f1c", "#ff7a3d", "#ffd27a"]);
+  const settledRamp = d3.interpolateRgbBasis(["#0f1012", "#7a5a1a", "#d4af37", "#fff2c2"]);
+  const coolRamp = d3.interpolateRgbBasis(["#0a1416", "#145d6b", "#55e2e1", "#e8ffff"]);
+  const signedRamp = d3.interpolateRgbBasis(["#1d6f7a", "#0a1416", "#7a5a1a"]);
+  const clamp01 = (x) => Math.max(0, Math.min(1, x));
+  // 0 when the loss is where it started, 1 when it is at the match tolerance: the warmth drains out as it settles
+  const coolness = () => {
+    if (!(state.loss > 0) || !(loss0 > 0)) return 0;
+    const lossAtTol = 3e-4;
+    return clamp01((Math.log(loss0) - Math.log(state.loss)) / (Math.log(loss0) - Math.log(lossAtTol)));
+  };
+  const learnedColour = (v) => d3.interpolateRgb(hotRamp(v), settledRamp(v))(coolness());
+
+  // ---------- heatmaps (D3) ----------
+  function heatmap(svgId) {
+    const svg = d3.select("#" + svgId);
+    return function render(M, colour, domain) {
+      if (!M) { svg.selectAll("*").remove(); return; }
+      const rows = M.length, cols = M[0].length;
+      const [lo, hi] = domain || [Math.min(...M.map((r) => Math.min(...r))), Math.max(...M.map((r) => Math.max(...r)))];
+      const span = hi - lo || 1;
+      const cells = [];
+      for (let i = 0; i < rows; i++) for (let j = 0; j < cols; j++) cells.push({ i, j, v: M[i][j] });
+      const w = 100 / cols, h = 100 / rows;
+      svg.selectAll("rect").data(cells, (c) => c.i * 64 + c.j).join("rect")
+        .attr("x", (c) => c.j * w).attr("y", (c) => c.i * h)
+        .attr("width", w + 0.15).attr("height", h + 0.15)
+        .attr("fill", (c) => colour((c.v - lo) / span));
+    };
+  }
+  const drawLearned = heatmap("heatLearned");
+  const drawConstructed = heatmap("heatConstructed");
+
+  // ---------- loss curve ----------
+  const lossSvg = d3.select("#lossCurve");
+  lossSvg.append("path").attr("id", "lossPath").attr("fill", "none").attr("stroke", "#ff7a3d").attr("stroke-width", 1.4);
+  lossSvg.append("line").attr("id", "lossTol").attr("stroke", "rgba(85,226,225,0.5)").attr("stroke-dasharray", "3 3");
+  lossSvg.append("text").attr("id", "lossLabel").attr("x", 4).attr("y", 12).attr("fill", "rgba(219,225,229,0.6)").attr("font-size", 10);
+  function drawLoss() {
+    const N = lossHistory.length;
+    if (N < 2) { lossSvg.select("#lossPath").attr("d", ""); return; }
+    const stride = Math.max(1, Math.floor(N / 300));
+    const pts = []; for (let i = 0; i < N; i += stride) pts.push([i, lossHistory[i]]); pts.push([N - 1, lossHistory[N - 1]]);
+    const x = d3.scaleLinear().domain([0, N - 1]).range([2, 298]);
+    const lo = Math.min(1e-5, ...pts.map((p) => p[1])), hi = Math.max(...pts.map((p) => p[1]));
+    const y = d3.scaleLog().domain([lo, hi]).range([86, 6]);
+    lossSvg.select("#lossPath").attr("d", d3.line().x((p) => x(p[0])).y((p) => y(Math.max(p[1], lo)))(pts))
+      .attr("stroke", d3.interpolateRgb("#ff7a3d", "#d4af37")(coolness()));
+    lossSvg.select("#lossTol").attr("x1", 2).attr("x2", 298).attr("y1", y(3e-4)).attr("y2", y(3e-4));
+    lossSvg.select("#lossLabel").text("loss, log scale");
+  }
+
+  // ---------- the shared volume (Babylon.js) ----------
+  const canvas = document.getElementById("stage3d");
+  const engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: false, stencil: false });
+  const scene = new BABYLON.Scene(engine);
+  scene.clearColor = BABYLON.Color4.FromHexString("#07080cff");
+  const camera = new BABYLON.ArcRotateCamera("cam", -Math.PI / 2.6, Math.PI / 3.1, 30, new BABYLON.Vector3(0, 1, 0), scene);
+  camera.attachControl(canvas, true);
+  camera.lowerRadiusLimit = 6; camera.upperRadiusLimit = 60;
+  camera.wheelPrecision = 20; camera.pinchPrecision = 60;
+  camera.lowerBetaLimit = 0.15; camera.upperBetaLimit = Math.PI / 2 - 0.05;
+  const hemi = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0.3, 1, 0.2), scene);
+  hemi.intensity = 0.85; hemi.groundColor = new BABYLON.Color3(0.05, 0.05, 0.08);
+  const sun = new BABYLON.DirectionalLight("sun", new BABYLON.Vector3(-0.6, -1, 0.4), scene);
+  sun.intensity = 0.5;
+
+  const matLearned = new BABYLON.StandardMaterial("mLearned", scene);
+  const matConstructed = new BABYLON.StandardMaterial("mConstructed", scene);
+  const matDiff = new BABYLON.StandardMaterial("mDiff", scene);
+  for (const m of [matLearned, matConstructed, matDiff]) { m.specularColor = new BABYLON.Color3(0.08, 0.08, 0.08); }
+  matConstructed.diffuseColor = BABYLON.Color3.FromHexString("#2ba8b9");
+  matConstructed.emissiveColor = BABYLON.Color3.FromHexString("#0d3a40");
+  matDiff.diffuseColor = BABYLON.Color3.FromHexString("#ff626b");
+  matDiff.emissiveColor = BABYLON.Color3.FromHexString("#3a0f14");
+  const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 80, height: 80 }, scene);
+  const groundMat = new BABYLON.StandardMaterial("ground", scene);
+  groundMat.diffuseColor = new BABYLON.Color3(0.04, 0.045, 0.06); groundMat.specularColor = BABYLON.Color3.Black();
+  ground.material = groundMat; ground.position.y = -0.01;
+
+  const H = 6;                 // height of a bar whose value is Amax
+  const DIFF_GAIN = 10;        // the difference field is drawn this many times taller than the values
+  let bars = { learned: [], constructed: [], diff: [] };
+  let barsN = 0;
+  function rebuildBars(n) {
+    for (const key of Object.keys(bars)) { for (const b of bars[key]) b.dispose(); bars[key] = []; }
+    const make = (name, mat) => {
+      const list = [];
+      for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+        const b = BABYLON.MeshBuilder.CreateBox(name + i + "_" + j, { size: 0.82 }, scene);
+        b.material = mat; b.isPickable = false; list.push(b);
+      }
+      return list;
+    };
+    bars.learned = make("L", matLearned);
+    bars.constructed = make("C", matConstructed);
+    bars.diff = make("D", matDiff);
+    barsN = n;
+    camera.target = new BABYLON.Vector3(0, 1, 0);
+    camera.radius = 9 + n * 1.5;
+  }
+  function placeBars(list, M, offsetX, alphaScale) {
+    const n = barsN; let idx = 0;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      const b = list[idx++];
+      const v = M ? M[i][j] : 0;
+      const h = Math.max(0.03, (v / Amax) * H * alphaScale);
+      b.scaling.y = h; b.position.set(offsetX + (j - (n - 1) / 2), h / 2, (i - (n - 1) / 2));
+      b.isVisible = !!M;
+    }
+  }
+  function layoutVolume() {
+    const n = barsN; const gap = n / 2 + 1.2;
+    const showL = state.mode !== "constructed", showC = state.mode !== "learned";
+    const built = state.stage === LAST;
+    const Ldisp = displayedLearned();
+    if (state.view === "difference") {
+      placeBars(bars.learned, null, 0, 1); placeBars(bars.constructed, null, 0, 1);
+      const D = built ? Ldisp.map((r, i) => r.map((x, j) => Math.abs(x - At[i][j]))) : null;
+      placeBars(bars.diff, D, 0, DIFF_GAIN);   // differences are small; drawn taller, and the label says so
+    } else {
+      placeBars(bars.diff, null, 0, 1);
+      const side = state.view === "side";
+      placeBars(bars.learned, showL ? Ldisp : null, side && showC ? -gap : 0, 1);
+      placeBars(bars.constructed, showC && built ? At : null, side && showL ? gap : 0, 1);
+      matConstructed.alpha = state.view === "overlay" && showL ? 0.55 : 1;
+    }
+    const c = coolness();
+    matLearned.diffuseColor = BABYLON.Color3.Lerp(BABYLON.Color3.FromHexString("#ff7a3d"), BABYLON.Color3.FromHexString("#d4af37"), c);
+    matLearned.emissiveColor = BABYLON.Color3.Lerp(BABYLON.Color3.FromHexString("#4a1a0a"), BABYLON.Color3.FromHexString("#3a2e08"), c);
+  }
+  // a brief cyan pulse through the constructed bars when the match first lights
+  let pulseT = 0;
+  scene.onBeforeRenderObservable.add(() => {
+    if (pulseT > 0) {
+      pulseT = Math.max(0, pulseT - engine.getDeltaTime() / 700);
+      const k = Math.sin(pulseT * Math.PI);
+      matConstructed.emissiveColor = BABYLON.Color3.Lerp(BABYLON.Color3.FromHexString("#0d3a40"), BABYLON.Color3.FromHexString("#55e2e1"), k);
+    }
+  });
+  engine.runRenderLoop(() => scene.render());
+  window.addEventListener("resize", () => engine.resize());
+
+  // ---------- what the learned view shows: live, or a scrubbed snapshot ----------
+  const displayedLearned = () => state.scrub === null ? A : snapshots[Math.min(state.scrub, snapshots.length - 1)].A;
+  const displayedStep = () => state.scrub === null ? state.steps : snapshots[Math.min(state.scrub, snapshots.length - 1)].step;
+
+  // ---------- the views ----------
+  const $ = (id) => document.getElementById(id);
+  const fmt = (x) => Number.isFinite(x) ? x.toExponential(2) : "—";
+  const fmtInt = (x) => x.toLocaleString("en-US");
+  const matchEl = $("match");
+  let wasMatch = false;
+  let lastCKey = "";
+
+  subscribe((s) => {
+    // learned path
+    const Ld = displayedLearned();
+    drawLearned(Ld, learnedColour, [0, Amax]);
+    const live = s.scrub === null;
+    $("learnedReadout").innerHTML =
+      `step <b>${fmtInt(displayedStep())}</b>${live ? "" : " (scrubbed)"}\n` +
+      `loss <b>${fmt(s.loss)}</b> · max |Δ| <b>${Number.isFinite(s.maxDiff) ? s.maxDiff.toFixed(4) : "—"}</b>\n` +
+      `${s.playing ? "descending" : s.maxDiff < TOL ? "settled within tolerance" : "paused"}`;
+    drawLoss();
+    $("play").textContent = s.playing ? "Pause" : "Play";
+    $("play").setAttribute("aria-pressed", String(s.playing));
+    const scrub = $("scrub");
+    scrub.max = String(Math.max(0, snapshots.length - 1));
+    if (live) scrub.value = scrub.max;
+
+    // constructed path: redrawn only when something on that side changed
+    const built = s.stage === LAST;
+    const cKey = `${s.stage}:${s.showOps}:${s.n}:${s.d}`;
+    if (cKey !== lastCKey) {
+    lastCKey = cKey;
+    if (s.stage < 0) {
+      drawConstructed(null);
+      $("constructedReadout").innerHTML = `stage <b>—</b> of ${STAGES.length}\nnot yet constructed`;
+    } else {
+      const st = STAGES[s.stage];
+      const M = st.mat();
+      const signed = s.stage <= 4;
+      drawConstructed(M, signed ? (v) => signedRamp(v) : coolRamp, built ? [0, Amax] : null);
+      $("constructedReadout").innerHTML = `stage <b>${s.stage + 1}</b> of ${STAGES.length}: <b>${st.op}</b> (${st.k})\n${built ? "constructed; no loss, no data" : "constructing"}`;
+    }
+    d3.select("#stages").selectAll("li").data(STAGES).join("li")
+      .attr("class", (st, i) => i === s.stage ? "now" : i < s.stage ? "done" : "")
+      .style("display", (st, i) => (s.showOps || i === LAST) ? "" : "none")
+      .html((st, i) => `<span class="op">${i + 1}. ${st.op}</span><span class="k">${st.k}</span>`);
+    $("showOps").setAttribute("aria-pressed", String(s.showOps));
+    $("stepConstructed").disabled = s.stage >= LAST;
+    }
+
+    // the volume and the match
+    layoutVolume();
+    $("volumeNote").textContent = s.view === "difference"
+      ? `|learned − constructed| as a height field, drawn ×${DIFF_GAIN}. Drag to orbit, scroll or pinch to zoom.`
+      : "Both results as height fields. Drag to orbit, scroll or pinch to zoom.";
+    const matchNow = built && s.maxDiff < TOL;
+    if (matchNow !== s.matrixMatch) state.matrixMatch = matchNow;
+    matchEl.classList.toggle("lit", matchNow);
+    matchEl.textContent = !built ? "constructed path not yet run"
+      : matchNow ? `match: within ${TOL} at step ${fmtInt(s.steps)}`
+      : `learned path is ${s.maxDiff.toFixed(3)} away`;
+    if (matchNow && !wasMatch) { pulseT = 1; matchEl.classList.remove("pulse"); void matchEl.offsetWidth; matchEl.classList.add("pulse"); }
+    wasMatch = matchNow;
+
+    // global controls
+    document.querySelectorAll("[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === s.mode)));
+    document.querySelectorAll("[data-view]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === s.view)));
+    $("learned").classList.toggle("dim", s.mode === "constructed");
+    $("constructed").classList.toggle("dim", s.mode === "learned");
+    $("nOut").value = s.n; $("dOut").value = s.d; $("speedOut").value = s.speed;
+  });
+
+  // ---------- the learning loop ----------
+  function frame() {
+    if (!state.playing) return;
+    let m = null;
+    for (let k = 0; k < state.speed; k++) m = gradientStep();
+    const playing = m.maxDiff >= TOL;    // stop on its own once within tolerance
+    update({ ...m, playing });
+    if (playing) requestAnimationFrame(frame);
+  }
+
+  // ---------- wiring ----------
+  $("play").addEventListener("click", () => {
+    if (state.playing) { update({ playing: false }); return; }
+    if (state.maxDiff < TOL) return;
+    update({ playing: true, scrub: null });
+    requestAnimationFrame(frame);
+  });
+  $("stepLearned").addEventListener("click", () => { if (state.playing) return; update({ ...gradientStep(), scrub: null }); });
+  $("resetLearned").addEventListener("click", resetLearned);
+  $("speed").addEventListener("input", (e) => update({ speed: +e.target.value }));
+  $("scrub").addEventListener("input", (e) => {
+    const i = +e.target.value;
+    update({ playing: false, scrub: i >= snapshots.length - 1 ? null : i });
+  });
+  $("construct").addEventListener("click", construct);
+  $("stepConstructed").addEventListener("click", () => { stopConstructing(); update({ stage: Math.min(LAST, state.stage + 1) }); });
+  $("resetConstructed").addEventListener("click", () => { stopConstructing(); update({ stage: -1 }); });
+  $("showOps").addEventListener("click", () => update({ showOps: !state.showOps }));
+  document.querySelectorAll("[data-mode]").forEach((b) => b.addEventListener("click", () => update({ mode: b.dataset.mode })));
+  document.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => update({ view: b.dataset.view })));
+
+  function rebuildAll() {
+    stopConstructing();
+    buildTarget(state.n, state.d);
+    rebuildBars(state.n);
+    state.stage = -1;
+    resetLearned();
+  }
+  $("n").addEventListener("input", (e) => { state.n = +e.target.value; rebuildAll(); });
+  $("d").addEventListener("input", (e) => { state.d = +e.target.value; rebuildAll(); });
+
+  rebuildAll();
+})();
+</script>
+</body>
+</html>
