@@ -496,6 +496,7 @@
     $("play").setAttribute("aria-pressed", String(s.playing));
     const scrub = $("scrub");
     scrub.max = String(Math.max(0, snapshots.length - 1));
+    scrub.disabled = snapshots.length < 2;   // nothing to scrub until a run has recorded steps
     if (live) scrub.value = scrub.max;
 
     // constructed path: redrawn only when something on that side changed
@@ -581,8 +582,17 @@
     state.stage = -1;
     resetLearned();
   }
-  $("n").addEventListener("input", (e) => { state.n = +e.target.value; rebuildAll(); });
-  $("d").addEventListener("input", (e) => { state.d = +e.target.value; rebuildAll(); });
+  // A dial sets a new target. The construction snaps to it at once, since it
+  // costs nothing, and a descent that was running starts again from random
+  // against the new target rather than stopping silently.
+  function redial() {
+    const wasPlaying = state.playing;
+    rebuildAll();
+    update({ stage: LAST });
+    if (wasPlaying) { update({ playing: true }); requestAnimationFrame(frame); }
+  }
+  $("n").addEventListener("input", (e) => { state.n = +e.target.value; redial(); });
+  $("d").addEventListener("input", (e) => { state.d = +e.target.value; redial(); });
 
   rebuildAll();
 })();
