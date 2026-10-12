@@ -546,7 +546,7 @@ function enter(f) {
   state.fragments.push(f); while (state.fragments.length > MAX_FRAGMENTS) state.fragments.shift();
   if (f.kind === 'gesture') { session.echoes += 1; sfx('echo'); }
   else {
-    sfx(f.want ? 'want' : 'ask', f.source); cortisolAdd(f.want ? 0.01 : 0.03);
+    sfx(f.want ? 'want' : 'ask', f.source); cortisolAdd(f.want ? 0.005 : 0.015);
     const k = f.want ? 'want' : 'ask'; session.seen[k] += 1; if (f.score < f.threshold) session.below[k] += 1;
     session.seenByChannel[f.source] = (session.seenByChannel[f.source] || 0) + 1;
     if (session.mutes.length) session.afterMute[f.source] = (session.afterMute[f.source] || 0) + 1;
@@ -710,7 +710,7 @@ function startSession() {
   for (let i = 0; i < 7; i++) { const f = makeFragment('stream'); f.born -= (7 - i) * PACE.steady; enter(f); }
   session.seen = { ask: 0, want: 0 }; session.below = { ask: 0, want: 0 }; // the seed is not what the feed showed her
   welcome.hidden = true; debrief.hidden = true;
-  soundInit(); SOUND.log.length = 0; SOUND.cortisol = 0; SOUND.beat = 0;
+  soundInit(); SOUND.log.length = 0; SOUND.cortisol = 0; SOUND.beat = 0; SOUND.pings = []; SOUND.habituatedAt = 0; SOUND.relief = 0;
   setRunning(true);
 }
 function endSession() {
@@ -791,7 +791,11 @@ function renderDebrief() {
   const beats = SOUND.log.filter((e) => e.kind === 'beat');
   if (beats.length > 4) {
     const lo = Math.min(...beats.map((b) => b.bpm)), hi = Math.max(...beats.map((b) => b.bpm)), hiAt = beats.find((b) => b.bpm === hi);
-    facts.push(`The music ran at <b>${lo}</b> beats a minute when things were quiet and <b>${hi}</b> at ${mmss(hiAt.t)}, when they weren't. It follows the feed and your hands, the way a pulse does.`);
+    const pings = SOUND.log.filter((e) => e.kind === 'ask' || e.kind === 'want').length;
+    facts.push(state.pace === 'busy'
+      ? `The music never had a quiet number: <b>${lo}</b> beats a minute at its lowest, <b>${hi}</b> at ${mmss(hiAt.t)}. On a bad day the pulse isn't your hands; it's the feed.`
+      : `The music ran at <b>${lo}</b> beats a minute when things were quiet and <b>${hi}</b> at ${mmss(hiAt.t)}, when they weren't. It follows the feed and your hands, the way a pulse does.`);
+    if (SOUND.habituatedAt) facts.push(`<b>${pings}</b> things pinged. Around <b>${mmss(SOUND.habituatedAt)}</b> they started getting quieter, not because the phone was quieter but because you had stopped hearing them. The ear leaves before you do.`);
   }
   if (n > 0) facts.push(session.seen.want > 0
     ? `You opened the feed to clear it. <b>${mmss(elapsed)}</b> later you are <b>${Math.round(endShare * 100)}%</b> of it, and the things you came for went past underneath: <i class="g">${session.seen.want}</i> of them, <b>${session.below.want}</b> below the cut-off. The garden plan is still where you left it.`
@@ -1252,12 +1256,14 @@ function synth(ctx, dest, kind, t, o = {}) {
       break; }
     case 'pulse': { const n = g(0.1); env(n, 0.1, 0.5); osc('triangle', NOTE(38), n, 0.5); break; } // the heartbeat under a bad day
     case 'ask': { // a phone's two-tone notification; the group chat gets three; and under it the buzz against the counter
-      { const n = g(0.14); env(n, 0.14, 0.14); const x = ctx.createOscillator(); x.type = 'square'; x.frequency.value = 58; const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 180; x.connect(f); f.connect(n); x.start(t); x.stop(t + 0.16); }
+      const gn = o.gain ?? 1;
+      { const n = g(0.14 * gn); env(n, 0.14 * gn, 0.14); const x = ctx.createOscillator(); x.type = 'square'; x.frequency.value = 58; const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 180; x.connect(f); f.connect(n); x.start(t); x.stop(t + 0.16); }
       const reps = o.src === 'social' ? 3 : 1;
       for (let r = 0; r < reps; r++) { const tt = t + r * 0.13; const n = ctx.createGain(); n.gain.setValueAtTime(0.0001, tt); n.gain.exponentialRampToValueAtTime(0.16, tt + 0.005); n.gain.exponentialRampToValueAtTime(0.0001, tt + 0.16); n.connect(dest);
+        n.gain.cancelScheduledValues(tt); n.gain.setValueAtTime(0.0001, tt); n.gain.exponentialRampToValueAtTime(0.16 * gn, tt + 0.005); n.gain.exponentialRampToValueAtTime(0.0001, tt + 0.16);
         const x = ctx.createOscillator(); x.type = 'sine'; x.frequency.setValueAtTime(o.src === 'work' ? 1174 : o.src === 'family' ? 988 : 880, tt); x.frequency.setValueAtTime(o.src === 'work' ? 1568 : o.src === 'family' ? 1318 : 1174, tt + 0.07); x.connect(n); x.start(tt); x.stop(tt + 0.2); }
       break; }
-    case 'want': { const n = g(0.1); env(n, 0.1, 0.35); osc('sine', 392, n, 0.35, 330); break; } // soft, low, falling: it doesn't ask
+    case 'want': { const gn = o.gain ?? 1; const n = g(0.1 * gn); env(n, 0.1 * gn, 0.35); osc('sine', 392, n, 0.35, 330); break; } // soft, low, falling: it doesn't ask
     case 'echo': { const n = g(0.14); env(n, 0.14, 0.25); osc('sine', 660, n, 0.25, 330); const n2 = g(0.06); env(n2, 0.06, 0.12); noise(n2, 0.06, 1200); break; } // a pop: your move, back
     case 'like': { const n = g(0.07); env(n, 0.07, 0.03); noise(n, 0.03, 4000, 1000); [0, 7].forEach((iv, i) => { const tt = t + 0.05 + i * 0.06; const m = ctx.createGain(); m.gain.setValueAtTime(0.0001, tt); m.gain.exponentialRampToValueAtTime(0.05, tt + 0.004); m.gain.exponentialRampToValueAtTime(0.0001, tt + 0.18); m.connect(dest); const x = ctx.createOscillator(); x.type = 'sine'; x.frequency.value = NOTE(84 + iv); x.connect(m); x.start(tt); x.stop(tt + 0.2); }); break; } // nearly nothing: a tick, and the number going up. That is what makes it cheap.
     case 'thunk': { const n = g(0.3); env(n, 0.3, 0.18); osc('sine', 160, n, 0.18, 70); const n2 = g(0.15); env(n2, 0.15, 0.1); noise(n2, 0.1, 300); break; } // hide, mute: relief
@@ -1283,10 +1289,16 @@ function sfx(kind, src) {
   if (!SOUND.ctx) return;
   const now = SOUND.ctx.currentTime;
   let at = now + 0.01;
-  if (kind === 'ask' || kind === 'want') { at = Math.max(at, SOUND.lastPing + 0.26); SOUND.lastPing = at; } // a burst is ding, ding, ding, not a wall
-  if (kind === 'thunk') { SOUND.relief = at + 60 / bpmNow() * 4; SOUND.cortisol = Math.max(0, SOUND.cortisol - 0.12); } // mute, hide: the music breathes for four beats
-  soundLog(kind, { src, at: at - now });
-  if (SOUND.on) synth(SOUND.ctx, SOUND.master, kind, at, { src });
+  let gain = 1;
+  if (kind === 'ask' || kind === 'want') {
+    at = Math.max(at, SOUND.lastPing + 0.26); SOUND.lastPing = at;
+    SOUND.pings = (SOUND.pings || []).filter((x) => x > now - 60); SOUND.pings.push(at);
+    gain = Math.max(0.3, 1 - Math.max(0, SOUND.pings.length - 12) / 24); // after a dozen in a minute the ear starts to leave; by the thirty-sixth it has gone
+    if (gain < 0.55 && !SOUND.habituatedAt && session.phase === 'running') SOUND.habituatedAt = vnow();
+  } // a burst is ding, ding, ding, not a wall, and a wall is not heard
+  if (kind === 'thunk') { SOUND.relief = at + 60 / bpmNow() * ({ calm: 12, steady: 8, busy: 6 }[state.pace]); SOUND.cortisol = Math.max(0, SOUND.cortisol - 0.15); } // mute, hide: the music breathes; longer on a quiet evening, barely on a bad day
+  soundLog(kind, { src, at: at - now, gain });
+  if (SOUND.on) synth(SOUND.ctx, SOUND.master, kind, at, { src, gain });
 }
 function scheduleBeats() {
   if (!SOUND.ctx || !SOUND.running) return;
@@ -1332,7 +1344,7 @@ async function renderSoundtrack(log, durationSec, offsetSec = 0) {
       synth(ctx, master, 'kick', t); if (!e.r) synth(ctx, master, 'hat', t + 30 / e.bpm, { accent: e.i % 2 === 0 });
       if (e.i % 8 === 0) synth(ctx, master, 'pad', t, { chord: CHORD[e.pace], cortisol: e.r ? 0 : e.c, dur: 8 * 60 / e.bpm });
       if (e.pace === 'busy' || e.c > 0.6) synth(ctx, master, 'pulse', t + 60 / e.bpm * 0.5);
-    } else synth(ctx, master, e.kind, t, { src: e.src });
+    } else synth(ctx, master, e.kind, t, { src: e.src, gain: e.gain });
   }
   const buf = await ctx.startRendering();
   const L = buf.getChannelData(0), R = buf.getChannelData(1), len = buf.length;
