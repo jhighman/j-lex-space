@@ -22,6 +22,41 @@ orbit — gets a visible badge and glow where it lands back in the feed,
 so the loop the piece is about is something a viewer can actually watch
 happen to their own actions, not just read a caption about.
 
+## One field, four ways
+
+The page opens on a line a person already believes before the feed is
+mentioned: *an ant can't read the trail without laying more of it.
+Neither can you read a feed.* Then it offers four **lenses** over one
+state — Feed, Trail, Body, Garden (keys 1–4). The state object does not
+change with the lens; nothing in it does. What changes is the nouns,
+the palette, and the shape of a fragment:
+
+| lens | the panel shows | a fragment is | the volume draws |
+|---|---|---|---|
+| Feed | the tidy feed: cards with source, time, sentiment, links | a card | a slab |
+| Trail | ants in a line on a scent path, each carrying its headline | an ant, and its scent | a flat scent patch on sand |
+| Body | cells along a vessel | a cell | a cell-sized cube on tissue |
+| Garden | plants in a row of soil | a plant | a stalk over soil |
+
+Switching lens is itself a framing gesture, so it is logged and comes
+back as a fragment like any other — *you, looking through the trail
+lens* arrives as an ant two seconds later, and if you switch again it
+is there in the next lens as a cell. Every shard in the volume keeps
+its position across a switch; only its shape and colour change, and
+the violet of a gesture never changes at all, so a viewer can follow
+their own click from one world into the next. The caption on a switch
+is the whole argument: *Same field. Only the nouns changed.* The
+operators do to ants, cells and plants exactly what they do to cards:
+Cut scatters them and removes the line; Show the machine draws the
+ranking meter, threshold and decay clock beside each; One ruler sizes
+them by magnitude; Never let it settle makes them shiver and fade.
+
+After the first switch, a note fades in on the right: a physicist had
+a word for a whole you can't step outside of. David Bohm called it the
+implicate order; each lens is one unfolding (his *explicate* order) of
+it, and every move folds back in. The page carries this as a figure,
+not a claim — see the citation posture below.
+
 ## Run it
 
 No build step. Serve the repository root and open the folder:
@@ -115,3 +150,13 @@ Reactivation of avant-garde tactics of interruption, apparatus exposure,
 and withheld closure (Bürger, Foster) under the technical conditions of
 contemporary event streams (Chun, Bucher), such that viewer framing
 gestures re-enter as further signal. The full list is in the issue.
+
+The lenses add one figure and name it as a figure: Bohm's implicate and
+explicate order (*Wholeness and the Implicate Order*, 1980), read as a
+picture of one shared state and its several renderings, not as a
+physics claim. The implicate order is an interpretation, not a tested
+result, and the suggestion elsewhere that latent spaces are an empirical
+way to study it is an inference; neither is asserted here. The ant
+trail is stigmergy (Grassé, 1959) and is the one analogy on the page
+with a literature of its own; the immune, garden and traffic readings
+are everyday pictures, offered as such.
