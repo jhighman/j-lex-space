@@ -1322,7 +1322,7 @@ function scheduleBeats() {
     SOUND.beat += 1;
   }
   SOUND.cortisol = Math.max(0, SOUND.cortisol - 0.0015); // the slow decay, every 100 ms
-  if (state.pace === 'busy' && session.phase === 'running') { vrok.t += 0.1; if (!vrok.z && vrok.t >= 20) { vrok.z = true; qwzhar(); } }
+  if (state.pace === 'busy' && session.phase === 'running') { vrok.t += 0.1; if (!vrok.z && vrok.t >= 8) { vrok.z = true; qwzhar(); } }
 }
 function soundRunning(on) {
   SOUND.running = on && SOUND.on;
@@ -1387,7 +1387,7 @@ function qwzhar() {
   o.style.cssText = 'position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:rgba(0,0,0,0.55);pointer-events:none';
   const i = document.createElement('img'); i.src = _vr2; i.alt = ''; i.style.cssText = 'max-height:88vh;max-width:88vw;filter:drop-shadow(0 0 60px #000)';
   o.appendChild(i); document.body.appendChild(o);
-  setTimeout(() => o.remove(), 3000);
+  setTimeout(() => o.remove(), 1000);
 }
 
 // The deck wraps on narrow screens; the line's bottom clearance follows it.
