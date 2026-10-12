@@ -619,8 +619,11 @@ function gesture(kind, detail) {
 /* Clocks.                                                             */
 /* ------------------------------------------------------------------ */
 function streamTick() {
-  if (state.running) enter(makeFragment('stream'));
-  setTimeout(streamTick, PACE[state.pace]);
+  if (state.running) {
+    const burst = Math.random() < 0.3 ? 2 + Math.floor(Math.random() * 2) : 1; // sometimes three in a second
+    for (let i = 0; i < burst; i++) setTimeout(() => { if (state.running) enter(makeFragment('stream')); }, i * 350);
+  }
+  setTimeout(streamTick, PACE[state.pace] * (0.6 + Math.random() * 0.9)); // and the gaps are uneven
 }
 setTimeout(streamTick, PACE[state.pace]);
 
@@ -1248,14 +1251,15 @@ function synth(ctx, dest, kind, t, o = {}) {
       for (const m of o.chord) { const x = ctx.createOscillator(); x.type = 'sawtooth'; x.frequency.value = NOTE(m); x.detune.value = (Math.random() - 0.5) * 8; x.connect(f); x.start(t); x.stop(t + o.dur + 0.1); }
       break; }
     case 'pulse': { const n = g(0.1); env(n, 0.1, 0.5); osc('triangle', NOTE(38), n, 0.5); break; } // the heartbeat under a bad day
-    case 'ask': { // a phone's two-tone notification; the group chat gets three
+    case 'ask': { // a phone's two-tone notification; the group chat gets three; and under it the buzz against the counter
+      { const n = g(0.14); env(n, 0.14, 0.14); const x = ctx.createOscillator(); x.type = 'square'; x.frequency.value = 58; const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 180; x.connect(f); f.connect(n); x.start(t); x.stop(t + 0.16); }
       const reps = o.src === 'social' ? 3 : 1;
       for (let r = 0; r < reps; r++) { const tt = t + r * 0.13; const n = ctx.createGain(); n.gain.setValueAtTime(0.0001, tt); n.gain.exponentialRampToValueAtTime(0.16, tt + 0.005); n.gain.exponentialRampToValueAtTime(0.0001, tt + 0.16); n.connect(dest);
         const x = ctx.createOscillator(); x.type = 'sine'; x.frequency.setValueAtTime(o.src === 'work' ? 1174 : o.src === 'family' ? 988 : 880, tt); x.frequency.setValueAtTime(o.src === 'work' ? 1568 : o.src === 'family' ? 1318 : 1174, tt + 0.07); x.connect(n); x.start(tt); x.stop(tt + 0.2); }
       break; }
     case 'want': { const n = g(0.1); env(n, 0.1, 0.35); osc('sine', 392, n, 0.35, 330); break; } // soft, low, falling: it doesn't ask
     case 'echo': { const n = g(0.14); env(n, 0.14, 0.25); osc('sine', 660, n, 0.25, 330); const n2 = g(0.06); env(n2, 0.06, 0.12); noise(n2, 0.06, 1200); break; } // a pop: your move, back
-    case 'like': { [0, 4, 7, 12].forEach((iv, i) => { const tt = t + i * 0.07; const n = ctx.createGain(); n.gain.setValueAtTime(0.0001, tt); n.gain.exponentialRampToValueAtTime(0.12, tt + 0.005); n.gain.exponentialRampToValueAtTime(0.0001, tt + 0.35); n.connect(dest); const x = ctx.createOscillator(); x.type = 'sine'; x.frequency.value = NOTE(72 + iv); x.connect(n); x.start(tt); x.stop(tt + 0.4); }); break; } // the sparkle
+    case 'like': { const n = g(0.07); env(n, 0.07, 0.03); noise(n, 0.03, 4000, 1000); [0, 7].forEach((iv, i) => { const tt = t + 0.05 + i * 0.06; const m = ctx.createGain(); m.gain.setValueAtTime(0.0001, tt); m.gain.exponentialRampToValueAtTime(0.05, tt + 0.004); m.gain.exponentialRampToValueAtTime(0.0001, tt + 0.18); m.connect(dest); const x = ctx.createOscillator(); x.type = 'sine'; x.frequency.value = NOTE(84 + iv); x.connect(m); x.start(tt); x.stop(tt + 0.2); }); break; } // nearly nothing: a tick, and the number going up. That is what makes it cheap.
     case 'thunk': { const n = g(0.3); env(n, 0.3, 0.18); osc('sine', 160, n, 0.18, 70); const n2 = g(0.15); env(n2, 0.15, 0.1); noise(n2, 0.1, 300); break; } // hide, mute: relief
     case 'refresh': { const n = g(0.12); env(n, 0.12, 0.5); const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 2; f.frequency.setValueAtTime(400, t); f.frequency.exponentialRampToValueAtTime(3000, t + 0.45); f.connect(n); noise(f, 0.5); const n2 = g(0.1); n2.gain.setValueAtTime(0.0001, t + 0.45); n2.gain.exponentialRampToValueAtTime(0.1, t + 0.46); n2.gain.exponentialRampToValueAtTime(0.0001, t + 0.9); const x = ctx.createOscillator(); x.type = 'sine'; x.frequency.value = 1318; x.connect(n2); x.start(t + 0.45); x.stop(t + 0.95); break; }
     case 'click': { const n = g(0.08); env(n, 0.08, 0.02); noise(n, 0.02, 3000, 800); break; }
@@ -1278,10 +1282,11 @@ function soundLog(kind, extra = {}) { SOUND.log.push({ t: vnow(), w: performance
 function sfx(kind, src) {
   if (!SOUND.ctx) return;
   const now = SOUND.ctx.currentTime;
-  if ((kind === 'ask' || kind === 'want') && now - SOUND.lastPing < 0.18) return; // a burst is a burst, not a wall
-  if (kind === 'ask' || kind === 'want') SOUND.lastPing = now;
-  soundLog(kind, { src });
-  if (SOUND.on) synth(SOUND.ctx, SOUND.master, kind, now + 0.01, { src });
+  let at = now + 0.01;
+  if (kind === 'ask' || kind === 'want') { at = Math.max(at, SOUND.lastPing + 0.26); SOUND.lastPing = at; } // a burst is ding, ding, ding, not a wall
+  if (kind === 'thunk') { SOUND.relief = at + 60 / bpmNow() * 4; SOUND.cortisol = Math.max(0, SOUND.cortisol - 0.12); } // mute, hide: the music breathes for four beats
+  soundLog(kind, { src, at: at - now });
+  if (SOUND.on) synth(SOUND.ctx, SOUND.master, kind, at, { src });
 }
 function scheduleBeats() {
   if (!SOUND.ctx || !SOUND.running) return;
@@ -1289,11 +1294,12 @@ function scheduleBeats() {
   while (SOUND.nextBeat < ctx.currentTime + ahead) {
     const bpm = bpmNow(), i = SOUND.beat, t = Math.max(SOUND.nextBeat, ctx.currentTime);
     const c = SOUND.cortisol, pace = state.pace;
-    soundLog('beat', { i, bpm: Math.round(bpm), c: +c.toFixed(2), pace });
+    soundLog('beat', { i, bpm: Math.round(bpm), c: +c.toFixed(2), pace, r: t < (SOUND.relief || 0) ? 1 : 0 });
+    const relief = t < (SOUND.relief || 0);
     if (SOUND.on) {
       synth(ctx, SOUND.master, 'kick', t);
-      synth(ctx, SOUND.master, 'hat', t + 30 / bpm, { accent: i % 2 === 0 });
-      if (i % 8 === 0) synth(ctx, SOUND.master, 'pad', t, { chord: CHORD[pace], cortisol: c, dur: 8 * 60 / bpm });
+      if (!relief) synth(ctx, SOUND.master, 'hat', t + 30 / bpm, { accent: i % 2 === 0 });
+      if (i % 8 === 0) synth(ctx, SOUND.master, 'pad', t, { chord: CHORD[pace], cortisol: relief ? 0 : c, dur: 8 * 60 / bpm });
       if (pace === 'busy' || c > 0.6) synth(ctx, SOUND.master, 'pulse', t + 60 / bpm * 0.5);
     }
     SOUND.nextBeat = t + 60 / bpm;
@@ -1321,10 +1327,10 @@ async function renderSoundtrack(log, durationSec, offsetSec = 0) {
   const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 4;
   const master = ctx.createGain(); master.gain.value = 0.7; master.connect(comp); comp.connect(ctx.destination);
   for (const e of log) {
-    const t = e.w / 1000 + offsetSec; if (t < 0 || t > durationSec - 0.1) continue;
+    const t = e.w / 1000 + offsetSec + (e.at || 0); if (t < 0 || t > durationSec - 0.1) continue;
     if (e.kind === 'beat') {
-      synth(ctx, master, 'kick', t); synth(ctx, master, 'hat', t + 30 / e.bpm, { accent: e.i % 2 === 0 });
-      if (e.i % 8 === 0) synth(ctx, master, 'pad', t, { chord: CHORD[e.pace], cortisol: e.c, dur: 8 * 60 / e.bpm });
+      synth(ctx, master, 'kick', t); if (!e.r) synth(ctx, master, 'hat', t + 30 / e.bpm, { accent: e.i % 2 === 0 });
+      if (e.i % 8 === 0) synth(ctx, master, 'pad', t, { chord: CHORD[e.pace], cortisol: e.r ? 0 : e.c, dur: 8 * 60 / e.bpm });
       if (e.pace === 'busy' || e.c > 0.6) synth(ctx, master, 'pulse', t + 60 / e.bpm * 0.5);
     } else synth(ctx, master, e.kind, t, { src: e.src });
   }
