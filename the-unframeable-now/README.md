@@ -155,6 +155,48 @@ The page has a start, an end and a debrief.
 - **Play again** resets everything and starts a new three minutes.
   **Look at the line** closes the card and leaves the ended session on
   the line to read.
+- **Shorter rounds** for playtesting: `?round=45` in the URL sets the
+  session to that many seconds (10 to 1800). The welcome's corner, the
+  Start button and the debrief all say the round that is set, and the
+  debrief says how long she actually played and whether she stopped
+  early.
+
+### What the debrief says, and why it says it that way
+
+The debrief was tuned by playing it, three recorded rounds as Kate, the
+player the welcome card describes, on 12 October 2026, each round on
+the build the previous round's complaints had changed. Her notes and
+the recordings are on Jeff's machine. What they changed:
+
+- It names the time she actually played, and the sparkline's axis fits
+  the round, because "your three minutes" after a thirty-second round
+  cost it her trust faster than anything it got right earned it.
+- One scroll is one move. A tap opens a card, the card grows, the
+  browser adjusts the scroll position, and that had been counting as
+  scrolling, seven times from one scroll. Only the wheel, touch and the
+  scroll keys arm it, and it must move six pixels.
+- Plain words: "will send the painter twice as often", not "at 2
+  against a base of 1". Counts stay counts until there are eight to
+  make a percentage of, and the ranking line says when it is too few to
+  call a pattern. "At its highest", not "at its worst"; it is her feed.
+- **What did I learn?** is written as her and is hers to agree with:
+  each line has a tick, "tick the ones you'd actually say; leave the
+  rest", and the card counts what she kept. Being asked instead of
+  told was the difference, in her words, between a result and a
+  lecture.
+- The fall. When she stopped moving the band went down, and the card
+  had given her the peak and the end and left the twenty seconds
+  between unexplained. It now says, with her numbers: after your last
+  move the band fell from this to this, not because anything of yours
+  was removed, but because the feed kept coming and buried you;
+  stopping doesn't take you out, it changes the proportions. And when
+  the end is zero, because every item ages out after 32 seconds and
+  her echoes did too, the headline says that straight rather than
+  putting "all of them came back" beside "0% was you" and leaving her
+  to reconcile them.
+
+Her op-ed, written in her voice from the three rounds, is in
+`social/2026-10-12-kate-the-unframeable-now/`.
 
 ## Controls
 
