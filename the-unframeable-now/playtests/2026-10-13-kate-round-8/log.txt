@@ -1,0 +1,69 @@
+0.0s	sets the pace: busy
+2.6s	scrolls the phone
+5.1s	taps open: School portal: a form is due Friday. Again
+9.1s	likes: Two hours of light left and the bed is half dug
+13.0s	hides: Slack, 6:48 pm: “quick question”
+16.3s	mutes the group chat
+19.6s	searches for garden
+22.6s	pulls to refresh
+31.5s	taps open: A deck needs eyes before the stand-up
+39.3s	taps open: Explainer: what the rate decision means for you. It doesn’t say
+45s	stops; hands off until the end
+120.1s	the round ended by itself
+
+=== SOUND ===
+{"counts":{"clack":1,"beat":277,"ask":81,"echo":13,"tick":1,"click":6,"want":42,"qwz":1,"like":1,"thunk":2,"type":1,"refresh":1,"resolve":1},"bpmMin":136,"bpmMax":145}
+
+=== DECAY ===
+snapshots 122 · attention 100→15 · calm 100→70 · agency 100→100 · minutes 100→90 · disorder 0.00→0.42
+
+=== DEBRIEF ===
+WHAT THE LINE SAW · YOUR 2:00
+
+13 moves. All of them came back, and then they aged out, as everything in the feed does after 32 seconds. By the end, none of your feed was you. It had been 30%.
+0:00
+1:00
+2:00
+MOVES
+0%
+30%
+peak 30% at 0:19
+
+Above: every move you made, as a tick. Below it: how much of the feed was you, over the whole session. Watch where the steps are.
+
+At 0:08 something jumped at you. That was us, not the feed. You chose a bad day.
+What it did to you, by the model: attention 100→15, calm 100→70, agency 100→100, and 2.0 of your twenty minutes gone to the feed. Disorder went from 0.00 to 0.42. Press See what it did to you for the replay.
+The music never had a quiet number: 136 beats a minute at its lowest, 145 at 0:40. On a bad day the pulse isn't your hands; it's the feed.
+123 things pinged. Around 0:22 they started getting quieter, not because the phone was quieter but because you had stopped hearing them. The ear leaves before you do.
+You opened the feed to clear it. 2:00 later you are 0% of it, and the things you came for went past underneath: 42 of them, 26 below the cut-off. The garden plan is still where you left it.
+13 of 13 moves came back as items, each 2.2 seconds later. No exceptions, and nothing you did could stop one.
+The band peaked at 30% at 0:19. Every step up in it sits just after a tick above it: that is the arc, counted.
+What you did most: tapping one open ×6, calling it a bad day, scrolling. Each is in the feed now, with your name on it.
+You searched for "garden". The search became an item too.
+After your last move at 0:39 the band fell from 19% to 0%. Not because anything of yours was removed: the feed kept coming and buried you, and after 32 seconds each of your echoes aged out, as every item does. Stopping doesn't take you out; it changes the proportions.
+You liked the garden. The feed learned: it will send the garden twice as often. That learning is you in the feed too.
+You hid work. Hidden from you; still in the stream, dimmed on the line, and each hiding came back as an item.
+You muted the group chat. What filled the space: the news, 35 times since. Muting makes room; it does not choose what takes it.
+The feed showed you 123 things: 81 asking something of you, 42 you'd rather have looked at. Of what you'd rather, 62% (26 of 42) sat below its cut-off; of the asks, 1% (1 of 81). The ranking did that, not you, and no move you made changed it.
+
+WHAT DID I LEARN?
+
+These are written as you. Tick the ones you'd actually say; leave the rest.
+
+I opened the feed to clear it. Every move I made to clear it became something to clear. 13 moves, 13 new items, every time, two seconds later.
+The more I tidied, the more of the feed was me: 30% at its highest. The band went up with my hand, not against it, and came down only when I stopped and the feed kept going.
+Even scrolling counted. Even searching for the garden counted. There was no move small enough not to come back.
+Muting the group chat didn't make room for the garden. It made room for the news.
+Liking what I actually wanted taught the feed to send more of it. That worked. It is also the clearest thing I put in the feed all night.
+When I stopped, the band went down, but nothing of mine went away. The feed just kept coming over the top of it. Doing nothing isn't tidying either; it's being buried politely.
+The things I came for were there the whole time, 42 of them, ranked low, 26 under the cut-off. Nothing I pressed lifted them. The ranking isn't mine to tidy.
+The feed isn't a place I go to. It's something I'm in. There was never an outside to tidy from.
+
+Play again knowing this. See how low you can keep the band, and notice what it costs you to do so; or go the other way and make the feed entirely you.
+
+Play again
+See what it did to you
+Look at the line
+
+=== ERRORS ===
+[]

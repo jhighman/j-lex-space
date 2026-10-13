@@ -279,6 +279,15 @@ calm, agency, minutes gone, disorder from to. The recording pipeline
 opens the report after the debrief and replays it to the end, so a
 round's MP4 ends with what it did to her.
 
+### A round you can open
+
+`playtests/2026-10-13-kate-round-8/` holds Kate's eighth round as it
+was recorded: a two-minute bad day with the moment, hands off after
+0:45, the soundtrack rendered in, the debrief, the decay report, the
+log, and her notes. It is the first playtest committed rather than kept
+on Jeff's machine, so the result can be read by someone who was not
+here.
+
 ### Three more rounds, with sound
 
 Rounds four to six as Kate, 1:15 on a normal day, 1:30 on a bad day
