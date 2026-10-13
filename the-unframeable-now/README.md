@@ -236,6 +236,49 @@ seconds, offset)` renders a logged session offline with the same synth,
 as WAV, so a headless recording can have back the sound that was heard.
 That is how Kate's recordings have their soundtracks.
 
+## Decay: what it did to you
+
+A modelled state, four dimensions that start whole and wear down under
+what the session records, with a stated mapping. It is a model of
+degradation, not a measurement of a person, and the report says so in
+its first line.
+
+| dimension | falls with | recovers with |
+|---|---|---|
+| **attention** | every arrival (asks more than wants), every tap, scroll and refresh; a lot at the bad day's moment | quiet: only when nothing has arrived for three seconds |
+| **calm** | the pulse the music runs at (it follows `1 − cortisol`); a group-chat burst; the bad day's moment, hard | a hide or a mute, briefly, the relief |
+| **agency** | the share of the feed that is her own echo; every move, because every move comes back | a like on something she wanted that actually worked |
+| **the minutes** | the clock: the twenty minutes she meant for the garden drain at the rate of real time | never |
+
+Beside them, **disorder**, measured from the field itself and not from
+her: how mixed the channels are (Shannon entropy over the seven),
+the share of the field that is her echo, and the share sitting under
+its cut-off, weighted 0.55, 0.3, 0.15. A snapshot of all five is taken
+at every cause, every second, and at the end; every change has a named
+cause in the record.
+
+The report opens from the debrief (*See what it did to you*). Three
+pictures, 2D and D3, no volume:
+
+- **Wholeness, now.** A four-axis disc, full when whole, that erodes
+  inward as each dimension falls; the edge tears in proportion to what
+  is lost. The lost area is shown behind it.
+- **Disorder, now.** A field of 64 cells ordered by channel in bands,
+  amber for the asks and green for the wants, with a fraction equal to
+  the disorder scrambled into grey noise, jittered and turned. The
+  plainest picture of degradation there is.
+- **Over the session.** The four dimensions and disorder as lines on
+  the session's clock, with every move as a tick above, so each drop
+  reads against its cause. A playhead, a scrubber, and a replay at six
+  times life that shows the shape and the field eroding snapshot by
+  snapshot, with the nearest cause named beneath: *0:11 · you, pulling
+  to refresh · since then, the weather.*
+
+The debrief carries the summary in one line, attention this to this,
+calm, agency, minutes gone, disorder from to. The recording pipeline
+opens the report after the debrief and replays it to the end, so a
+round's MP4 ends with what it did to her.
+
 ### Three more rounds, with sound
 
 Rounds four to six as Kate, 1:15 on a normal day, 1:30 on a bad day
