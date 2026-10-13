@@ -1,0 +1,32 @@
+{
+  "id": "issue6",
+  "audience": "readers of media theory and the history of the avant-garde",
+  "title": "The Unframeable Now",
+  "subtitle": "What remains once conventional framing is suspended: a simulated study of the viewer's own filtering gestures re-entering the stream as signal",
+  "premise": "Present-day events arrive pre-framed. Platform timelines, news cards, expert threads and model-generated summaries already supply narrative continuity, emotional valence, scale compression and implied resolution; the event itself rarely reaches a viewer except through these grammars. The historical avant-garde refused exactly those grammars: it interrupted expected continuity, exposed the supporting apparatus, forced incompatible scales into one field, treated the audience's act of looking as material, and withheld cathartic closure. The claim of the piece is that those devices can be reactivated as real-time instruments rather than period styles. Instead of representing an event, the work alters the conditions under which any event-stream can be received, and shows that every act of framing or filtering by the viewer becomes additional material in the same field.",
+  "claim": "The unframeable now is the residual that persists once framing is suspended: discontinuous fragments, exposed ranking and timing rules, the forced co-presence of incompatible scales, and the viewer's attention re-entering the stream as further signal. The piece does not explain events; it makes the apparatus of their reception experiential, and the record shows that every frame the viewer applies, including the suspending of frames, returns as one more fragment two seconds later.",
+  "applicability": [
+    "For the brief's own counter, frames applied against fragments still unframed: the model measures its successor directly, the share of the field that is the viewer's own echo, and finds it rises with every frame applied and falls only when the viewer stops and the stream buries what she added.",
+    "For the four operators: cut, expose apparatus, scale collision and duration refusal survive as legible changes to the record, under the names of the gestures a person makes on a feed, with the avant-garde terms kept beneath them; the renaming is a question for the brief's author.",
+    "For the recursive loop: the lineage renders it as parentage, the viewer's gesture as the parent of its own return, and a mute as the parent of everything that filled the space it made.",
+    "For the volume the brief asked for: it was built and retired under a reading that it labelled relations rather than drawing them; the line on a time axis draws the one relation the brief is about, a frame and its return."
+  ],
+  "voice": { "person": "the viewer", "possessive": "the viewer's", "feed": "the stream", "session": "a reception", "moves": "the viewer's framing gestures" },
+  "figures": { "prefer": ["lineage", "bands", "disc", "strips", "petals", "table"], "avoid": ["brain", "blob"] },
+  "tone": "the brief's own register: apparatus, grammar, residual, re-entry; concrete about what the record shows and silent about what it does not",
+  "discussion": [
+    "Read against the brief, the piece kept its claim and changed its instruments. The default reception layer is a phone, which is the grammar the brief names and the one a viewer already carries. The four operators act on it and on the record at once. The recursive loop, which the brief specified as every filtering, framing or orbiting gesture logged and re-entering after a short delay, is the model's load-bearing rule: the return is a fragment with the viewer's name on it, 2.2 seconds after the gesture, without exception, and the lineage draws the parentage.",
+    "The brief's counter, frames applied against fragments still unframed, became a band: the share of the field that is the viewer's own echo. It is a different quantity and a sharper one, because it falls when the viewer stops, and falls not because anything was unframed but because the stream buried what she framed. Whether the original counter is still owed is an open question on the record.",
+    "The decay model is the piece's addition to the brief and is named as a figure for a mechanism: four dimensions that wear under the recorded gestures and arrivals, with the mapping stated. It is a model of degradation, not a measurement of a person. What it adds to the brief's claim is a cost: the frames the viewer applies to tidy the stream are paid for in attention, calm, agency and the minutes she meant for something else, and the record shows the payment beside the gesture.",
+    "What remains unframeable, in the record, is the residual the brief predicted: after the ties are cut, the apparatus exposed, the scales collided and duration refused, what is left is a field in which the viewer's own gestures are a growing share of the material, and no operator removes them. The avant-garde's withheld closure holds: there is no stopping point at which the stream is tidy."
+  ],
+  "references": [
+    "Krauss, R. \"The Originality of the Avant-Garde.\" <i>October</i> 18, 1981. Repetition and the exposure of the supporting system rather than claims of pure origin.",
+    "Benjamin, W. \"The Work of Art in the Age of Its Technological Reproducibility\" (1935–36). Reception under technical mediation; distraction and tactility as modes of attention.",
+    "Bourdieu, P. <i>On Television</i>. New Press, 1998. The journalistic field and the pre-framing of events.",
+    "Galloway, A. <i>The Interface Effect</i>. Polity, 2012. Interfaces as zones of contestation rather than neutral windows.",
+    "Steyerl, H. \"In Defense of the Poor Image.\" Circulation, resolution and the conditions under which images and events travel and degrade.",
+    "von Foerster, H. <i>Observing Systems</i>. Intersystems, 1981. The observer's activity re-enters the system observed.",
+    "Bateson, G. <i>Steps to an Ecology of Mind</i>. Chicago, 1972. Frames, and the pathologies that arise when framing rules are invisible to participants."
+  ]
+}

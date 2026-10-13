@@ -58,7 +58,7 @@
 </head>
 <body>
 <div class="noprint">
-  <label>frame <select id="frameSel"><option>general</option><option>product</option><option>wellbeing</option></select></label>
+  <label>frame <select id="frameSel"><option>general</option><option>product</option><option>wellbeing</option><option>issue6</option></select></label>
   <label>seeds <input type="number" id="seeds" value="10" min="2" max="100" style="width:56px"></label>
   <label>round s <input type="number" id="round" value="180" min="30" max="600" style="width:64px"></label>
   <button id="redraw">Draw and write</button>
@@ -269,6 +269,7 @@ function write(frame, A, plan) {
 
   S('Discussion', [
     `<p>${frame.applicability.map((a) => a).join(' ')}</p>`,
+    ...(frame.discussion || []).map((d) => `<p>${d}</p>`),
     renderFigure(plan.discussion.kind, 'discussion', A, frame),
     `<p>Whether the findings above are findings about feeds or artefacts of the constants is exactly what the lab is for: the constants are in one file, the personas in one table, and a sample of ${A.n} sessions takes a fraction of a second to draw. A different premise is a different frame over the same machine; this paper was written under the frame <i>${frame.id}</i>, for ${frame.audience}.</p>`,
   ].join(''));
@@ -291,6 +292,7 @@ function write(frame, A, plan) {
       <li>nitaku, <i>Tangled Tree Visualization II</i>, Observable. The lineage layout, re-derived in <code>views.js</code>.</li>
       <li>Grassé, P.-P. (1959), stigmergy: the one analogy the piece once carried with a literature of its own.</li>
       <li>The piece: <code>the-unframeable-now/</code> in the repository <code>jhighman/j-lex-space</code>, issue #6, and its lab.</li>
+      ${(frame.references || []).map((r) => `<li>${r}</li>`).join('')}
     </ul>`,
   ].join(''));
 

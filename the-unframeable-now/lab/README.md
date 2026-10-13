@@ -33,7 +33,11 @@ claim, what applicability means for this audience, the voice (she, the
 user, the participant), which figures to prefer and which to avoid, and
 the tone. Three to start: `general` for an intelligent general reader,
 `product` for people who design and rank feeds, `wellbeing` for
-researchers in attention and wellbeing. Swap the frame and the same
+researchers in attention and wellbeing, and `issue6`, the original
+premise of Lex's brief in its own register, for readers of media theory
+and the history of the avant-garde. A frame may also contribute
+paragraphs to the discussion and references of its own, which is how a
+theoretical premise carries its lineage into the paper. Swap the frame and the same
 sample becomes a different paper: a different title, a different
 opening figure, different vocabulary, different applicability, the same
 numbers. Add a frame to try a different premise or point of view.
