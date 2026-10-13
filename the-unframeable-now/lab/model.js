@@ -63,6 +63,7 @@
       cortisol: 0, lastArrival: -1e9, decay: { a: 1, c: 1, g: 1, m: 1, e: 0 },
       snaps: [], moves: [], arrivals: 0, seen: { ask: 0, want: 0 }, below: { ask: 0, want: 0 },
       momentT: 0, momentFired: false, momentAt: null, nextId: 1,
+      events: [], lastLike: {}, lastMute: null,
     };
     const queue = []; // { t, fn }
     const at = (t, fn) => { queue.push({ t, fn }); };
@@ -83,8 +84,9 @@
     function enter(f) {
       if (!f) return;
       st.fragments.push(f); while (st.fragments.length > MAX_FRAGMENTS) st.fragments.shift();
-      if (f.kind === 'gesture') return;
+      if (f.kind === 'gesture') { st.events.push({ t: st.t, kind: 'echo', move: f.move }); return; }
       st.arrivals += 1;
+      st.events.push({ t: st.t, kind: 'arrival', source: f.source, want: f.want, below: f.score < f.threshold, like: st.lastLike[f.source] ?? null, mute: st.lastMute });
       const k = f.want ? 'want' : 'ask'; st.seen[k] += 1; if (f.score < f.threshold) st.below[k] += 1;
       st.cortisol = Math.min(1, st.cortisol + (f.want ? 0.005 : 0.015));
       st.lastArrival = st.t;
@@ -96,15 +98,18 @@
       st.snaps.push({ t: st.t, a: d.a, c: d.c, g: d.g, m: d.m, e: d.e, cause: cause || null });
     }
     function move(kind, detail, said) {
-      const g = { at: st.t, kind, detail, said };
+      const g = { at: st.t, kind, detail, said, i: st.moves.length };
       st.moves.push(g);
+      st.events.push({ t: st.t, kind: 'move', move: g.i, said, what: kind, detail });
+      if (kind === 'liked') st.lastLike[detail] = g.i;
+      if (kind === 'muted') st.lastMute = g.i;
       st.cortisol = Math.min(1, st.cortisol + MOVE_CORTISOL[pace]);
       const d = st.decay;
       d.a = Math.max(0, d.a - ({ scrolled: 0.015, opened: 0.01, refreshed: 0.025 }[kind] || 0.008));
       d.g = Math.max(0, d.g - 0.02);
       if (kind === 'liked' && WANTS.has(detail)) d.g = Math.min(1, d.g + 0.08);
       if (kind === 'hid' || kind === 'muted') { d.c = Math.min(1, d.c + 0.05); st.cortisol = Math.max(0, st.cortisol - 0.15); }
-      at(st.t + REENTRY_DELAY_MS, () => enter({ id: st.nextId++, kind: 'gesture', source: 'you', want: false, score: R(0.35, 0.98), threshold: R(0.1, 0.55), born: st.t, hidden: false }));
+      at(st.t + REENTRY_DELAY_MS, () => enter({ id: st.nextId++, kind: 'gesture', source: 'you', want: false, score: R(0.35, 0.98), threshold: R(0.1, 0.55), born: st.t, hidden: false, move: g.i }));
       snap(`you, ${said}`);
     }
 
@@ -146,7 +151,7 @@
       // ageing out, as the page's tick does
       for (const f of [...st.fragments]) if (st.t - f.born > FRAGMENT_LIFE_MS) st.fragments.splice(st.fragments.indexOf(f), 1);
       if (st.t % 100 === 0) st.cortisol = Math.max(0, st.cortisol - 0.0015);
-      if (pace === 'busy') { st.momentT += 0.05; if (!st.momentFired && st.momentT >= MOMENT_AT_S) { st.momentFired = true; st.momentAt = st.t; st.decay.c = Math.max(0, st.decay.c - 0.35); st.decay.a = Math.max(0, st.decay.a - 0.15); snap('something you did not ask for'); } }
+      if (pace === 'busy') { st.momentT += 0.05; if (!st.momentFired && st.momentT >= MOMENT_AT_S) { st.momentFired = true; st.momentAt = st.t; st.decay.c = Math.max(0, st.decay.c - 0.35); st.decay.a = Math.max(0, st.decay.a - 0.15); st.events.push({ t: st.t, kind: 'moment' }); snap('something you did not ask for'); } }
       if (st.t - lastTick >= TICK_MS) {
         lastTick = st.t;
         const d = st.decay;
@@ -165,7 +170,7 @@
     const minOf = (k) => Math.min(...st.snaps.map((s) => s[k]));
     return {
       pace, roundSec: ROUND / 1000, seed: opts.seed, persona: opts.personaName || 'kate',
-      snaps: st.snaps, moves: st.moves, arrivals: st.arrivals, seen: st.seen, below: st.below, momentAt: st.momentAt,
+      snaps: st.snaps, moves: st.moves, events: st.events, arrivals: st.arrivals, seen: st.seen, below: st.below, momentAt: st.momentAt,
       summary: { a: last.a, c: last.c, g: last.g, m: last.m, e: last.e, aMin: minOf('a'), cMin: minOf('c'), gMin: minOf('g'), eMax: Math.max(...st.snaps.map((s) => s.e)), moves: st.moves.length, arrivals: st.arrivals },
     };
   }

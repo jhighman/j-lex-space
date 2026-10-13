@@ -78,6 +78,17 @@ are ways of looking.
   whole. Babylon.js.
 - **3D · surface** — wholeness, the mean of the four, as a height field:
   persona × pace across, time along. The bad day is a trench.
+- **Lineage** — one session as a tangled tree, after nitaku's *Tangled
+  Tree Visualization II* (Observable), with the layout re-derived here.
+  Time runs down in windows; each window has three sub-levels: what
+  happened (moves, the moment, arrivals), what it caused within the
+  window (the window's echoes as one node with every move they came
+  from as a parent; arrivals whose cause is in the same window), and
+  the state at the window's end, descended from the state before and
+  everything in the window. A later arrival descends from the like that
+  raised its channel and the mute that made room, so a mute's red lanes
+  fan out to every window after it. Pick a persona, pace and seed; the
+  model records every event with its causes for this.
 - **Table** — median and p10–p90 per group, and the extremes.
 
 ## What the first sample said
