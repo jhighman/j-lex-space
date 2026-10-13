@@ -54,6 +54,7 @@
   function simulate(opts) {
     const pace = opts.pace || 'steady';
     const ROUND = (opts.roundSec || 180) * 1000;
+    const withMoment = opts.moment !== false;
     const rnd = mulberry32(opts.seed == null ? 1 : opts.seed);
     const R = (a, b) => a + rnd() * (b - a);
     const pick = (xs) => xs[Math.floor(rnd() * xs.length)];
@@ -151,7 +152,7 @@
       // ageing out, as the page's tick does
       for (const f of [...st.fragments]) if (st.t - f.born > FRAGMENT_LIFE_MS) st.fragments.splice(st.fragments.indexOf(f), 1);
       if (st.t % 100 === 0) st.cortisol = Math.max(0, st.cortisol - 0.0015);
-      if (pace === 'busy') { st.momentT += 0.05; if (!st.momentFired && st.momentT >= MOMENT_AT_S) { st.momentFired = true; st.momentAt = st.t; st.decay.c = Math.max(0, st.decay.c - 0.35); st.decay.a = Math.max(0, st.decay.a - 0.15); st.events.push({ t: st.t, kind: 'moment' }); snap('something you did not ask for'); } }
+      if (pace === 'busy' && withMoment) { st.momentT += 0.05; if (!st.momentFired && st.momentT >= MOMENT_AT_S) { st.momentFired = true; st.momentAt = st.t; st.decay.c = Math.max(0, st.decay.c - 0.35); st.decay.a = Math.max(0, st.decay.a - 0.15); st.events.push({ t: st.t, kind: 'moment' }); snap('something you did not ask for'); } }
       if (st.t - lastTick >= TICK_MS) {
         lastTick = st.t;
         const d = st.decay;
@@ -169,7 +170,7 @@
     const first = st.snaps[0], last = st.snaps[st.snaps.length - 1];
     const minOf = (k) => Math.min(...st.snaps.map((s) => s[k]));
     return {
-      pace, roundSec: ROUND / 1000, seed: opts.seed, persona: opts.personaName || 'kate',
+      pace, roundSec: ROUND / 1000, seed: opts.seed, persona: opts.personaName || 'kate', moment: withMoment,
       snaps: st.snaps, moves: st.moves, events: st.events, arrivals: st.arrivals, seen: st.seen, below: st.below, momentAt: st.momentAt,
       summary: { a: last.a, c: last.c, g: last.g, m: last.m, e: last.e, aMin: minOf('a'), cMin: minOf('c'), gMin: minOf('g'), eMax: Math.max(...st.snaps.map((s) => s.e)), moves: st.moves.length, arrivals: st.arrivals },
     };
@@ -207,10 +208,11 @@
     const personas = spec.personas || Object.keys(PERSONAS);
     const paces = spec.paces || ['calm', 'steady', 'busy'];
     const seeds = spec.seeds || 20;
-    for (const personaName of personas) for (const pace of paces) for (let s = 0; s < seeds; s++) {
-      runs.push(simulate({ persona: PERSONAS[personaName], personaName, pace, roundSec: spec.roundSec || 180, seed: (spec.seedBase || 1000) + s }));
+    const moments = spec.moments || [true];
+    for (const personaName of personas) for (const pace of paces) for (const moment of moments) for (let s = 0; s < seeds; s++) {
+      runs.push(simulate({ persona: PERSONAS[personaName], personaName, pace, moment, roundSec: spec.roundSec || 180, seed: (spec.seedBase || 1000) + s }));
     }
-    return { spec: { personas, paces, seeds, roundSec: spec.roundSec || 180 }, runs };
+    return { spec: { personas, paces, seeds, moments, roundSec: spec.roundSec || 180 }, runs };
   }
   function quantile(xs, q) { const a = xs.slice().sort((x, y) => x - y); const i = (a.length - 1) * q; const lo = Math.floor(i), hi = Math.ceil(i); return a[lo] + (a[hi] - a[lo]) * (i - lo); }
   function stats(runs, key) {

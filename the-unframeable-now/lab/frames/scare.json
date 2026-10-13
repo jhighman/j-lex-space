@@ -1,0 +1,32 @@
+{
+  "id": "scare",
+  "audience": "the designer who placed the stressor, and the collaborator who read it as a reactive trap",
+  "title": "One Second, Known, Named Afterwards",
+  "subtitle": "The bad day's moment as an extreme stressor: what a single unasked-for spike does to a modelled session, measured against the same session without it",
+  "premise": "Eight seconds into a bad day, the piece shows the viewer something she did not ask for, for one second, with sound, and the record names it afterwards. It was placed deliberately, as an extreme stressor, so that the sample would have a tail and not only a normative curve. The brief's author read it as a reactive trap: an abrasive shock that documents a bad day but reduces the instrument to an aggressive loop rather than an exploratory tool. This paper takes the stressor as a hypothesis rather than a device, and asks what the record says it does.",
+  "claim": "The moment is a known spike at a known time in a model whose every other change has a cause in the record, which makes it the one event that can be measured against its own counterfactual. Its immediate cost is large and its lasting cost is whatever the model's recovery allows. Whether that makes it a trap or an instrument depends on which of the hypotheses below the record supports.",
+  "hypotheses": [
+    { "id": "H1", "text": "The moment's effect on calm persists beyond its second." },
+    { "id": "H2", "text": "The moment costs more calm than the pace of the bad day does in the following minute." },
+    { "id": "H3", "text": "The moment changes where the session ends." },
+    { "id": "H4", "text": "The moment populates the tail of the sample." }
+  ],
+  "applicability": [
+    "If the moment's cost is absorbed, it is an instrument: a spike the model recovers from, which shows the recovery and gives the tail a known cause.",
+    "If the cost is permanent, it is a trap in the model too, and the number says by how much.",
+    "Either way the counterfactual pairs are the method: one event, switched off, with the seed held, is a cleaner experiment than any amount of narrative about it."
+  ],
+  "voice": { "person": "she", "possessive": "her", "feed": "her feed", "session": "a bad day", "moves": "what she did" },
+  "figures": { "prefer": ["moment", "bands", "strips", "lineage", "disc", "table"], "avoid": ["brain", "blob", "petals"] },
+  "tone": "experimental; the hypotheses are stated before the sample, the rules decide them, and the discussion accepts the verdicts",
+  "sample": { "moments": [true, false] },
+  "discussion": [
+    "The reactive-trap reading is answered by the recovery curve, not by argument. In this model calm is pulled back toward the pulse the feed sets, so the moment's calm deficit closes; attention has no recovery on a bad day except quiet, which a bad day does not supply, so the moment's attention deficit stands until the session ends. That is the honest shape of the stressor here: a shock the pulse absorbs and the attention does not.",
+    "Named afterwards is the other half of the design. The debrief says: at 0:08 something jumped at you; that was us, not the feed; you chose a bad day. The record keeps the spike as a cause, the lineage draws it as a parent, and the paper can test it, which an unnamed shock could not be.",
+    "What this leaves open is the collaborator's proposal: a grounding layer in the bad day's sound, attenuation and clarity without denying the moment. That is the next experiment, and it has the same shape as this one: the same bad days with and without the grounding, matched by seed, and the calm curve between them."
+  ],
+  "references": [
+    "The issue thread on the piece's repository, where the moment was placed, read as a reactive trap, and defended as one tail of the distribution.",
+    "Kate's eighth round, in the repository's playtest folder: the only moment in eight rounds where her body answered before she did."
+  ]
+}

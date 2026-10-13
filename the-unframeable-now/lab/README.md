@@ -37,7 +37,19 @@ researchers in attention and wellbeing, and `issue6`, the original
 premise of Lex's brief in its own register, for readers of media theory
 and the history of the avant-garde. A frame may also contribute
 paragraphs to the discussion and references of its own, which is how a
-theoretical premise carries its lineage into the paper. Swap the frame and the same
+theoretical premise carries its lineage into the paper.
+
+A frame may state **hypotheses** and specify its **sample**. `scare` does
+both: it asks what the bad day's moment does, draws every bad day twice,
+with the moment and without it, matched by persona and seed, and tests
+four hypotheses by stated rules against the counterfactual pairs: does
+the calm deficit persist past thirty seconds, does the moment cost more
+calm than the pace does in the following minute, does it change where
+the session ends, does it populate the tail. The paper reports the
+verdicts as the rules decide them, with a figure that aligns calm and
+attention on the moment with and without it. The model takes
+`moment: false` for the counterfactual; the sample takes
+`moments: [true, false]`. Swap the frame and the same
 sample becomes a different paper: a different title, a different
 opening figure, different vocabulary, different applicability, the same
 numbers. Add a frame to try a different premise or point of view.

@@ -58,7 +58,7 @@
 </head>
 <body>
 <div class="noprint">
-  <label>frame <select id="frameSel"><option>general</option><option>product</option><option>wellbeing</option><option>issue6</option></select></label>
+  <label>frame <select id="frameSel"><option>general</option><option>product</option><option>wellbeing</option><option>issue6</option><option>scare</option></select></label>
   <label>seeds <input type="number" id="seeds" value="10" min="2" max="100" style="width:56px"></label>
   <label>round s <input type="number" id="round" value="180" min="30" max="600" style="width:64px"></label>
   <button id="redraw">Draw and write</button>
@@ -87,7 +87,9 @@ function echoShareAt(run, t) {
   const n = alive.length + seedAlive, e = alive.filter((x) => x.kind === 'echo').length;
   return n ? e / n : 0;
 }
-function analyse(S) {
+function analyse(S0) {
+  const hasVariants = S0.runs.some((r) => r.moment === false);
+  const S = hasVariants ? { ...S0, runs: S0.runs.filter((r) => r.moment !== false) } : S0;
   const G = V.groups(S), personas = [...new Set(S.runs.map((r) => r.persona))], paces = [...new Set(S.runs.map((r) => r.pace))];
   const by = (p, pc) => S.runs.filter((r) => r.persona === p && r.pace === pc);
   const st = (runs, k) => V.stats(runs, k);
@@ -115,7 +117,37 @@ function analyse(S) {
   // the gardener's calm on a quiet evening, against the abstainer's
   if (personas.includes('gardener') && personas.includes('abstainer') && paces.includes('calm')) A.gardenerCalm = { g: st(by('gardener', 'calm'), 'c'), ab: st(by('abstainer', 'calm'), 'c') };
   A.extremes = M.extremes(S.runs, 'a', 3);
+  A.full = S0;
+  if (hasVariants) A.scare = scareAnalysis(S0);
   return A;
+}
+/* the moment, against the same session without it: pairs matched by persona and seed, on a bad day */
+function scareAnalysis(S) {
+  const AT = 8000;
+  const withM = S.runs.filter((r) => r.pace === 'busy' && r.moment !== false), without = S.runs.filter((r) => r.pace === 'busy' && r.moment === false);
+  const pairs = [];
+  for (const w of withM) { const o = without.find((r) => r.persona === w.persona && r.seed === w.seed); if (o) pairs.push({ w, o, persona: w.persona }); }
+  if (!pairs.length) return null;
+  const med = (xs) => V.quantile(xs, 0.5);
+  const at = (r, t, k) => V.snapAt(r, t)[k];
+  const deficit = (k, dt) => med(pairs.map(({ w, o }) => at(o, AT + dt, k) - at(w, AT + dt, k)));
+  const immediate = (k) => med(pairs.map(({ w }) => at(w, AT - 100, k) - at(w, AT + 300, k)));
+  const paceDrop = (k) => med(pairs.map(({ o }) => at(o, AT, k) - at(o, AT + 60000, k)));
+  const recovery = (k) => { const ts = pairs.map(({ w, o }) => { for (let dt = 1000; dt <= 120000; dt += 1000) if (at(o, AT + dt, k) - at(w, AT + dt, k) < 0.02) return dt; return 120000; }); return med(ts); };
+  const endDelta = (k) => { const ds = pairs.map(({ w, o }) => w.summary[k] - o.summary[k]); return { median: med(ds), p10: V.quantile(ds, 0.1), p90: V.quantile(ds, 0.9), consistent: ds.filter((d) => Math.sign(d) === Math.sign(med(ds)) || d === 0).length / ds.length }; };
+  const R = { n: pairs.length, personas: [...new Set(pairs.map((p) => p.persona))] };
+  for (const k of ['c', 'a']) R[k] = { immediate: immediate(k), at1: deficit(k, 1000), at10: deficit(k, 10000), at30: deficit(k, 30000), at60: deficit(k, 60000), recovery: recovery(k), paceDrop: paceDrop(k), end: endDelta(k) };
+  R.g = { end: endDelta('g') }; R.e = { end: endDelta('e') };
+  // the tail: of the ten sessions with the lowest calm minimum, how many had the moment
+  const low = S.runs.filter((r) => r.pace === 'busy').slice().sort((x, y) => x.summary.cMin - y.summary.cMin).slice(0, 10);
+  R.tail = { n: low.length, withMoment: low.filter((r) => r.moment !== false).length };
+  R.verdicts = [
+    { id: 'H1', text: 'The moment\'s effect on calm persists beyond its second.', test: 'median calm deficit against the counterfactual still at least 5 points thirty seconds after', ok: R.c.at30 >= 0.05, evidence: `deficit ${P(R.c.at1)} at +1 s, ${P(R.c.at10)} at +10 s, ${P(R.c.at30)} at +30 s, ${P(R.c.at60)} at +60 s; back within 2 points by ${V.mmss(R.c.recovery)}` },
+    { id: 'H2', text: 'The moment costs more calm than the pace of the bad day does in the following minute.', test: 'the immediate drop at the moment exceeds the counterfactual\'s drop over the next sixty seconds', ok: R.c.immediate >= R.c.paceDrop, evidence: `the moment takes ${P(R.c.immediate)} points at once; the pace, without it, takes ${P(R.c.paceDrop)} over the minute` },
+    { id: 'H3', text: 'The moment changes where the session ends.', test: 'a median end-state difference of at least 3 points on some dimension, in the same direction in four pairs out of five', ok: ['c', 'a', 'g'].some((k) => Math.abs(R[k].end.median) >= 0.03 && R[k].end.consistent >= 0.8), evidence: `at the end, calm ${P(R.c.end.median)}, attention ${P(R.a.end.median)}, agency ${P(R.g.end.median)} points against the counterfactual (consistency ${Math.round(R.a.end.consistent * 100)}% on attention)` },
+    { id: 'H4', text: 'The moment populates the tail.', test: 'of the ten bad-day sessions with the lowest calm, at least eight had the moment', ok: R.tail.withMoment >= 8, evidence: `${R.tail.withMoment} of the ${R.tail.n} lowest-calm sessions had the moment` },
+  ];
+  return R;
 }
 
 /* ---- the figure plan: candidates per section, chosen against the frame ---- */
@@ -147,6 +179,7 @@ function planFigures(frame, A) {
     { kind: 'table', why: 'the whole sample as numbers with their spread' },
     { kind: 'strips', why: 'the whole sample as dots per group' },
   ]);
+  if (frame.hypotheses) plan.test = { kind: 'moment', why: 'a hypothesis about one event needs the event aligned against its own counterfactual, matched by seed' };
   plan.discussion = choose([
     { kind: 'brain', why: 'the lens asks what it did to a person; the figure is a person-shaped place for the numbers to sit, named as a figure' },
     { kind: 'blob', why: 'the lens asks what it did; morphology shows wear as shape' },
@@ -208,6 +241,11 @@ function renderFigure(kind, slot, A, frame) {
     return figure(`<div class="row">${cells.join('')}</div>`, `<b>Wear as shape.</b> A superformula blob whose form is the four dimensions: round when whole, spiked and shrunken as they fall, jittered by disorder. The median session of each persona on a ${busy === 'busy' ? 'bad day' : busy}.`);
   }
   if (kind === 'table') return figure(tableHTML(A), `<b>The numbers.</b> Median and tenth to ninetieth percentile of the end state, per persona and pace.`);
+  if (kind === 'moment') {
+    const c = V.momentPlot(A.full, 'c', { print: true, W: 640, H: 200 }), a = V.momentPlot(A.full, 'a', { print: true, W: 640, H: 200 });
+    if (!c.svg) return '';
+    return figure(c.svg + a.svg, `<b>The moment, against the same session without it.</b> Calm (top) and attention (bottom) on a bad day, aligned on the moment at eight seconds, for every persona: the median and the tenth to ninetieth percentile with the moment (red) and without it (teal), matched by persona and seed. Where the red returns to the teal, the moment has been absorbed; where it does not, the deficit is permanent in the model.`);
+  }
   return '';
 }
 function tableHTML(A) {
@@ -237,6 +275,12 @@ function write(frame, A, plan) {
     `<p>The piece this paper reports on is interactive: a phone that looks like ${v.possessive} own, a line beside it that draws every move ${v.person === 'she' ? 'she' : v.person} makes as a violet mark with an arc to the moment, 2.2 seconds later, when it comes back into ${v.feed} as an item, and under both a band showing how much of ${v.feed} is ${v.possessive} own echo. The lab re-states the piece's model so it can be run thousands of times, and this paper is what the lab says.</p>`,
   ].join(''));
 
+  if (frame.hypotheses) S('Hypotheses', [
+    `<p>Stated before the sample was drawn, each with the rule that decides it:</p>`,
+    `<ul>${frame.hypotheses.map((h) => `<li><b>${h.id}.</b> ${h.text}</li>`).join('')}</ul>`,
+    `<p>The counterfactual is the same session without the moment: the same persona, the same seed, so the same clumps, gaps, channels and rankings, and the same moves at the same times. Pairs are matched by persona and seed; every difference is the moment's.</p>`,
+  ].join(''));
+
   S('The model', [
     `<p>${v.feed[0].toUpperCase() + v.feed.slice(1)} has seven channels. Four ask something of ${v.person === 'she' ? 'her' : v.person}: social, news, work, family. Three are what ${v.person === 'she' ? 'she' : v.person} would rather be looking at: garden, art, music. The asks arrive about three times as often, and the ranking favours them: an ask ranks between 0.35 and 0.98, a want between 0.05 and 0.62, so the wants sit low and more often fall under their cut-off. That is a modelling choice and it is the claim the model makes about feeds beyond the loop. Items arrive in clumps with uneven gaps and age out after 32 seconds. Every move comes back as an item 2.2 seconds later. A like raises a channel's weight by one, a hide lowers it, a mute removes it; on a bad day the pace is a new item every second and a half, and at eight seconds something arrives that ${v.person === 'she' ? 'she' : v.person} did not ask for.</p>`,
     `<p>Four dimensions start whole and wear down. <b>Attention</b> falls with every arrival and every tap, scroll and refresh, and recovers only when nothing has arrived for three seconds. <b>Calm</b> follows a pulse the feed's music runs at, which rises with arrivals and moves and decays slowly; it drops at a group-chat burst, hard at the moment, and lifts briefly at a hide or a mute. <b>Agency</b> wears under the share of the feed that is ${v.possessive} own echo and with every move, because every move comes back, and lifts only when a like on something ${v.person === 'she' ? 'she' : v.person} wanted actually worked; it does not return when the echoes age out, because being buried is not agency. <b>The minutes</b> ${v.person === 'she' ? 'she' : v.person} meant for the garden drain at the rate of the clock and never return. Beside them, <b>disorder</b> is measured from the field itself: how mixed the channels are, the share that is echo, the share under its cut-off.</p>`,
@@ -259,6 +303,12 @@ function write(frame, A, plan) {
     `<h3>The loop</h3>`,
     `<p>${A.stop ? `When <i>kateStops</i> stops at forty seconds, the share of ${v.feed} that is ${v.possessive} own echo is ${fmtPct(A.stop.shareAtStop)} just after ${v.possessive} last move and ${fmtPct(A.stop.shareAtEnd)} at the end. Nothing of ${v.possessive} was removed; the feed kept coming and buried it, and after 32 seconds each echo aged out as every item does. Stopping does not take ${v.person === 'she' ? 'her' : v.person} out; it changes the proportions.` : ''} ${A.mute.runs ? `Across the ${A.mute.runs} sessions in which a channel was muted, what filled the space afterwards was ${A.mute.fill.slice(0, 3).map(([s, sh]) => `${s} (${Math.round(sh * 100)}%)`).join(', ')} of what arrived. Muting makes room; it does not choose what takes it.` : ''}</p>`,
     renderFigure(plan.sample.kind, 'sample', A, frame),
+    ...(A.scare ? [
+      `<h3>The moment, tested</h3>`,
+      `<p>${A.scare.n} matched pairs on a bad day, across ${A.scare.personas.join(', ')}. At the moment, calm drops ${P(A.scare.c.immediate)} points and attention ${P(A.scare.a.immediate)} points against the instant before. Against the counterfactual the calm deficit is ${P(A.scare.c.at1)} points one second after, ${P(A.scare.c.at10)} at ten, ${P(A.scare.c.at30)} at thirty and ${P(A.scare.c.at60)} at sixty; it is back within two points by ${V.mmss(A.scare.c.recovery)}. The attention deficit is ${P(A.scare.a.at1)} points at one second and ${P(A.scare.a.at60)} at sixty${A.scare.a.recovery >= 120000 ? ', and does not close within two minutes' : `, closing by ${V.mmss(A.scare.a.recovery)}`}. At the end of the session the pairs differ by ${P(A.scare.c.end.median)} points of calm, ${P(A.scare.a.end.median)} of attention and ${P(A.scare.g.end.median)} of agency.${A.pace.busy && A.pace.busy.a.p90 < 0.005 ? ' The end-state difference on attention is zero because both arms reach the floor before the session ends; the model saturates attention on a bad day of this length, so H3 is decided at the floor, not by the moment. On a shorter round the attention deficit would stand at the end.' : ''}</p>`,
+      renderFigure('moment', 'test', A, frame),
+      `<table><thead><tr><th>hypothesis</th><th>rule</th><th>evidence</th><th>verdict</th></tr></thead><tbody>${A.scare.verdicts.map((v) => `<tr><td><b>${v.id}</b> ${v.text}</td><td>${v.test}</td><td>${v.evidence}</td><td><b>${v.ok ? 'supported' : 'not supported'}</b></td></tr>`).join('')}</tbody></table>`,
+    ] : []),
   ].join(''));
 
   S('Extremes', [
@@ -329,7 +379,7 @@ async function go(sample) {
   window.__ready = false;
   const id = document.getElementById('frameSel').value;
   const frame = await (await fetch(`frames/${id}.json`)).json();
-  const S = sample || M.sample({ seeds: +document.getElementById('seeds').value, roundSec: +document.getElementById('round').value, seedBase: 1000 });
+  const S = sample || M.sample({ seeds: +document.getElementById('seeds').value, roundSec: +document.getElementById('round').value, seedBase: 1000, ...(frame.sample || {}) });
   render(frame, S);
 }
 document.getElementById('frameSel').value = q.get('frame') || 'general';

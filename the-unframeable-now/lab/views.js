@@ -196,5 +196,30 @@
     return { svg: svg + '</svg>', nodes: T.nodes.length, links: T.links.length, width: T.width, height: T.height };
   }
 
-  return { DIMS, pcol, mmss, quantile, groups, medianRun, snapAt, stats, band, wholeOf, disc, blob, brain, petals, bands, strips, lineage, tangleLayout, WANTS };
+  /* the moment: a dimension around the bad day's moment, with it and without it, aligned at t = 8 s */
+  function momentPlot(S, key, opts = {}) {
+    const AT = 8000, FROM = -6000, TO = opts.to || 90000, step = 1000;
+    const W = opts.W || 640, H = opts.H || 220, L = 34, R = 10, T = 22, B = 20;
+    const name = DIMS.find((d) => d[0] === key)[1];
+    const sel = (m) => S.runs.filter((r) => r.pace === 'busy' && r.moment === m && (!opts.persona || r.persona === opts.persona));
+    const withM = sel(true), without = sel(false);
+    if (!withM.length || !without.length) return { svg: '', n: 0 };
+    const series = (runs) => { const out = []; for (let dt = FROM; dt <= TO; dt += step) { const vals = runs.map((r) => snapAt(r, AT + dt)[key]); out.push({ t: dt, p10: quantile(vals, 0.1), p50: quantile(vals, 0.5), p90: quantile(vals, 0.9) }); } return out; };
+    const a = series(withM), b = series(without);
+    const x = d3.scaleLinear().domain([FROM, TO]).range([L, W - R]), y = d3.scaleLinear().domain([0, 1]).range([H - B, T]);
+    const grid = opts.print ? '#e6e6e6' : 'rgba(255,255,255,0.08)', tick = opts.print ? '#666' : 'rgba(219,225,229,0.5)', ink = opts.print ? '#333' : '#e8e4d6';
+    const cw = opts.print ? '#c0392b' : '#ff626b', co = opts.print ? '#1f9aa0' : '#55e2e1';
+    let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%"><text x="${L}" y="12" font-size="10" fill="${ink}" font-weight="600">${name} around the moment · bad day${opts.persona ? ' · ' + opts.persona : ''}</text>`;
+    for (const v of [0, 0.5, 1]) svg += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${grid}"/><text x="${L - 3}" y="${y(v) + 3}" font-size="8" text-anchor="end" fill="${tick}">${v * 100}</text>`;
+    for (const dt of [0, 30000, 60000, 90000]) if (dt <= TO) svg += `<text x="${x(dt)}" y="${H - 6}" font-size="8" text-anchor="middle" fill="${tick}">${dt === 0 ? 'the moment' : '+' + dt / 1000 + ' s'}</text>`;
+    svg += `<line x1="${x(0)}" x2="${x(0)}" y1="${T}" y2="${H - B}" stroke="${cw}" stroke-dasharray="3 3" opacity="0.7"/>`;
+    const area = (d) => d3.area().x((p) => x(p.t)).y0((p) => y(p.p10)).y1((p) => y(p.p90)).curve(d3.curveMonotoneX)(d);
+    const line = (d) => d3.line().x((p) => x(p.t)).y((p) => y(p.p50)).curve(d3.curveMonotoneX)(d);
+    svg += `<path d="${area(b)}" fill="${co}" opacity="0.14"/><path d="${line(b)}" fill="none" stroke="${co}" stroke-width="1.6"/>`;
+    svg += `<path d="${area(a)}" fill="${cw}" opacity="0.14"/><path d="${line(a)}" fill="none" stroke="${cw}" stroke-width="1.6"/>`;
+    svg += `<rect x="${W - R - 150}" y="${T - 6}" width="8" height="3" fill="${cw}"/><text x="${W - R - 138}" y="${T - 2}" font-size="8" fill="${tick}">with the moment</text><rect x="${W - R - 60}" y="${T - 6}" width="8" height="3" fill="${co}"/><text x="${W - R - 48}" y="${T - 2}" font-size="8" fill="${tick}">without</text>`;
+    return { svg: svg + '</svg>', n: withM.length + without.length, withM: a, without: b };
+  }
+
+  return { DIMS, pcol, mmss, quantile, groups, medianRun, snapAt, stats, band, wholeOf, disc, blob, brain, petals, bands, strips, lineage, tangleLayout, momentPlot, WANTS };
 });
