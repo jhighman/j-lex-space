@@ -20,6 +20,50 @@ end state per dimension against a tolerance of two standard deviations.
 Run it after any change to the model on either side. A rendering here is
 an exploration of the numbers; the report on the piece is the report.
 
+## The paper
+
+`paper.html` is a summary machine: it takes a sample, analyses it,
+chooses figures for each section by rule, writes the prose from the
+numbers in a chosen register, and lays the result out for A4.
+`paper.js` renders it headless to a PDF with running heads and page
+numbers, the way the rounds were recorded.
+
+The **narrative frame** is a small JSON in `frames/`: the premise, the
+claim, what applicability means for this audience, the voice (she, the
+user, the participant), which figures to prefer and which to avoid, and
+the tone. Three to start: `general` for an intelligent general reader,
+`product` for people who design and rank feeds, `wellbeing` for
+researchers in attention and wellbeing. Swap the frame and the same
+sample becomes a different paper: a different title, a different
+opening figure, different vocabulary, different applicability, the same
+numbers. Add a frame to try a different premise or point of view.
+
+What the machine does, and does not do:
+
+- **Analysis.** Per persona × pace: median and tenth to ninetieth
+  percentile of every dimension; the pace effect across personas; the
+  persona ranking by wholeness; the echo share at its peak and end,
+  reconstructed from the event record; what filled the space after a
+  mute, as shares; the calm the bad day's moment takes; what happens
+  when Kate stops; the extremes.
+- **Figure selection.** Each section has candidates with a stated
+  reason. The frame's preference order ranks them, its avoid list
+  removes them, and a kind already used in the paper is penalised so a
+  figure does not reappear. The appendix lists every choice and why.
+- **Prose.** Templates filled from the numbers in the frame's voice.
+  It says when the model has saturated. It does not reason about the
+  data beyond the rules it states, and the limitations section says so.
+- **Layout.** A4, print CSS, figures that do not break across pages,
+  captions that carry the figure's claim, a running head and page
+  numbers from the renderer.
+
+```sh
+NODE_PATH=…/node_modules node paper.js --frame product --seeds 10 --round 180 --out paper-product.pdf
+```
+
+The drawings the paper uses are the lab's, from `views.js`, so a figure
+in the paper is the figure on the lab page.
+
 ## Files
 
 - `model.js` — the model, headless. `simulate({persona, pace, roundSec,
@@ -31,8 +75,13 @@ an exploration of the numbers; the report on the piece is the report.
 - `sample.js` — a CLI that draws a sample and prints the table:
   `node sample.js --personas kate,doomscroller --paces busy --seeds 50
   --round 180 --out samples.json`.
+- `views.js` — the drawings as functions that return SVG, shared by the
+  lab page and the paper: the disc, the morph, the brain, the petals,
+  the bands, the strips, the lineage.
 - `index.html` — the lab page. Draw a sample in the browser, or load a
-  `samples.json`, and see it eight ways.
+  `samples.json`, and see it ten ways.
+- `paper.html`, `paper.js`, `frames/` — the summary machine, its
+  headless renderer, and the narrative frames; see *The paper* above.
 - `conformance.js` — the bench. Needs Playwright on `NODE_PATH` and the
   repository root served: `NODE_PATH=…/node_modules node conformance.js
   --url http://localhost:8000 --pace busy --round 40 --n 5`.

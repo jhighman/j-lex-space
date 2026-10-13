@@ -1,0 +1,16 @@
+{
+  "id": "general",
+  "audience": "an intelligent general reader",
+  "title": "You Cannot Tidy a Feed From Outside It",
+  "subtitle": "A simulated study of what tidying a feed does to the feed, and to the person tidying",
+  "premise": "Every move a person makes to tidy a feed is recorded by the feed and served back as more feed. There is no position outside the stream from which to tidy it. We model the loop and ask what it does, over minutes, to attention, calm, agency and the time she meant for something else.",
+  "claim": "The share of the feed that is the reader's own echo rises with every move and never falls to zero while she keeps moving; the quiet things she wanted rank low and are cut off more often than the things asking for her; and when she stops, nothing of hers is removed, the feed simply buries it.",
+  "applicability": [
+    "For a reader deciding how to spend an evening: the cost of tidying is paid in the currency she meant to spend elsewhere, and doing nothing is not the same as having the time.",
+    "For a reader who has felt the band climb without knowing why: the mechanism is drawn, with the move beside its return.",
+    "For anyone comparing a quiet evening with a bad day: the difference is not her hands; on a bad day the feed sets the pulse."
+  ],
+  "voice": { "person": "she", "possessive": "her", "feed": "her feed", "session": "an evening", "moves": "what she did" },
+  "figures": { "prefer": ["disc", "brain", "bands", "strips", "lineage", "petals"], "avoid": [] },
+  "tone": "plain, concrete, no jargon; numbers in sentences only when they change what the reader does"
+}

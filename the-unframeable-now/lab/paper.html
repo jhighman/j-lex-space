@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decay Lab · paper</title>
+<style>
+  /* ---- A4, for print first ---- */
+  @page { size: A4; margin: 18mm 17mm 20mm 17mm; }
+  :root { --ink: #111; --soft: #555; --faint: #8a8a8a; --rule: #d9d9d9; --accent: #5b3fc4; --coral: #c0392b; }
+  * { box-sizing: border-box; }
+  html { background: #e9e9ec; }
+  body { margin: 0; color: var(--ink); font-family: Charter, "Iowan Old Style", Georgia, "Times New Roman", serif; font-size: 10.5pt; line-height: 1.5; }
+  .sheet { background: #fff; width: 210mm; min-height: 297mm; margin: 12mm auto; padding: 18mm 17mm 20mm; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+  @media print { html { background: #fff; } .sheet { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; } .noprint { display: none !important; } }
+  .noprint { position: sticky; top: 0; z-index: 5; background: #1b1d26; color: #eee; font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 12px; padding: 8px 14px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+  .noprint select, .noprint input, .noprint button { font: inherit; font-size: 12px; padding: 4px 8px; border-radius: 6px; border: 1px solid #444; background: #2a2d3a; color: #eee; }
+  .noprint button.primary { background: #a788f5; color: #111; border-color: #a788f5; font-weight: 600; }
+  .noprint .st { margin-left: auto; color: #aaa; }
+
+  .running { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 7.5pt; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); display: flex; justify-content: space-between; border-bottom: 1px solid var(--rule); padding-bottom: 4px; margin-bottom: 10mm; }
+  @media print { .running, .foot { display: none; } }
+  .foot { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 7.5pt; color: var(--faint); display: flex; justify-content: space-between; border-top: 1px solid var(--rule); padding-top: 4px; margin-top: 12mm; }
+
+  .eyebrow { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 8pt; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+  h1 { font-size: 26pt; line-height: 1.12; margin: 0 0 6px; font-weight: 700; letter-spacing: -0.01em; }
+  .subtitle { font-size: 13pt; line-height: 1.35; color: var(--soft); margin: 0 0 10mm; font-style: italic; }
+  .byline { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 8.5pt; color: var(--soft); margin: 0 0 8mm; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .abstract { border-left: 3px solid var(--accent); padding: 2px 0 2px 12px; margin: 0 0 8mm; font-size: 10pt; line-height: 1.5; }
+  .abstract b { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 8pt; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 4px; }
+  h2 { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 12pt; font-weight: 700; margin: 9mm 0 3mm; letter-spacing: 0.01em; break-after: avoid; }
+  h2 .n { color: var(--accent); margin-right: 8px; font-weight: 500; }
+  h3 { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 9.5pt; font-weight: 700; margin: 5mm 0 2mm; color: var(--soft); letter-spacing: 0.04em; text-transform: uppercase; break-after: avoid; }
+  p { margin: 0 0 3.2mm; max-width: 128mm; text-align: left; hyphens: auto; }
+  p.wide { max-width: none; }
+  ul { margin: 0 0 3.2mm; padding-left: 5mm; max-width: 128mm; } li { margin-bottom: 1.4mm; }
+  .pull { font-size: 12.5pt; line-height: 1.4; font-style: italic; color: var(--accent); max-width: 128mm; margin: 4mm 0 5mm; padding-left: 12px; border-left: 2px solid var(--accent); }
+  figure { margin: 4mm 0 6mm; break-inside: avoid; page-break-inside: avoid; }
+  figure.full { width: 100%; }
+  figure .fig { background: #fff; border: 1px solid var(--rule); border-radius: 4px; padding: 6px; }
+  figure .row { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; }
+  figure .row > * { flex: 1 1 0; min-width: 0; }
+  figure svg { display: block; width: 100%; height: auto; }
+  figcaption { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 8.5pt; line-height: 1.45; color: var(--soft); margin-top: 5px; }
+  figcaption b { color: var(--ink); }
+  .cell-lbl { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 8pt; color: var(--soft); text-align: center; margin: 2px 0 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 8.5pt; font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; break-inside: avoid; }
+  th, td { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--rule); }
+  th { font-size: 7.5pt; letter-spacing: 0.08em; text-transform: uppercase; color: var(--soft); font-weight: 600; }
+  td.num { font-variant-numeric: tabular-nums; }
+  .legend { font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 8pt; color: var(--soft); display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 4px 0 0; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; vertical-align: -1px; margin-right: 4px; }
+  .refs { font-size: 9pt; max-width: 150mm; } .refs li { margin-bottom: 2mm; }
+  .appendix td, .appendix th { font-size: 8pt; }
+  .pagebreak { break-before: page; page-break-before: always; }
+  .small { font-size: 9pt; color: var(--soft); }
+</style>
+</head>
+<body>
+<div class="noprint">
+  <label>frame <select id="frameSel"><option>general</option><option>product</option><option>wellbeing</option></select></label>
+  <label>seeds <input type="number" id="seeds" value="10" min="2" max="100" style="width:56px"></label>
+  <label>round s <input type="number" id="round" value="180" min="30" max="600" style="width:64px"></label>
+  <button id="redraw">Draw and write</button>
+  <button id="loadBtn">Load samples.json</button>
+  <button class="primary" id="printBtn">Print / PDF</button>
+  <span class="st" id="st"></span>
+</div>
+<div class="sheet" id="sheet"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="model.js"></script>
+<script src="views.js"></script>
+<script>
+const M = window.DecayModel, V = window.Views;
+const q = new URLSearchParams(location.search);
+const fmtPct = (v) => `${Math.round(v * 100)}%`;
+const P = (v) => Math.round(v * 100);
+const f2 = (v) => v.toFixed(2);
+const today = new Date().toISOString().slice(0, 10);
+
+/* ---- analysis: what the sample says, as numbers with their spread ---- */
+function echoShareAt(run, t) {
+  const LIFE = M.constants.FRAGMENT_LIFE_MS;
+  const alive = (run.events || []).filter((e) => (e.kind === 'arrival' || e.kind === 'echo') && e.t <= t && e.t > t - LIFE);
+  const seedAlive = Math.max(0, 7 - Math.floor(t / 3600)); // the seven seeded items age out over the first half minute
+  const n = alive.length + seedAlive, e = alive.filter((x) => x.kind === 'echo').length;
+  return n ? e / n : 0;
+}
+function analyse(S) {
+  const G = V.groups(S), personas = [...new Set(S.runs.map((r) => r.persona))], paces = [...new Set(S.runs.map((r) => r.pace))];
+  const by = (p, pc) => S.runs.filter((r) => r.persona === p && r.pace === pc);
+  const st = (runs, k) => V.stats(runs, k);
+  const A = { S, G, personas, paces, by, st, n: S.runs.length, round: S.spec.roundSec };
+  // pace effect: across all personas
+  A.pace = Object.fromEntries(paces.map((pc) => [pc, { a: st(S.runs.filter((r) => r.pace === pc), 'a'), c: st(S.runs.filter((r) => r.pace === pc), 'c'), g: st(S.runs.filter((r) => r.pace === pc), 'g'), e: st(S.runs.filter((r) => r.pace === pc), 'e'), arrivals: st(S.runs.filter((r) => r.pace === pc), 'arrivals') }]));
+  // persona effect: mean whole across paces
+  A.persona = Object.fromEntries(personas.map((p) => { const runs = S.runs.filter((r) => r.persona === p); return [p, { whole: V.quantile(runs.map((r) => V.wholeOf(r.summary)), 0.5), a: st(runs, 'a'), c: st(runs, 'c'), g: st(runs, 'g'), moves: st(runs, 'moves') }]; }));
+  A.rank = personas.slice().sort((x, y) => A.persona[x].whole - A.persona[y].whole); // worst first
+  // the echo share: peak and end, per group
+  A.echo = {};
+  for (const [k, runs] of G) { const peaks = [], ends = []; for (const r of runs) { const dur = r.snaps[r.snaps.length - 1].t; let pk = 0; for (let t = 0; t <= dur; t += 2000) pk = Math.max(pk, echoShareAt(r, t)); peaks.push(pk); ends.push(echoShareAt(r, dur)); } A.echo[k] = { peak: V.quantile(peaks, 0.5), end: V.quantile(ends, 0.5) }; }
+  // what filled the space after a mute, across all runs that muted
+  const fill = {}; let muted = 0;
+  for (const r of S.runs) { const m = (r.events || []).find((e) => e.kind === 'move' && e.what === 'muted'); if (!m) continue; muted += 1; for (const e of r.events) if (e.kind === 'arrival' && e.t > m.t) fill[e.source] = (fill[e.source] || 0) + 1; }
+  const fillTotal = Object.values(fill).reduce((a, b) => a + b, 0) || 1;
+  A.mute = { runs: muted, fill: Object.entries(fill).sort((x, y) => y[1] - x[1]).map(([s, c]) => [s, c / fillTotal]) };
+  // the moment: calm just before and just after, on busy runs
+  const drops = [];
+  for (const r of S.runs) if (r.momentAt) { const before = V.snapAt(r, r.momentAt - 100).c, after = V.snapAt(r, r.momentAt + 100).c; drops.push(before - after); }
+  A.moment = drops.length ? { n: drops.length, drop: V.quantile(drops, 0.5) } : null;
+  // stopping: kateStops, share at last move vs end
+  const ks = S.runs.filter((r) => r.persona === 'kateStops');
+  if (ks.length) { const atStop = [], atEnd = [], aEnd = []; for (const r of ks) { const last = r.moves[r.moves.length - 1]; if (!last) continue; atStop.push(echoShareAt(r, last.at + 2500)); atEnd.push(echoShareAt(r, r.snaps[r.snaps.length - 1].t)); aEnd.push(r.summary.a); } A.stop = { n: ks.length, shareAtStop: V.quantile(atStop, 0.5), shareAtEnd: V.quantile(atEnd, 0.5) }; }
+  // the gardener's calm on a quiet evening, against the abstainer's
+  if (personas.includes('gardener') && personas.includes('abstainer') && paces.includes('calm')) A.gardenerCalm = { g: st(by('gardener', 'calm'), 'c'), ab: st(by('abstainer', 'calm'), 'c') };
+  A.extremes = M.extremes(S.runs, 'a', 3);
+  return A;
+}
+
+/* ---- the figure plan: candidates per section, chosen against the frame ---- */
+function planFigures(frame, A) {
+  const prefer = frame.figures.prefer, avoid = new Set(frame.figures.avoid || []);
+  const used = new Set();
+  const choose = (cands) => { const ok = cands.filter((c) => !avoid.has(c.kind)); const score = (c) => (prefer.indexOf(c.kind) < 0 ? 99 : prefer.indexOf(c.kind)) + (used.has(c.kind) ? 50 : 0); ok.sort((x, y) => score(x) - score(y)); used.add(ok[0].kind); return ok[0]; };
+  const plan = {};
+  plan.premise = choose([
+    { kind: 'disc', why: 'the premise is a shape: whole against worn, the same person on a bad day beside doing nothing' },
+    { kind: 'bands', why: 'the premise is a trajectory: attention over the session, every persona, on a bad day' },
+    { kind: 'brain', why: 'the premise as a figure a reader already carries, the session against doing nothing' },
+  ]);
+  plan.mechanism = choose([
+    { kind: 'lineage', why: 'the mechanism is causal: a move, its return, and what a mute made room for, as parents and children' },
+    { kind: 'bands', why: 'the mechanism over time, the echo share rising with each move' },
+  ]);
+  plan.pace = choose([
+    { kind: 'bands', why: 'the pace effect is a change over time; bands show it with its spread' },
+    { kind: 'strips', why: 'the pace effect as end states, with the spread as dots' },
+  ]);
+  plan.persona = choose([
+    { kind: 'strips', why: 'personas differ in their end states; strips show every session and the extremes' },
+    { kind: 'petals', why: 'personas as morphology across the whole sample' },
+    { kind: 'disc', why: 'personas as the report\'s shape, side by side' },
+  ]);
+  plan.sample = choose([
+    { kind: 'petals', why: 'the whole sample at a glance, sorted worst first, so the reader sees the distribution not a curve' },
+    { kind: 'table', why: 'the whole sample as numbers with their spread' },
+    { kind: 'strips', why: 'the whole sample as dots per group' },
+  ]);
+  plan.discussion = choose([
+    { kind: 'brain', why: 'the lens asks what it did to a person; the figure is a person-shaped place for the numbers to sit, named as a figure' },
+    { kind: 'blob', why: 'the lens asks what it did; morphology shows wear as shape' },
+    { kind: 'disc', why: 'the report\'s own shape, which the reader will meet on the piece' },
+  ]);
+  return plan;
+}
+
+/* ---- figures, rendered for print ---- */
+let figN = 0;
+const figure = (inner, caption, cls = 'full') => { figN += 1; return `<figure class="${cls}"><div class="fig">${inner}</div><figcaption><b>Figure ${figN}.</b> ${caption}</figcaption></figure>`; };
+function renderFigure(kind, slot, A, frame) {
+  const v = frame.voice, pr = { print: true };
+  const busy = A.paces.includes('busy') ? 'busy' : A.paces[A.paces.length - 1];
+  const kate = A.personas.includes('kateStops') ? 'kateStops' : A.personas[0];
+  const ab = A.personas.includes('abstainer') ? 'abstainer' : null;
+  if (kind === 'disc') {
+    const cells = [];
+    const sz = slot === 'premise' ? 150 : 200;
+    const kr = V.medianRun(A.by(kate, busy)); cells.push(`<div>${V.disc(kr.summary, sz, '', { print: true, axes: true })}<p class="cell-lbl">${kate} · ${busy}</p></div>`);
+    if (ab) { const ar = V.medianRun(A.by(ab, busy)); cells.push(`<div>${V.disc(ar.summary, sz, '', { print: true, axes: true })}<p class="cell-lbl">${ab} · ${busy}</p></div>`); }
+    cells.push(`<div>${V.disc({ a: 1, c: 1, g: 1, m: 1, e: 0 }, sz, '', { print: true, axes: true })}<p class="cell-lbl">whole</p></div>`);
+    return figure(`<div class="row">${cells.join('')}</div>`, `<b>Wholeness as a shape.</b> Four dimensions on four axes; the disc is full when whole and tears inward as each falls. Left, the median session of <i>${kate}</i> on a ${busy === 'busy' ? 'bad day' : busy}; ${ab ? `middle, the <i>abstainer</i> on the same pace, who opened the feed and did nothing;` : ''} right, whole. The difference between the first two is the cost of ${v.moves}.`);
+  }
+  if (kind === 'lineage') {
+    const full = V.medianRun(A.by(kate, busy));
+    const cut = 60000, run = { ...full, snaps: full.snaps.filter((s) => s.t <= cut), events: (full.events || []).filter((e) => e.t <= cut) };
+    const L = V.lineage(run, 10000, pr);
+    return figure(L.svg, `<b>The first minute of one session as a lineage.</b> Time runs down in windows of ten seconds. Each move ${v.person === 'she' ? 'she' : v.person} makes descends from the state before it; its echo, two seconds later, descends from the move; a later arrival descends from the like that raised its channel (green) and the mute that made room (red), so a mute's lanes fan out to every window after it; the state at each window's end descends from everything in it. Layout after nitaku's tangled tree. <i>${kate}</i>, ${busy}, seed ${run.seed}: ${L.nodes} nodes, ${L.links} links.`);
+  }
+  if (kind === 'bands') {
+    const keys = slot === 'premise' || slot === 'mechanism' ? ['a'] : ['a', 'c'];
+    const paces = slot === 'premise' || slot === 'mechanism' ? [busy] : A.paces;
+    let personas = null, col = null, html = '';
+    const single = paces.length === 1;
+    for (const k of keys) { html += '<div class="row">'; for (const pc of paces) { const b = V.bands(A.S, k, pc, { print: true, W: single ? 640 : 300, H: single ? 220 : 150 }); personas = b.personas; col = b.col; html += `<div>${b.svg}</div>`; } html += '</div>'; }
+    const legend = `<div class="legend">${personas.map((p) => `<span><i style="background:${col(p)}"></i>${p}</span>`).join('')}</div>`;
+    const what = keys.length === 1 ? 'attention' : 'attention (top) and calm (bottom)';
+    return figure(html + legend, `<b>${what[0].toUpperCase() + what.slice(1)} over ${v.session}, by ${paces.length === 1 ? 'persona' : 'pace and persona'}.</b> The line is the median of the seeds; the band is the tenth to the ninetieth percentile. ${paces.length > 1 ? 'Left to right: a quiet evening, a normal day, a bad day.' : ''} Where bands do not overlap, the personas differ.`);
+  }
+  if (kind === 'strips') {
+    const keys = slot === 'pace' ? ['a', 'c'] : ['a', 'g'];
+    const html = keys.map((k) => V.strips(A.S, k, { print: true, W: 980 })).join('');
+    return figure(html, `<b>End states, every session.</b> One dot per session, one row per persona and pace; the bar is the tenth to the ninetieth percentile, the white tick the median, the rings the extremes. The spread is the sample, not a curve.`);
+  }
+  if (kind === 'petals') {
+    const pt = V.petals(A.S.runs, { print: true, sortBy: 'a', size: 48 });
+    return figure(pt.svg + `<div class="legend">${pt.personas.map((p) => `<span><i style="background:${pt.col(p)}"></i>${p}</span>`).join('')}<span>petals: attention up, calm right, agency down, minutes left · paler with disorder · sorted by attention, worst first</span></div>`, `<b>The whole sample as morphology.</b> Every session as a four-petal glyph, sorted worst first by attention. The eye finds the distribution and its tails without a curve being fitted.`);
+  }
+  if (kind === 'brain') {
+    const cells = [];
+    const show = [kate, 'doomscroller', 'gardener'].filter((p) => A.personas.includes(p));
+    for (const p of show) { const r = V.medianRun(A.by(p, busy)); const b = ab ? V.medianRun(A.by(ab, busy)).summary : { a: 1, c: 1, g: 1, m: 1, e: 0 }; cells.push(`<div>${V.brain(r.summary, b, 200, r.seed, pr)}<p class="cell-lbl">${p} · ${busy}</p></div>`); }
+    return figure(`<div class="row">${cells.join('')}</div><div class="legend"><span><i style="background:#6b4fd0"></i>frontal · agency</span><span><i style="background:#1f9aa0"></i>parietal · attention</span><span><i style="background:#b8901f"></i>temporal · calm</span><span><i style="background:#3f9a6b"></i>occipital · the minutes</span><span>speckle · disorder</span></div>`, `<b>A figure, not a finding.</b> The four dimensions mapped by concept onto a top-down brain so the numbers have a familiar place to sit: agency on the frontal region, attention on the parietal, calm on the temporal, the minutes on the occipital. Left hemisphere, the session; right, ${ab ? 'the abstainer on the same pace' : 'whole'}. Nothing here is measured from a brain.`);
+  }
+  if (kind === 'blob') {
+    const cells = [];
+    for (const p of A.personas.slice(0, 6)) { const r = V.medianRun(A.by(p, busy)); cells.push(`<div>${V.blob(r.summary, 150, pr)}<p class="cell-lbl">${p}</p></div>`); }
+    return figure(`<div class="row">${cells.join('')}</div>`, `<b>Wear as shape.</b> A superformula blob whose form is the four dimensions: round when whole, spiked and shrunken as they fall, jittered by disorder. The median session of each persona on a ${busy === 'busy' ? 'bad day' : busy}.`);
+  }
+  if (kind === 'table') return figure(tableHTML(A), `<b>The numbers.</b> Median and tenth to ninetieth percentile of the end state, per persona and pace.`);
+  return '';
+}
+function tableHTML(A) {
+  const cell = (runs, k) => { const s = V.stats(runs, k); return `<td class="num">${f2(s.p50)} <span class="small">[${f2(s.p10)}–${f2(s.p90)}]</span></td>`; };
+  let t = '<table><thead><tr><th>persona</th><th>pace</th><th>n</th><th>attention</th><th>calm</th><th>agency</th><th>minutes</th><th>disorder</th><th>moves</th><th>arrivals</th></tr></thead><tbody>';
+  for (const [k, runs] of A.G) { const [p, pc] = k.split(' · '); t += `<tr><td>${p}</td><td>${pc}</td><td class="num">${runs.length}</td>${cell(runs, 'a')}${cell(runs, 'c')}${cell(runs, 'g')}${cell(runs, 'm')}${cell(runs, 'e')}<td class="num">${f2(V.stats(runs, 'moves').p50)}</td><td class="num">${f2(V.stats(runs, 'arrivals').p50)}</td></tr>`; }
+  return t + '</tbody></table>';
+}
+
+/* ---- the prose, in the frame's register ---- */
+function write(frame, A, plan) {
+  const v = frame.voice, She = v.person[0].toUpperCase() + v.person.slice(1);
+  const busy = A.paces.includes('busy') ? 'busy' : A.paces[A.paces.length - 1];
+  const paceName = { calm: 'a quiet evening', steady: 'a normal day', busy: 'a bad day' };
+  const kate = A.personas.includes('kateStops') ? 'kateStops' : A.personas[0];
+  const worst = A.rank[0], best = A.rank[A.rank.length - 1];
+  const pa = A.pace, pc = (k, key) => pa[k] ? pa[k][key] : null;
+  const sections = [];
+  const S = (title, body) => sections.push({ title, body });
+
+  const abstract = `${frame.premise} We ran ${A.n} simulated sessions of ${A.round} seconds, ${A.personas.length} ways of using ${v.feed} by ${A.paces.length} paces by ${A.S.spec.seeds} seeds. ${frame.claim} In the sample, the median session on a bad day ended with attention at ${fmtPct(pc('busy', 'a').p50)} against ${fmtPct(pc('calm', 'a').p50)} on a quiet evening, and the ${worst} ended lowest on every pace. Every number is from the model, whose constants are in one file; the interactive piece is the reference and a conformance bench measures the gap.`;
+
+  S('Premise', [
+    `<p>${frame.premise}</p>`,
+    renderFigure(plan.premise.kind, 'premise', A, frame),
+    `<div class="pull">${frame.claim}</div>`,
+    `<p>The piece this paper reports on is interactive: a phone that looks like ${v.possessive} own, a line beside it that draws every move ${v.person === 'she' ? 'she' : v.person} makes as a violet mark with an arc to the moment, 2.2 seconds later, when it comes back into ${v.feed} as an item, and under both a band showing how much of ${v.feed} is ${v.possessive} own echo. The lab re-states the piece's model so it can be run thousands of times, and this paper is what the lab says.</p>`,
+  ].join(''));
+
+  S('The model', [
+    `<p>${v.feed[0].toUpperCase() + v.feed.slice(1)} has seven channels. Four ask something of ${v.person === 'she' ? 'her' : v.person}: social, news, work, family. Three are what ${v.person === 'she' ? 'she' : v.person} would rather be looking at: garden, art, music. The asks arrive about three times as often, and the ranking favours them: an ask ranks between 0.35 and 0.98, a want between 0.05 and 0.62, so the wants sit low and more often fall under their cut-off. That is a modelling choice and it is the claim the model makes about feeds beyond the loop. Items arrive in clumps with uneven gaps and age out after 32 seconds. Every move comes back as an item 2.2 seconds later. A like raises a channel's weight by one, a hide lowers it, a mute removes it; on a bad day the pace is a new item every second and a half, and at eight seconds something arrives that ${v.person === 'she' ? 'she' : v.person} did not ask for.</p>`,
+    `<p>Four dimensions start whole and wear down. <b>Attention</b> falls with every arrival and every tap, scroll and refresh, and recovers only when nothing has arrived for three seconds. <b>Calm</b> follows a pulse the feed's music runs at, which rises with arrivals and moves and decays slowly; it drops at a group-chat burst, hard at the moment, and lifts briefly at a hide or a mute. <b>Agency</b> wears under the share of the feed that is ${v.possessive} own echo and with every move, because every move comes back, and lifts only when a like on something ${v.person === 'she' ? 'she' : v.person} wanted actually worked; it does not return when the echoes age out, because being buried is not agency. <b>The minutes</b> ${v.person === 'she' ? 'she' : v.person} meant for the garden drain at the rate of the clock and never return. Beside them, <b>disorder</b> is measured from the field itself: how mixed the channels are, the share that is echo, the share under its cut-off.</p>`,
+    renderFigure(plan.mechanism.kind, 'mechanism', A, frame),
+    `<p class="small">The mapping from events to decrements is stated in <code>lab/model.js</code> under the same names as in the piece. It is a model of degradation, not a measurement of a person, and every claim in this paper is a claim about the model.</p>`,
+  ].join(''));
+
+  S('Sample', [
+    `<p>${A.n} sessions of ${A.round} seconds: ${A.personas.length} personas, ${A.paces.length} paces, ${A.S.spec.seeds} seeds per cell. A persona is a way of using ${v.feed}, written down as a schedule of moves: <i>kate</i> does her seven things in the first twenty seconds and then a scroll or a tap every nine; <i>kateStops</i> does the seven and then nothing; the <i>doomscroller</i> never stops; the <i>tidier</i> hides and mutes everything that asks; the <i>gardener</i> likes only what ${v.person === 'she' ? 'she' : v.person} wanted; the <i>abstainer</i> opens it and does nothing. Seeds vary the stream's clumps, gaps, channels and rankings, so each cell is a spread and its extremes are real sessions that can be re-run.</p>`,
+  ].join(''));
+
+  const paceLines = A.paces.map((p) => `${paceName[p]}: attention ${fmtPct(pc(p, 'a').p50)} [${fmtPct(pc(p, 'a').p10)}–${fmtPct(pc(p, 'a').p90)}], calm ${fmtPct(pc(p, 'c').p50)}, ${Math.round(pc(p, 'arrivals').p50)} arrivals`).join('; ');
+  S('Results', [
+    `<h3>The pace of the feed</h3>`,
+    `<p>Across all personas, the pace of ${v.feed} is the largest single factor. Medians at the end, with the spread across personas and seeds: ${paceLines}.${A.paces.some((p) => pc(p, 'a').p90 < 0.005) ? ` Where a spread reads [0%–0%] the model has saturated: on ${A.paces.filter((p) => pc(p, 'a').p90 < 0.005).map((p) => paceName[p]).join(' and ')}, ${A.round} seconds is long enough to take all of attention from every persona, which is a statement about the constants as much as about the day; the per-arrival cost of attention is the constant to contest.` : ''} On a bad day attention is taken whether or not ${v.person === 'she' ? 'she' : v.person} does anything: the <i>abstainer</i>, who does nothing, ends a bad day at ${fmtPct(A.st(A.by('abstainer', busy), 'a').p50)} attention${A.moment ? `, and the moment at eight seconds takes ${P(A.moment.drop)} points of calm in the model, across ${A.moment.n} sessions` : ''}.</p>`,
+    renderFigure(plan.pace.kind, 'pace', A, frame),
+    `<h3>How ${v.feed} is used</h3>`,
+    `<p>Holding pace fixed, the way ${v.feed} is used separates the personas. By median wholeness across all paces, worst first: ${A.rank.map((p) => `<i>${p}</i> ${fmtPct(A.persona[p].whole)}`).join(', ')}. The <i>${worst}</i> ends lowest on every pace. ${A.personas.includes('tidier') ? `The <i>tidier</i>, who does nothing but hide and mute, keeps attention and calm and ends with agency at ${fmtPct(A.persona.tidier.g.p50)}, because every hide and mute comes back.` : ''} ${A.gardenerCalm ? `The <i>gardener</i>, who likes something ${v.person === 'she' ? 'she' : v.person} wanted every six seconds, ends a quiet evening with calm at ${fmtPct(A.gardenerCalm.g.p50)} against the abstainer's ${fmtPct(A.gardenerCalm.ab.p50)}: on a quiet evening ${v.possessive} hands are the pulse.` : ''}</p>`,
+    renderFigure(plan.persona.kind, 'persona', A, frame),
+    `<h3>The loop</h3>`,
+    `<p>${A.stop ? `When <i>kateStops</i> stops at forty seconds, the share of ${v.feed} that is ${v.possessive} own echo is ${fmtPct(A.stop.shareAtStop)} just after ${v.possessive} last move and ${fmtPct(A.stop.shareAtEnd)} at the end. Nothing of ${v.possessive} was removed; the feed kept coming and buried it, and after 32 seconds each echo aged out as every item does. Stopping does not take ${v.person === 'she' ? 'her' : v.person} out; it changes the proportions.` : ''} ${A.mute.runs ? `Across the ${A.mute.runs} sessions in which a channel was muted, what filled the space afterwards was ${A.mute.fill.slice(0, 3).map(([s, sh]) => `${s} (${Math.round(sh * 100)}%)`).join(', ')} of what arrived. Muting makes room; it does not choose what takes it.` : ''}</p>`,
+    renderFigure(plan.sample.kind, 'sample', A, frame),
+  ].join(''));
+
+  S('Extremes', [
+    `<p>A normative curve hides the tails. The three sessions furthest from the median on attention, each re-runnable by its seed:</p>`,
+    `<ul>${A.extremes.map((r) => `<li><i>${r.persona}</i> on ${paceName[r.pace]}, seed ${r.seed}: attention ${fmtPct(r.summary.a)}, calm ${fmtPct(r.summary.c)}, agency ${fmtPct(r.summary.g)}, disorder ${f2(r.summary.e)}, ${r.moves.length} moves, ${r.arrivals} arrivals.</li>`).join('')}</ul>`,
+    `<p>The bad day's moment is an extreme stressor placed deliberately in the record so that the tail is populated: one spike, known, at a known time, named afterwards. It is one tail of the distribution, not the distribution.</p>`,
+  ].join(''));
+
+  S('Discussion', [
+    `<p>${frame.applicability.map((a) => a).join(' ')}</p>`,
+    renderFigure(plan.discussion.kind, 'discussion', A, frame),
+    `<p>Whether the findings above are findings about feeds or artefacts of the constants is exactly what the lab is for: the constants are in one file, the personas in one table, and a sample of ${A.n} sessions takes a fraction of a second to draw. A different premise is a different frame over the same machine; this paper was written under the frame <i>${frame.id}</i>, for ${frame.audience}.</p>`,
+  ].join(''));
+
+  S('Limitations and integrity', [
+    `<ul>
+      <li>This is a model of degradation with a stated mapping, not a measurement of a person. No dimension here was measured from anyone.</li>
+      <li>The interactive piece is the reference. The lab's model re-states it; <code>conformance.js</code> runs the same scripted session on the piece and in the lab and compares the end state per dimension against two standard deviations. At the time of writing all seven dimensions were within tolerance on that script.</li>
+      <li>The personas are schedules, not people. The playtests that tuned the piece were played by the same process that built it, and that limit is named in the piece's record.</li>
+      <li>The ranking asymmetry, the arrival rates and the decrements are constants chosen to make the mechanism visible. They are the first thing to contest.</li>
+      <li>The paper was generated from the sample by templates in the frame's register. It selects figures by rule and says why in the appendix. It does not reason about the data beyond the rules it states.</li>
+    </ul>`,
+  ].join(''));
+
+  S('References', [
+    `<ul class="refs">
+      <li>Bürger, P. <i>Theory of the Avant-Garde</i>. Minnesota, 1984. Foster, H. <i>The Return of the Real</i>. MIT, 1996. The operators the piece borrows: interruption, apparatus exposure, scale collision, withheld closure.</li>
+      <li>Chun, W. H. K. <i>Updating to Remain the Same</i>. MIT, 2016. Bucher, T. <i>If…Then: Algorithmic Power and Politics</i>. Oxford, 2018. The technical conditions of streams: refresh, ranking, visibility.</li>
+      <li>Tufte, E. R. <i>The Visual Display of Quantitative Information</i>. Graphics Press, 1983. The rule the line was redrawn under: show the relation, do not label it.</li>
+      <li>nitaku, <i>Tangled Tree Visualization II</i>, Observable. The lineage layout, re-derived in <code>views.js</code>.</li>
+      <li>Grassé, P.-P. (1959), stigmergy: the one analogy the piece once carried with a literature of its own.</li>
+      <li>The piece: <code>the-unframeable-now/</code> in the repository <code>jhighman/j-lex-space</code>, issue #6, and its lab.</li>
+    </ul>`,
+  ].join(''));
+
+  S('Appendix: why these figures', [
+    `<p class="small">Chosen by rule against the frame's preferences (${frame.figures.prefer.join(', ')}${frame.figures.avoid && frame.figures.avoid.length ? `; avoiding ${frame.figures.avoid.join(', ')}` : ''}):</p>`,
+    `<ul class="small">${Object.entries(plan).map(([slot, c]) => `<li><b>${slot}</b> → ${c.kind}: ${c.why}.</li>`).join('')}</ul>`,
+    `<h3>Constants</h3>`,
+    `<table class="appendix"><thead><tr><th>constant</th><th>value</th></tr></thead><tbody>${Object.entries(M.constants).filter(([k]) => !['WANTS', 'CHANNEL_WEIGHTS'].includes(k)).map(([k, val]) => `<tr><td>${k}</td><td class="num">${typeof val === 'object' ? JSON.stringify(val) : val}</td></tr>`).join('')}<tr><td>CHANNEL_WEIGHTS</td><td>${M.constants.CHANNEL_WEIGHTS.map(([c, w]) => `${c} ${w}`).join(', ')}</td></tr></tbody></table>`,
+    `<h3>The numbers</h3>`,
+    tableHTML(A),
+  ].join(''));
+
+  return { abstract, sections };
+}
+
+/* ---- assembly ---- */
+function render(frame, S) {
+  figN = 0;
+  const A = analyse(S), plan = planFigures(frame, A), W = write(frame, A, plan);
+  const head = `<div class="running"><span>The Unframeable Now · Decay Lab</span><span>${frame.title}</span><span>${today}</span></div>`;
+  const foot = `<div class="foot"><span>frame: ${frame.id} · for ${frame.audience}</span><span>${A.n} simulated sessions · model.js · generated ${today}</span></div>`;
+  let html = head;
+  html += `<p class="eyebrow">A simulated study · frame: ${frame.id}</p><h1>${frame.title}</h1><p class="subtitle">${frame.subtitle}</p>`;
+  html += `<div class="byline"><span>Decay Lab, The Unframeable Now</span><span>jhighman/j-lex-space</span><span>${today}</span><span>${A.n} sessions · ${A.personas.length} personas · ${A.paces.length} paces · ${A.S.spec.seeds} seeds</span></div>`;
+  html += `<div class="abstract"><b>Abstract</b>${W.abstract}</div>`;
+  W.sections.forEach((s, i) => { html += `<h2><span class="n">${i + 1}</span>${s.title}</h2>${s.body}`; });
+  html += foot;
+  document.getElementById('sheet').innerHTML = html;
+  document.title = `${frame.title} · Decay Lab`;
+  document.getElementById('st').textContent = `${A.n} sessions · ${figN} figures · frame ${frame.id}`;
+  window.__ready = true;
+}
+async function go(sample) {
+  window.__ready = false;
+  const id = document.getElementById('frameSel').value;
+  const frame = await (await fetch(`frames/${id}.json`)).json();
+  const S = sample || M.sample({ seeds: +document.getElementById('seeds').value, roundSec: +document.getElementById('round').value, seedBase: 1000 });
+  render(frame, S);
+}
+document.getElementById('frameSel').value = q.get('frame') || 'general';
+if (q.get('seeds')) document.getElementById('seeds').value = q.get('seeds');
+if (q.get('round')) document.getElementById('round').value = q.get('round');
+document.getElementById('redraw').addEventListener('click', () => go());
+document.getElementById('frameSel').addEventListener('change', () => go());
+document.getElementById('printBtn').addEventListener('click', () => window.print());
+document.getElementById('loadBtn').addEventListener('click', () => { const i = document.createElement('input'); i.type = 'file'; i.accept = '.json'; i.onchange = async () => go(JSON.parse(await i.files[0].text())); i.click(); });
+(async () => { if (q.get('sample')) { try { const S = await (await fetch(q.get('sample'))).json(); return go(S); } catch (e) {} } go(); })();
+</script>
+</body>
+</html>

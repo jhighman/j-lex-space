@@ -1,0 +1,16 @@
+{
+  "id": "product",
+  "audience": "people who design and rank feeds",
+  "title": "Engagement Is the User Trying to Leave",
+  "subtitle": "A simulated study of feedback in ranked feeds: every control the user touches becomes content, and the ranking buries what she came for",
+  "premise": "Ranked feeds record every user action and feed it back as signal. We simulate a feed with the ordinary machinery, a ranking that favours what asks something of the user, a cut-off, a lifetime, bursts of arrivals, and a learning loop on likes, hides and mutes, and measure what the user's own tidying does to the feed and to four modelled dimensions of the user.",
+  "claim": "Under engagement-weighted ranking, the user's controls increase the share of the feed that is her own echo; muting makes room but does not choose what fills it; liking what she wanted is the only control that works in her favour, and it too comes back as content; and stopping does not clear anything.",
+  "applicability": [
+    "A control that is logged as engagement is a control that increases the feed's hold; the design question is which controls should not be signal.",
+    "The ranking asymmetry is a tunable in this model; it is the constant to contest, and the lab exposes it in one file.",
+    "Stopping dilutes rather than removes: a feed that wants to be left alone should expire the user's echoes faster than the stream."
+  ],
+  "voice": { "person": "the user", "possessive": "the user's", "feed": "the feed", "session": "a session", "moves": "the user's actions" },
+  "figures": { "prefer": ["bands", "lineage", "strips", "disc", "petals", "table"], "avoid": ["brain"] },
+  "tone": "precise, mechanistic; name the control, the constant and the number"
+}

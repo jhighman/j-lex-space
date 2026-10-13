@@ -1,0 +1,16 @@
+{
+  "id": "wellbeing",
+  "audience": "researchers in attention and wellbeing",
+  "title": "Decay From Whole",
+  "subtitle": "A modelled account of attention, calm, agency and time under a feedback-ranked feed, with its mapping stated",
+  "premise": "We model four dimensions of a person as states that start whole and wear down under the recorded events of a feed session, with a stated mapping from events to decrements, and ask how the trajectory depends on the pace of the feed and on the way it is used. The model is a figure for a mechanism, not a measurement of a person, and every claim below is a claim about the model.",
+  "claim": "In the model, attention falls with arrivals and taps and recovers only in quiet; calm follows a pulse the feed sets on a bad day regardless of the user's hands; agency wears under the user's own echo and does not return when the echo ages out; and the minutes meant for something else drain and never return. The pace of the feed, not the user's behaviour, is the largest single factor on a bad day.",
+  "applicability": [
+    "The mapping from events to decrements is explicit and tunable, so the model can be fitted against measured data rather than asserted.",
+    "The conformance bench between the interactive piece and the simulator is a template for keeping an instrument and its model in agreement.",
+    "The extremes in the sample are real, re-runnable sessions, which makes case study possible alongside the aggregate."
+  ],
+  "voice": { "person": "the participant", "possessive": "the participant's", "feed": "the feed", "session": "a session", "moves": "the participant's actions" },
+  "figures": { "prefer": ["bands", "strips", "brain", "disc", "lineage", "table"], "avoid": [] },
+  "tone": "careful; every number carries its spread; the model is named as a model in every section"
+}
