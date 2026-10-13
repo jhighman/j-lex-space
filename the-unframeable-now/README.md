@@ -279,6 +279,15 @@ calm, agency, minutes gone, disorder from to. The recording pipeline
 opens the report after the debrief and replays it to the end, so a
 round's MP4 ends with what it did to her.
 
+### The lab
+
+`lab/` is where renderings and morphology of this data are explored and
+where the model runs as a simulator, personas × paces × seeds, for
+samples and comparisons. Nothing in it touches this page. Its model is
+a re-statement of this one, and `lab/conformance.js` measures the gap
+between them against this page, which is the reference. See
+`lab/README.md`.
+
 ### A round you can open
 
 `playtests/2026-10-13-kate-round-8/` holds Kate's eighth round as it
