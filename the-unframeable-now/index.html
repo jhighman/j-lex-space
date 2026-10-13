@@ -1312,7 +1312,7 @@ function decayTick(now) {
   const calmTarget = 1 - Math.max(FLOOR[state.pace], SOUND.cortisol);
   DECAY.c += (calmTarget - DECAY.c) * 0.06;                                         // calm follows the pulse
   const n = state.fragments.length, e = state.fragments.filter((f) => f.kind === 'gesture').length;
-  DECAY.g += ((1 - (n ? e / n : 0)) - DECAY.g) * 0.03;                               // agency follows the echo share
+  DECAY.g = Math.max(0, DECAY.g - 0.004 * (n ? e / n : 0));                          // agency wears under the echo share, and does not come back when the echoes age out: being buried is not agency
   DECAY.m = Math.max(0, 1 - (now - session.startedAt) / MINUTES_MS);                 // the minutes drain
   DECAY.e = entropyOf(state.fragments);
   snap(now, null);

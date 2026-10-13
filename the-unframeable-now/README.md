@@ -247,7 +247,7 @@ its first line.
 |---|---|---|
 | **attention** | every arrival (asks more than wants), every tap, scroll and refresh; a lot at the bad day's moment | quiet: only when nothing has arrived for three seconds |
 | **calm** | the pulse the music runs at (it follows `1 − cortisol`); a group-chat burst; the bad day's moment, hard | a hide or a mute, briefly, the relief |
-| **agency** | the share of the feed that is her own echo; every move, because every move comes back | a like on something she wanted that actually worked |
+| **agency** | the share of the feed that is her own echo, for as long as it lasts; every move, because every move comes back | a like on something she wanted that actually worked, and nothing else: it does not come back when her echoes age out, because being buried is not agency |
 | **the minutes** | the clock: the twenty minutes she meant for the garden drain at the rate of real time | never |
 
 Beside them, **disorder**, measured from the field itself and not from
