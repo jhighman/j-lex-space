@@ -97,6 +97,7 @@ const VIEWS = [
   ['bands', 'Bands', 'Each dimension over time: the median trajectory per persona with its p10–p90 band. Where bands do not overlap, personas differ.'],
   ['strips', 'Strips', 'The end state of every session as a dot, one strip per persona per dimension; the extremes are the dots at the ends. The spread is the sample, not a curve.'],
   ['morph', 'Morph', 'A superformula blob whose shape is the four dimensions: round when whole, spiked and shrunken as they fall. Scrub time.'],
+  ['brain', 'Brain', 'The four dimensions mapped onto a top-down brain, by concept and not by anatomy: agency on the frontal region, attention on the parietal, calm on the temporal, the minutes on the occipital, where what she meant to look at would have been. Disorder speckles the whole surface. Left hemisphere: this session; right: the same pace with nothing done. Scrub time.'],
   ['petals', 'Petals', 'Every session\'s end state as a four-petal glyph on a grid, sorted by attention. Morphology across the whole sample at a glance.'],
   ['path3d', '3D · paths', 'Each session as a path through attention × calm × agency; time runs along the path; colour is the persona. Drag to orbit.'],
   ['surface3d', '3D · surface', 'Wholeness (the mean of the four) as a height field: persona across, time along, height is what is left. The bad day is a trench.'],
@@ -203,6 +204,21 @@ function render() {
     scrub.addEventListener('input', () => { playing = false; draw(dur * scrub.value / 1000); });
     document.getElementById('mplay').addEventListener('click', () => { playing = !playing; if (playing) { let v = +scrub.value >= 1000 ? 0 : +scrub.value; const step = () => { if (!playing) return; v = Math.min(1000, v + 6); scrub.value = v; draw(dur * v / 1000); if (v < 1000) timer = setTimeout(step, 50); else playing = false; }; step(); } });
     draw(dur);
+  } else if (view === 'brain') {
+    html.push('<div class="legend"><span><i style="background:#a788f5"></i>frontal · agency</span><span><i style="background:#55e2e1"></i>parietal · attention</span><span><i style="background:#d4af37"></i>temporal · calm</span><span><i style="background:#7fd1a8"></i>occipital · the minutes</span><span>speckle · disorder</span><span>left: the session · right: the abstainer on the same pace, or whole</span></div><div class="grid" id="brainGrid" style="grid-template-columns: repeat(auto-fill, minmax(230px, 1fr))"></div><div class="scrub"><button type="button" id="bplay">▶ play</button><input type="range" id="bscrub" min="0" max="1000" value="1000"><span class="mono" id="btime"></span></div><p class="note" style="margin-top:8px">A figure, not a finding: the regions are named for a familiar shape so the four numbers have somewhere to sit. Nothing here is measured from a brain.</p>');
+    stage.innerHTML = html.join('');
+    const grid = document.getElementById('brainGrid');
+    const dur = Math.max(...S.runs.map((r) => r.snaps[r.snaps.length - 1].t));
+    const snapAt = (r, t) => { let v = r.snaps[0]; for (const sn of r.snaps) { if (sn.t <= t) v = sn; else break; } return v; };
+    const baseline = (pace) => { const runs = S.runs.filter((r) => r.persona === 'abstainer' && r.pace === pace); return runs.length ? medianRun(runs) : null; };
+    const draw = (t) => {
+      grid.innerHTML = [...G].map(([k, runs]) => { const r = medianRun(runs); const sn = snapAt(r, t); const b = baseline(r.pace); const bs = b ? snapAt(b, t) : { a: 1, c: 1, g: 1, m: 1, e: 0 }; return `<div class="cell"><h3>${k}</h3>${brainSVG(sn, bs, 220, r.seed)}<div class="sub">a ${Math.round(sn.a * 100)} · c ${Math.round(sn.c * 100)} · g ${Math.round(sn.g * 100)} · m ${Math.round(sn.m * 100)} · e ${sn.e.toFixed(2)}</div></div>`; }).join('');
+      document.getElementById('btime').textContent = mmss(t);
+    };
+    const scrub = document.getElementById('bscrub'); let playing = false, timer = 0;
+    scrub.addEventListener('input', () => { playing = false; draw(dur * scrub.value / 1000); });
+    document.getElementById('bplay').addEventListener('click', () => { playing = !playing; if (playing) { let v = +scrub.value >= 1000 ? 0 : +scrub.value; const step = () => { if (!playing) return; v = Math.min(1000, v + 6); scrub.value = v; draw(dur * v / 1000); if (v < 1000) timer = setTimeout(step, 50); else playing = false; }; step(); } });
+    draw(dur);
   } else if (view === 'petals') {
     const runs = S.runs.slice().sort((x, y) => x.summary.a - y.summary.a);
     const cols = Math.ceil(Math.sqrt(runs.length * 1.6)), size = 56;
@@ -283,6 +299,38 @@ function render() {
     stage.innerHTML = html.join('');
   }
 }
+/* ---- the brain: a top-down figure the dimensions are mapped onto, by concept ---- */
+function brainSVG(sn, bs, size, seed) {
+  const W = size, H = size * 1.18, cx = W / 2, cy = H / 2;
+  const rx = W * 0.42, ry = H * 0.44;
+  const REG = [
+    ['g', 'frontal', '#a788f5', (sgn) => `M${cx},${cy - ry} C${cx + sgn * rx * 0.95},${cy - ry} ${cx + sgn * rx},${cy - ry * 0.55} ${cx + sgn * rx * 0.98},${cy - ry * 0.2} L${cx},${cy - ry * 0.2} Z`],
+    ['a', 'parietal', '#55e2e1', (sgn) => `M${cx},${cy - ry * 0.2} L${cx + sgn * rx * 0.98},${cy - ry * 0.2} C${cx + sgn * rx},${cy + ry * 0.05} ${cx + sgn * rx * 0.9},${cy + ry * 0.3} ${cx + sgn * rx * 0.7},${cy + ry * 0.42} L${cx},${cy + ry * 0.42} Z`],
+    ['c', 'temporal', '#d4af37', (sgn) => `M${cx + sgn * rx * 0.98},${cy - ry * 0.2} L${cx + sgn * rx * 0.7},${cy + ry * 0.42} L${cx + sgn * rx * 0.72},${cy + ry * 0.62} C${cx + sgn * rx * 0.95},${cy + ry * 0.45} ${cx + sgn * rx * 1.0},${cy + ry * 0.1} ${cx + sgn * rx * 0.98},${cy - ry * 0.2} Z`],
+    ['m', 'occipital', '#7fd1a8', (sgn) => `M${cx},${cy + ry * 0.42} L${cx + sgn * rx * 0.7},${cy + ry * 0.42} L${cx + sgn * rx * 0.72},${cy + ry * 0.62} C${cx + sgn * rx * 0.55},${cy + ry * 0.9} ${cx + sgn * rx * 0.3},${cy + ry} ${cx},${cy + ry} Z`],
+  ];
+  let rnd = (seed || 1) * 7 + 13; const R = () => { rnd = (rnd * 9301 + 49297) % 233280; return rnd / 233280; };
+  let out = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
+  out += `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#15171f" stroke="rgba(255,255,255,0.18)"/>`;
+  for (const sgn of [-1, 1]) {
+    const S_ = sgn < 0 ? sn : bs; // left: the session; right: the baseline
+    for (const [k, name, col, path] of REG) {
+      const v = S_[k];
+      out += `<path d="${path(sgn)}" fill="${col}" fill-opacity="${0.08 + 0.72 * v}" stroke="rgba(10,11,16,0.9)" stroke-width="1"/>`;
+      // gyri: a few curved strokes, which fade as the region does
+      for (let i = 0; i < 3; i++) { const y0 = cy - ry * 0.9 + (i + 0.5) * ry * 0.6 + (k === 'm' ? ry * 0.55 : k === 'a' ? ry * 0.05 : k === 'c' ? ry * 0.2 : -ry * 0.25); out += `<path d="M${cx + sgn * rx * 0.15},${y0} q${sgn * rx * 0.2},${-ry * 0.08} ${sgn * rx * 0.4},${ry * 0.02} q${sgn * rx * 0.15},${ry * 0.06} ${sgn * rx * 0.3},${-ry * 0.03}" fill="none" stroke="rgba(10,11,16,0.55)" stroke-width="1.2" opacity="${0.2 + 0.7 * v}"/>`; }
+      // loss as speckle: more dots the more is gone, and more with disorder
+      const dots = Math.round((1 - v) * 26 + S_.e * 18);
+      for (let i = 0; i < dots; i++) { const a = R() * Math.PI * 2, rr = Math.sqrt(R()); const px = cx + sgn * Math.abs(Math.cos(a)) * rx * 0.9 * rr, py = cy + Math.sin(a) * ry * 0.9 * rr; out += `<circle cx="${px}" cy="${py}" r="${1 + R() * 1.6}" fill="${R() < S_.e ? '#777' : '#0a0b10'}" opacity="0.8"/>`; }
+    }
+  }
+  // the longitudinal fissure, which widens with disorder of the session
+  out += `<path d="M${cx},${cy - ry} C${cx + 1},${cy - ry * 0.4} ${cx - 1},${cy + ry * 0.4} ${cx},${cy + ry}" fill="none" stroke="#0a0b10" stroke-width="${2 + 6 * sn.e}" stroke-linecap="round"/>`;
+  out += `<text x="${cx}" y="${H - 2}" text-anchor="middle" font-size="9" fill="rgba(219,225,229,0.55)">front ↑</text>`;
+  out += '</svg>';
+  return out;
+}
+
 /* ---- lineage: a tangled tree of one session's causes ----
  * Layout after nitaku's "Tangled tree visualization II" (Observable), re-derived:
  * levels are rows of nodes; a node's parents are in earlier levels; nodes in a

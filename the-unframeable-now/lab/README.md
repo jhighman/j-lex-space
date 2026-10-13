@@ -70,6 +70,17 @@ are ways of looking.
 - **Morph** — a superformula blob whose shape is the four dimensions:
   round when whole, spiked and shrunken as they fall, jittered by
   disorder. A scrubber runs it through time.
+- **Brain** — the four dimensions mapped onto a top-down brain, by
+  concept and not by anatomy, and the view says so in its last line:
+  agency on the frontal region, attention on the parietal, calm on the
+  temporal, the minutes on the occipital, where what she meant to look
+  at would have been. A region's fill fades and fills with speckle as
+  its dimension falls; disorder speckles the whole surface and widens
+  the fissure. The left hemisphere is the session, the right is the
+  abstainer on the same pace, so a glance shows what the session cost
+  against doing nothing. One figure per persona × pace at the median
+  run, with a scrubber through time. A figure, not a finding; nothing
+  is measured from a brain.
 - **Petals** — every session as a four-petal glyph on a grid, sorted by
   attention, paler with disorder. Morphology across the whole sample at
   a glance; hover for the numbers.
