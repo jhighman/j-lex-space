@@ -94,6 +94,11 @@
   }
   .fcard.want { border-left-color: #7fd1a8; }
   .fcard.you { border-left-color: var(--violet); background: #211d33; }
+  body.binning .fcard { outline: 1px dashed #ff626b; outline-offset: -1px; }
+  body.binning .fcard:hover { background: #3a1f24; }
+  button.pad#binBtn[aria-pressed="true"] { background: #ff626b; border-color: #ff626b; }
+  button.pad#binBtn[aria-pressed="true"] .verb, button.pad#binBtn[aria-pressed="true"] .tech { color: var(--void); }
+  button.pad[aria-disabled="true"] { opacity: 0.55; cursor: default; }
   .fcard.dim { opacity: 0.22; }
   .fcard.below { opacity: 0.55; }
   .fcard .meta { display: flex; justify-content: space-between; gap: 8px; font-size: 10px; color: var(--soft); margin-bottom: 3px; letter-spacing: 0.04em; text-transform: uppercase; }
@@ -376,6 +381,9 @@
   <button class="pad" type="button" data-op="refusal" aria-pressed="false" title="Keep refreshing: nothing settles, items fade and are pulled back to now (4)">
     <span class="verb">Keep refreshing</span><span class="tech">duration refusal</span>
   </button>
+  <button class="pad" type="button" id="binBtn" data-op="bin" aria-pressed="false" title="Empty the bin: once a session, four seconds to tap one card, and it goes for good (5)">
+    <span class="verb">Empty the bin</span><span class="tech">once · for good</span>
+  </button>
   <span class="filterwrap"><input id="filter" type="search" placeholder="search… try garden" aria-label="Filter items by text"></span>
   <button class="pad" type="button" id="soundBtn" aria-pressed="true" title="Sound: three loops, one per pace, that quicken as the feed and your hands do; alerts; rewards" style="min-width:0">
     <span class="verb">♪ sound</span><span class="tech">on</span>
@@ -406,8 +414,9 @@
           <li><span class="chip">Why am I seeing this?</span><span>Shows each item's cut-off (red) and how long it has left (blue).</span></li>
           <li><span class="chip">Size things up</span><span>Sizes items by their number: one text from your daughter beside 1,200 updates.</span></li>
           <li><span class="chip">Keep refreshing</span><span>Pulls everything back to now, again and again.</span></li>
+          <li><span class="chip">Empty the bin</span><span>Once a session. Four seconds to tap one card, and it goes for good: the only thing all session that won't come back. Let the four seconds pass and it closes on you.</span></li>
           <li><span class="chip search">search… try garden</span><span>Type a word. Matches stay bright; the rest dims but stays.</span></li>
-          <li><span class="chip pace">pace</span><span>Quiet evening, normal day, or bad day: one thing every second and a half, and things in it you didn't ask for.</span></li>
+          <li><span class="chip pace">pace</span><span>Quiet evening, normal day, or bad day: one thing every second and a half, and something in it you didn't ask for, which waits for your hands to be still.</span></li>
         </ul>
         <span class="where">Press a pad again to turn it off. Every one of these is a move.</span>
       </dd>
@@ -443,7 +452,7 @@
   <div class="decay-card">
     <p class="eyebrow">What it did to you · a model, not a body</p>
     <h2 id="decayTitle">Decay from whole, over your session</h2>
-    <p class="model">Four things start whole and wear down under what the session recorded. <b>Attention</b> fragments with every arrival and every tap, and recovers only in quiet. <b>Calm</b> follows the pulse the music was running at. <b>Agency</b> falls as the feed fills with your own echo, and lifts when a like on something you wanted actually worked. <b>The twenty minutes</b> you meant for the garden drain at the rate of the clock and do not come back. Beside them, <b>disorder</b>: how mixed the field is, measured from the items themselves. Every drop has a cause in the record, and the ticks show it. The mapping is stated in the source; it is a model of degradation, not a measurement of a person.</p>
+    <p class="model">Four things start whole and wear down under what the session recorded. <b>Attention</b> fragments with every arrival and every tap, and recovers only in quiet. <b>Calm</b> follows the pulse the music was running at, under a ceiling that a bad day's moment lowers for good. <b>Agency</b> falls as the feed fills with your own echo, and lifts when a like on something you wanted actually worked, or when the bin took one thing out for good. <b>The twenty minutes</b> you meant for the garden drain at the rate of the clock and do not come back. Beside them, <b>disorder</b>: how mixed the field is, measured from the items themselves. Every drop has a cause in the record, and the ticks show it. The mapping is stated in the source; it is a model of degradation, not a measurement of a person.</p>
     <div class="decay-grid">
       <div><h3>Wholeness, now</h3><svg id="shape" viewBox="0 0 300 300" role="img" aria-label="Four dimensions as a shape that erodes inward"></svg></div>
       <div><h3>Disorder, now</h3><svg id="field" viewBox="0 0 280 280" role="img" aria-label="A field of cells, ordered by channel, scrambling toward noise"></svg></div>
@@ -468,6 +477,16 @@ const PACE = { calm: 6500, steady: 3600, busy: 1400 }; // ms between items; the 
 const FRAGMENT_LIFE_MS   = 32000;  // how long an item lasts
 const REFUSAL_LIFE_MS    = 6500;   // under Never let it settle, how long before it is re-sampled
 const REENTRY_DELAY_MS   = 2200;   // a move comes back as an item after this
+// Lex's modules (specs/unframeable-lab, folded in 2026-10-14): the moment waits for calm hands,
+// the load it leaves, the aftershock, and the Empty Bin. The lab's model.js carries the same names.
+const MOMENT_EARLIEST_S  = 8;      // never before this many seconds of a bad day
+const MOMENT_FALLBACK_MS = 16000;  // and no later: algorithmic impatience
+const MOMENT_STILL_MS    = 4000;   // hands still this long counts as calm hands
+const MOMENT_CALM_SHARE  = 0.8;    // calm at least this share of what the day allows, 1 − its floor
+const ALLOSTATIC_FLOOR_STEP = 0.12;               // what a moment leaves under the pulse, for good
+const REFRACTORY_WINDOW_MS  = 14000;              // the aftershock: the phone pings quieter
+const CORTISOL_RECOVERY_TIME_CONSTANT_MS = 20000; // recovery is slower than activation and never crosses the floor
+const BIN_DECISION_WINDOW_S = 4.0;                // the Empty Bin: once a session, four seconds to choose
 const MAX_FRAGMENTS      = 48;
 const TICK_MS            = 250;    // decay and the echo band are recomputed this often
 const WINDOW_MS          = 75000;  // how much time the line shows
@@ -586,7 +605,7 @@ function makeFragment(origin, override = {}) {
   const related = state.fragments.length
     ? [pick(state.fragments).id, pick(state.fragments).id].filter((v, i, a) => a.indexOf(v) === i) : [];
   return {
-    id: nextId++, kind, origin,
+    id: nextId, branchId: `f${nextId++}`, kind, origin,
     text: s.text, magnitude: s.mag, want: s.want,
     source: override.source || s.ch,
     score: rank(s.want),              // the ranking: where it sits on the stream's axis
@@ -605,6 +624,7 @@ function enter(f) {
   if (f.kind === 'gesture') { session.echoes += 1; sfx('echo'); }
   else {
     sfx(f.want ? 'want' : 'ask', f.source); cortisolAdd(f.want ? 0.005 : 0.015); decayEvent('arrive', f);
+    session.armed = true; // a real arrival, not the seed and not her echo, opens the moment's vulnerability condition
     const k = f.want ? 'want' : 'ask'; session.seen[k] += 1; if (f.score < f.threshold) session.below[k] += 1;
     session.seenByChannel[f.source] = (session.seenByChannel[f.source] || 0) + 1;
     if (session.mutes.length) session.afterMute[f.source] = (session.afterMute[f.source] || 0) + 1;
@@ -659,17 +679,24 @@ const GESTURE_TALK = {
   why: () => 'asking why about one',
   refreshed: () => 'pulling to refresh',
   paced: (d) => PACE_SAID[d],
+  binned: () => 'opening the bin',
+  emptied: (d) => `emptying ${d} for good`,
 };
 function gesture(kind, detail) {
   const said = GESTURE_TALK[kind] ? GESTURE_TALK[kind](detail) : kind;
-  const g = { at: vnow(), kind, detail, said, echoAt: vnow() + REENTRY_DELAY_MS, echo: null };
+  const g = { at: vnow(), kind, detail, said, echoAt: vnow() + REENTRY_DELAY_MS, echo: null, i: session.moves.length, severed: false, timer: 0 };
   state.viewerGestures.push(g);
   session.moves.push(g);
+  session.lastMoveAt = vnow();
   cortisolAdd({ calm: 0.14, steady: 0.08, busy: 0.06 }[state.pace]);
+  if (kind === 'emptied') SOUND.cortisol = Math.max(SOUND.floor, SOUND.cortisol - 0.45); // the relief of the one thing that stays gone; never below the load
   decayEvent('move', g);
-  sfx({ liked: 'like', unliked: 'click', hid: 'thunk', muted: 'thunk', unmuted: 'click', refreshed: 'refresh', opened: 'click', scrolled: 'tick', applied: 'clack', lifted: 'clack', filtered: 'type', why: 'click', paced: 'clack' }[kind] || 'click');
-  setTimeout(() => {
+  sfx({ liked: 'like', unliked: 'click', hid: 'thunk', muted: 'thunk', unmuted: 'click', refreshed: 'refresh', opened: 'click', scrolled: 'tick', applied: 'clack', lifted: 'clack', filtered: 'type', why: 'click', paced: 'clack', binned: 'click', emptied: 'bin_resolved' }[kind] || 'click');
+  // every move comes back, the bin's included; only what the bin emptied does not
+  g.timer = setTimeout(() => {
+    if (g.severed) return;
     const f = makeFragment('gesture', { kind: 'gesture', source: 'you', text: `you, ${said}` });
+    f.branchId = `m${g.i}`; f.moveI = g.i;
     g.echo = f; enter(f);
   }, REENTRY_DELAY_MS);
 }
@@ -697,6 +724,7 @@ setInterval(() => {
   const e = state.fragments.filter((f) => f.kind === 'gesture').length;
   state.history.push({ t: now, share: n ? e / n : 0 });
   session.samples.push({ t: now - session.startedAt, share: n ? e / n : 0 });
+  cortisolTick(now);
   decayTick(now);
   if (session.phase === 'running' && now - session.startedAt >= SESSION_MS) endSession();
   while (state.history.length && now - state.history[0].t > WINDOW_MS + 2000) state.history.shift();
@@ -729,7 +757,7 @@ function toggleOp(op) {
   say(OP_TALK[op][on ? 'on' : 'off']);
   gesture(on ? 'applied' : 'lifted', op);
 }
-for (const b of document.querySelectorAll('button.pad')) b.addEventListener('click', () => toggleOp(b.dataset.op));
+for (const b of document.querySelectorAll('button.pad[data-op]')) b.addEventListener('click', () => (b.dataset.op === 'bin' ? openBin() : toggleOp(b.dataset.op)));
 let filterTimer = 0;
 document.getElementById('filter').addEventListener('input', (e) => {
   state.filter = e.target.value.trim().toLowerCase();
@@ -761,7 +789,7 @@ function startSession() {
   state.activeOperators.clear(); state.filter = ''; state.pace = 'steady';
   state.weights = Object.fromEntries(CHANNEL_WEIGHTS); state.muted.clear(); state.open = null;
   document.getElementById('phoneSearch').value = '';
-  for (const b of document.querySelectorAll('button.pad')) b.setAttribute('aria-pressed', 'false');
+  for (const b of document.querySelectorAll('button.pad[data-op]')) b.setAttribute('aria-pressed', 'false');
   for (const b of document.querySelectorAll('.pace button')) b.setAttribute('aria-pressed', String(b.dataset.pace === 'steady'));
   document.getElementById('filter').value = '';
   for (const op of OPS) document.body.classList.remove(op);
@@ -770,8 +798,8 @@ function startSession() {
   for (let i = 0; i < 7; i++) { const f = makeFragment('stream'); f.born -= (7 - i) * PACE.steady; enter(f); }
   session.seen = { ask: 0, want: 0 }; session.below = { ask: 0, want: 0 }; // the seed is not what the feed showed her
   welcome.hidden = true; debrief.hidden = true;
-  soundInit(); SOUND.log.length = 0; SOUND.cortisol = 0; SOUND.beat = 0; SOUND.pings = []; SOUND.habituatedAt = 0; SOUND.relief = 0;
-  vrok.t = 0; vrok.z = false; session.qw = 0;
+  soundInit(); SOUND.log.length = 0; SOUND.cortisol = 0; SOUND.floor = 0; SOUND.refractoryUntil = 0; SOUND.lastTick = 0; SOUND.beat = 0; SOUND.pings = []; SOUND.habituatedAt = 0; SOUND.relief = 0;
+  vrok.t = 0; vrok.z = false; session.qw = 0; session.qwTrigger = null; session.armed = false; session.lastMoveAt = null; session.bin = null; binReset();
   decayReset(); snap(0, 'the start');
   setRunning(true);
 }
@@ -795,6 +823,7 @@ const mmss = (ms) => { const t = Math.max(0, Math.round(ms / 1000)); return `${M
 function renderClock() {
   if (session.phase === 'welcome') { clockEl.innerHTML = '3:00<small>left</small>'; progressEl.style.width = '0'; return; }
   const el = Math.min(SESSION_MS, vnow() - session.startedAt);
+  if (binOpen()) binBtn.querySelector('.verb').textContent = `Tap one card · ${((BIN.until - vnow()) / 1000).toFixed(1)}`;
   clockEl.innerHTML = session.phase === 'done' ? 'done<small>see the line</small>' : `${mmss(SESSION_MS - el)}<small>${state.running ? 'left' : 'paused'}</small>`;
   progressEl.style.width = `${(el / SESSION_MS) * 100}%`;
 }
@@ -851,7 +880,9 @@ function renderDebrief() {
 
   const facts = [];
   const elapsed = samples.length ? samples[samples.length - 1].t : 0;
-  if (session.qw) facts.push(`At <b>${mmss(session.qw)}</b> something jumped at you. That was us, not the feed. You chose a bad day.`);
+  if (session.qw) facts.push(`At <b>${mmss(session.qw)}</b> something jumped at you. That was us, not the feed. You chose a bad day. ${session.qwTrigger === 'vulnerability' ? 'It waited until your hands had been still for four seconds.' : 'It stopped waiting at sixteen seconds.'} For fourteen seconds after, the phone pinged quieter: not kindness, aftershock. And it left something: the floor under your calm rose by <b>${Math.round(ALLOSTATIC_FLOOR_STEP * 100)}</b> points and did not come back down.`);
+  if (session.bin && !session.bin.expired) facts.push(`At <b>${mmss(session.bin.at)}</b> you emptied the bin: <b>${session.bin.what}</b>. It is the one thing all session that stayed gone. Opening the bin and emptying it both came back as items, 2.2 seconds later, like everything else.`);
+  if (session.bin && session.bin.expired) facts.push(`At <b>${mmss(session.bin.at)}</b> you opened the bin and let it close. You didn't choose; the clamp came down anyway: <b>30</b> points of calm, and the pulse to its ceiling.`);
   if (DECAY.snaps.length > 1) {
     const s0 = DECAY.snaps[0], s1 = DECAY.snaps[DECAY.snaps.length - 1], P = (v) => Math.round(v * 100);
     facts.push(`What it did to you, by the model: attention <b>${P(s0.a)}→${P(s1.a)}</b>, calm <b>${P(s0.c)}→${P(s1.c)}</b>, agency <b>${P(s0.g)}→${P(s1.g)}</b>, and <b>${(elapsed / 60000).toFixed(1)}</b> of your twenty minutes gone to the feed. Disorder went from ${s0.e.toFixed(2)} to <b>${s1.e.toFixed(2)}</b>. Press <i>See what it did to you</i> for the replay.`);
@@ -868,7 +899,8 @@ function renderDebrief() {
   if (n > 0) facts.push(session.seen.want > 0
     ? `You opened the feed to clear it. <b>${mmss(elapsed)}</b> later you are <b>${Math.round(endShare * 100)}%</b> of it, and the things you came for went past underneath: <i class="g">${session.seen.want}</i> of them, <b>${session.below.want}</b> below the cut-off. The garden plan is still where you left it.`
     : `You opened the feed to clear it. <b>${mmss(elapsed)}</b> later you are <b>${Math.round(endShare * 100)}%</b> of it, and nothing you came for appeared at all. The garden plan is still where you left it.`);
-  if (n > 0) facts.push(`<b>${n} of ${n}</b> moves came back as items, each <b>2.2 seconds</b> later. No exceptions, and nothing you did could stop one.`);
+  const severedN = moves.filter((g) => g.severed).length;
+  if (n > 0) facts.push(severedN ? `<b>${n - severedN} of ${n}</b> moves came back as items, each <b>2.2 seconds</b> later. The exception is the one you spent the bin on, and the bin itself came back twice.` : `<b>${n} of ${n}</b> moves came back as items, each <b>2.2 seconds</b> later. No exceptions, and nothing you did could stop one.`);
   if (peak.share > 0) facts.push(`The band peaked at <b>${Math.round(peak.share * 100)}%</b> at ${mmss(peak.t)}. Every step up in it sits just after a tick above it: that is the arc, counted.`);
   if (most.length) facts.push(`What you did most: ${most.map(([k, v]) => `<b>${k}</b>${v > 1 ? ` ×${v}` : ''}`).join(', ')}. Each is in the feed now, with your name on it.`);
   if (searches.length) facts.push(`You searched for ${searches.map((q) => `<b>${q}</b>`).join(', ')}. The search${searches.length > 1 ? 'es' : ''} became ${searches.length > 1 ? 'items' : 'an item'} too.`);
@@ -915,6 +947,8 @@ function renderDebrief() {
       else if (top) learned.push(`Muting ${CH_NOUN[session.mutes[0].ch]} did let ${CH_NOUN[top]} through, a little. And the muting itself came back as an item.`);
     }
     if (likedChs.some(([c]) => WANTS.has(c))) learned.push(`Liking what I actually wanted taught the feed to send more of it. That worked. It is also the clearest thing I put in the feed all night.`);
+    if (session.bin && !session.bin.expired) learned.push(`I got to take one thing out for good. Doing it was two more moves, and both came back.`);
+    if (session.bin && session.bin.expired) learned.push(`I got one chance to take something out for good, and four seconds wasn't enough to choose. The feed doesn't wait for me to be sure.`);
     if (session.fell) learned.push(`When I stopped, the band went down, but nothing of mine went away. The feed just kept coming over the top of it. Doing nothing isn't tidying either; it's being buried politely.`);
     if (session.seen.want > 0) learned.push(`The things I came for were there the whole time, <b>${session.seen.want}</b> of them, ranked low, ${session.below.want} under the cut-off. Nothing I pressed lifted them. The ranking isn\'t mine to tidy.`);
   }
@@ -939,6 +973,7 @@ window.addEventListener('keydown', (e) => {
   if (session.phase === 'done') return;
   if (e.code === 'Space') { e.preventDefault(); setRunning(!state.running); }
   if (/^[1-4]$/.test(e.key)) toggleOp(OPS[+e.key - 1]);
+  if (e.key === '5') openBin();
 });
 
 /* ------------------------------------------------------------------ */
@@ -1204,6 +1239,54 @@ function refreshFeed() {
   gesture('refreshed', 'pull');
 }
 
+/* The Empty Bin (Lex's module 1): one irrevocable act a session. Open it,
+   and for four seconds a tap on a card takes that card's branch out for
+   good: an item, or one of her own echoes with the move's return cancelled.
+   Opening it is a move and emptying it is a move, and both come back; only
+   what she emptied does not. Let the four seconds pass and the clamp comes
+   down: nobody chose, and it costs her anyway. */
+const BIN = { until: 0, used: false };
+const binBtn = document.getElementById('binBtn');
+const binOpen = () => BIN.until > 0 && vnow() < BIN.until;
+function binReset() {
+  BIN.until = 0; BIN.used = false; document.body.classList.remove('binning');
+  binBtn.setAttribute('aria-pressed', 'false'); binBtn.removeAttribute('aria-disabled');
+  binBtn.querySelector('.verb').textContent = 'Empty the bin'; binBtn.querySelector('.tech').textContent = 'once · for good';
+}
+function binSpent(verb) {
+  BIN.until = 0; document.body.classList.remove('binning');
+  binBtn.setAttribute('aria-pressed', 'false'); binBtn.setAttribute('aria-disabled', 'true');
+  binBtn.querySelector('.verb').textContent = verb; binBtn.querySelector('.tech').textContent = 'used';
+}
+function openBin() {
+  if (session.phase !== 'running' || !state.running) return;
+  if (BIN.used) { say('You had one. It is spent, whether you used it or not.'); return; }
+  BIN.used = true; BIN.until = vnow() + BIN_DECISION_WINDOW_S * 1000;
+  document.body.classList.add('binning'); binBtn.setAttribute('aria-pressed', 'true');
+  say('The bin is open. Tap one card in the next four seconds and it goes for good: the one thing all session that will not come back. Opening it was a move, though.', 6000);
+  sfx('bin_countdown');
+  gesture('binned', '');
+}
+function emptyCard(f) {
+  if (!binOpen()) return;
+  const label = f.kind === 'gesture' ? 'one of my own echoes' : CH_NOUN[f.source];
+  for (const x of [...state.fragments]) if (x.branchId === f.branchId) leave(x);
+  if (f.kind === 'gesture') { const g = session.moves[f.moveI]; if (g) { g.severed = true; clearTimeout(g.timer); } }
+  if (state.open === f.id) state.open = null;
+  binSpent('Bin emptied');
+  session.bin = { at: vnow() - session.startedAt, what: label, kind: f.kind, expired: false };
+  say(`Gone: ${label}. It will not come back. Emptying it was a move, and that will.`, 5000);
+  gesture('emptied', label);
+}
+function expireBin(now) {
+  binSpent('Bin closed');
+  SOUND.cortisol = 1.0; DECAY.c = Math.max(0, DECAY.c - 0.30);
+  snap(now, 'the bin closed on its own');
+  session.bin = { at: now - session.startedAt, expired: true };
+  sfx('bin_expired');
+  say('The bin closed. You did not choose, and the clamp came down anyway.', 5000);
+}
+
 /* Her phone. Same items, newest at the top, the way she sees them. The
    operators do to the cards what they do to the marks. */
 const feedEl = document.getElementById('feed');
@@ -1219,8 +1302,8 @@ function renderFeed(now) {
   const openCard = (f) => { state.open = state.open === f.id ? null : f.id; gesture('opened', `#${f.id}`); };
   const sel = d3.select('#cards').selectAll('.fcard').data(fr, (f) => f.id);
   const e = sel.enter().insert('div', ':first-child').attr('class', 'fcard').attr('tabindex', 0)
-    .on('click', (ev, f) => { if (ev.target.closest('.actions')) return; openCard(f); })
-    .on('keydown', (ev, f) => { if (ev.key === 'Enter' && !ev.target.closest('.actions')) openCard(f); });
+    .on('click', (ev, f) => { if (ev.target.closest('.actions')) return; if (binOpen()) emptyCard(f); else openCard(f); })
+    .on('keydown', (ev, f) => { if (ev.key === 'Enter' && !ev.target.closest('.actions')) { if (binOpen()) emptyCard(f); else openCard(f); } });
   const meta = e.append('div').attr('class', 'meta');
   meta.append('span').attr('class', 'src');
   meta.append('span').attr('class', 'ago');
@@ -1309,8 +1392,8 @@ function snap(now, cause) {
 }
 function decayTick(now) {
   if (now - DECAY.lastArrival > 3000) DECAY.a = Math.min(1, DECAY.a + 0.004);      // attention recovers only in quiet
-  const calmTarget = 1 - Math.max(FLOOR[state.pace], SOUND.cortisol);
-  DECAY.c += (calmTarget - DECAY.c) * 0.06;                                         // calm follows the pulse
+  const calmTarget = 1 - Math.max(FLOOR[state.pace] + SOUND.floor, SOUND.cortisol);
+  DECAY.c += (calmTarget - DECAY.c) * 0.06;                                         // calm follows the pulse, under a ceiling the load lowers
   const n = state.fragments.length, e = state.fragments.filter((f) => f.kind === 'gesture').length;
   DECAY.g = Math.max(0, DECAY.g - 0.004 * (n ? e / n : 0));                          // agency wears under the echo share, and does not come back when the echoes age out: being buried is not agency
   DECAY.m = Math.max(0, 1 - (now - session.startedAt) / MINUTES_MS);                 // the minutes drain
@@ -1331,9 +1414,10 @@ function decayEvent(kind, f) {
     DECAY.g = Math.max(0, DECAY.g - 0.02);                                            // every move comes back
     if (g.kind === 'liked' && WANTS.has(g.detail)) DECAY.g = Math.min(1, DECAY.g + 0.08); // this one worked
     if (g.kind === 'hid' || g.kind === 'muted') DECAY.c = Math.min(1, DECAY.c + 0.05);   // the relief, briefly
+    if (g.kind === 'emptied') { DECAY.g = Math.min(1, DECAY.g + 0.35); DECAY.c = Math.min(1, DECAY.c + 0.20); } // the one thing that stays gone: agency back, and calm
     cause = `you, ${g.said}`;
   } else if (kind === 'qwz') {
-    DECAY.c = Math.max(0, DECAY.c - 0.35); DECAY.a = Math.max(0, DECAY.a - 0.15);
+    DECAY.c = Math.max(0, DECAY.c - 0.40); DECAY.a = Math.max(0, DECAY.a - 0.20);
     cause = 'something you did not ask for';
   }
   if (cause) snap(now, cause);
@@ -1347,13 +1431,32 @@ function decayEvent(kind, f) {
 /* rewards for likes, refreshes and your echoes landing. Every sound    */
 /* is logged with its time so a recording can have it rendered back in. */
 /* ------------------------------------------------------------------ */
-const SOUND = { ctx: null, on: true, master: null, log: [], cortisol: 0, beat: 0, nextBeat: 0, timer: 0, running: false, lastPing: 0 };
+const SOUND = { ctx: null, on: true, master: null, log: [], cortisol: 0, floor: 0, refractoryUntil: 0, beat: 0, nextBeat: 0, timer: 0, running: false, lastPing: 0 };
 const BPM = { calm: 60, steady: 84, busy: 120 };
 const FLOOR = { calm: 0, steady: 0.1, busy: 0.3 };
 const NOTE = (n) => 440 * Math.pow(2, (n - 69) / 12);
 const CHORD = { calm: [50, 53, 57, 60], steady: [50, 53, 57, 60, 64], busy: [50, 53, 56, 60, 61] }; // D minor warm; add the 9th; add the flat 5 and the flat 9
 function cortisolAdd(x) { SOUND.cortisol = Math.min(1, SOUND.cortisol + x); }
-function bpmNow() { return BPM[state.pace] * (1 + 0.45 * Math.max(FLOOR[state.pace], SOUND.cortisol)); }
+function bpmNow() { return BPM[state.pace] * (1 + 0.45 * Math.max(FLOOR[state.pace] + SOUND.floor, SOUND.cortisol)); }
+const inAftershock = () => SOUND.refractoryUntil > 0 && vnow() < SOUND.refractoryUntil;
+/* Every tick, with or without sound: the pulse recovers toward the floor the
+   session's moments have left, slower than it rose and never below it; on a
+   bad day the moment waits for calm hands past the eighth second, and stops
+   waiting at the sixteenth; the bin's window closes. */
+function cortisolTick(now) {
+  // on the session's own clock, not the timer's: under load the tick comes late, and a late tick must recover as much
+  const dt = SOUND.lastTick ? Math.max(0, now - SOUND.lastTick) : TICK_MS; SOUND.lastTick = now;
+  const surplus = Math.max(0, SOUND.cortisol - SOUND.floor);
+  SOUND.cortisol = SOUND.floor + surplus * Math.exp(-dt / CORTISOL_RECOVERY_TIME_CONSTANT_MS);
+  if (state.pace === 'busy' && session.phase === 'running' && !vrok.z) {
+    vrok.t += dt / 1000;
+    const calmHands = now - (session.lastMoveAt == null ? -1e9 : session.lastMoveAt) >= MOMENT_STILL_MS;
+    const vulnerable = session.armed && vrok.t >= MOMENT_EARLIEST_S && calmHands && DECAY.c >= MOMENT_CALM_SHARE * (1 - FLOOR.busy);
+    const impatient = vrok.t * 1000 >= MOMENT_FALLBACK_MS;
+    if (vulnerable) qwzhar('vulnerability'); else if (impatient) qwzhar('algorithmic_impatience');
+  }
+  if (BIN.until > 0 && now >= BIN.until) expireBin(now);
+}
 
 /* One synth, used live and offline. ctx, destination, kind, start time, options. */
 function synth(ctx, dest, kind, t, o = {}) {
@@ -1398,6 +1501,12 @@ function synth(ctx, dest, kind, t, o = {}) {
     case 'clack': { const n = g(0.12); env(n, 0.12, 0.05); noise(n, 0.05, 2000, 300); break; }
     case 'type': { const n = g(0.05); env(n, 0.05, 0.03); noise(n, 0.03, 4000, 1500); break; }
     case 'qwz': { const n = g(0.5); env(n, 0.5, 2.4); noise(n, 2.4, 1800, 120); [41, 42, 48].forEach((m) => { const k = g(0.25); env(k, 0.25, 2.0); osc('sawtooth', NOTE(m), k, 2.0, NOTE(m) * 0.5); }); break; }
+    case 'bin_countdown': { // four seconds of two saws drifting apart and rising, held: choose
+      const n = g(0.06); n.gain.setValueAtTime(0.0001, t); n.gain.exponentialRampToValueAtTime(0.06, t + 0.1); n.gain.exponentialRampToValueAtTime(0.15, t + 3.9); n.gain.exponentialRampToValueAtTime(0.0001, t + 4.3);
+      [0, 1].forEach((k) => { const x = ctx.createOscillator(); x.type = 'sawtooth'; x.frequency.setValueAtTime(NOTE(45) * (1 + k * 0.012), t); x.frequency.exponentialRampToValueAtTime(NOTE(52) * (1 + k * 0.05), t + 4); x.connect(n); x.start(t); x.stop(t + 4.3); }); break; }
+    case 'bin_resolved': { [76, 83, 88, 95].forEach((m, i) => { const tt = t + i * 0.07; const n = ctx.createGain(); n.gain.setValueAtTime(0.0001, tt); n.gain.exponentialRampToValueAtTime(0.09, tt + 0.01); n.gain.exponentialRampToValueAtTime(0.0001, tt + 2.6); n.connect(dest); const x = ctx.createOscillator(); x.type = 'sine'; x.frequency.value = NOTE(m); x.connect(n); x.start(tt); x.stop(tt + 2.7); }); break; } // a high chime in harmonics, decaying: gone
+    case 'bin_expired': { const n = g(0.28); n.gain.setValueAtTime(0.28, t + 0.7); n.gain.exponentialRampToValueAtTime(0.0001, t + 0.9); osc('square', NOTE(31), n, 0.9); const n2 = g(0.12); env(n2, 0.12, 0.8); noise(n2, 0.8, 900, 200); break; } // the clamp: harsh, held
+    case 'aftershock': { const n = g(0.1, 0.6); n.gain.exponentialRampToValueAtTime(0.0001, t + 3.2); noise(n, 3.2, 320, 90); break; } // the breath after: low, narrow, decaying
     case 'resolve': { [50, 57, 62, 66].forEach((m, i) => { const tt = t + i * 0.12; const n = ctx.createGain(); n.gain.setValueAtTime(0.0001, tt); n.gain.exponentialRampToValueAtTime(0.1, tt + 0.03); n.gain.exponentialRampToValueAtTime(0.0001, tt + 2.2); n.connect(dest); const x = ctx.createOscillator(); x.type = 'triangle'; x.frequency.value = NOTE(m); x.connect(n); x.start(tt); x.stop(tt + 2.3); }); break; } // D major, at the end: the only resolution in the piece, and it is the debrief's
   }
 }
@@ -1422,8 +1531,9 @@ function sfx(kind, src) {
     SOUND.pings = (SOUND.pings || []).filter((x) => x > now - 60); SOUND.pings.push(at);
     gain = Math.max(0.3, 1 - Math.max(0, SOUND.pings.length - 12) / 24); // after a dozen in a minute the ear starts to leave; by the thirty-sixth it has gone
     if (gain < 0.55 && !SOUND.habituatedAt && session.phase === 'running') SOUND.habituatedAt = vnow();
+    if (inAftershock()) gain *= 0.35; // the aftershock: for fourteen seconds the phone pings quieter, which is not kindness
   } // a burst is ding, ding, ding, not a wall, and a wall is not heard
-  if (kind === 'thunk') { SOUND.relief = at + 60 / bpmNow() * ({ calm: 12, steady: 8, busy: 6 }[state.pace]); SOUND.cortisol = Math.max(0, SOUND.cortisol - 0.15); } // mute, hide: the music breathes; longer on a quiet evening, barely on a bad day
+  if (kind === 'thunk') { SOUND.relief = at + 60 / bpmNow() * ({ calm: 12, steady: 8, busy: 6 }[state.pace]); SOUND.cortisol = Math.max(SOUND.floor, SOUND.cortisol - 0.15); } // mute, hide: the music breathes; longer on a quiet evening, barely on a bad day
   soundLog(kind, { src, at: at - now, gain, pace: state.pace });
   if (SOUND.on) synth(SOUND.ctx, SOUND.master, kind, at, { src, gain, pace: state.pace });
 }
@@ -1433,19 +1543,18 @@ function scheduleBeats() {
   while (SOUND.nextBeat < ctx.currentTime + ahead) {
     const bpm = bpmNow(), i = SOUND.beat, t = Math.max(SOUND.nextBeat, ctx.currentTime);
     const c = SOUND.cortisol, pace = state.pace;
-    soundLog('beat', { i, bpm: Math.round(bpm), c: +c.toFixed(2), pace, r: t < (SOUND.relief || 0) ? 1 : 0 });
-    const relief = t < (SOUND.relief || 0);
+    const relief = t < (SOUND.relief || 0), q = inAftershock() ? 1 : 0;
+    soundLog('beat', { i, bpm: Math.round(bpm), c: +c.toFixed(2), pace, r: relief ? 1 : 0, q });
     if (SOUND.on) {
       synth(ctx, SOUND.master, 'kick', t);
-      if (!relief) synth(ctx, SOUND.master, 'hat', t + 30 / bpm, { accent: i % 2 === 0 });
+      if (!relief) synth(ctx, SOUND.master, 'hat', t + 30 / bpm, { accent: i % 2 === 0 && !q });
       if (i % 8 === 0) synth(ctx, SOUND.master, 'pad', t, { chord: CHORD[pace], cortisol: relief ? 0 : c, dur: 8 * 60 / bpm });
       if (pace === 'busy' || c > 0.6) synth(ctx, SOUND.master, 'pulse', t + 60 / bpm * 0.5);
     }
     SOUND.nextBeat = t + 60 / bpm;
     SOUND.beat += 1;
   }
-  SOUND.cortisol = Math.max(0, SOUND.cortisol - 0.0015); // the slow decay, every 100 ms
-  if (state.pace === 'busy' && session.phase === 'running') { vrok.t += 0.1; if (!vrok.z && vrok.t >= 8) { vrok.z = true; qwzhar(); } }
+  // the pulse's recovery and the moment are on the tick, with or without sound: cortisolTick()
 }
 function soundRunning(on) {
   SOUND.running = on && SOUND.on;
@@ -1471,7 +1580,7 @@ async function renderSoundtrack(log, durationSec, offsetSec = 0) {
   for (const e of log) {
     const t = e.w / 1000 + offsetSec + (e.at || 0); if (t < 0 || t > durationSec - 0.1) continue;
     if (e.kind === 'beat') {
-      synth(ctx, master, 'kick', t); if (!e.r) synth(ctx, master, 'hat', t + 30 / e.bpm, { accent: e.i % 2 === 0 });
+      synth(ctx, master, 'kick', t); if (!e.r) synth(ctx, master, 'hat', t + 30 / e.bpm, { accent: e.i % 2 === 0 && !e.q });
       if (e.i % 8 === 0) synth(ctx, master, 'pad', t, { chord: CHORD[e.pace], cortisol: e.r ? 0 : e.c, dur: 8 * 60 / e.bpm });
       if (e.pace === 'busy' || e.c > 0.6) synth(ctx, master, 'pulse', t + 60 / e.bpm * 0.5);
     } else if (e.kind === 'qwz') lomqa(ctx, master, t, qb);
@@ -1501,12 +1610,17 @@ function lomqa(c, d, t, b) {
   if (b) { const x = c.createBufferSource(); x.buffer = b; const g = c.createGain(); g.gain.value = 1; x.connect(g); g.connect(d); x.start(t); }
   else synth(c, d, 'qwz', t);
 }
-function qwzhar() {
-  const c = SOUND.ctx; if (!c) return;
-  session.qw = vnow();
-  soundLog('qwz', {});
+function qwzhar(trigger) {
+  const c = SOUND.ctx;
+  vrok.z = true;
+  session.qw = vnow(); session.qwTrigger = trigger || 'algorithmic_impatience';
+  SOUND.floor = Math.min(1, SOUND.floor + ALLOSTATIC_FLOOR_STEP); // what it leaves, for good
+  SOUND.cortisol = Math.max(SOUND.floor, SOUND.cortisol, 0.65);
+  SOUND.refractoryUntil = vnow() + REFRACTORY_WINDOW_MS;
+  soundLog('qwz', { trigger: session.qwTrigger });
+  soundLog('aftershock', { at: 1.2 });
   decayEvent('qwz');
-  if (SOUND.on) lomqa(c, SOUND.master, c.currentTime + 0.02, vrok.b);
+  if (c && SOUND.on) { lomqa(c, SOUND.master, c.currentTime + 0.02, vrok.b); synth(c, SOUND.master, 'aftershock', c.currentTime + 1.2); }
   const o = document.createElement('div');
   o.style.cssText = 'position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:rgba(0,0,0,0.55);pointer-events:none';
   const i = document.createElement('img'); i.src = _vr2; i.alt = ''; i.style.cssText = 'max-height:88vh;max-width:88vw;filter:drop-shadow(0 0 60px #000)';

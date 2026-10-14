@@ -245,9 +245,9 @@ its first line.
 
 | dimension | falls with | recovers with |
 |---|---|---|
-| **attention** | every arrival (asks more than wants), every tap, scroll and refresh; a lot at the bad day's moment | quiet: only when nothing has arrived for three seconds |
-| **calm** | the pulse the music runs at (it follows `1 − cortisol`); a group-chat burst; the bad day's moment, hard | a hide or a mute, briefly, the relief |
-| **agency** | the share of the feed that is her own echo, for as long as it lasts; every move, because every move comes back | a like on something she wanted that actually worked, and nothing else: it does not come back when her echoes age out, because being buried is not agency |
+| **attention** | every arrival (asks more than wants), every tap, scroll and refresh; 20 points at the bad day's moment | quiet: only when nothing has arrived for three seconds |
+| **calm** | the pulse the music runs at (it follows `1 − max(floor, cortisol)`, and each moment raises the floor by 12 points for good); a group-chat burst; the bad day's moment, 40 points; the bin closing unused, 30 | a hide or a mute, briefly, the relief; the bin emptied, 20 |
+| **agency** | the share of the feed that is her own echo, for as long as it lasts; every move, because every move comes back | a like on something she wanted that actually worked, and the bin emptied (35 points), and nothing else: it does not come back when her echoes age out, because being buried is not agency |
 | **the minutes** | the clock: the twenty minutes she meant for the garden drain at the rate of real time | never |
 
 Beside them, **disorder**, measured from the field itself and not from
@@ -278,6 +278,80 @@ The debrief carries the summary in one line, attention this to this,
 calm, agency, minutes gone, disorder from to. The recording pipeline
 opens the report after the debrief and replays it to the end, so a
 round's MP4 ends with what it did to her.
+
+## Lex's modules
+
+Folded in on 2026-10-14 from `specs/unframeable-lab/`, Lex's spec and
+model for five modules, with her names kept in the source and in the
+lab: `MOMENT_FALLBACK_MS`, `ALLOSTATIC_FLOOR_STEP`,
+`REFRACTORY_WINDOW_MS`, `CORTISOL_RECOVERY_TIME_CONSTANT_MS`,
+`BIN_DECISION_WINDOW_S`, the audio cue contracts, the event kinds
+(`moment` with its trigger, `refractory_start`, `bin_countdown_start`,
+`bin_resolved`, `bin_expired`), and her tests, which run against the
+lab's model from `lab/tests/`.
+
+- **The moment is dynamic.** On a bad day it no longer comes at a fixed
+  second. Past the eighth second, as soon as her hands have been still
+  for four seconds and her calm is at least eight tenths of what the day
+  allows, it comes (*vulnerability*); at the sixteenth second it comes
+  whether or not (*algorithmic impatience*). The debrief says which. It
+  costs 40 points of calm and 20 of attention, and sets the pulse to at
+  least 0.65.
+- **Allostatic load.** Each moment raises a floor under the pulse by
+  0.12 that never comes back down. The floor adds to the pace's own, so
+  on a bad day the ceiling of calm drops from 0.70 to 0.58 for the rest
+  of the session, and the music's tempo floor rises with it. A hide, a
+  mute or the bin can bring the pulse down to the floor and not below.
+- **Asymmetric recovery.** The pulse recovers toward the floor on an
+  exponential with a 20-second time constant instead of a straight line,
+  so activation is instant and recovery is not, and runs on the tick
+  rather than on the music, so it happens with the sound off too.
+- **The aftershock.** For fourteen seconds after the moment the phone's
+  pings come through at a third of their volume and the hat loses its
+  accent; a low breath tail follows the impact. Not kindness: the
+  debrief says so.
+- **The Empty Bin.** A fifth pad, once a session. Press it and for four
+  seconds a tap on a card takes that card's branch out for good: an
+  item, or one of her own echoes with the move's return cancelled.
+  Emptying it lifts agency by 35 points and calm by 20 and brings the
+  pulse down by 0.45. Let the four seconds pass and the clamp comes
+  down: 30 points of calm and the pulse to its ceiling, with nobody
+  having chosen.
+
+Three places the fold departs from the spec, each a decision about the
+premise and named here so it can be contested:
+
+1. **The bin's own moves come back.** In the spec, opening the bin and
+   emptying it are moves without echoes. Here they echo like every other
+   move, and only what the bin emptied stays gone, because the premise
+   is that there is no move small enough not to come back, and one
+   exception for the thing removed is a claim the piece can carry; an
+   exception for the act of removing is not. The debrief counts it.
+2. **The vulnerability condition is read against the day.** The spec
+   tests the pulse at or below 0.05 and calm above 0.8. On the page calm
+   follows `1 − max(floor, pulse)` and a bad day's floor is 0.3, so calm
+   above 0.8 is only ever true in a bad day's first two seconds, and the
+   moment would come before she had read a card. Here the calm test is
+   a share of what the day allows, the stillness of her hands stands in
+   for the pulse's low reading (her hands are the pulse's largest
+   input), and the earliest second stays at eight, which was the
+   constant before the modules. In the lab, with these constants, the
+   gardener and the abstainer get the moment at the eighth second and
+   everyone else at the sixteenth.
+3. **The recovery time constant is 20 seconds, not 100.** At 100 the
+   arrivals alone saturate the pulse: an abstainer on a bad day with no
+   moment ends at a pulse of 0.94 and calm of 0.05, and every persona's
+   calm ends near zero, which erases the thing calm and the music were
+   built to show. At 20, the world without a moment stays where it was
+   (abstainer on a bad day: calm 0.69 against 0.70 before) and the
+   moment's residue is carried by the floor, which is what the spec
+   asked the residue to be. The lab's `conformance.js` and
+   `tests/` both pass at 20.
+
+Modules 3 and 4 in the spec describe an audio architecture and a canvas
+aura for a host page that has neither; what the page has, the cue
+names in the sound log and the aftershock in the synth, is as far as
+they reach here.
 
 ### The lab
 

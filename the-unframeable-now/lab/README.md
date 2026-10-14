@@ -10,9 +10,10 @@ here.
 
 `model.js` is the piece's model re-stated so it can run without a
 browser clock: the stream with its clumps, the feed that learns from
-likes, hides and mutes, the cortisol the music follows, the moment on a
-bad day at eight seconds, and the decay from whole with the same
-constants under the same names. **If this file and the page disagree,
+likes, hides and mutes, the cortisol the music follows and the floor it
+keeps, the moment on a bad day with its two triggers and its aftershock,
+the Empty Bin, and the decay from whole with the same constants under
+the same names. **If this file and the page disagree,
 the page is right and this file is wrong.** `conformance.js` measures
 the gap: it runs the same scripted session on the page, headless, on
 the real clock, and in the lab on the simulated one, and compares the
@@ -47,7 +48,10 @@ the calm deficit persist past thirty seconds, does the moment cost more
 calm than the pace does in the following minute, does it change where
 the session ends, does it populate the tail. The paper reports the
 verdicts as the rules decide them, with a figure that aligns calm and
-attention on the moment with and without it. The model takes
+attention on each pair's own moment with and without it, since the
+moment's second is now an output of the session (the eighth when her
+hands were still, the sixteenth otherwise) and the paper reports the
+split. The model takes
 `moment: false` for the counterfactual; the sample takes
 `moments: [true, false]`. Swap the frame and the same
 sample becomes a different paper: a different title, a different
@@ -98,6 +102,12 @@ in the paper is the figure on the lab page.
   `samples.json`, and see it ten ways.
 - `paper.html`, `paper.js`, `frames/` — the summary machine, its
   headless renderer, and the narrative frames; see *The paper* above.
+- `tests/` — Lex's three test files from `specs/unframeable-lab/`, run
+  against this model: `node tests/model.empty-bin.test.js`, and the
+  same for `model.moment` and `model.allostasis`. Two lines were
+  adapted: the vulnerability case runs twelve seconds instead of five,
+  because the page's earliest second is eight; and the bin case also
+  asserts that opening the bin comes back as an item.
 - `conformance.js` — the bench. Needs Playwright on `NODE_PATH` and the
   repository root served: `NODE_PATH=…/node_modules node conformance.js
   --url http://localhost:8000 --pace busy --round 40 --n 5`.
@@ -115,6 +125,8 @@ start, in `model.js`; add one there and it is everywhere.
 | `tidier` | hides and mutes everything that asks, and nothing else |
 | `gardener` | likes only what she wanted, never touches an ask |
 | `abstainer` | opens it and does nothing |
+| `emptier` | Kate's seven things, then at half a minute opens the bin and empties the newest ask |
+| `dawdler` | Kate's seven things, then opens the bin and cannot choose |
 
 Seeds make a run repeatable; the stream is random in its clumps, its
 gaps, its channels and its rankings, so twenty seeds give a spread and
@@ -179,3 +191,21 @@ tidier keeps attention and calm and loses agency, because every hide
 and mute comes back. Whether those are findings about feeds or
 artefacts of the constants is exactly what the lab is for, and the
 constants are in one file.
+
+## What the sample said after Lex's modules (2026-10-14)
+
+240 sessions, eight personas, three paces, ten seeds, the bad days drawn
+twice. The moment came on vulnerability in 20 of 80 pairs (the
+gardener and the abstainer, at the eighth second) and on impatience in
+60 (everyone whose hands were moving, at the sixteenth). All four
+hypotheses of the `scare` frame are now supported: the calm deficit is
+38 points at one second, 30 at ten, 13 at thirty and 12 at sixty,
+which is the floor the moment left and does not close; the moment
+takes 39 points at once where the pace takes 6 in the following
+minute; the pairs end 12 points of calm apart; eight of the ten
+lowest-calm sessions had the moment. Attention still saturates on a
+three-minute bad day, so the attention verdict is decided at the floor.
+The `emptier` ends a bad day with agency at 0.34 against Kate's 0.17,
+the bin's 35 points less the two moves it cost; the `dawdler` at 0.14.
+What she empties is the one thing that stays gone, and the emptying
+comes back.
