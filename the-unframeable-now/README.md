@@ -236,6 +236,45 @@ seconds, offset)` renders a logged session offline with the same synth,
 as WAV, so a headless recording can have back the sound that was heard.
 That is how Kate's recordings have their soundtracks.
 
+### An operator's soundtrack (2026-10-14)
+
+A **soundtrack…** button, on the welcome and beside the sound pad,
+opens an operator panel with one row per pace. Upload an audio file
+(anything the browser decodes: mp3, m4a, wav, ogg) and it plays, looped,
+in place of the synthesised loop for that pace; the alerts, the pop,
+the thunk and the chord at the end stay on top of it. *Follows the
+pulse* (on by default) sets the track's playback rate to the same
+proportion the loop's tempo takes, ×1 at rest to ×1.45 at the ceiling,
+so a track still quickens with the feed and her hands; off, it plays
+at its own speed. A tempo field lets the operator say what the track
+runs at, and the debrief then says what it ran at: *the soundtrack was
+X, in place of the loop, and it followed the pulse: ×1.05 at its
+slowest, ×1.15 at its fastest (75–83 beats a minute from 72).* Level
+and remove per row. Swapping the pace mid-session swaps the track, or
+drops back to the loop for a pace without one; pausing holds the
+track's position.
+
+The files stay in the browser's own storage (IndexedDB) and are never
+sent anywhere; they survive a reload. A session with a track logs it
+(`track`, `track_stop`, and `trk` on every beat), and
+`renderSoundtrack` reads the same storage, so a recording made with a
+track renders the track in at the rate the beats logged.
+
+What this is for: trying what the day sounds like with different
+material, tempo, mode, lyrics, and seeing what the pulse does to it. It
+is not a claim about what music does to a person. The model has one
+arrow, pulse → tempo; the reverse arrow is a hypothesis, and the
+evidence for it is summarised in `sound-science` notes on Jeff's
+machine: tempo moves heart rate modestly over minutes (Bernardi 2006;
+Ooishi 2017; de Witte 2020 meta-analysis, d ≈ 0.4 on heart rate), mode
+moves how it feels more than what the body does, background
+instrumental music does nothing measurable to attention while lyrics
+cost some (Cheah 2022), and a phone's alert alone costs attention
+(Stothart 2015), which is the one link the piece already models. A
+track that follows the pulse and leads it down is the experiment the
+mechanism supports and nobody has run; the lab could carry it as a
+frame with a counterfactual, once someone chooses the constant.
+
 ## Decay: what it did to you
 
 A modelled state, four dimensions that start whole and wear down under

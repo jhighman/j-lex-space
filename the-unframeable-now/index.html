@@ -246,6 +246,22 @@
   /* ---------------------------------------------------------------- */
   /* Welcome: what this is, what to watch, what you'll find.           */
   /* ---------------------------------------------------------------- */
+  #tracks { position: fixed; inset: 0; z-index: 23; display: grid; place-items: center; padding: 16px; background: rgba(6,7,11,0.86); backdrop-filter: blur(6px); }
+  #tracks[hidden] { display: none; }
+  .tracks-card { width: min(720px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #12141c; border: 1px solid rgba(212,175,55,0.45); border-radius: 16px; padding: 20px 24px 18px; }
+  .tracks-card h2 { margin: 2px 0 8px; font-size: 20px; }
+  .tracks-card p { color: var(--soft); font-size: 13px; line-height: 1.5; margin: 0 0 10px; }
+  .tracks-card table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0 12px; }
+  .tracks-card th { text-align: left; font-weight: 500; color: var(--soft); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 6px; border-bottom: 1px solid var(--rule); }
+  .tracks-card td { padding: 8px 6px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+  .tracks-card td.name { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff1bf; }
+  .tracks-card input[type="number"] { width: 58px; font: inherit; font-size: 12px; background: #0e1016; color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 3px 5px; }
+  .tracks-card input[type="range"] { width: 80px; }
+  .tracks-card button { font: inherit; font-size: 12px; color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 5px 10px; cursor: pointer; }
+  .tracks-card button.primary { background: var(--amber); border-color: var(--amber); color: var(--void); }
+  .tracks-card label.file { display: inline-block; font-size: 12px; color: var(--ink); border: 1px solid var(--rule); border-radius: 999px; padding: 5px 10px; cursor: pointer; }
+  .tracks-card label.file input { display: none; }
+  .tracks-card .fine { font-size: 11px; color: var(--soft); }
   #welcome { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: rgba(6,7,11,0.8); backdrop-filter: blur(6px); }
   #welcome[hidden] { display: none; }
   .welcome-card {
@@ -386,8 +402,9 @@
   </button>
   <span class="filterwrap"><input id="filter" type="search" placeholder="search… try garden" aria-label="Filter items by text"></span>
   <button class="pad" type="button" id="soundBtn" aria-pressed="true" title="Sound: three loops, one per pace, that quicken as the feed and your hands do; alerts; rewards" style="min-width:0">
-    <span class="verb">♪ sound</span><span class="tech">on</span>
+    <span class="verb">♪ sound</span><span class="tech" id="soundTech">on</span>
   </button>
+  <button type="button" id="tracksBtn" class="btn" title="Operator: upload a soundtrack per pace, in place of the synth loop" style="font-size:11px">soundtrack…</button>
   <span class="pace" role="group" aria-label="Pace of the stream">
     <span class="lbl">pace</span>
     <button type="button" data-pace="calm" aria-pressed="false" title="Something every six seconds or so">quiet evening</button>
@@ -427,7 +444,7 @@
     </dl>
     <div class="welcome-actions"><button type="button" id="start">Start · three minutes</button></div>
 
-    <p class="fine">Three minutes on the feed's own clock; it ends by itself or when you press <b>I'm done</b>, and then the line tells you what it saw. Nothing leaves your machine; the items are invented and name nobody. <b>? intro</b> brings this back.</p>
+    <p class="fine">Three minutes on the feed's own clock; it ends by itself or when you press <b>I'm done</b>, and then the line tells you what it saw. Nothing leaves your machine; the items are invented and name nobody. <b>? intro</b> brings this back. <button type="button" id="tracksBtn2" class="btn" style="font-size:11px; margin-left:6px" title="Operator: upload a soundtrack per pace, in place of the synth loop">soundtrack…</button></p>
   </div>
 </div>
 
@@ -445,6 +462,20 @@
       <button type="button" id="decayBtn" style="border-color: rgba(255,98,107,0.5); color: #ffb3b8">See what it did to you</button>
       <button type="button" id="lookBtn">Look at the line</button>
     </div>
+  </div>
+</div>
+
+<div id="tracks" role="dialog" aria-modal="true" aria-labelledby="tracksTitle" hidden>
+  <div class="tracks-card">
+    <p class="eyebrow">Operator · the soundtrack</p>
+    <h2 id="tracksTitle">A track per pace, in place of the loop</h2>
+    <p>Upload an audio file for any of the three days and it plays, looped, instead of the synthesised loop for that pace. The alerts, the pop, the thunk and the rest stay on top of it. With <b>follows the pulse</b> on, the track's playback rate follows the pulse the way the loop's tempo does: ×1 at rest, up to ×1.45 at the ceiling, from the track's own tempo. Give the track's tempo so the debrief can say what it ran at. The files stay in this browser, in its own storage, and never leave the machine; a recording made here renders them in.</p>
+    <table>
+      <thead><tr><th>pace</th><th>track</th><th>tempo</th><th>follows the pulse</th><th>level</th><th></th></tr></thead>
+      <tbody id="tracksRows"></tbody>
+    </table>
+    <p class="fine">Formats: whatever this browser can decode (mp3, m4a, wav, ogg). A session that starts with a track in place logs it, and the debrief names it. Remove a track to go back to the loop. Nothing here is a claim about what music does to a person; it is a way to try one.</p>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:6px"><button type="button" id="tracksClose">Done</button></div>
   </div>
 </div>
 
@@ -773,6 +804,7 @@ for (const b of document.querySelectorAll('.pace button')) {
     for (const o of document.querySelectorAll('.pace button')) o.setAttribute('aria-pressed', String(o === b));
     say({ calm: 'A quiet evening: something every six seconds or so.', steady: 'A normal day: something every few seconds.', busy: 'A bad day: something every second and a half. This is what it feels like.' }[state.pace]);
     gesture('paced', state.pace);
+    trackPaceChanged();
   });
 }
 const welcome = document.getElementById('welcome');
@@ -800,6 +832,7 @@ function startSession() {
   welcome.hidden = true; debrief.hidden = true;
   soundInit(); SOUND.log.length = 0; SOUND.cortisol = 0; SOUND.floor = 0; SOUND.refractoryUntil = 0; SOUND.lastTick = 0; SOUND.beat = 0; SOUND.pings = []; SOUND.habituatedAt = 0; SOUND.relief = 0;
   vrok.t = 0; vrok.z = false; session.qw = 0; session.qwTrigger = null; session.armed = false; session.lastMoveAt = null; session.bin = null; binReset();
+  TRACK.pos = { calm: 0, steady: 0, busy: 0 };
   decayReset(); snap(0, 'the start');
   setRunning(true);
 }
@@ -887,6 +920,14 @@ function renderDebrief() {
     const s0 = DECAY.snaps[0], s1 = DECAY.snaps[DECAY.snaps.length - 1], P = (v) => Math.round(v * 100);
     facts.push(`What it did to you, by the model: attention <b>${P(s0.a)}→${P(s1.a)}</b>, calm <b>${P(s0.c)}→${P(s1.c)}</b>, agency <b>${P(s0.g)}→${P(s1.g)}</b>, and <b>${(elapsed / 60000).toFixed(1)}</b> of your twenty minutes gone to the feed. Disorder went from ${s0.e.toFixed(2)} to <b>${s1.e.toFixed(2)}</b>. Press <i>See what it did to you</i> for the replay.`);
   }
+  const tracksUsed = SOUND.log.filter((e) => e.kind === 'track');
+  if (tracksUsed.length) {
+    const names = [...new Set(tracksUsed.map((e) => e.name))];
+    const tb = SOUND.log.filter((e) => e.kind === 'beat' && e.trk);
+    const rates = tb.map((e) => e.bpm / BPM[e.pace]);
+    const fo = tracksUsed.some((e) => e.follow !== false);
+    facts.push(`The soundtrack was <b>${names.join('</b>, <b>')}</b>, in place of the loop${fo && rates.length ? `, and it followed the pulse: <b>×${Math.min(...rates).toFixed(2)}</b> at its slowest, <b>×${Math.max(...rates).toFixed(2)}</b> at its fastest${tracksUsed[0].bpm ? ` (${Math.round(tracksUsed[0].bpm * Math.min(...rates))}–${Math.round(tracksUsed[0].bpm * Math.max(...rates))} beats a minute from ${tracksUsed[0].bpm})` : ''}` : ', at its own speed'}. What a track does to a person is not in this model; what the pulse did to the track is.`);
+  }
   const beats = SOUND.log.filter((e) => e.kind === 'beat');
   if (beats.length > 4) {
     const lo = Math.min(...beats.map((b) => b.bpm)), hi = Math.max(...beats.map((b) => b.bpm)), hiAt = beats.find((b) => b.bpm === hi);
@@ -967,6 +1008,7 @@ function renderDebrief() {
 document.getElementById('start').focus();
 window.addEventListener('keydown', (e) => {
   if (document.activeElement?.tagName === 'INPUT') return;
+  if (!tracksEl.hidden) { if (e.key === 'Escape') tracksEl.hidden = true; return; }
   if (!welcome.hidden) { if (e.key === 'Escape' && session.phase !== 'welcome') welcome.hidden = true; return; }
   if (!decayEl.hidden) { if (e.key === 'Escape') { decayEl.hidden = true; debrief.hidden = false; } return; }
   if (!debrief.hidden) { if (e.key === 'Escape') debrief.hidden = true; return; }
@@ -1432,6 +1474,75 @@ function decayEvent(kind, f) {
 /* is logged with its time so a recording can have it rendered back in. */
 /* ------------------------------------------------------------------ */
 const SOUND = { ctx: null, on: true, master: null, log: [], cortisol: 0, floor: 0, refractoryUntil: 0, beat: 0, nextBeat: 0, timer: 0, running: false, lastPing: 0 };
+/* Operator soundtracks: one per pace, uploaded, kept in this browser's own
+   storage (IndexedDB) and never sent anywhere. When a pace has a track, it
+   plays looped in place of the synthesised loop, its playback rate following
+   the pulse as the loop's tempo does; the alerts and rewards stay on top. */
+const TRACK = { meta: { calm: null, steady: null, busy: null }, buf: { calm: null, steady: null, busy: null }, src: null, gain: null, pace: null, pos: { calm: 0, steady: 0, busy: 0 }, startedAt: 0, db: null };
+function trackDb() {
+  if (TRACK.db) return TRACK.db;
+  TRACK.db = new Promise((res, rej) => { const r = indexedDB.open('unframeable-now', 1); r.onupgradeneeded = () => r.result.createObjectStore('tracks'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  return TRACK.db;
+}
+async function trackStore(pace, rec) { const db = await trackDb(); return new Promise((res, rej) => { const tx = db.transaction('tracks', 'readwrite'); const q = rec ? tx.objectStore('tracks').put(rec, pace) : tx.objectStore('tracks').delete(pace); q.onsuccess = () => res(); q.onerror = () => rej(q.error); }); }
+async function trackLoadAll() { const db = await trackDb(); return new Promise((res, rej) => { const tx = db.transaction('tracks', 'readonly'); const out = {}; const q = tx.objectStore('tracks').openCursor(); q.onsuccess = () => { const c = q.result; if (c) { out[c.key] = c.value; c.continue(); } else res(out); }; q.onerror = () => rej(q.error); }); }
+async function trackDecode(ctx, pace) { const m = TRACK.meta[pace]; if (!m) { TRACK.buf[pace] = null; return null; } try { TRACK.buf[pace] = await ctx.decodeAudioData(await m.blob.arrayBuffer()); } catch (e) { TRACK.buf[pace] = null; }
+  if (TRACK.buf[pace] && SOUND.running && state.pace === pace && !TRACK.src) trackStart(pace); // decoded after the session began: take over from the loop now
+  return TRACK.buf[pace]; }
+const trackRate = (pace, bpm) => (TRACK.meta[pace] && TRACK.meta[pace].follow === false) ? 1 : bpm / BPM[pace];
+const trackOn = () => TRACK.src !== null;
+function trackStart(pace) {
+  const ctx = SOUND.ctx, b = TRACK.buf[pace]; if (!ctx || !b || !SOUND.running) return false;
+  trackStop();
+  const m = TRACK.meta[pace];
+  const src = ctx.createBufferSource(); src.buffer = b; src.loop = true;
+  const g = ctx.createGain(); g.gain.value = (m.gain == null ? 0.6 : m.gain); src.connect(g); g.connect(SOUND.master);
+  src.playbackRate.value = trackRate(pace, bpmNow());
+  const pos = TRACK.pos[pace] % b.duration;
+  src.start(ctx.currentTime + 0.02, pos);
+  TRACK.src = src; TRACK.gain = g; TRACK.pace = pace; TRACK.startedAt = ctx.currentTime + 0.02 - pos;
+  soundLog('track', { pace, name: m.name, bpm: m.bpm || null, follow: m.follow !== false, gain: g.gain.value, pos });
+  return true;
+}
+function trackStop() {
+  if (!TRACK.src) return;
+  const ctx = SOUND.ctx, b = TRACK.src.buffer;
+  TRACK.pos[TRACK.pace] = ((ctx.currentTime - TRACK.startedAt) * TRACK.src.playbackRate.value) % b.duration;
+  try { TRACK.src.stop(); } catch (e) { /* already stopped */ }
+  TRACK.src.disconnect(); TRACK.gain.disconnect();
+  soundLog('track_stop', { pace: TRACK.pace });
+  TRACK.src = null; TRACK.gain = null; TRACK.pace = null;
+}
+function trackFollow(bpm) { if (TRACK.src && SOUND.ctx) TRACK.src.playbackRate.setTargetAtTime(trackRate(TRACK.pace, bpm), SOUND.ctx.currentTime, 0.4); }
+function trackPaceChanged() { if (!SOUND.running) return; if (TRACK.buf[state.pace]) trackStart(state.pace); else trackStop(); }
+async function trackSet(pace, file) {
+  if (!file) { TRACK.meta[pace] = null; TRACK.buf[pace] = null; await trackStore(pace, null); if (TRACK.pace === pace) trackStop(); renderTracks(); return; }
+  const rec = { name: file.name, type: file.type, blob: file, bpm: null, follow: true, gain: 0.6 };
+  TRACK.meta[pace] = rec; await trackStore(pace, rec);
+  if (SOUND.ctx) { await trackDecode(SOUND.ctx, pace); if (state.running && state.pace === pace) trackStart(pace); }
+  renderTracks();
+}
+async function trackMeta(pace, patch) { const m = TRACK.meta[pace]; if (!m) return; Object.assign(m, patch); await trackStore(pace, m); if (TRACK.pace === pace && TRACK.gain && patch.gain != null) TRACK.gain.gain.setTargetAtTime(patch.gain, SOUND.ctx.currentTime, 0.1); if (TRACK.pace === pace && patch.follow != null) trackFollow(bpmNow()); }
+const PACE_NAME = { calm: 'quiet evening', steady: 'normal day', busy: 'bad day' };
+function renderTracks() {
+  const rows = document.getElementById('tracksRows');
+  rows.innerHTML = ['calm', 'steady', 'busy'].map((pc) => { const m = TRACK.meta[pc]; return `<tr data-pace="${pc}"><td>${PACE_NAME[pc]}<br><span class="fine">loop ${BPM[pc]} bpm</span></td><td class="name" title="${m ? m.name : ''}">${m ? m.name : '<span class="fine">the loop</span>'}</td><td>${m ? `<input type="number" min="30" max="240" step="1" value="${m.bpm || ''}" placeholder="bpm" aria-label="tempo in beats per minute">` : ''}</td><td>${m ? `<input type="checkbox" ${m.follow !== false ? 'checked' : ''} aria-label="follows the pulse">` : ''}</td><td>${m ? `<input type="range" min="0" max="1" step="0.05" value="${m.gain == null ? 0.6 : m.gain}" aria-label="level">` : ''}</td><td style="text-align:right; white-space:nowrap"><label class="file">${m ? 'replace' : 'upload'}<input type="file" accept="audio/*"></label>${m ? ' <button type="button" class="rm">remove</button>' : ''}</td></tr>`; }).join('');
+  for (const tr of rows.querySelectorAll('tr')) {
+    const pc = tr.dataset.pace;
+    tr.querySelector('input[type="file"]').addEventListener('change', (e) => { if (e.target.files[0]) trackSet(pc, e.target.files[0]); });
+    const rm = tr.querySelector('.rm'); if (rm) rm.addEventListener('click', () => trackSet(pc, null));
+    const bpm = tr.querySelector('input[type="number"]'); if (bpm) bpm.addEventListener('change', (e) => trackMeta(pc, { bpm: e.target.value ? Number(e.target.value) : null }));
+    const fo = tr.querySelector('input[type="checkbox"]'); if (fo) fo.addEventListener('change', (e) => trackMeta(pc, { follow: e.target.checked }));
+    const gn = tr.querySelector('input[type="range"]'); if (gn) gn.addEventListener('input', (e) => trackMeta(pc, { gain: Number(e.target.value) }));
+  }
+  const any = ['calm', 'steady', 'busy'].filter((pc) => TRACK.meta[pc]);
+  document.getElementById('soundTech').textContent = SOUND.on ? (any.length ? `on · ${any.length} track${any.length > 1 ? 's' : ''}` : 'on') : 'off';
+}
+const tracksEl = document.getElementById('tracks');
+for (const id of ['tracksBtn', 'tracksBtn2']) document.getElementById(id).addEventListener('click', () => { tracksEl.hidden = false; });
+document.getElementById('tracksClose').addEventListener('click', () => { tracksEl.hidden = true; });
+trackLoadAll().then((all) => { for (const pc of ['calm', 'steady', 'busy']) if (all[pc]) TRACK.meta[pc] = all[pc]; renderTracks(); if (SOUND.ctx) for (const pc of ['calm', 'steady', 'busy']) trackDecode(SOUND.ctx, pc); }).catch(() => renderTracks());
+window.TRACK = TRACK; window.trackSet = trackSet;
 const BPM = { calm: 60, steady: 84, busy: 120 };
 const FLOOR = { calm: 0, steady: 0.1, busy: 0.3 };
 const NOTE = (n) => 440 * Math.pow(2, (n - 69) / 12);
@@ -1519,6 +1630,7 @@ function soundInit() {
   SOUND.master = SOUND.ctx.createGain(); SOUND.master.gain.value = SOUND.on ? 0.7 : 0;
   SOUND.master.connect(comp); comp.connect(SOUND.ctx.destination);
   tshuma(SOUND.ctx);
+  for (const pc of ['calm', 'steady', 'busy']) trackDecode(SOUND.ctx, pc);
 }
 function soundLog(kind, extra = {}) { SOUND.log.push({ t: vnow(), w: performance.now(), kind, ...extra }); }
 function sfx(kind, src) {
@@ -1543,9 +1655,10 @@ function scheduleBeats() {
   while (SOUND.nextBeat < ctx.currentTime + ahead) {
     const bpm = bpmNow(), i = SOUND.beat, t = Math.max(SOUND.nextBeat, ctx.currentTime);
     const c = SOUND.cortisol, pace = state.pace;
-    const relief = t < (SOUND.relief || 0), q = inAftershock() ? 1 : 0;
-    soundLog('beat', { i, bpm: Math.round(bpm), c: +c.toFixed(2), pace, r: relief ? 1 : 0, q });
-    if (SOUND.on) {
+    const relief = t < (SOUND.relief || 0), q = inAftershock() ? 1 : 0, trk = trackOn() ? 1 : 0;
+    soundLog('beat', { i, bpm: Math.round(bpm), c: +c.toFixed(2), pace, r: relief ? 1 : 0, q, trk });
+    if (trk) trackFollow(bpm);
+    if (SOUND.on && !trk) {
       synth(ctx, SOUND.master, 'kick', t);
       if (!relief) synth(ctx, SOUND.master, 'hat', t + 30 / bpm, { accent: i % 2 === 0 && !q });
       if (i % 8 === 0) synth(ctx, SOUND.master, 'pad', t, { chord: CHORD[pace], cortisol: relief ? 0 : c, dur: 8 * 60 / bpm });
@@ -1559,13 +1672,14 @@ function scheduleBeats() {
 function soundRunning(on) {
   SOUND.running = on && SOUND.on;
   clearInterval(SOUND.timer);
-  if (SOUND.running && SOUND.ctx) { SOUND.nextBeat = SOUND.ctx.currentTime + 0.05; SOUND.timer = setInterval(scheduleBeats, 100); }
+  if (SOUND.running && SOUND.ctx) { SOUND.nextBeat = SOUND.ctx.currentTime + 0.05; SOUND.timer = setInterval(scheduleBeats, 100); if (TRACK.buf[state.pace]) trackStart(state.pace); }
+  else trackStop();
 }
 const soundBtn = document.getElementById('soundBtn');
 soundBtn.addEventListener('click', () => {
   SOUND.on = !SOUND.on;
   soundBtn.setAttribute('aria-pressed', String(SOUND.on));
-  soundBtn.querySelector('.tech').textContent = SOUND.on ? 'on' : 'off';
+  renderTracks();
   if (SOUND.master) SOUND.master.gain.setTargetAtTime(SOUND.on ? 0.7 : 0, SOUND.ctx.currentTime, 0.05);
   soundRunning(state.running);
 });
@@ -1577,9 +1691,29 @@ async function renderSoundtrack(log, durationSec, offsetSec = 0) {
   const master = ctx.createGain(); master.gain.value = 0.7; master.connect(comp); comp.connect(ctx.destination);
   let qb = null;
   if (log.some((e) => e.kind === 'qwz')) { try { qb = await ctx.decodeAudioData(await (await fetch(_vr1)).arrayBuffer()); } catch (e) { qb = null; } }
+  // operator tracks: one looped source per run of the track, rate following the logged beats
+  if (log.some((e) => e.kind === 'track')) {
+    const stored = await trackLoadAll().catch(() => ({}));
+    const bufs = {};
+    for (const pc of Object.keys(stored)) { try { bufs[pc] = await ctx.decodeAudioData(await stored[pc].blob.arrayBuffer()); } catch (e) { bufs[pc] = null; } }
+    let cur = null;
+    for (const e of log) {
+      const t = e.w / 1000 + offsetSec + (e.at || 0);
+      if (e.kind === 'track' && bufs[e.pace]) {
+        if (cur) { cur.src.stop(Math.max(cur.t0, t)); }
+        const src = ctx.createBufferSource(); src.buffer = bufs[e.pace]; src.loop = true; const g = ctx.createGain(); g.gain.value = e.gain; src.connect(g); g.connect(master);
+        src.playbackRate.setValueAtTime(e.follow === false ? 1 : 1, Math.max(0, t)); src.start(Math.max(0, t), e.pos || 0);
+        cur = { src, pace: e.pace, follow: e.follow !== false, t0: Math.max(0, t) };
+      } else if (e.kind === 'track_stop' && cur) { cur.src.stop(Math.max(cur.t0, t)); cur = null; }
+      else if (e.kind === 'beat' && e.trk && cur && cur.follow && t >= cur.t0) cur.src.playbackRate.setValueAtTime(e.bpm / BPM[cur.pace], t);
+    }
+    if (cur) cur.src.stop(durationSec);
+  }
   for (const e of log) {
     const t = e.w / 1000 + offsetSec + (e.at || 0); if (t < 0 || t > durationSec - 0.1) continue;
+    if (e.kind === 'track' || e.kind === 'track_stop') continue;
     if (e.kind === 'beat') {
+      if (e.trk) continue;
       synth(ctx, master, 'kick', t); if (!e.r) synth(ctx, master, 'hat', t + 30 / e.bpm, { accent: e.i % 2 === 0 && !e.q });
       if (e.i % 8 === 0) synth(ctx, master, 'pad', t, { chord: CHORD[e.pace], cortisol: e.r ? 0 : e.c, dur: 8 * 60 / e.bpm });
       if (e.pace === 'busy' || e.c > 0.6) synth(ctx, master, 'pulse', t + 60 / e.bpm * 0.5);
