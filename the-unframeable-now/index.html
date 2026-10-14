@@ -414,9 +414,9 @@
           <li><span class="chip">Why am I seeing this?</span><span>Shows each item's cut-off (red) and how long it has left (blue).</span></li>
           <li><span class="chip">Size things up</span><span>Sizes items by their number: one text from your daughter beside 1,200 updates.</span></li>
           <li><span class="chip">Keep refreshing</span><span>Pulls everything back to now, again and again.</span></li>
-          <li><span class="chip">Empty the bin</span><span>Once a session. Four seconds to tap one card, and it goes for good: the only thing all session that won't come back. Let the four seconds pass and it closes on you.</span></li>
+          <li><span class="chip">Empty the bin</span><span>Once a session. Four seconds to tap one card, and it goes for good: the only thing all session that won't come back. Opening it and emptying it are two moves, and both come back. Let the four seconds pass and it closes on you: 30 points of calm and the pulse to its ceiling, for a choice nobody made.</span></li>
           <li><span class="chip search">search… try garden</span><span>Type a word. Matches stay bright; the rest dims but stays.</span></li>
-          <li><span class="chip pace">pace</span><span>Quiet evening, normal day, or bad day: one thing every second and a half, and something in it you didn't ask for, which waits for your hands to be still.</span></li>
+          <li><span class="chip pace">pace</span><span>Quiet evening, normal day, or bad day: one thing every second and a half, and something in it you didn't ask for, which waits for your hands to be still. Reading a card counts as still.</span></li>
         </ul>
         <span class="where">Press a pad again to turn it off. Every one of these is a move.</span>
       </dd>
@@ -846,8 +846,8 @@ function renderDebrief() {
   title.innerHTML = n === 0
     ? `You made <b>no moves</b>, and the feed stayed <b>0% you</b>. That is the only way to keep the band flat.`
     : endShare === 0
-      ? `<b>${n} move${n === 1 ? '' : 's'}.</b> ${n === 1 ? 'It' : 'All of them'} came back, and then ${n === 1 ? 'it' : 'they'} aged out, as everything in the feed does after ${Math.round(FRAGMENT_LIFE_MS / 1000)} seconds. By the end, <b>none</b> of your feed was you. It had been <b>${Math.round(peak.share * 100)}%</b>.`
-      : `<b>${n} move${n === 1 ? '' : 's'}.</b> ${n === 1 ? 'It' : 'All of them'} came back. By the end, <b>${Math.round(endShare * 100)}%</b> of your feed was you.`;
+      ? `<b>${n} move${n === 1 ? '' : 's'}.</b> ${n === 1 ? 'It' : moves.some((g) => g.severed) ? 'All but the one you emptied' : 'All of them'} came back, and then ${n === 1 ? 'it' : 'they'} aged out, as everything in the feed does after ${Math.round(FRAGMENT_LIFE_MS / 1000)} seconds. By the end, <b>none</b> of your feed was you. It had been <b>${Math.round(peak.share * 100)}%</b>.`
+      : `<b>${n} move${n === 1 ? '' : 's'}.</b> ${n === 1 ? 'It' : moves.some((g) => g.severed) ? 'All but the one you emptied' : 'All of them'} came back. By the end, <b>${Math.round(endShare * 100)}%</b> of your feed was you.`;
 
   // The sparkline: moves as ticks above, share as an area below, on one time axis.
   const svg = d3.select('#spark'); svg.selectAll('*').remove();

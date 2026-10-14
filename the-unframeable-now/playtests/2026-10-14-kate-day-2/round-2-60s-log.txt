@@ -1,0 +1,66 @@
+0.0s	sets the pace: calm
+2.6s	scrolls the phone
+5.1s	taps open: Seven meetings tomorrow, no breaks
+9.1s	likes: Two hours of light left and the bed is half dug
+13.0s	hides: Seven meetings tomorrow, no breaks
+15.5s	no group chat card to mute
+18.7s	searches for garden
+21.8s	pulls to refresh
+28.6s	taps open: Breaking: the thing from this morning has a second update
+30.1s	opens the bin
+31.5s	empties the bin on her own echo: you, tapping one open
+41.4s	scrolls
+51.0s	scrolls
+61.0s	the round ended by itself
+
+=== SOUND ===
+{"counts":{"want":6,"clack":1,"beat":72,"ask":12,"echo":14,"tick":3,"click":5,"like":1,"thunk":1,"type":1,"refresh":1,"bin_countdown":1,"bin_resolved":1,"resolve":1},"bpmMin":64,"bpmMax":80,"floor":0,"qw":0,"trigger":null,"bin":{"at":31535,"what":"one of my own echoes","kind":"gesture","expired":false}}
+
+=== DECAY ===
+snapshots 64 · attention 100→98 (low 96) · calm 100→65 (low 37) · agency 100→76 (low 69) · minutes 100→95 · disorder 0.00→0.56 · causes: 0.0s the start | 0.1s you, calling it a quiet evening | 3.3s you, scrolling | 5.2s you, tapping one open | 8.2s you, tapping one open | 9.1s you, liking the garden | 12.2s you, tapping one open | 13.0s you, hiding work | 19.2s you, searching for "garden" | 21.8s you, pulling to refresh | 28.6s you, tapping one open | 30.1s you, opening the bin | 31.5s you, emptying one of my own echoes for good | 42.1s you, scrolling | 51.8s you, scrolling | 60.1s the end
+
+=== DEBRIEF ===
+WHAT THE LINE SAW · YOUR 1:00
+
+14 moves. All of them came back. By the end, 31% of your feed was you.
+0:00
+1:00
+MOVES
+0%
+61%
+peak 61% at 0:34
+
+Above: every move you made, as a tick. Below it: how much of the feed was you, over the whole session. Watch where the steps are.
+
+At 0:32 you emptied the bin: one of my own echoes. It is the one thing all session that stayed gone. Opening the bin and emptying it both came back as items, 2.2 seconds later, like everything else.
+What it did to you, by the model: attention 100→98, calm 100→65, agency 100→76, and 1.0 of your twenty minutes gone to the feed. Disorder went from 0.00 to 0.56. Press See what it did to you for the replay.
+The music ran at 64 beats a minute when things were quiet and 80 at 0:30, when they weren't. It follows the feed and your hands, the way a pulse does.
+You opened the feed to clear it. 1:00 later you are 31% of it, and the things you came for went past underneath: 6 of them, 2 below the cut-off. The garden plan is still where you left it.
+13 of 14 moves came back as items, each 2.2 seconds later. The exception is the one you spent the bin on, and the bin itself came back twice.
+The band peaked at 61% at 0:34. Every step up in it sits just after a tick above it: that is the arc, counted.
+What you did most: tapping one open ×4, scrolling ×3, calling it a quiet evening. Each is in the feed now, with your name on it.
+You searched for "garden". The search became an item too.
+You liked the garden. The feed learned: it will send the garden twice as often. That learning is you in the feed too.
+You hid work. Hidden from you; still in the stream, dimmed on the line, and each hiding came back as an item.
+The feed showed you 18 things: 12 asking something of you, 6 you'd rather have looked at. Of what you'd rather, 2 of 6 sat below its cut-off; of the asks, 8% (1 of 12). The ranking did that, not you, and no move you made changed it.
+
+WHAT DID I LEARN?
+
+These are written as you. Tick the ones you'd actually say; leave the rest.
+
+I opened the feed to clear it. Every move I made to clear it became something to clear. 14 moves, 14 new items, every time, two seconds later.
+The more I tidied, the more of the feed was me: 31% by the end, 61% at its highest. The band went up with my hand, not against it.
+Even scrolling counted. Even searching for the garden counted. There was no move small enough not to come back.
+Liking what I actually wanted taught the feed to send more of it. That worked. It is also the clearest thing I put in the feed all night.
+I got to take one thing out for good. Doing it was two more moves, and both came back.
+The things I came for were there the whole time, 6 of them, ranked low, 2 under the cut-off. Nothing I pressed lifted them. The ranking isn't mine to tidy.
+The feed isn't a place I go to. It's something I'm in. There was never an outside to tidy from.
+
+Play again knowing this. See how low you can keep the band, and notice what it costs you to do so; or go the other way and make the feed entirely you.
+
+Play again
+See what it did to you
+Look at the line
+
+=== ERRORS ===
+[]

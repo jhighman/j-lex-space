@@ -362,6 +362,14 @@ a re-statement of this one, and `lab/conformance.js` measures the gap
 between them against this page, which is the reference. See
 `lab/README.md`.
 
+### Day 2
+
+`playtests/2026-10-14-kate-day-2/` holds Kate's four rounds on the build
+with Lex's modules, each paired with its day-1 counterpart in her
+retrospective: the bin spent on the group chat, on her own echo, let
+close on a bad day, and spent on work before she stopped. Notes,
+debriefs, reports and logs; the recordings are on Jeff's machine.
+
 ### A round you can open
 
 `playtests/2026-10-13-kate-round-8/` holds Kate's eighth round as it

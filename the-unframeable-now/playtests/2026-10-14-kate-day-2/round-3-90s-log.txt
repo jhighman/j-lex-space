@@ -1,0 +1,75 @@
+0.0s	sets the pace: busy
+2.6s	scrolls the phone
+5.1s	taps open: Dentist: confirm by replying YES
+9.1s	likes: Life drawing on Wednesday has a space
+13.0s	hides: Your out-of-office is on. Three people replied to it anyway
+16.3s	mutes the group chat
+15.9s	something jumps at her (it stopped waiting at sixteen seconds)
+19.6s	searches for garden
+22.6s	pulls to refresh
+29.4s	scrolls
+36.2s	scrolls
+40.1s	opens the bin
+44.7s	cannot choose; the bin closes on her
+51.0s	scrolls
+59.5s	taps open: The gallery’s late opening is Thursday. You said you’d go
+67.9s	taps open: Mum: “did you see what I sent?”
+77.2s	scrolls
+85.8s	taps open: The shared calendar has a new colour and nobody said
+95.2s	the round ended by itself
+
+=== SOUND ===
+{"counts":{"clack":1,"beat":229,"ask":57,"echo":19,"tick":5,"want":34,"click":8,"like":1,"thunk":2,"qwz":1,"aftershock":1,"type":1,"refresh":1,"bin_countdown":1,"bin_expired":1,"resolve":1},"bpmMin":136,"bpmMax":173,"floor":0.12,"qw":15888,"trigger":"algorithmic_impatience","bin":{"at":44139,"expired":true}}
+
+=== DECAY ===
+snapshots 98 · attention 100→18 (low 18) · calm 100→42 (low 10) · agency 100→44 (low 44) · minutes 100→92 · disorder 0.00→0.52 · causes: 0.0s the start | 0.0s you, calling it a bad day | 3.3s you, scrolling | 5.1s you, tapping one open | 8.2s you, tapping one open | 9.1s you, liking the painter | 12.1s you, tapping one open | 13.0s you, hiding work | 15.5s you, tapping one open | 15.9s something you did not ask for | 16.3s you, muting the group chat | 20.1s you, searching for "garden" | 22.6s you, pulling to refresh | 30.3s you, scrolling | 36.9s you, scrolling | 40.1s you, opening the bin | 44.1s the bin closed on its own | 51.7s you, scrolling | 59.5s you, tapping one open | 67.9s you, tapping one open | 78.1s you, scrolling | 85.8s you, tapping one open | 90.1s the end
+
+=== DEBRIEF ===
+WHAT THE LINE SAW · YOUR 1:30
+
+19 moves. All of them came back. By the end, 10% of your feed was you.
+0:00
+1:00
+MOVES
+0%
+32%
+peak 32% at 0:19
+
+Above: every move you made, as a tick. Below it: how much of the feed was you, over the whole session. Watch where the steps are.
+
+At 0:16 something jumped at you. That was us, not the feed. You chose a bad day. It stopped waiting at sixteen seconds. For fourteen seconds after, the phone pinged quieter: not kindness, aftershock. And it left something: the floor under your calm rose by 12 points and did not come back down.
+At 0:44 you opened the bin and let it close. You didn't choose; the clamp came down anyway: 30 points of calm, and the pulse to its ceiling.
+What it did to you, by the model: attention 100→18, calm 100→42, agency 100→44, and 1.5 of your twenty minutes gone to the feed. Disorder went from 0.00 to 0.52. Press See what it did to you for the replay.
+The music never had a quiet number: 136 beats a minute at its lowest, 173 at 0:44. On a bad day the pulse isn't your hands; it's the feed.
+91 things pinged. Around 0:23 they started getting quieter, not because the phone was quieter but because you had stopped hearing them. The ear leaves before you do.
+You opened the feed to clear it. 1:30 later you are 10% of it, and the things you came for went past underneath: 34 of them, 14 below the cut-off. The garden plan is still where you left it.
+19 of 19 moves came back as items, each 2.2 seconds later. No exceptions, and nothing you did could stop one.
+The band peaked at 32% at 0:19. Every step up in it sits just after a tick above it: that is the arc, counted.
+What you did most: tapping one open ×7, scrolling ×5, calling it a bad day. Each is in the feed now, with your name on it.
+You searched for "garden". The search became an item too.
+You liked the painter. The feed learned: it will send the painter twice as often. That learning is you in the feed too.
+You hid work. Hidden from you; still in the stream, dimmed on the line, and each hiding came back as an item.
+You muted the group chat. What filled the space: the news, 28 times since. Muting makes room; it does not choose what takes it.
+The feed showed you 91 things: 57 asking something of you, 34 you'd rather have looked at. Of what you'd rather, 41% (14 of 34) sat below its cut-off; of the asks, 9% (5 of 57). The ranking did that, not you, and no move you made changed it.
+
+WHAT DID I LEARN?
+
+These are written as you. Tick the ones you'd actually say; leave the rest.
+
+I opened the feed to clear it. Every move I made to clear it became something to clear. 19 moves, 19 new items, every time, two seconds later.
+The more I tidied, the more of the feed was me: 10% by the end, 32% at its highest. The band went up with my hand, not against it.
+Even scrolling counted. Even searching for the garden counted. There was no move small enough not to come back.
+Muting the group chat didn't make room for the garden. It made room for the news.
+Liking what I actually wanted taught the feed to send more of it. That worked. It is also the clearest thing I put in the feed all night.
+I got one chance to take something out for good, and four seconds wasn't enough to choose. The feed doesn't wait for me to be sure.
+The things I came for were there the whole time, 34 of them, ranked low, 14 under the cut-off. Nothing I pressed lifted them. The ranking isn't mine to tidy.
+The feed isn't a place I go to. It's something I'm in. There was never an outside to tidy from.
+
+Play again knowing this. See how low you can keep the band, and notice what it costs you to do so; or go the other way and make the feed entirely you.
+
+Play again
+See what it did to you
+Look at the line
+
+=== ERRORS ===
+[]
