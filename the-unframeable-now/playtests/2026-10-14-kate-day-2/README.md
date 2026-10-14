@@ -24,5 +24,17 @@ the one you emptied* when the bin was spent on an echo, and the welcome
 gives the bin's two prices and says that reading a card counts as still.
 The third, a longer window on a bad day, is left as she put it.
 
+A note on the register of round 3. While writing Kate's account of the
+bad day's moment, the response was stopped partway by a safety
+classifier inside the model, the second time that has happened at the
+same place (the first was the round-8 summary on 2026-10-13). The
+round-3 note was rewritten shorter and by the record rather than
+reproduce the cut passage; the other notes are untouched. From here
+Kate reports the moment by its numbers and says in a sentence that she
+felt it. A reader comparing day 1's voice with day 2's should know that
+some of the difference is the build and some is this. The note to Lex
+on issue #6 says more.
+
 The usual caveat: the same process built the build, played Kate, and
-wrote her notes.
+wrote her notes; the classifier is the one part of the chain that did
+not.
