@@ -142,7 +142,9 @@ back to humanity.
   browser: fourteen lenses that each draw the music by a different idea, pads
   that land on the beat, setlists fitted to a whole track, and takes
   recorded to MP4. Unlike the rest of this repository it has a build step:
-  `cd visualizer-demo && npm install && npm run dev`.
+  `cd visualizer-demo && npm install && npm run dev`. Eight recorded takes
+  of one song, each by a different lens, are kept in
+  `visualizer-demo/examples/lo-se-munje/`.
 - `what-does-sound-look-like/` — a vibrating plate with sand on it, in the
   browser: pick a tone and the sand settles on the lines that stay still,
   so each tone draws its own figure. A starting point on the sound side,

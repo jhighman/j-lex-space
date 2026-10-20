@@ -112,7 +112,10 @@ two differently from one take to the next.
 `state()`, which reports the time, what is on each deck, the fader,
 whether a take is recording, the calm, and which ground is drawn.
 
-Takes recorded locally can be kept in `takes/`, which git ignores.
+Takes recorded locally can be kept in `takes/`, which git ignores. Takes
+kept on purpose go in `examples/`: `examples/lo-se-munje/` holds eight
+takes of one song, each by a different lens, with a note on where they
+came from and which of their lenses this repository does not have.
 
 ## Lenses
 
