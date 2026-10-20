@@ -41,12 +41,21 @@ project is undisciplined ludic elaboration and this workbench is for
 serious research; the takes cross over as examples of what the instrument
 has drawn, and the instrument stays where it is.
 
-**One thing the Studio B note records** that matters for the research
-prompt: the song is not in English, and nothing in the instrument can
-tell. The signal it draws from carries twelve pitch classes, onsets,
-loudness and brightness and no words, so a song in a language the
-instrument cannot read is read exactly as completely as one it could. That
-is why Pulley, the one lens that reads a poem, is absent from all eight.
+**Why the song is not in English.** A logic guard, chosen before the
+takes were made: a song whose words the listener understands lets the
+language influence the interpretive quality of the research, because the
+reader of the image would be reading the words too. A song in a language
+neither the instrument nor the reader can parse keeps the reading to the
+sound. The instrument's side of this is recorded in Studio B's note: the
+signal it draws from carries twelve pitch classes, onsets, loudness and
+brightness and no words, so a song in a language it cannot read is read
+exactly as completely as one it could. That is why Pulley, the one lens
+that reads a poem, is absent from all eight.
+
+The guard also opens a line of inquiry the prompt makes room for: the
+dialect and sound properties of languages themselves as musical
+features, chanting in eastern dialects among them, read by the same
+instrument that cannot tell what any of them mean.
 
 ## Provenance, stated plainly
 
