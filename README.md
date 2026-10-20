@@ -148,7 +148,9 @@ back to humanity.
 - `what-does-sound-look-like/` — a vibrating plate with sand on it, in the
   browser: pick a tone and the sand settles on the lines that stay still,
   so each tone draws its own figure. A starting point on the sound side,
-  beside the visualizer; no build step. Its README says where it might go.
+  beside the visualizer; no build step. Its README says where it might go,
+  and `inventory/` sorts every other sound-to-image idea here by whether
+  the sound drives the space or symbols move to the sound.
 - `tools/` — small, dependency-free helpers. `letterpress.py` turns a
   markdown letter into email-ready HTML: book-like type with every style
   inlined, so it survives pasting into mail clients and blog editors.

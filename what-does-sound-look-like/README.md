@@ -58,6 +58,13 @@ The usual caveat applies in a smaller way than elsewhere here: nobody
 has set this beside a real plate. If it earns a place in either of the
 neighbouring pieces, that is the first thing to do.
 
+## The inventory, sorted
+
+`inventory/` holds one frame of every other sound-to-image idea in this
+workbench, sorted into three bins for the Phase Transition review: the
+sound drives the space, symbols move to the sound, not sound at all. It
+says why each sits where it does.
+
 ## Where it might go
 
 Three directions were named when it came in, and none is taken yet:
