@@ -1,0 +1,5 @@
+name = "excluded"
+defaultTargets = ["Excluded"]
+
+[[lean_lib]]
+name = "Excluded"
