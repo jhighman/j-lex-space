@@ -15,7 +15,7 @@ const M = require('./model.js');
 
 const args = Object.fromEntries(process.argv.slice(2).map((a, i, arr) => a.startsWith('--') ? [a.slice(2), arr[i + 1] && !arr[i + 1].startsWith('--') ? arr[i + 1] : true] : []).filter((x) => x.length));
 const knob = args.knob || 'propensity';
-const frames = args.frames ? String(args.frames).split(',') : ['none', 'fatigue', 'reactivity'];
+const frames = args.frames ? String(args.frames).split(',') : ['none', 'fatigue', 'reactivity', 'ironic'];
 const seeds = Number(args.seeds || 20);
 const roundSec = Number(args.round || 180);
 const points = Number(args.points || 24);
@@ -83,14 +83,17 @@ for (const f of frames) console.log(pad(`${f} excl`, 12) + curves[f].pts.map((q)
 const W = 1020, H = 420, L = 70, R = 310, T = 36, B = 56;
 const xs = (x) => L + (x - lo) / (hi - lo) * (W - L - R);
 const maxAll = Math.max(...frames.map((f) => curves[f].maxE), 1);
-const ys = (e) => T + (1 - e / maxAll) * (H - T - B);
-const COLOURS = ['#6b6b6b', '#2a7f9e', '#b23a3a', '#3a8f4a', '#7b3fa0'];
+// log scale on the exterior, as log10(1 + E), so a supercritical tail does not flatten the other frames
+const ly = (e) => Math.log10(1 + Math.max(0, e));
+const ys = (e) => T + (1 - ly(e) / ly(maxAll)) * (H - T - B);
+const COLOURS = ['#6b6b6b', '#2a7f9e', '#b23a3a', '#c48a1a', '#7b3fa0'];
 let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="system-ui, sans-serif" font-size="12">
 <rect width="${W}" height="${H}" fill="#fcfcfa"/>
 <text x="${L}" y="20" font-size="14" fill="#222">Exterior mass at the end against ${label}${actMass != null ? ` · act returns with ${actMass}` : ''} · ${roundSec}s, median of ${seeds} seeds</text>
 <line x1="${L}" y1="${ys(0)}" x2="${W - R}" y2="${ys(0)}" stroke="#999"/><line x1="${L}" y1="${ys(maxAll)}" x2="${L}" y2="${ys(0)}" stroke="#999"/>
-<text x="${L - 8}" y="${ys(maxAll) + 4}" text-anchor="end" fill="#555">${f1(maxAll)}</text><text x="${L - 8}" y="${ys(0) + 4}" text-anchor="end" fill="#555">0</text>
-<text x="${L - 8}" y="${ys(maxAll / 2) + 4}" text-anchor="end" fill="#555">exterior</text>`;
+<text x="${L - 8}" y="${ys(0) + 4}" text-anchor="end" fill="#555">0</text>
+<text x="${L - 8}" y="${T - 8}" text-anchor="end" fill="#555" font-size="10">exterior, log</text>`;
+for (const v of [1, 3, 10, 30, 100, 300, 1000, 3000, 10000].filter((v) => v <= maxAll)) svg += `<line x1="${L - 4}" y1="${ys(v)}" x2="${L}" y2="${ys(v)}" stroke="#999"/><text x="${L - 8}" y="${ys(v) + 4}" text-anchor="end" fill="#555">${v}</text>`;
 for (let v = lo; v <= hi + 1e-9; v += (hi - lo) / 5) svg += `<line x1="${xs(v)}" y1="${ys(0)}" x2="${xs(v)}" y2="${ys(0) + 5}" stroke="#999"/><text x="${xs(v)}" y="${ys(0) + 18}" text-anchor="middle" fill="#555">${f2(v)}</text>`;
 svg += `<text x="${(L + W - R) / 2}" y="${H - 14}" text-anchor="middle" fill="#333">${label}</text>`;
 if (critical >= lo && critical <= hi) svg += `<line x1="${xs(critical)}" y1="${ys(maxAll)}" x2="${xs(critical)}" y2="${ys(0)}" stroke="#bbb" stroke-dasharray="3 3"/><text x="${xs(critical) + 3}" y="${ys(maxAll) + 10}" fill="#888" font-size="10">R0 = 1, by the mean field</text>`;

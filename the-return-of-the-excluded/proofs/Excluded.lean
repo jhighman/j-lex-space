@@ -173,4 +173,25 @@ theorem supercritical_iff (pi g sigma delta m a : Nat) :
     (r0den sigma delta m ≤ r0num pi g sigma a) ↔ ((sigma + delta) * m ≤ pi * g * sigma * a) := by
   rfl
 
+/-! ## §4 The fourth frame: load raising the return rate -/
+
+/-- `R0`'s dependence on `σ` is through `σ / (σ + δ)`. Compared as fractions
+by cross-multiplication: a higher return rate never lowers `R0`. -/
+theorem ironic_monotone (s1 s2 delta : Nat) (h : s1 ≤ s2) :
+    s1 * (s2 + delta) ≤ s2 * (s1 + delta) := by
+  simp only [Nat.mul_add]
+  have h1 : s1 * delta ≤ s2 * delta := Nat.mul_le_mul_right delta h
+  rw [Nat.mul_comm s1 s2]
+  omega
+
+/-- **Raising the return rate can only buy the dissipation's share.** For any
+`σ`, `π g σ ≤ π g (σ + δ)`: `R0` never exceeds `π g`, whatever load does to
+the monitor. Growth *above* the threshold is another matter; the rate of
+that growth is not `R0`'s to bound. -/
+theorem ironic_capped (pi g sigma delta : Nat) :
+    r0num pi g sigma 1 ≤ pi * g * (sigma + delta) := by
+  unfold r0num
+  rw [Nat.mul_one]
+  exact Nat.mul_le_mul_left _ (Nat.le_add_right _ _)
+
 end Excluded

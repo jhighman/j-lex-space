@@ -8,7 +8,7 @@
  * Node and the browser, no dependencies.
  *
  * simulate(opts) → one session. opts:
- *   { seed, roundSec, propensity (π), gain (g), frame ('none'|'fatigue'|'reactivity'),
+ *   { seed, roundSec, propensity (π), gain (g), frame ('none'|'fatigue'|'reactivity'|'ironic'),
  *     actMass (a: what returns when content is destroyed; null = the brief, content returns),
  *     override: { spawnRate, decayRate, threshold, baseMs, holdMs, reactMs, loadStep, loadRecoveryMs } }
  */
@@ -73,6 +73,11 @@
       if (frame === 'reactivity') return Math.min(1, pi * (1 + st.load));
       return pi;
     }
+    /* the return rate this tick, under the frame: Wegner's monitor runs harder under load */
+    function effectiveSpawn() {
+      if (frame === 'ironic') return C.spawnRate * (1 + st.load);
+      return C.spawnRate;
+    }
     function exclude(s) {
       st.field = st.field.filter((x) => x !== s);
       st.exclusions += 1;
@@ -93,7 +98,7 @@
       if (st.t >= st.nextBase) { appear(1, 'base'); st.nextBase = st.t + C.baseMs * R(0.6, 1.5); }
       // the exterior returns, above the threshold, one unit of mass at a time, louder by the gain
       const above = Math.max(0, st.exterior - C.threshold);
-      const expected = C.spawnRate * above * dt;
+      const expected = effectiveSpawn() * above * dt;
       let k = Math.floor(expected); if (rnd() < expected - k) k += 1;
       k = Math.min(k, RETURNS_PER_TICK_CAP);
       for (let i = 0; i < k && st.exterior >= 1; i++) { st.exterior -= 1; appear(gain, 'return'); }

@@ -24,7 +24,8 @@ Lex's extension adds the body. Each exclusion is not free: it raises an
 much as pollution. Two readings of what the load does are kept as frames,
 since the brief does not decide: **fatigue** (the load lowers the capacity
 to exclude) and **reactivity** (the load raises it). A third frame, **none**,
-is the brief as written.
+is the brief as written. A fourth, **ironic**, was added after the first
+runs and is stated in its own section below.
 
 `lab/model.js` is this, in ms ticks, seeded. Its constants, with the
 page-to-be having none yet, are the bench's and are listed in the file.
@@ -145,6 +146,38 @@ has it.
   load is this budget's debt; the two frames are the two signs its
   interest could take.
 
+## The fourth frame: Wegner's monitor (stated before its runs, 2026-10-28)
+
+Ironic process theory (Wegner 1994) says what load does differently from
+either frame above. The operating process that suppresses weakens under
+load; the monitoring process that scans for the suppressed content keeps
+running, and in scanning keeps it accessible. In the bench's terms load
+does not change `π`; it raises the return rate `σ`. The **ironic** frame
+is `σ_eff = σ · (1 + load)`, so at full load the exterior returns twice
+as fast. `π` and `g` are untouched.
+
+Predictions, from the mean field before the runs:
+
+- **H6a. Small, not large.** `R0 = π g σ / (σ + δ)` and `σ / (σ + δ)` is
+  already 0.83 at the bench's constants. Doubling `σ` takes it to 0.91,
+  so `R0` at `π = 1, g = 1.5` goes from 1.25 to 1.36 and the critical
+  propensity moves from 0.80 to no lower than **0.73**. The frame is the
+  opposite of fatigue in direction and a fraction of reactivity in size.
+  Raising the return rate can only ever buy the dissipation's share.
+- **H6b. Still no critical point without gain.** At `g = 1` the ceiling
+  is `R0 = 0.91 π < 1` at every `π`. The duration test at `g = 1` settles.
+- **H6c. A faster return drains the exterior.** Below the critical point
+  the exterior at the end should sit *lower* than the `none` frame's at
+  the same `π`, since mass spends less time outside, while exclusions and
+  returns run higher. Pollution under this frame shows in the count of
+  returns, not in the standing mass. If this holds, "exterior at the end"
+  is the wrong reading of this frame, and the README should say so.
+- **The theorem** to go with it: `R0` is monotone in `σ` and bounded by
+  `π g` for any `σ`. `ironic_monotone`, `ironic_capped` in the proofs.
+
+What would falsify the framing: a critical point under 0.7, or the
+exterior at the end *higher* than `none` below the critical point.
+
 ## Results (2026-10-28)
 
 Nothing above this line was changed after the runs. The sweeps are
@@ -227,6 +260,60 @@ which the viewer cannot keep up. The literature's rebound is small
 bench's `σ / (σ + δ) = 0.83`, a `g` under 1.2 has no critical point at
 any propensity, and a `g` of 1.5 has one at 0.8. Whether a person's loop
 has a gain, and what it is, is not a question this bench can answer.
+
+### The fourth frame's runs (2026-10-28, after the section above was written)
+
+Figures `lab/sweep-propensity.svg` (now four frames); the duration tests
+are in the session record. `g = 1.5` unless said.
+
+**H6a: right about the threshold, wrong about the size.** The critical
+point moved as the mean field said and no further: in the duration test
+the ironic frame settles at `π = 0.6` (ratio 1.10), is nearly settled at
+0.7 (1.96, growth +0.02 a minute) and grows hard at 0.8 (ratio 139). The
+turn is between 0.7 and 0.8, inside the predicted band, and the
+falsifier (a critical point under 0.7) did not fire. But "a fraction of
+reactivity in size" was wrong. At `π = 1` the ironic exterior ends at
+1107 against 128 for `none`, with 3148 exclusions against 385. The
+mean field missed this because `R0` counts exclusions *per generation*
+and says nothing about how long a generation takes. Doubling `σ` barely
+moves `R0` (0.83 → 0.91 on the return share) but halves the generation
+time, so above the threshold the exponential rate roughly doubles:
+`σ_eff (g − 1) − δ` is 0.015 a second for `none` and 0.04 for ironic at
+full load, and over three minutes that is `e^2.7` against `e^7.2`.
+**`R0` says whether the loop runs away; `σ` says how fast.** Wegner's
+monitor does not change whether suppression fails; it changes how
+quickly the failure compounds. That is the refinement this frame adds,
+and it is the opposite of what H6a's second sentence claimed.
+
+**H6b: supported.** At `g = 1` the ironic frame settles at every `π`:
+ratios 0.83 to 1.34, growth rates within ±0.01 a minute, exterior under
+25. The monitor cannot make a loop without gain run away.
+
+**H6c: supported, modestly.** Below the critical point the ironic
+exterior at the end sits at or under the `none` frame's at the same `π`
+(5.0 against 7.0 at 0.52, 5.0 against 8.1 at 0.57, 6.9 against 8.8 at
+0.61) while returns run higher (37 against 25, 41 against 39, 56 against
+39). Mass spends less time outside. Above the critical point the order
+reverses, for the reason in H6a. So for this frame "exterior at the end"
+reads pollution only above the threshold; below it the count of returns
+is the honest measure, and the README now says so.
+
+**The verdict rule misfired again,** this time the other way: it called
+the ironic curve a *cliff* on the strength of the exponential tail at
+`π → 1`, not of anything at 0.8. The rule has now been wrong on this
+bench in both directions and is kept, unchanged, as the record of that.
+
+**A bench artefact in the far supercritical tail.** The returns-per-tick
+cap (50) binds in the ironic frame at `π ≥ 0.9` over twelve minutes,
+which is why the measured growth rate there (+0.12, +0.04) is lower than
+at 0.8 (+0.52). The exterior is in the tens of thousands by then; the
+numbers past the cap say the cap, not the loop.
+
+**Proved:** `ironic_monotone` (a higher return rate never lowers `R0`)
+and `ironic_capped` (`R0 ≤ π g` whatever the return rate). The second
+is the theorem behind H6a's correct half and is silent about H6a's wrong
+half, which is the right division of labour between a theorem about a
+ratio and a simulator with a clock.
 
 **Caveats.** One process wrote the brief into rules, chose every
 constant, wrote the hypotheses and ran them; the pre-registration is the

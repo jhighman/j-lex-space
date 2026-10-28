@@ -17,6 +17,8 @@ then this follows"; none is about a person.
 | `load_mono` | under the viewer's acts alone the load never falls, while under its cap | **Lex: dissociation burns bandwidth** |
 | `permanent_exclusion_lowers_R0` | destroying content and returning only the act, with `a ≤ m`, does not raise `R0` | **the Unframeable bin lowers the loop's `R0`** |
 | `supercritical_iff` | `R0 ≥ 1` is `(σ + δ) · m ≤ π · g · σ · a`, by definition | **the threshold moves; it does not vanish** |
+| `ironic_monotone` | a higher return rate `σ` never lowers `R0` (cross-multiplied) | **Wegner's monitor under load does not help** |
+| `ironic_capped` | `R0 ≤ π g` for any `σ` | **raising the return rate buys only the dissipation's share** of `R0`; what it does to the *speed* of growth above the threshold is the simulator's to show, not this ratio's |
 
 The rules were transcribed by hand from `model.js`. If the model
 changes, the transcription is what has to be checked.

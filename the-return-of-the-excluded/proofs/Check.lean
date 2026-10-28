@@ -11,3 +11,5 @@ open Excluded
 #print axioms load_mono
 #print axioms permanent_exclusion_lowers_R0
 #print axioms supercritical_iff
+#print axioms ironic_monotone
+#print axioms ironic_capped
