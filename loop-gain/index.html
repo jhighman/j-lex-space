@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop Gain</title>
+<style>
+  :root { --ink: #1d1d1b; --paper: #fcfcfa; --rule: #d9d4c7; --violet: #7b3fa0; --amber: #c48a1a; --green: #3a8f4a; --red: #b23a3a; --mute: #777; }
+  html, body { margin: 0; background: #111; color: var(--paper); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .stage { display: grid; place-items: center; min-height: 100vh; padding: 16px; box-sizing: border-box; }
+  canvas { width: min(100%, 1280px); aspect-ratio: 16 / 9; background: var(--paper); border-radius: 4px; box-shadow: 0 12px 40px rgba(0,0,0,.5); }
+  .deck { max-width: 1280px; margin: 10px auto 0; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; color: #bbb; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #555; background: #222; color: #eee; cursor: pointer; }
+  button[aria-pressed="true"] { border-color: var(--amber); color: var(--amber); }
+  .fine { color: #888; font-size: 12px; }
+  a { color: #bbb; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div>
+    <canvas id="c" width="1280" height="720" aria-label="Loop Gain: three movements on one canvas"></canvas>
+    <div class="deck">
+      <button id="start" aria-pressed="false">Start · three minutes</button>
+      <button id="rec" aria-pressed="false">Record a take</button>
+      <span id="status" class="fine">Click Start. Sound begins on the click; the browser requires it.</span>
+      <span class="fine" style="margin-left:auto">Loop Gain · Highman–Krížová · <a href="README.md">how it works</a></span>
+    </div>
+  </div>
+</div>
+
+<script src="../the-unframeable-now/lab/model.js"></script>
+<script src="plate.js"></script>
+<script src="lenses.js"></script>
+<script>
+(() => {
+  'use strict';
+  /* ---------- the score ---------- */
+  const M1 = 60, M2 = 150, END = 180;         // movement boundaries, seconds
+  const DELAY_S = 0.45;                       // the loop's delay: an echo you can hear
+  const RESONANCE_HZ = 870, RESONANCE_Q = 9;  // the loop's resonance, as a room has one; 870 Hz is the square plate's figure (2, 5)
+  const GAIN_FROM = 0.80, GAIN_TO = 1.25, GAIN_RAMP_FROM = M1 + 6, GAIN_RAMP_TO = M2 - 22; // g rises 0.80 → 1.25 over about a minute
+  const REENTRY = 2.2;                        // the feed's echo delay, as on the page
+  const LIFE = 32;                            // an item's life on the line, as on the page
+  const CAPTIONS = [
+    [0, 'I · The line', 'A feed, and a reader using it. Every gesture she makes comes back into the stream 2.2 seconds later as one item, which does not act. The band is the share of the stream that is her own echo.'],
+    [22, 'I · The line', 'A gesture returns once, as itself. Loop gain 0. The band rises while she keeps moving and ages out when she stops. The sweep of this model found a slope and no threshold.'],
+    [44, 'I · The line', 'What you hear is the feed: a two-tone ping for what asks, a soft fall for what she would rather, a pop when her move comes back.'],
+    [M1, 'II · The loop', 'The same pings, now through a delay with gain. What returns is excluded again and returns louder. The gain is the loop’s reproduction number, R0: how many returns one return begets.'],
+    [M1 + 20, 'II · The loop', 'Below one, the echoes thin and die. The excluded material cycles and settles. The disc is the exterior, drawn as Bridson\u2019s growth: it fills as fast as the loop carries, and it changes colour where the gain crosses one.'],
+    [M1 + 50, 'II · The loop', 'At one it is critical. Past one every return begets more than itself, and the loop blooms into a howl: the Larsen effect, feedback finding its own frequency. A limiter stands where a speaker’s ceiling would.'],
+    [M1 + 75, 'II · The loop', 'R0 says whether the loop runs away. The return rate says how fast. Doubling the rate barely moves R0 and halves the time a generation takes.'],
+    [M2, 'III · The plate', 'The howl has settled on one frequency, the loop’s resonance, as feedback finds a room’s. That tone, on a plate with sand: the grains leave where the plate moves and come to rest where it is still.'],
+    [M2 + 16, 'III · The plate', 'A continuous drive meets a threshold and the pattern reorganises rather than slides. Chladni, 1787. The runaway, grounded into form. The small disc is what the loop left behind: nothing is gone.'],
+    [M2 + 24, 'III · The plate', 'The ring in the corner has been the piece\u2019s own map all along: the three movements as parts, the needle at the playhead, the growth planted where each event was heard. The piece as heard, inside the piece as planned.'],
+    [END - 8, '', 'Loop Gain · one ping stream, three grammars · Jeff Highman · Alexandra Krížová — critical reviewer and development reviewer'],
+  ];
+  const gainAt = (t) => t < GAIN_RAMP_FROM ? GAIN_FROM : t > GAIN_RAMP_TO ? GAIN_TO : GAIN_FROM + (GAIN_TO - GAIN_FROM) * (t - GAIN_RAMP_FROM) / (GAIN_RAMP_TO - GAIN_RAMP_FROM);
+  const gainCrossesOne = GAIN_RAMP_FROM + (1 - GAIN_FROM) / (GAIN_TO - GAIN_FROM) * (GAIN_RAMP_TO - GAIN_RAMP_FROM);
+
+  /* ---------- the session the line replays: the feed's own model, headless ---------- */
+  const session = DecayModel.simulate({ persona: DecayModel.PERSONAS.kate, personaName: 'kate', pace: 'steady', roundSec: M1, seed: 1007 });
+  const arrivals = session.events.filter((e) => e.kind === 'arrival').map((e) => ({ t: e.t / 1000, source: e.source, want: e.want, score: 0.35 + 0.63 * Math.random(), below: e.below }));
+  const moves = session.moves.map((g) => ({ t: g.at / 1000, said: g.said, kind: g.kind, i: g.i }));
+  // movement II replays the same arrivals as pings, cycling the minute
+  const pingTimes = []; for (let cyc = 0; cyc < Math.ceil((M2 - M1) / M1) + 1; cyc++) for (const a of arrivals) { const t = M1 + cyc * M1 + a.t; if (t < M2 - 2) pingTimes.push({ t, source: a.source, want: a.want }); }
+
+  /* ---------- audio ---------- */
+  const A = { ctx: null, master: null, dest: null, loopIn: null, delay: null, loopGain: null, band: null, analyser: null, fft: null, started: 0, scheduled: new Set(), plateOsc: null, plateGain: null };
+  function audioInit() {
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+    const ctx = new AC();
+    const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 12; comp.attack.value = 0.003; comp.release.value = 0.12;
+    const master = ctx.createGain(); master.gain.value = 0.8; master.connect(comp); comp.connect(ctx.destination);
+    const dest = ctx.createMediaStreamDestination(); comp.connect(dest);
+    // the loop: in → delay → gain → resonance → soft clip → (back to the delay, and out)
+    const loopIn = ctx.createGain(); loopIn.gain.value = 1;
+    const delay = ctx.createDelay(2); delay.delayTime.value = DELAY_S;
+    const loopGain = ctx.createGain(); loopGain.gain.value = GAIN_FROM;
+    const band = ctx.createBiquadFilter(); band.type = 'peaking'; band.frequency.value = RESONANCE_HZ; band.Q.value = RESONANCE_Q; band.gain.value = 6; // the room's resonance: 6 dB of it
+    const clip = ctx.createWaveShaper(); const curve = new Float32Array(1024); for (let i = 0; i < 1024; i++) { const x = i / 511.5 - 1; curve[i] = Math.tanh(1.6 * x) / Math.tanh(1.6); } clip.curve = curve; clip.oversample = '2x'; // where the speaker's ceiling would be
+    const loopOut = ctx.createGain(); loopOut.gain.value = 0.9;
+    loopIn.connect(master); // the ping itself, dry, so what enters the loop is heard before its first return
+    loopIn.connect(delay); delay.connect(loopGain); loopGain.connect(band); band.connect(clip); clip.connect(delay); clip.connect(loopOut); loopOut.connect(master);
+    const analyser = ctx.createAnalyser(); analyser.fftSize = 8192; analyser.smoothingTimeConstant = 0.6; clip.connect(analyser);
+    // the plate's tone, for movement III
+    const plateGain = ctx.createGain(); plateGain.gain.value = 0; plateGain.connect(master);
+    const plateOsc = ctx.createOscillator(); plateOsc.type = 'sine'; plateOsc.frequency.value = RESONANCE_HZ; plateOsc.connect(plateGain); plateOsc.start();
+    Object.assign(A, { ctx, master, dest, loopIn, delay, loopGain, band, analyser, fft: new Float32Array(analyser.frequencyBinCount), td: new Float32Array(analyser.fftSize), plateOsc, plateGain });
+    return true;
+  }
+  /* the feed's pings, as on the page: a two-tone chime for what asks (three for the group chat), a soft fall for what she would rather, a pop for her move coming back */
+  function synth(ctx, dest, kind, t, o) {
+    const g = (v) => { const n = ctx.createGain(); n.gain.setValueAtTime(0.0001, t); n.gain.exponentialRampToValueAtTime(v, t + 0.005); n.connect(dest); return n; };
+    const env = (n, v, dur) => { n.gain.setValueAtTime(v, t + 0.005); n.gain.exponentialRampToValueAtTime(0.0001, t + dur); };
+    const osc = (type, f, n, dur, f2) => { const x = ctx.createOscillator(); x.type = type; x.frequency.setValueAtTime(f, t); if (f2) x.frequency.exponentialRampToValueAtTime(f2, t + dur); x.connect(n); x.start(t); x.stop(t + dur + 0.05); };
+    const noise = (n, dur, lp) => { const len = Math.ceil(ctx.sampleRate * dur), b = ctx.createBuffer(1, len, ctx.sampleRate), d = b.getChannelData(0); for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; const src = ctx.createBufferSource(); src.buffer = b; let node = src; if (lp) { const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = lp; node.connect(f); node = f; } node.connect(n); src.start(t); src.stop(t + dur + 0.02); };
+    switch (kind) {
+      case 'ask': {
+        { const n = g(0.12); env(n, 0.12, 0.14); const x = ctx.createOscillator(); x.type = 'square'; x.frequency.value = 58; const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 180; x.connect(f); f.connect(n); x.start(t); x.stop(t + 0.16); }
+        const reps = o.source === 'social' ? 3 : 1;
+        for (let r = 0; r < reps; r++) { const tt = t + r * 0.13; const n = ctx.createGain(); n.gain.setValueAtTime(0.0001, tt); n.gain.exponentialRampToValueAtTime(0.16, tt + 0.005); n.gain.exponentialRampToValueAtTime(0.0001, tt + 0.16); n.connect(dest); const x = ctx.createOscillator(); x.type = 'sine'; x.frequency.setValueAtTime(o.source === 'work' ? 1174 : o.source === 'family' ? 988 : 880, tt); x.frequency.setValueAtTime(o.source === 'work' ? 1568 : o.source === 'family' ? 1318 : 1174, tt + 0.07); x.connect(n); x.start(tt); x.stop(tt + 0.2); }
+        break; }
+      case 'want': { const n = g(0.1); env(n, 0.1, 0.35); osc('sine', 392, n, 0.35, 330); break; }
+      case 'echo': { const n = g(0.14); env(n, 0.14, 0.25); osc('sine', 660, n, 0.25, 330); const n2 = g(0.06); env(n2, 0.06, 0.12); noise(n2, 0.06, 1200); break; }
+      case 'click': { const n = g(0.07); env(n, 0.07, 0.02); noise(n, 0.07, 3000); break; }
+    }
+  }
+  function scheduleSound(now) {
+    if (!A.ctx) return;
+    const ahead = 0.4, base = A.started;
+    const due = (t) => base + t;
+    if (now < M1 + 1) for (const a of arrivals) { const k = 'a' + a.t; if (!A.scheduled.has(k) && a.t >= now - 0.05 && a.t < now + ahead) { A.scheduled.add(k); synth(A.ctx, A.master, a.want ? 'want' : 'ask', due(a.t), a); } }
+    if (now < M1 + 3) for (const m of moves) {
+      const k = 'm' + m.i; if (!A.scheduled.has(k) && m.t >= now - 0.05 && m.t < now + ahead) { A.scheduled.add(k); synth(A.ctx, A.master, 'click', due(m.t), m); }
+      const k2 = 'e' + m.i, te = m.t + REENTRY; if (!A.scheduled.has(k2) && te >= now - 0.05 && te < now + ahead) { A.scheduled.add(k2); synth(A.ctx, A.master, 'echo', due(te), m); }
+    }
+    if (now >= M1 - 1 && now < M2) for (const p of pingTimes) { const k = 'p' + p.t; if (!A.scheduled.has(k) && p.t >= now - 0.05 && p.t < now + ahead) { A.scheduled.add(k); synth(A.ctx, A.loopIn, p.want ? 'want' : 'ask', due(p.t), p); } }
+  }
+  function audioFrame(now) {
+    if (!A.ctx) return;
+    const ct = A.ctx.currentTime;
+    if (now >= M1 && now < M2) A.loopGain.gain.setTargetAtTime(gainAt(now), ct, 0.1);
+    if (now >= M2) {
+      // let the loop die under its own weight and hand the tone to the plate
+      A.loopGain.gain.setTargetAtTime(0.6, ct, 0.5);
+      A.plateGain.gain.setTargetAtTime(now < END - 6 ? 0.12 : 0, ct, 0.4);
+      A.plateOsc.frequency.setTargetAtTime(plate.freq, ct, 0.05);
+    }
+  }
+  function loopLevelDb() { if (!A.ctx) return -90; A.analyser.getFloatTimeDomainData(A.td); let s = 0; for (let i = 0; i < A.td.length; i++) s += A.td[i] * A.td[i]; return 20 * Math.log10(Math.sqrt(s / A.td.length) + 1e-6); }
+  function loopPeakHz() { if (!A.ctx) return RESONANCE_HZ; A.analyser.getFloatFrequencyData(A.fft); let bi = 1; for (let i = 2; i < A.fft.length; i++) if (A.fft[i] > A.fft[bi]) bi = i; return bi * A.ctx.sampleRate / A.analyser.fftSize; }
+
+  /* ---------- the picture ---------- */
+  const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const plate = makePlate({ size: 560, shape: 'square' });
+  plate.snap(870); plate.scatter();
+  const level = []; // movement II's measured loop level, [t, dB]
+  /* Lex's perceptual readings (issue #9): Bridson as the exterior, Atlas as the piece's own map */
+  const REGIME = { sub: 0, crit: 1, sup: 2 }; // Bridson's "keys" are the loop's regimes
+  const regimeOf = (g) => (g < 0.995 ? REGIME.sub : g <= 1.005 ? REGIME.crit : REGIME.sup);
+  const bridson = LoopLenses.makeBridson(20260);
+  let bridsonEnergy = 0, lastRegime = REGIME.sub;
+  const atlas = LoopLenses.makeAtlas([{ at: 0, until: M1, pc: 0, label: 'I' }, { at: M1, until: M2, pc: 1, label: 'II' }, { at: M2, until: END, pc: 2, label: 'III' }], 20261);
+  let atlasKey = 0; const atlasSeen = new Set();
+  const regimeColour = (pc, active, v) => pc === REGIME.sub ? `hsla(40, 70%, ${active ? 42 : 55}%, ${v})` : pc === REGIME.crit ? `hsla(20, 75%, ${active ? 40 : 52}%, ${v})` : `hsla(0, 65%, ${active ? 38 : 48}%, ${v})`;
+  const regimeGround = (pc) => pc === REGIME.sub ? 'hsl(40, 40%, 94%)' : pc === REGIME.crit ? 'hsl(20, 45%, 93%)' : 'hsl(0, 40%, 93%)';
+  const movementColour = (pc, active, v) => pc === 0 ? `hsla(276, 45%, ${active ? 40 : 52}%, ${v})` : pc === 1 ? `hsla(36, 70%, ${active ? 40 : 52}%, ${v})` : `hsla(30, 25%, ${active ? 30 : 45}%, ${v})`;
+  const movementGround = () => 'hsl(45, 30%, 96%)';
+  let peakHz = RESONANCE_HZ, settledHz = null;
+  const INK = '#1d1d1b', MUTE = '#777', VIOLET = '#7b3fa0', AMBER = '#c48a1a', GREEN = '#3a8f4a', RED = '#b23a3a', RULE = '#d9d4c7';
+  const font = (px, w) => `${w || 400} ${px}px system-ui, -apple-system, "Segoe UI", sans-serif`;
+  function wrap(text, x, y, maxW, lh) { const words = text.split(' '); let line = ''; for (const w of words) { const t = line ? line + ' ' + w : w; if (ctx.measureText(t).width > maxW && line) { ctx.fillText(line, x, y); y += lh; line = w; } else line = t; } if (line) ctx.fillText(line, x, y); return y; }
+  function chrome(now) {
+    ctx.fillStyle = '#fcfcfa'; ctx.fillRect(0, 0, W, H);
+    const cap = CAPTIONS.filter((c) => c[0] <= now).pop() || CAPTIONS[0];
+    ctx.fillStyle = INK; ctx.font = font(22, 600); ctx.fillText('Loop Gain', 40, 44);
+    ctx.fillStyle = MUTE; ctx.font = font(15); ctx.fillText(cap[1], 160, 44);
+    const mm = Math.floor(now / 60), ss = Math.floor(now % 60); ctx.textAlign = 'right'; ctx.fillText(`${mm}:${String(ss).padStart(2, '0')}`, W - 40, 44); ctx.textAlign = 'left';
+    ctx.fillStyle = INK; ctx.font = font(17); wrap(cap[2], 40, H - 72, W - 80, 24);
+    ctx.fillStyle = RULE; ctx.fillRect(40, 58, W - 80, 1); ctx.fillRect(40, H - 100, W - 80, 1);
+    atlas.at(now); atlas.draw(ctx, W - 118, 142, 64, movementColour, movementGround, true);
+    ctx.fillStyle = MUTE; ctx.font = font(11); ctx.textAlign = 'center'; ctx.fillText('Atlas · the piece as heard', W - 118, 222); ctx.textAlign = 'left';
+  }
+  function drawLine(now) {
+    const x0 = 60, x1 = W - 60, y0 = 100, span = 50, nowX = x1 - 120; // "now" a little right of centre... as on the page, with room for what has just arrived
+    const xs = (t) => nowX - (now - t) / span * (nowX - x0);
+    const rows = { you: y0 + 40, streamTop: y0 + 110, streamBot: y0 + 340, band: y0 + 400 };
+    ctx.strokeStyle = RULE; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, rows.streamBot + 8); ctx.lineTo(x1, rows.streamBot + 8); ctx.stroke();
+    ctx.fillStyle = MUTE; ctx.font = font(12); ctx.fillText('you', x0, rows.you - 14); ctx.fillText('stream · height is ranking', x0, rows.streamTop - 10); ctx.fillText('your echo · share of the stream', x0, rows.band - 10);
+    ctx.fillStyle = '#bbb'; ctx.fillRect(nowX, rows.you - 24, 1, rows.band + 30 - rows.you); ctx.fillStyle = MUTE; ctx.fillText('now', nowX + 6, rows.you - 20);
+    // items: arrivals, by ranking
+    for (const a of arrivals) { if (a.t > now || now - a.t > span) continue; const x = xs(a.t), y = rows.streamBot - a.score * (rows.streamBot - rows.streamTop); const age = Math.min(1, (now - a.t) / LIFE); ctx.globalAlpha = 1 - 0.7 * age; ctx.fillStyle = a.want ? GREEN : AMBER; ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.fill(); }
+    ctx.globalAlpha = 1;
+    // moves and their echoes
+    for (const m of moves) {
+      if (m.t > now || now - m.t > span) continue; const x = xs(m.t), te = m.t + REENTRY, xe = xs(Math.min(te, now));
+      ctx.fillStyle = VIOLET; ctx.fillRect(x - 2, rows.you - 8, 4, 16);
+      ctx.strokeStyle = VIOLET; ctx.lineWidth = 1.2; ctx.setLineDash(te > now ? [3, 3] : []); ctx.beginPath(); ctx.moveTo(x, rows.you + 8); ctx.quadraticCurveTo((x + xe) / 2, rows.streamTop - 30, xe, rows.streamTop + 20); ctx.stroke(); ctx.setLineDash([]);
+      if (te <= now) { const age = Math.min(1, (now - te) / LIFE); ctx.globalAlpha = 1 - 0.7 * age; ctx.fillStyle = VIOLET; ctx.beginPath(); ctx.moveTo(xe, rows.streamTop + 12); ctx.lineTo(xe + 7, rows.streamTop + 20); ctx.lineTo(xe, rows.streamTop + 28); ctx.lineTo(xe - 7, rows.streamTop + 20); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; }
+    }
+    // the band: share of live items that are echoes, over the visible window
+    ctx.fillStyle = VIOLET; ctx.globalAlpha = 0.85;
+    for (let t = Math.max(0, now - span); t <= now; t += 0.25) {
+      const alive = arrivals.filter((a) => a.t <= t && t - a.t < LIFE).length, echoes = moves.filter((m) => m.t + REENTRY <= t && t - (m.t + REENTRY) < LIFE).length;
+      const share = alive + echoes ? echoes / (alive + echoes) : 0; const x = xs(t); ctx.fillRect(x, rows.band + 24 - share * 24, 2.2, share * 24);
+    }
+    ctx.globalAlpha = 1;
+    const aliveNow = arrivals.filter((a) => a.t <= now && now - a.t < LIFE).length, echoesNow = moves.filter((m) => m.t + REENTRY <= now && now - (m.t + REENTRY) < LIFE).length;
+    const shareNow = aliveNow + echoesNow ? echoesNow / (aliveNow + echoesNow) : 0;
+    ctx.fillStyle = INK; ctx.font = font(15); ctx.fillText(`${Math.round(shareNow * 100)}% of the stream is you`, nowX + 10, rows.band + 20);
+    ctx.fillStyle = MUTE; ctx.font = font(13); ctx.fillText(`loop gain 0 · a move returns as one item, and an item does not act`, x0, rows.band + 60);
+  }
+  function drawLoop(now) {
+    const g = gainAt(now);
+    const x0 = 80, x1 = W - 470, y0 = 110, y1 = H - 150;
+    const xs = (t) => x0 + (t - M1) / (M2 - M1) * (x1 - x0);
+    const dbLo = -60, dbHi = -6, ys = (db) => y1 - (Math.max(dbLo, Math.min(dbHi, db)) - dbLo) / (dbHi - dbLo) * (y1 - y0);
+    ctx.strokeStyle = RULE; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, y1); ctx.lineTo(x1, y1); ctx.moveTo(x0, y0); ctx.lineTo(x0, y1); ctx.stroke();
+    ctx.fillStyle = MUTE; ctx.font = font(12); ctx.fillText('what the loop carries · dB', x0, y0 - 12);
+    for (const db of [-60, -40, -20, -6]) { ctx.fillText(`${db}`, x0 - 34, ys(db) + 4); ctx.fillStyle = RULE; ctx.fillRect(x0, ys(db), x1 - x0, 1); ctx.fillStyle = MUTE; }
+    // the gain ramp, as a thin line against the right axis
+    ctx.strokeStyle = AMBER; ctx.lineWidth = 1.5; ctx.beginPath();
+    for (let t = M1; t <= M2; t += 1) { const gg = gainAt(t), y = y1 - (gg - 0.7) / (1.3 - 0.7) * (y1 - y0); t === M1 ? ctx.moveTo(xs(t), y) : ctx.lineTo(xs(t), y); } ctx.stroke();
+    ctx.fillStyle = AMBER; ctx.font = font(12); ctx.textAlign = 'right'; ctx.fillText('loop gain g', x1, y1 - (gainAt(M2) - 0.7) / 0.6 * (y1 - y0) - 8); ctx.textAlign = 'left';
+    // R0 = 1
+    const xc = xs(gainCrossesOne); ctx.strokeStyle = '#bbb'; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(xc, y0); ctx.lineTo(xc, y1); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = MUTE; ctx.fillText('g = 1 · R0 = 1', xc + 6, y0 + 14);
+    // the pings, as ticks under the axis
+    ctx.fillStyle = AMBER; for (const p of pingTimes) if (p.t <= now) { ctx.globalAlpha = p.want ? 0.5 : 0.9; ctx.fillStyle = p.want ? GREEN : AMBER; ctx.fillRect(xs(p.t), y1 + 4, 1.5, 8); } ctx.globalAlpha = 1;
+    // the measured level
+    ctx.strokeStyle = VIOLET; ctx.lineWidth = 2; ctx.beginPath(); let first = true;
+    for (const [t, db] of level) { const x = xs(t), y = ys(db); first ? ctx.moveTo(x, y) : ctx.lineTo(x, y); first = false; } ctx.stroke();
+    // readouts
+    ctx.fillStyle = INK; ctx.font = font(28, 600); ctx.fillText(`g = ${g.toFixed(2)}`, x0 + 20, y0 + 44);
+    ctx.font = font(14); ctx.fillStyle = MUTE; ctx.fillText(g < 0.995 ? 'subcritical · the echoes die' : g < 1.005 ? 'critical' : 'supercritical · every return begets more than itself', x0 + 20, y0 + 68);
+    const lv = level.length ? level[level.length - 1][1] : -90;
+    ctx.fillText(`loop level ${lv.toFixed(0)} dB · peak ${Math.round(peakHz)} Hz`, x0 + 20, y0 + 90);
+    ctx.fillText(`delay ${DELAY_S} s · resonance ${RESONANCE_HZ} Hz · a limiter where the speaker’s ceiling would be`, x0 + 20, y0 + 112);
+    // Bridson: the exterior, grown by what the loop carries
+    const bx = W - 270, by = 330, br = 165;
+    bridson.draw(ctx, bx, by, br, regimeColour, regimeGround);
+    ctx.fillStyle = MUTE; ctx.font = font(12); ctx.textAlign = 'center';
+    ctx.fillText('Bridson · the exterior', bx, by + br + 22);
+    ctx.fillText(bridson.label() + (bridson.full() ? ' · full' : ''), bx, by + br + 40);
+    ctx.textAlign = 'left';
+  }
+  function drawPlate(now) {
+    const w = 460, x = 80, y = 100;
+    plate.draw(ctx, x, y, w);
+    ctx.strokeStyle = RULE; ctx.strokeRect(x - 0.5, y - 0.5, w + 1, w + 1);
+    const tx = x + w + 60;
+    ctx.fillStyle = INK; ctx.font = font(28, 600); ctx.fillText(`${Math.round(plate.freq)} Hz`, tx, y + 44);
+    ctx.font = font(15); ctx.fillStyle = MUTE; ctx.fillText(plate.strength > 0.1 ? plate.describe() : 'between resonances', tx, y + 70);
+    ctx.fillText(`the howl settled at ${settledHz ? Math.round(settledHz) : '…'} Hz; the plate’s nearest figure is ${plate.nearest(plate.freq).f} Hz`, tx, y + 94);
+    ctx.fillStyle = INK; ctx.font = font(15);
+    let yy = y + 140;
+    yy = wrap('The sand is thrown off the parts of the plate that move and comes to rest on the lines that stay still. Each tone draws its own figure; between tones the plate barely responds and the sand stays where it is.', tx, yy, W - tx - 60, 22);
+    yy = wrap('Square plate: two crossed standing waves. The pitches are chosen for listening and are not measured from a real plate.', tx, yy + 30, W - tx - 60, 22);
+    // the resonance meter
+    ctx.fillStyle = RULE; ctx.fillRect(tx, yy + 40, 320, 6); ctx.fillStyle = AMBER; ctx.fillRect(tx, yy + 40, 320 * plate.strength, 6);
+    ctx.fillStyle = MUTE; ctx.font = font(12); ctx.fillText('how much the plate moves at this tone', tx, yy + 62);
+    bridson.draw(ctx, W - 150, H - 190, 62, regimeColour, regimeGround);
+    ctx.textAlign = 'center'; ctx.fillText('what the loop left', W - 150, H - 112); ctx.textAlign = 'left';
+  }
+
+  /* ---------- time and the take ---------- */
+  let running = false, t0 = 0, raf = 0, take = null, recordWanted = false;
+  const status = document.getElementById('status');
+  function nowSec() { return A.ctx ? A.ctx.currentTime - A.started : (performance.now() - t0) / 1000; }
+  function frame() {
+    const now = Math.min(END, nowSec());
+    scheduleSound(now); audioFrame(now);
+    chrome(now);
+    // Atlas: a beat at every event of the piece, in the movement's key; a key change at each movement boundary
+    const movementKey = now < M1 ? 0 : now < M2 ? 1 : 2;
+    if (movementKey !== atlasKey) { atlasKey = movementKey; atlas.at(now); atlas.keyChange(movementKey); }
+    atlas.at(now);
+    if (now < M1) { for (const a of arrivals) { const k = 'a' + a.t; if (a.t <= now && !atlasSeen.has(k)) { atlasSeen.add(k); atlas.beat(0); } } for (const m of moves) { const k = 'e' + m.i; if (m.t + REENTRY <= now && !atlasSeen.has(k)) { atlasSeen.add(k); atlas.beat(0); } } }
+    else if (now < M2) { for (const p of pingTimes) { const k = 'p' + p.t; if (p.t <= now && !atlasSeen.has(k)) { atlasSeen.add(k); atlas.beat(1); } } }
+    else if (Math.floor(now * 2) !== Math.floor((now - 1 / 60) * 2)) atlas.beat(2);
+    if (now < M1) drawLine(now);
+    else if (now < M2) {
+      if (A.ctx) { const db = loopLevelDb(); if (!level.length || now - level[level.length - 1][0] > 0.2) level.push([now, db]); peakHz = loopPeakHz(); }
+      // Bridson grows by what the loop carries: a round each time the level above the floor accumulates to one
+      const g = gainAt(now), regime = regimeOf(g);
+      if (regime !== lastRegime) { lastRegime = regime; bridson.keyChange(regime, (now - M1) / (M2 - M1)); }
+      const db = level.length ? level[level.length - 1][1] : -90;
+      bridsonEnergy += Math.max(0, (db + 48) / 24) * (1 / 60) * 6; // −48 dB: nothing; −24 dB: a round a second; the ceiling: two a second
+      while (bridsonEnergy >= 1) { bridsonEnergy -= 1; bridson.beat((now - M1) / (M2 - M1)); }
+      drawLoop(now);
+    } else {
+      if (settledHz == null) { settledHz = A.ctx ? loopPeakHz() : RESONANCE_HZ; if (!(settledHz > 120 && settledHz < 2600)) settledHz = RESONANCE_HZ; plate.setTarget(settledHz); }
+      plate.frame(0.02); drawPlate(now);
+    }
+    if (now >= END) { stop(); return; }
+    raf = requestAnimationFrame(frame);
+  }
+  async function start() {
+    if (running) return;
+    if (!A.ctx && !audioInit()) { status.textContent = 'This browser has no Web Audio; the picture will run without sound.'; }
+    if (A.ctx && A.ctx.state === 'suspended') await A.ctx.resume();
+    running = true; t0 = performance.now(); if (A.ctx) A.started = A.ctx.currentTime + 0.1;
+    level.length = 0; settledHz = null; A.scheduled.clear(); plate.setShape('square'); plate.snap(870); plate.scatter();
+    Object.assign(bridson.state, { samples: [{ x: 0, y: 0, pc: 0, born: 0, active: true, parent: -1 }], seed: 20260, rounds: 0, key: 0, idle: 0 }); bridsonEnergy = 0; lastRegime = REGIME.sub;
+    Object.assign(atlas.state, { needle: 0, samples: [], seed: 20261, rounds: 0, changes: [] }); atlasKey = 0; atlasSeen.clear();
+    document.getElementById('start').setAttribute('aria-pressed', 'true');
+    if (recordWanted && A.ctx && typeof MediaRecorder !== 'undefined') {
+      const prefs = ['video/mp4;codecs=avc1.640028,mp4a.40.2', 'video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm'];
+      const mime = prefs.find((m) => MediaRecorder.isTypeSupported(m));
+      if (mime) {
+        const stream = new MediaStream([...canvas.captureStream(60).getVideoTracks(), ...A.dest.stream.getAudioTracks()]);
+        const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 8_000_000, audioBitsPerSecond: 256_000 }); const chunks = [];
+        rec.addEventListener('dataavailable', (e) => { if (e.data.size) chunks.push(e.data); });
+        take = { rec, chunks, ext: mime.startsWith('video/mp4') ? 'mp4' : 'webm', mime: mime.split(';')[0] }; rec.start(1000);
+        status.textContent = `Recording (${take.ext}). The file saves when the piece ends.`;
+      } else status.textContent = 'This browser cannot record; the piece runs without a take.';
+    } else status.textContent = 'Running.';
+    raf = requestAnimationFrame(frame);
+  }
+  function stop() {
+    running = false; cancelAnimationFrame(raf);
+    document.getElementById('start').setAttribute('aria-pressed', 'false');
+    if (A.ctx) { A.plateGain.gain.setTargetAtTime(0, A.ctx.currentTime, 0.3); A.loopGain.gain.setTargetAtTime(0, A.ctx.currentTime, 0.3); }
+    if (take) {
+      const tk = take; take = null;
+      tk.rec.addEventListener('stop', () => { const blob = new Blob(tk.chunks, { type: tk.mime }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `loop-gain.${tk.ext}`; a.click(); status.textContent = `Saved loop-gain.${tk.ext} (${(blob.size / 1e6).toFixed(1)} MB).`; }, { once: true });
+      setTimeout(() => tk.rec.stop(), 600);
+    } else status.textContent = 'Ended. Start again to run it again.';
+  }
+  document.getElementById('start').addEventListener('click', () => running ? stop() : start());
+  document.getElementById('rec').addEventListener('click', (e) => { recordWanted = !recordWanted; e.currentTarget.setAttribute('aria-pressed', String(recordWanted)); status.textContent = recordWanted ? 'Recording is armed: the next Start records a take and saves it when the piece ends.' : 'Recording is off.'; });
+  if (new URLSearchParams(location.search).get('record') === '1') { recordWanted = true; document.getElementById('rec').setAttribute('aria-pressed', 'true'); status.textContent = 'Recording is armed by the URL. Click Start.'; }
+
+  // a still first frame
+  chrome(0); drawLine(0);
+})();
+</script>
+</body>
+</html>
