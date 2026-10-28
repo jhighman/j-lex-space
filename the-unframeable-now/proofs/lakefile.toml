@@ -1,0 +1,5 @@
+name = "unframeable"
+defaultTargets = ["Unframeable"]
+
+[[lean_lib]]
+name = "Unframeable"
