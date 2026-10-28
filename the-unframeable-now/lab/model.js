@@ -74,20 +74,29 @@
   }
 
   /* ---- one session ----
-   * opts: { pace, roundSec, seed, persona, personaName, moment }
+   * opts: { pace, roundSec, seed, persona, personaName, moment, override }
    * persona: function (api) that schedules actions; see PERSONAS.
    * moment: false runs the same bad day without the moment (the counterfactual).
+   * override: for a sweep (sweep.js), a few of the page's constants set by hand:
+   *   { paceMs, askWeight, reentryMs, lifeMs }. Each defaults to the page's value,
+   *   so a run without one is the page's model; the floor, the tempo and the moment
+   *   still follow the pace's name. Left out, nothing here changes.
    * returns { snaps, moves, events, arrivals, summary, momentState, allostasis, bin } */
   function simulate(opts) {
     const pace = opts.pace || 'steady';
     const ROUND = (opts.roundSec || 180) * 1000;
+    const OV = opts.override || {};
+    const paceMs = OV.paceMs != null ? OV.paceMs : PACE[pace];
+    const reentryMs = OV.reentryMs != null ? OV.reentryMs : REENTRY_DELAY_MS;
+    const lifeMs = OV.lifeMs != null ? OV.lifeMs : FRAGMENT_LIFE_MS;
+    const askWeight = OV.askWeight != null ? OV.askWeight : 1;
     const withMoment = opts.moment !== false;
     const rnd = mulberry32(opts.seed == null ? 1 : opts.seed);
     const R = (a, b) => a + rnd() * (b - a);
     const pick = (xs) => xs[Math.floor(rnd() * xs.length)];
 
     const st = {
-      t: 0, fragments: [], weights: Object.fromEntries(CHANNEL_WEIGHTS), muted: new Set(),
+      t: 0, fragments: [], weights: Object.fromEntries(CHANNEL_WEIGHTS.map(([c, w]) => [c, WANTS.has(c) ? w : w * askWeight])), muted: new Set(), echoPeak: 0,
       cortisol: 0, lastArrival: -1e9, lastMove: -1e9, decay: { a: 1, c: 1, g: 1, m: 1, e: 0 },
       snaps: [], moves: [], arrivals: 0, seen: { ask: 0, want: 0 }, below: { ask: 0, want: 0 },
       momentT: 0, momentTriggered: false, momentAt: null, momentArmed: false, momentTrigger: null,
@@ -188,7 +197,7 @@
         d.g = Math.min(1, d.g + 0.35); d.c = Math.min(1, d.c + 0.20);
       }
       // every move comes back, the Empty Bin's included; only what it emptied does not
-      at(st.t + REENTRY_DELAY_MS, () => enter({ id: st.nextId++, branchId: g.branchId, kind: 'gesture', source: 'you', want: false, score: R(0.35, 0.98), threshold: R(0.1, 0.55), born: st.t, hidden: false, move: g.i }), { branchId: g.branchId, kind: 'gesture-reentry' });
+      at(st.t + reentryMs, () => enter({ id: st.nextId++, branchId: g.branchId, kind: 'gesture', source: 'you', want: false, score: R(0.35, 0.98), threshold: R(0.1, 0.55), born: st.t, hidden: false, move: g.i }), { branchId: g.branchId, kind: 'gesture-reentry' });
       snap(`you, ${said}`);
       return true;
     }
@@ -243,11 +252,11 @@
     function streamTick() {
       const burst = rnd() < 0.3 ? 2 + Math.floor(rnd() * 2) : 1;
       for (let i = 0; i < burst; i++) at(st.t + i * 350, () => enter(makeItem()));
-      at(st.t + PACE[pace] * (0.6 + rnd() * 0.9), streamTick);
+      at(st.t + paceMs * (0.6 + rnd() * 0.9), streamTick);
     }
     // seed, as on the page: seven items already there, born before the start
     for (let i = 0; i < 7; i++) { const f = makeItem(); if (f) { f.born = -(7 - i) * PACE.steady; st.fragments.push(f); } }
-    at(PACE[pace], streamTick);
+    at(paceMs, streamTick);
     (opts.persona || PERSONAS.kate)(api, pace, ROUND);
     snap('the start');
 
@@ -258,7 +267,7 @@
       st.t += 50;
       while (queue.length && queue[0].t <= st.t) { const q = queue.shift(); if (!q.cancelled) q.fn(); queue.sort((x, y) => x.t - y.t); }
       // ageing out, as the page's tick does
-      for (const f of [...st.fragments]) if (st.t - f.born > FRAGMENT_LIFE_MS) st.fragments.splice(st.fragments.indexOf(f), 1);
+      for (const f of [...st.fragments]) if (st.t - f.born > lifeMs) st.fragments.splice(st.fragments.indexOf(f), 1);
       if (st.t % 100 === 0) {
         // recovery approaches the floor and never crosses it: a session's load is kept
         const surplus = Math.max(0, st.cortisol - st.allostaticFloor);
@@ -280,6 +289,7 @@
         d.c += (calmTarget - d.c) * 0.06;
         const n = st.fragments.length, e = st.fragments.filter((f) => f.kind === 'gesture').length;
         d.g = Math.max(0, d.g - 0.004 * (n ? e / n : 0));
+        st.echoPeak = Math.max(st.echoPeak, n ? e / n : 0);
         d.m = Math.max(0, 1 - st.t / MINUTES_MS);
         d.e = entropyOf(st.fragments);
         if (st.binCountdown != null) { st.binCountdown = Math.max(0, st.binCountdown - TICK_MS / 1000); if (st.binCountdown === 0) emptyBinExpire(); }
@@ -289,13 +299,14 @@
     snap('the end');
     const first = st.snaps[0], last = st.snaps[st.snaps.length - 1];
     const minOf = (k) => Math.min(...st.snaps.map((s) => s[k]));
+    const nEnd = st.fragments.length, eEnd = st.fragments.filter((f) => f.kind === 'gesture').length;
     return {
       pace, roundSec: ROUND / 1000, seed: opts.seed, persona: opts.personaName || 'kate', moment: withMoment,
       snaps: st.snaps, moves: st.moves, events: st.events, arrivals: st.arrivals, seen: st.seen, below: st.below, momentAt: st.momentAt,
       momentState: { triggered: st.momentTriggered, armed: st.momentArmed, at: st.momentAt, trigger: st.momentTrigger },
       allostasis: { floor: st.allostaticFloor, refractoryUntil: st.refractoryUntil, refractoryActive: st.refractoryUntil != null && st.t < st.refractoryUntil },
       bin: { available: st.binAvailable, countdown: st.binCountdown, target: st.binTarget, severedBranches: [...st.severedBranches] },
-      summary: { a: last.a, c: last.c, g: last.g, m: last.m, e: last.e, aMin: minOf('a'), cMin: minOf('c'), gMin: minOf('g'), eMax: Math.max(...st.snaps.map((s) => s.e)), moves: st.moves.length, arrivals: st.arrivals, cortisol: last.cortisol, floor: st.allostaticFloor },
+      summary: { a: last.a, c: last.c, g: last.g, m: last.m, e: last.e, aMin: minOf('a'), cMin: minOf('c'), gMin: minOf('g'), eMax: Math.max(...st.snaps.map((s) => s.e)), moves: st.moves.length, arrivals: st.arrivals, cortisol: last.cortisol, floor: st.allostaticFloor, echo: nEnd ? eEnd / nEnd : 0, echoPeak: st.echoPeak },
     };
   }
 

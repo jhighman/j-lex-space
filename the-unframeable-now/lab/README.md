@@ -108,6 +108,13 @@ in the paper is the figure on the lab page.
   adapted: the vulnerability case runs twelve seconds instead of five,
   because the page's earliest second is eight; and the bin case also
   asserts that opening the bin comes back as an item.
+- `sweep.js` — push one of the page's constants through a range and
+  watch where the end state goes, per persona: `node sweep.js --knob
+  paceMs|askWeight|reentryMs|lifeMs [--pace busy] [--seeds 20]`. Writes
+  `sweep-<knob>.svg` (kept) and `sweep-<knob>.json` (every run; not
+  tracked). The model takes the knob through `simulate({ override })`,
+  each value defaulting to the page's, so a run without one is the
+  page's model. See *What the sweep said* below.
 - `conformance.js` — the bench. Needs Playwright on `NODE_PATH` and the
   repository root served: `NODE_PATH=…/node_modules node conformance.js
   --url http://localhost:8000 --pace busy --round 40 --n 5`.
@@ -209,3 +216,54 @@ The `emptier` ends a bad day with agency at 0.34 against Kate's 0.17,
 the bin's 35 points less the two moves it cost; the `dawdler` at 0.14.
 What she empties is the one thing that stays gone, and the emptying
 comes back.
+
+## What the sweep said (2026-10-28)
+
+Issue #4 frames capability as a phase transition: a landscape that
+reorganises past a critical value. The same question can be put to the
+feed with no new instrument, since the constants are in one file. Does a
+persona's end state slide as the feed is turned up, or drop at a
+critical value? A slide is a slope; a drop is a phase transition.
+
+`sweep.js` pushed four constants through a range, twenty-four points,
+log-spaced, ten or twenty seeds a point, two-minute sessions, and read
+the end state as the mean of attention, calm and agency (the minutes
+drain with the clock whatever happens, and are left out). The verdict is
+by rule, stated in the script: *flat* if the curve moves less than 0.15
+across the range; *cliff* if one step carries a third of the fall or
+more, which is the shape a discontinuity would have at this grid;
+*steep* if no step does but the 90→10% crossing fits inside half a
+decade; *slides* otherwise.
+
+| knob | range | pace | verdicts |
+|---|---|---|---|
+| ms between arrivals | 12 s → 0.3 s | normal day | five slide, the doomscroller steep |
+| ms between arrivals | 12 s → 0.3 s | bad day, with the moment | five slide, the doomscroller steep |
+| the asks' weight against the wants' | ×⅛ → ×16 | normal day | five flat, the gardener slides |
+| ms until a move returns | 0.2 s → 30 s | normal day | all flat |
+| ms an item lasts | 4 s → 120 s | normal day | all flat |
+
+No cliff. What there is instead is a knee. On the arrival interval every
+persona holds flat from twelve seconds down to about 3.5 seconds between
+arrivals, which is the page's normal day, and then slides over roughly a
+decade: the abstainer from 0.97 to 0.33, the tidier furthest, 0.64 to
+0.07, Kate 0.62 to 0.21. The doomscroller is at the floor by four
+seconds between arrivals and has nowhere further to fall, which is what
+makes his one fall steep. The asks' weight moves the end state by a
+tenth at most; the re-entry delay and the item's life barely move it.
+The bad day shifts every curve down and does not change its shape: the
+moment adds a floor, not a transition.
+
+So in this model the trap is a slope, not a threshold. That is a negative
+result, and it goes in the record at the same length as a positive one
+would. Two cautions. The grid is 0.07 decades apart, so a transition
+narrower than that would read as a steep slide; and the verdict rule was
+written for this sweep, after the first run showed that a ratio to the
+typical step flags every flat curve. The figures are `sweep-*.svg`; each
+title names the knob, the pace and the seed count, which is all
+`sweep.js` needs to draw it again.
+
+The conformance bench against the page was not re-run for the `override`
+hook; the sample table without an override is identical to the byte, and
+the three tests in `tests/` pass.
+
