@@ -111,4 +111,16 @@ the ping synth from `../the-unframeable-now/index.html`, both as written.
   settle would be truer and less recordable; this one was chosen for the
   Sunday deadline and the README says so.
 - Thesis, process note and disclosure are in `thesis.md` and
-  `process-note.md`.
+  `process-note.md`. `paper.md` is the long-form account for an audio
+  overview and a video.
+
+## The video
+
+`video/script.md` is a single-narrator script of about ten minutes for a
+YouTube video aimed at people early in research, built on the week's
+method rather than its finding: write the rules down, seed everything,
+predict first, keep the failure, prove what you can, find the quantity,
+work with someone who reads against you. `video/youtube-cut.md` is the
+earlier plan for cutting the Notebook's audio overview, kept for the
+shot list. `audio-overview/` holds that overview's transcript, a
+line-by-line review of it against the record, and a corrections source.
