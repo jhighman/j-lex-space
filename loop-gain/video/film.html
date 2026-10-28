@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Loop Gain · the film</title>
+<style>
+  html, body { margin: 0; background: #111; color: #ccc; font: 14px system-ui, sans-serif; }
+  .stage { display: grid; place-items: center; min-height: 100vh; padding: 16px; box-sizing: border-box; }
+  canvas { width: min(100%, 1280px); aspect-ratio: 16/9; background: #fcfcfa; box-shadow: 0 12px 40px rgba(0,0,0,.5); }
+  .deck { max-width: 1280px; margin: 10px auto 0; display: flex; gap: 12px; align-items: center; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #555; background: #222; color: #eee; cursor: pointer; }
+  .fine { color: #888; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="stage"><div>
+  <canvas id="c" width="1280" height="720"></canvas>
+  <div class="deck">
+    <button id="start">Start the film</button>
+    <button id="rec">Record (silent MP4)</button>
+    <span id="status" class="fine">Eleven and a half minutes, no sound. ?record=1 arms the recorder; ?auto=1 starts without a click.</span>
+  </div>
+</div></div>
+<script src="../../the-unframeable-now/lab/model.js"></script>
+<script src="../plate.js"></script>
+<script src="../lenses.js"></script>
+<script src="film.js"></script>
+</body>
+</html>
