@@ -164,3 +164,7 @@ work with someone who reads against you. `video/youtube-cut.md` is the
 earlier plan for cutting the Notebook's audio overview, kept for the
 shot list. `audio-overview/` holds that overview's transcript, a
 line-by-line review of it against the record, and a corrections source.
+
+`video/reading-script.md` is the same narration with the film's clock: a
+timecode before each paragraph, the words each scene holds against the
+seconds it has, and which two lines to trim where it runs over.
