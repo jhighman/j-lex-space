@@ -7,8 +7,10 @@ the captions sharp.*
 
 ## 1. Upload the master, not the small cut
 
-Use **`loop-gain-film-master-1440p.mp4`**: 2560×1440, 30 fps, H.264 at
-10 Mb/s, AAC voice, about 1 GB, 13:54. Every mark in it is drawn at that
+Use **`loop-gain-film-master-1440p.mp4`**: 2560×1440, 30 fps, H.264,
+AAC voice at 155 kb/s, 188 MB, 13:54. The encoder was given 10 Mb/s and
+used under two on average, because most frames are flat colour and text;
+the picture is drawn at that size, not upscaled, and the edges are exact. Every mark in it is drawn at that
 size, not upscaled, so its edges survive a re-encode.
 
 Do not upload the 46 MB cut. It was made for a 50 MB limit, and YouTube
@@ -74,7 +76,7 @@ text lives, and it is the page as it was.
 YouTube filters links in viewers' comments, but a comment from the
 channel itself carries them, and the channel can pin one comment to the
 top of the thread. Post this one from the channel account, then open its
-`⋮` menu and choose **Pin**. Do it after the video is live, since pinning
+three-dot menu and choose **Pin**. Do it after the video is live, since pinning
 needs the comment thread to exist.
 
 > **If you want the research behind this:**
