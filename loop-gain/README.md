@@ -188,6 +188,15 @@ sequences from the recording as JPEGs at ten a second; they stay out of
 the repository and are regenerated from the committed recording.
 `?cutaways=0` plays the drawn shots instead.
 
+Captions: `video/narration.srt` and `narration.vtt` carry the narration
+as closed captions, 164 cues, for YouTube's caption upload or any player
+that toggles them. The words are the reading script's; the timing is
+Whisper's, word by word, over the recorded track, aligned by
+`video/voiceover/captions.py`, which also writes `subtitles.json`. With
+`?subs=1` the film renders a burned-in cut at 1280×800: the picture
+unchanged above, an 80 px band below carrying the cue, so nothing is
+covered. `render.js … subs=1` makes that cut.
+
 `video/reading-script.md` is the same narration with the film's clock: a
 timecode before each paragraph, the words each scene holds against the
 seconds it has, and which two lines to trim where it runs over.

@@ -1,0 +1,822 @@
+[
+{
+"s": 6.54,
+"e": 11.92,
+"text": "Put a microphone in front of its\nown speaker and turn the gain up."
+},
+{
+"s": 12.26,
+"e": 15.41,
+"text": "Below a certain point you\nget an echo that dies away."
+},
+{
+"s": 15.46,
+"e": 18.13,
+"text": "Past that point you get a howl,"
+},
+{
+"s": 18.18,
+"e": 22.66,
+"text": "and the howl settles on\nwhatever note the room likes."
+},
+{
+"s": 23.16,
+"e": 26.14,
+"text": "Nobody chose the note. The room did."
+},
+{
+"s": 27.36,
+"e": 32.33,
+"text": "That point has a name.\nLoop gain equal to one."
+},
+{
+"s": 32.38,
+"e": 38.33,
+"text": "This is a video about a week we spent\nfinding that point in two places it was"
+},
+{
+"s": 38.38,
+"e": 41.7,
+"text": "not supposed to be,\nand about how we found it,"
+},
+{
+"s": 42.0,
+"e": 45.0,
+"text": "because the how is the part you can use."
+},
+{
+"s": 47.68,
+"e": 52.39,
+"text": "It started as art. Two concept\nbriefs for interactive pieces,"
+},
+{
+"s": 52.44,
+"e": 58.2,
+"text": "written by Lex, the reviewer on this\nproject, in two different vocabularies."
+},
+{
+"s": 58.48,
+"e": 63.19,
+"text": "The first is about a feed. Everything\nthat reaches you arrives framed:"
+},
+{
+"s": 63.24,
+"e": 67.74,
+"text": "a card, a timestamp, a sentiment\ncolour, a \"because you liked\"."
+},
+{
+"s": 68.18,
+"e": 73.76,
+"text": "The brief's claim is one sentence:\nevery frame applied re-enters as signal."
+},
+{
+"s": 74.26,
+"e": 78.69,
+"text": "Whatever you do to the feed\nbecomes one more thing in the feed."
+},
+{
+"s": 78.74,
+"e": 82.1,
+"text": "The second is about pollution,\nread as a symptom."
+},
+{
+"s": 82.52,
+"e": 87.96,
+"text": "Push a signal out of awareness and it\naccumulates somewhere, and comes back."
+},
+{
+"s": 88.16,
+"e": 90.82,
+"text": "The brief's claim is also one sentence:"
+},
+{
+"s": 91.14,
+"e": 95.44,
+"text": "excluding the signal repeats\nthe act that produced it."
+},
+{
+"s": 95.58,
+"e": 101.71,
+"text": "An art programme called Phase Transition\nasked us to translate a finding into"
+},
+{
+"s": 101.76,
+"e": 106.63,
+"text": "a form, under the rule carry the\nstructure, not just the essence."
+},
+{
+"s": 106.68,
+"e": 111.26,
+"text": "The programme's name gave us a\nquestion to put to both briefs."
+},
+{
+"s": 111.44,
+"e": 115.86,
+"text": "As you turn the system up,\ndoes it slide, or does it drop?"
+},
+{
+"s": 118.14,
+"e": 122.16,
+"text": "You cannot ask a brief that\nquestion. You can ask a model."
+},
+{
+"s": 122.92,
+"e": 126.01,
+"text": "So the first thing we\ndid, for each brief,"
+},
+{
+"s": 126.06,
+"e": 129.69,
+"text": "was write its rules down\nplainly enough to run."
+},
+{
+"s": 129.74,
+"e": 133.19,
+"text": "The feed became a stream\nfrom seven channels,"
+},
+{
+"s": 133.24,
+"e": 138.81,
+"text": "four that ask something of the reader\nand three she would rather see, ranked"
+},
+{
+"s": 138.86,
+"e": 145.39,
+"text": "by stated weights. Every gesture returns\nto the stream two point two seconds"
+},
+{
+"s": 145.44,
+"e": 151.48,
+"text": "later as one more item. Four\nnumbers wear down by stated rules:"
+},
+{
+"s": 151.92,
+"e": 157.81,
+"text": "attention, calm, agency, and the\nminutes she meant for something else."
+},
+{
+"s": 157.86,
+"e": 163.2,
+"text": "Then seeds. A seed is a number\nthat fixes every random choice,"
+},
+{
+"s": 163.42,
+"e": 167.44,
+"text": "so the same seed gives the\nsame session on any machine."
+},
+{
+"s": 167.94,
+"e": 171.3,
+"text": "When a run looks strange,\nyou run that one again."
+},
+{
+"s": 171.6,
+"e": 177.51,
+"text": "We say \"twenty seeds a point\" and we\nmean twenty repeatable sessions at each"
+},
+{
+"s": 177.56,
+"e": 178.56,
+"text": "setting."
+},
+{
+"s": 178.74,
+"e": 184.47,
+"text": "None of this is a claim about a person.\nIt is a machine for finding out what"
+},
+{
+"s": 184.52,
+"e": 187.66,
+"text": "the rules entail. That\nsentence will come back."
+},
+{
+"s": 190.1,
+"e": 192.52,
+"text": "The second brief had been written,"
+},
+{
+"s": 192.88,
+"e": 199.31,
+"text": "read and extended by two people before\nanyone wrote down the number that decides"
+},
+{
+"s": 199.36,
+"e": 204.97,
+"text": "it. Here it is. Each exclusion\ndeposits a unit in the exterior."
+},
+{
+"s": 205.02,
+"e": 208.34,
+"text": "A unit returns with some probability,"
+},
+{
+"s": 209.18,
+"e": 213.86,
+"text": "and a returned signal is excluded\nagain with some propensity,"
+},
+{
+"s": 214.44,
+"e": 218.99,
+"text": "and comes back louder by a gain.\nSo one exclusion begets,"
+},
+{
+"s": 219.04,
+"e": 223.63,
+"text": "on average, propensity times\ngain times return share,"
+},
+{
+"s": 223.68,
+"e": 226.41,
+"text": "exclusions in the next generation."
+},
+{
+"s": 226.46,
+"e": 230.01,
+"text": "Epidemiologists call that R\u2011nought."
+},
+{
+"s": 230.06,
+"e": 234.78,
+"text": "Below one, it dies out.\nAbove one, it multiplies."
+},
+{
+"s": 235.3,
+"e": 241.17,
+"text": "The brief's claim that ignoring the\nsignal supplies fresh material for the"
+},
+{
+"s": 241.22,
+"e": 245.87,
+"text": "next return is the claim\nthat the gain is above one."
+},
+{
+"s": 245.92,
+"e": 250.75,
+"text": "Before we ran anything we\nwrote five hypotheses to disk,"
+},
+{
+"s": 250.8,
+"e": 254.21,
+"text": "with numbers, and what\nwould falsify each."
+},
+{
+"s": 254.26,
+"e": 259.79,
+"text": "With our constants the critical\npropensity was zero point eight."
+},
+{
+"s": 259.84,
+"e": 263.1,
+"text": "We marked the section and\ndid not touch it again."
+},
+{
+"s": 263.5,
+"e": 268.94,
+"text": "This costs ten minutes. It is the\ndifference between a result and a story."
+},
+{
+"s": 270.8,
+"e": 275.61,
+"text": "We swept the feed first.\nFour constants through a range,"
+},
+{
+"s": 275.66,
+"e": 280.01,
+"text": "twenty-four points, ten\nor twenty seeds a point."
+},
+{
+"s": 280.06,
+"e": 285.78,
+"text": "Interval between arrivals from twelve\nseconds down to a third of a second."
+},
+{
+"s": 286.3,
+"e": 290.56,
+"text": "No cliff. Every curve\nflat or sliding. One knee,"
+},
+{
+"s": 291.06,
+"e": 294.62,
+"text": "near three and a half\nseconds between arrivals,"
+},
+{
+"s": 294.84,
+"e": 297.96,
+"text": "which happens to be\nthe page's normal day."
+},
+{
+"s": 298.4,
+"e": 303.22,
+"text": "And the knee had a reason we\ncould read off the rules by hand."
+},
+{
+"s": 304.0,
+"e": 309.76,
+"text": "Attention in the model recovers\nonly after three seconds of quiet."
+},
+{
+"s": 310.42,
+"e": 315.59,
+"text": "The share of gaps that long is a\ncontinuous function of the interval,"
+},
+{
+"s": 315.64,
+"e": 319.79,
+"text": "one above five seconds, zero below two."
+},
+{
+"s": 319.84,
+"e": 325.79,
+"text": "The attention curves track it at\npoint nine to point nine nine seven."
+},
+{
+"s": 325.84,
+"e": 327.74,
+"text": "A slope, with an explanation."
+},
+{
+"s": 329.72,
+"e": 335.73,
+"text": "Then the exclusion loop. We had predicted\na critical point at zero point eight"
+},
+{
+"s": 335.78,
+"e": 339.1,
+"text": "and said the sweep would\nread it as a cliff."
+},
+{
+"s": 339.74,
+"e": 345.78,
+"text": "It read \"slides.\" Our first\nhypothesis failed under its own test."
+},
+{
+"s": 346.74,
+"e": 349.86,
+"text": "Here is why, and it\nis worth sitting with."
+},
+{
+"s": 350.46,
+"e": 356.68,
+"text": "The verdict rule was written for the feed,\nfor a bounded quantity that steps."
+},
+{
+"s": 357.4,
+"e": 362.56,
+"text": "A quantity that diverges at a\ncritical point does not step."
+},
+{
+"s": 362.74,
+"e": 369.03,
+"text": "It grows, and in a three-minute\nsession it grows smoothly straight"
+},
+{
+"s": 369.08,
+"e": 374.0,
+"text": "through the critical value. The\ninstrument was wrong for the question."
+},
+{
+"s": 374.62,
+"e": 378.63,
+"text": "The pre-registration is\nwhat let us see that,"
+},
+{
+"s": 378.68,
+"e": 382.83,
+"text": "instead of quietly moving the goalposts."
+},
+{
+"s": 382.88,
+"e": 388.09,
+"text": "So we wrote a second test\nand labelled it post-hoc,"
+},
+{
+"s": 388.14,
+"e": 391.64,
+"text": "so nobody could mistake\nit for the first."
+},
+{
+"s": 392.28,
+"e": 397.59,
+"text": "For a critical point the right question\nis whether the end state depends on"
+},
+{
+"s": 397.64,
+"e": 401.03,
+"text": "how long the session\nran. Below the point,"
+},
+{
+"s": 401.08,
+"e": 405.81,
+"text": "a twelve-minute session should\nend where a three-minute one did."
+},
+{
+"s": 405.86,
+"e": 408.67,
+"text": "Above it, it should keep growing."
+},
+{
+"s": 408.72,
+"e": 414.03,
+"text": "At zero point six the\nratio was one point one."
+},
+{
+"s": 414.08,
+"e": 417.99,
+"text": "At zero point eight, three point nine."
+},
+{
+"s": 418.04,
+"e": 424.45,
+"text": "At zero point nine, sixty-two. The\nturn was at zero point eight, where"
+},
+{
+"s": 424.5,
+"e": 428.29,
+"text": "the number said. And the\nfailure stays in the record,"
+},
+{
+"s": 428.34,
+"e": 430.9,
+"text": "at full length, next to the success."
+},
+{
+"s": 434.04,
+"e": 439.22,
+"text": "Some claims do not need a sample.\nThey follow from the rules alone."
+},
+{
+"s": 439.88,
+"e": 443.24,
+"text": "For those we used Lean,\na proof assistant,"
+},
+{
+"s": 443.72,
+"e": 446.64,
+"text": "in its core form with no library,"
+},
+{
+"s": 447.02,
+"e": 451.44,
+"text": "so that anyone can check\nthem with one small download."
+},
+{
+"s": 452.1,
+"e": 457.5,
+"text": "The band cannot be kept flat by\nacting. The floor never comes down."
+},
+{
+"s": 457.88,
+"e": 461.53,
+"text": "The moment's calm deficit\npersists as structure."
+},
+{
+"s": 461.58,
+"e": 467.5,
+"text": "Agency never rises without a\nlike that worked or an emptying."
+},
+{
+"s": 468.08,
+"e": 471.94,
+"text": "For the loop: supercritical\nmass is unbounded,"
+},
+{
+"s": 472.4,
+"e": 474.68,
+"text": "subcritical mass is bounded,"
+},
+{
+"s": 475.38,
+"e": 479.31,
+"text": "and a higher return rate\nnever lowers R\u2011nought."
+},
+{
+"s": 479.36,
+"e": 485.52,
+"text": "Twenty-one theorems, resting on\nLean's own axioms and nothing else."
+},
+{
+"s": 486.04,
+"e": 491.89,
+"text": "One of them corrected us. Our first\nversion of the floor theorem was false"
+},
+{
+"s": 491.94,
+"e": 496.0,
+"text": "as written. If the floor\nwere ever above its cap,"
+},
+{
+"s": 496.5,
+"e": 502.06,
+"text": "a rule would pull it back down. The\ncompiler found the missing hypothesis."
+},
+{
+"s": 502.7,
+"e": 505.54,
+"text": "That is what a proof assistant is for."
+},
+{
+"s": 505.84,
+"e": 512.3,
+"text": "And every theorem is of the form: if the\nmodel is as written, then this follows."
+},
+{
+"s": 512.92,
+"e": 516.87,
+"text": "Not one is about a person.\nThe proofs tell you,"
+},
+{
+"s": 516.92,
+"e": 521.5,
+"text": "by what they cannot reach,\nwhere the simulator's work begins."
+},
+{
+"s": 524.12,
+"e": 529.04,
+"text": "Lex's extension of the second\nbrief had put a body in the model:"
+},
+{
+"s": 529.5,
+"e": 535.24,
+"text": "each exclusion costs something,\nan allostatic load that recovers slowly."
+},
+{
+"s": 535.76,
+"e": 539.04,
+"text": "We had three readings\nof what the load does."
+},
+{
+"s": 539.36,
+"e": 541.39,
+"text": "Then we read Wegner."
+},
+{
+"s": 541.44,
+"e": 547.61,
+"text": "Wegner's ironic process theory says why\ntrying not to think of something makes"
+},
+{
+"s": 547.66,
+"e": 552.93,
+"text": "you think of it. A monitor scans\nfor the suppressed thought and,"
+},
+{
+"s": 552.98,
+"e": 558.81,
+"text": "in scanning, keeps it close. Under load\nthe monitor keeps running while the"
+},
+{
+"s": 558.86,
+"e": 563.48,
+"text": "effort to suppress gets tired.\nIn the model's terms,"
+},
+{
+"s": 563.8,
+"e": 566.03,
+"text": "load raises the return rate."
+},
+{
+"s": 566.08,
+"e": 572.17,
+"text": "We wrote the prediction first. The\ncritical point would barely move, because"
+},
+{
+"s": 572.22,
+"e": 578.43,
+"text": "the return share was already point\neight three and doubling the rate could"
+},
+{
+"s": 578.48,
+"e": 585.0,
+"text": "only buy the rest. That held. We also\nwrote that the frame would be small."
+},
+{
+"s": 585.4,
+"e": 588.27,
+"text": "That was wrong by an order of magnitude."
+},
+{
+"s": 588.32,
+"e": 594.53,
+"text": "R\u2011nought counts returns per generation\nand says nothing about how long"
+},
+{
+"s": 594.58,
+"e": 600.25,
+"text": "a generation takes. Double the return\nrate and you barely move whether the"
+},
+{
+"s": 600.3,
+"e": 605.16,
+"text": "loop runs away. You halve\nthe time a generation takes,"
+},
+{
+"s": 605.58,
+"e": 610.23,
+"text": "so above the threshold it\ncompounds twice as fast."
+},
+{
+"s": 610.28,
+"e": 615.12,
+"text": "R\u2011nought says whether. The\nreturn rate says how fast."
+},
+{
+"s": 615.36,
+"e": 618.04,
+"text": "We did not have that sentence on Monday."
+},
+{
+"s": 620.42,
+"e": 624.97,
+"text": "Which is when the two briefs\nstopped being neighbours."
+},
+{
+"s": 625.02,
+"e": 630.91,
+"text": "In the feed, a gesture returns once,\nas itself, and the echo does not act."
+},
+{
+"s": 630.96,
+"e": 636.25,
+"text": "R\u2011nought is zero. The share\naccumulates and ages out."
+},
+{
+"s": 636.3,
+"e": 637.3,
+"text": "A slope."
+},
+{
+"s": 637.38,
+"e": 643.23,
+"text": "In the exclusion loop, a return invites\nthe act that produced it and comes"
+},
+{
+"s": 643.28,
+"e": 649.7,
+"text": "back louder. R\u2011nought is positive, and a\npositive R\u2011nought has a critical point."
+},
+{
+"s": 649.96,
+"e": 650.96,
+"text": "A cliff."
+},
+{
+"s": 651.48,
+"e": 657.54,
+"text": "Every frame re-enters as signal.\nExcluding the signal repeats the act."
+},
+{
+"s": 658.18,
+"e": 662.77,
+"text": "The same loop, at gain\nzero and gain above zero."
+},
+{
+"s": 662.82,
+"e": 666.71,
+"text": "The difference between media\ntheory and depth psychology,"
+},
+{
+"s": 666.76,
+"e": 672.34,
+"text": "in these two models, is one rule:\ndoes what returns invite an act?"
+},
+{
+"s": 674.56,
+"e": 680.0,
+"text": "So that is what we made. Three minutes.\nOne stream of pings, read three ways."
+},
+{
+"s": 680.36,
+"e": 684.43,
+"text": "The line: a real run of the\nfeed's model, with its sounds."
+},
+{
+"s": 684.48,
+"e": 687.74,
+"text": "A gesture, and its\npop two seconds later."
+},
+{
+"s": 688.18,
+"e": 689.71,
+"text": "Loop gain zero."
+},
+{
+"s": 689.76,
+"e": 695.45,
+"text": "The loop: the same pings through a\ndelay with gain, rising past one."
+},
+{
+"s": 695.5,
+"e": 701.61,
+"text": "The echoes stop dying. The howl.\nA resonance placed by hand at"
+},
+{
+"s": 701.66,
+"e": 707.74,
+"text": "eight hundred and seventy hertz, as a\nroom has one, and we say so on screen."
+},
+{
+"s": 708.38,
+"e": 713.37,
+"text": "The plate: the howl's settled\nnote drives a plate of sand,"
+},
+{
+"s": 713.42,
+"e": 718.85,
+"text": "and the sand leaves where the plate\nmoves and gathers where it is still."
+},
+{
+"s": 718.9,
+"e": 723.37,
+"text": "Chladni, seventeen eighty-seven.\nA continuous drive,"
+},
+{
+"s": 723.42,
+"e": 728.58,
+"text": "a threshold, a form. The oldest\nversion of the same structure."
+},
+{
+"s": 731.0,
+"e": 735.31,
+"text": "Two people did this. A public\nrepository, a laptop, a week."
+},
+{
+"s": 735.36,
+"e": 740.19,
+"text": "One of us built with an AI\nassistant; the other reviewed,"
+},
+{
+"s": 740.24,
+"e": 742.75,
+"text": "on purpose with a different one,"
+},
+{
+"s": 742.8,
+"e": 747.28,
+"text": "so we would not share\none set of blind spots."
+},
+{
+"s": 747.9,
+"e": 753.89,
+"text": "She asked to be credited as a reviewer\nrather than an author, because"
+},
+{
+"s": 753.94,
+"e": 755.74,
+"text": "that is what she did."
+},
+{
+"s": 756.12,
+"e": 762.09,
+"text": "Here is what we would say to anyone\nwho wants to do their own research and"
+},
+{
+"s": 762.14,
+"e": 766.3,
+"text": "means it. Write the rules\ndown. Seed everything."
+},
+{
+"s": 766.98,
+"e": 772.0,
+"text": "Predict first, with a number.\nKeep the failures at full length."
+},
+{
+"s": 772.5,
+"e": 776.06,
+"text": "Prove what can be proved\nand say what cannot."
+},
+{
+"s": 776.66,
+"e": 782.47,
+"text": "Find the quantity the question turns on.\nWork with someone who reads against"
+},
+{
+"s": 782.52,
+"e": 783.23,
+"text": "you."
+},
+{
+"s": 783.28,
+"e": 788.72,
+"text": "And say what the numbers are not. Every\nclaim in this video is about a model."
+},
+{
+"s": 789.02,
+"e": 792.16,
+"text": "Whether a feed does any of this to you,"
+},
+{
+"s": 792.5,
+"e": 798.49,
+"text": "whether your own loop has a gain, is a\nquestion for a person and a measurement."
+},
+{
+"s": 798.54,
+"e": 803.06,
+"text": "That experiment is the\none nobody has run."
+},
+{
+"s": 803.44,
+"e": 804.44,
+"text": "It is next."
+}
+]

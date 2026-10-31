@@ -1,6 +1,6 @@
 # Voiceover tools
 
-Three scripts, no ffmpeg. Both run with a Python that has PyObjC, which on
+Four scripts, no ffmpeg. Both run with a Python that has PyObjC, which on
 this machine is the Whisper venv (`~/.venvs/whisper/bin/python`); the
 first needs only the system `say`.
 
@@ -22,6 +22,14 @@ every scene at its new start. The narration starts five seconds
 late, after the film's opening card. Copy the timing file beside `film.js`,
 render, then mux. The levelling is the only processing; no compression,
 no noise reduction.
+
+`captions.py <whisper-words.json> <reading-script.md> <outdir>` aligns the
+script's words to Whisper word timestamps taken over the narration track
+(`whisper.transcribe(..., word_timestamps=True)`, model `small`) and
+writes `narration.srt`, `narration.vtt` and `subtitles.json`. Cues are up
+to two lines of about forty characters, one to six seconds, broken at
+sentence ends or clause marks, never across a paragraph. Script words
+Whisper missed take their time from their neighbours.
 
 `mux.py <video.mp4> <audio.m4a> <out.mp4>` lays an audio file onto the
 silent film with AVFoundation, passthrough, so the picture is not

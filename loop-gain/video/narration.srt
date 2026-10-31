@@ -1,0 +1,790 @@
+1
+00:00:06,540 --> 00:00:11,920
+Put a microphone in front of its
+own speaker and turn the gain up.
+
+2
+00:00:12,260 --> 00:00:15,410
+Below a certain point you
+get an echo that dies away.
+
+3
+00:00:15,460 --> 00:00:18,130
+Past that point you get a howl,
+
+4
+00:00:18,180 --> 00:00:22,660
+and the howl settles on
+whatever note the room likes.
+
+5
+00:00:23,160 --> 00:00:26,140
+Nobody chose the note. The room did.
+
+6
+00:00:27,360 --> 00:00:32,330
+That point has a name.
+Loop gain equal to one.
+
+7
+00:00:32,380 --> 00:00:38,330
+This is a video about a week we spent
+finding that point in two places it was
+
+8
+00:00:38,380 --> 00:00:41,700
+not supposed to be,
+and about how we found it,
+
+9
+00:00:42,000 --> 00:00:45,000
+because the how is the part you can use.
+
+10
+00:00:47,680 --> 00:00:52,390
+It started as art. Two concept
+briefs for interactive pieces,
+
+11
+00:00:52,440 --> 00:00:58,200
+written by Lex, the reviewer on this
+project, in two different vocabularies.
+
+12
+00:00:58,480 --> 00:01:03,190
+The first is about a feed. Everything
+that reaches you arrives framed:
+
+13
+00:01:03,240 --> 00:01:07,740
+a card, a timestamp, a sentiment
+colour, a "because you liked".
+
+14
+00:01:08,180 --> 00:01:13,760
+The brief's claim is one sentence:
+every frame applied re-enters as signal.
+
+15
+00:01:14,260 --> 00:01:18,690
+Whatever you do to the feed
+becomes one more thing in the feed.
+
+16
+00:01:18,740 --> 00:01:22,100
+The second is about pollution,
+read as a symptom.
+
+17
+00:01:22,520 --> 00:01:27,960
+Push a signal out of awareness and it
+accumulates somewhere, and comes back.
+
+18
+00:01:28,160 --> 00:01:30,820
+The brief's claim is also one sentence:
+
+19
+00:01:31,140 --> 00:01:35,440
+excluding the signal repeats
+the act that produced it.
+
+20
+00:01:35,580 --> 00:01:41,710
+An art programme called Phase Transition
+asked us to translate a finding into
+
+21
+00:01:41,760 --> 00:01:46,630
+a form, under the rule carry the
+structure, not just the essence.
+
+22
+00:01:46,680 --> 00:01:51,260
+The programme's name gave us a
+question to put to both briefs.
+
+23
+00:01:51,440 --> 00:01:55,860
+As you turn the system up,
+does it slide, or does it drop?
+
+24
+00:01:58,140 --> 00:02:02,160
+You cannot ask a brief that
+question. You can ask a model.
+
+25
+00:02:02,920 --> 00:02:06,010
+So the first thing we
+did, for each brief,
+
+26
+00:02:06,060 --> 00:02:09,690
+was write its rules down
+plainly enough to run.
+
+27
+00:02:09,740 --> 00:02:13,190
+The feed became a stream
+from seven channels,
+
+28
+00:02:13,240 --> 00:02:18,810
+four that ask something of the reader
+and three she would rather see, ranked
+
+29
+00:02:18,860 --> 00:02:25,390
+by stated weights. Every gesture returns
+to the stream two point two seconds
+
+30
+00:02:25,440 --> 00:02:31,480
+later as one more item. Four
+numbers wear down by stated rules:
+
+31
+00:02:31,920 --> 00:02:37,810
+attention, calm, agency, and the
+minutes she meant for something else.
+
+32
+00:02:37,860 --> 00:02:43,200
+Then seeds. A seed is a number
+that fixes every random choice,
+
+33
+00:02:43,420 --> 00:02:47,440
+so the same seed gives the
+same session on any machine.
+
+34
+00:02:47,940 --> 00:02:51,300
+When a run looks strange,
+you run that one again.
+
+35
+00:02:51,600 --> 00:02:57,510
+We say "twenty seeds a point" and we
+mean twenty repeatable sessions at each
+
+36
+00:02:57,560 --> 00:02:58,560
+setting.
+
+37
+00:02:58,740 --> 00:03:04,470
+None of this is a claim about a person.
+It is a machine for finding out what
+
+38
+00:03:04,520 --> 00:03:07,660
+the rules entail. That
+sentence will come back.
+
+39
+00:03:10,100 --> 00:03:12,520
+The second brief had been written,
+
+40
+00:03:12,880 --> 00:03:19,310
+read and extended by two people before
+anyone wrote down the number that decides
+
+41
+00:03:19,360 --> 00:03:24,970
+it. Here it is. Each exclusion
+deposits a unit in the exterior.
+
+42
+00:03:25,020 --> 00:03:28,340
+A unit returns with some probability,
+
+43
+00:03:29,180 --> 00:03:33,860
+and a returned signal is excluded
+again with some propensity,
+
+44
+00:03:34,440 --> 00:03:38,990
+and comes back louder by a gain.
+So one exclusion begets,
+
+45
+00:03:39,040 --> 00:03:43,630
+on average, propensity times
+gain times return share,
+
+46
+00:03:43,680 --> 00:03:46,410
+exclusions in the next generation.
+
+47
+00:03:46,460 --> 00:03:50,010
+Epidemiologists call that R‑nought.
+
+48
+00:03:50,060 --> 00:03:54,780
+Below one, it dies out.
+Above one, it multiplies.
+
+49
+00:03:55,300 --> 00:04:01,170
+The brief's claim that ignoring the
+signal supplies fresh material for the
+
+50
+00:04:01,220 --> 00:04:05,870
+next return is the claim
+that the gain is above one.
+
+51
+00:04:05,920 --> 00:04:10,750
+Before we ran anything we
+wrote five hypotheses to disk,
+
+52
+00:04:10,800 --> 00:04:14,210
+with numbers, and what
+would falsify each.
+
+53
+00:04:14,260 --> 00:04:19,790
+With our constants the critical
+propensity was zero point eight.
+
+54
+00:04:19,840 --> 00:04:23,100
+We marked the section and
+did not touch it again.
+
+55
+00:04:23,500 --> 00:04:28,940
+This costs ten minutes. It is the
+difference between a result and a story.
+
+56
+00:04:30,800 --> 00:04:35,610
+We swept the feed first.
+Four constants through a range,
+
+57
+00:04:35,660 --> 00:04:40,010
+twenty-four points, ten
+or twenty seeds a point.
+
+58
+00:04:40,060 --> 00:04:45,780
+Interval between arrivals from twelve
+seconds down to a third of a second.
+
+59
+00:04:46,300 --> 00:04:50,560
+No cliff. Every curve
+flat or sliding. One knee,
+
+60
+00:04:51,060 --> 00:04:54,620
+near three and a half
+seconds between arrivals,
+
+61
+00:04:54,840 --> 00:04:57,960
+which happens to be
+the page's normal day.
+
+62
+00:04:58,400 --> 00:05:03,220
+And the knee had a reason we
+could read off the rules by hand.
+
+63
+00:05:04,000 --> 00:05:09,760
+Attention in the model recovers
+only after three seconds of quiet.
+
+64
+00:05:10,420 --> 00:05:15,590
+The share of gaps that long is a
+continuous function of the interval,
+
+65
+00:05:15,640 --> 00:05:19,790
+one above five seconds, zero below two.
+
+66
+00:05:19,840 --> 00:05:25,790
+The attention curves track it at
+point nine to point nine nine seven.
+
+67
+00:05:25,840 --> 00:05:27,740
+A slope, with an explanation.
+
+68
+00:05:29,720 --> 00:05:35,730
+Then the exclusion loop. We had predicted
+a critical point at zero point eight
+
+69
+00:05:35,780 --> 00:05:39,100
+and said the sweep would
+read it as a cliff.
+
+70
+00:05:39,740 --> 00:05:45,780
+It read "slides." Our first
+hypothesis failed under its own test.
+
+71
+00:05:46,740 --> 00:05:49,860
+Here is why, and it
+is worth sitting with.
+
+72
+00:05:50,460 --> 00:05:56,680
+The verdict rule was written for the feed,
+for a bounded quantity that steps.
+
+73
+00:05:57,400 --> 00:06:02,560
+A quantity that diverges at a
+critical point does not step.
+
+74
+00:06:02,740 --> 00:06:09,030
+It grows, and in a three-minute
+session it grows smoothly straight
+
+75
+00:06:09,080 --> 00:06:14,000
+through the critical value. The
+instrument was wrong for the question.
+
+76
+00:06:14,620 --> 00:06:18,630
+The pre-registration is
+what let us see that,
+
+77
+00:06:18,680 --> 00:06:22,830
+instead of quietly moving the goalposts.
+
+78
+00:06:22,880 --> 00:06:28,090
+So we wrote a second test
+and labelled it post-hoc,
+
+79
+00:06:28,140 --> 00:06:31,640
+so nobody could mistake
+it for the first.
+
+80
+00:06:32,280 --> 00:06:37,590
+For a critical point the right question
+is whether the end state depends on
+
+81
+00:06:37,640 --> 00:06:41,030
+how long the session
+ran. Below the point,
+
+82
+00:06:41,080 --> 00:06:45,810
+a twelve-minute session should
+end where a three-minute one did.
+
+83
+00:06:45,860 --> 00:06:48,670
+Above it, it should keep growing.
+
+84
+00:06:48,720 --> 00:06:54,030
+At zero point six the
+ratio was one point one.
+
+85
+00:06:54,080 --> 00:06:57,990
+At zero point eight, three point nine.
+
+86
+00:06:58,040 --> 00:07:04,450
+At zero point nine, sixty-two. The
+turn was at zero point eight, where
+
+87
+00:07:04,500 --> 00:07:08,290
+the number said. And the
+failure stays in the record,
+
+88
+00:07:08,340 --> 00:07:10,900
+at full length, next to the success.
+
+89
+00:07:14,040 --> 00:07:19,220
+Some claims do not need a sample.
+They follow from the rules alone.
+
+90
+00:07:19,880 --> 00:07:23,240
+For those we used Lean,
+a proof assistant,
+
+91
+00:07:23,720 --> 00:07:26,640
+in its core form with no library,
+
+92
+00:07:27,020 --> 00:07:31,440
+so that anyone can check
+them with one small download.
+
+93
+00:07:32,100 --> 00:07:37,500
+The band cannot be kept flat by
+acting. The floor never comes down.
+
+94
+00:07:37,880 --> 00:07:41,530
+The moment's calm deficit
+persists as structure.
+
+95
+00:07:41,580 --> 00:07:47,500
+Agency never rises without a
+like that worked or an emptying.
+
+96
+00:07:48,080 --> 00:07:51,940
+For the loop: supercritical
+mass is unbounded,
+
+97
+00:07:52,400 --> 00:07:54,680
+subcritical mass is bounded,
+
+98
+00:07:55,380 --> 00:07:59,310
+and a higher return rate
+never lowers R‑nought.
+
+99
+00:07:59,360 --> 00:08:05,520
+Twenty-one theorems, resting on
+Lean's own axioms and nothing else.
+
+100
+00:08:06,040 --> 00:08:11,890
+One of them corrected us. Our first
+version of the floor theorem was false
+
+101
+00:08:11,940 --> 00:08:16,000
+as written. If the floor
+were ever above its cap,
+
+102
+00:08:16,500 --> 00:08:22,060
+a rule would pull it back down. The
+compiler found the missing hypothesis.
+
+103
+00:08:22,700 --> 00:08:25,540
+That is what a proof assistant is for.
+
+104
+00:08:25,840 --> 00:08:32,300
+And every theorem is of the form: if the
+model is as written, then this follows.
+
+105
+00:08:32,920 --> 00:08:36,870
+Not one is about a person.
+The proofs tell you,
+
+106
+00:08:36,920 --> 00:08:41,500
+by what they cannot reach,
+where the simulator's work begins.
+
+107
+00:08:44,120 --> 00:08:49,040
+Lex's extension of the second
+brief had put a body in the model:
+
+108
+00:08:49,500 --> 00:08:55,240
+each exclusion costs something,
+an allostatic load that recovers slowly.
+
+109
+00:08:55,760 --> 00:08:59,040
+We had three readings
+of what the load does.
+
+110
+00:08:59,360 --> 00:09:01,390
+Then we read Wegner.
+
+111
+00:09:01,440 --> 00:09:07,610
+Wegner's ironic process theory says why
+trying not to think of something makes
+
+112
+00:09:07,660 --> 00:09:12,930
+you think of it. A monitor scans
+for the suppressed thought and,
+
+113
+00:09:12,980 --> 00:09:18,810
+in scanning, keeps it close. Under load
+the monitor keeps running while the
+
+114
+00:09:18,860 --> 00:09:23,480
+effort to suppress gets tired.
+In the model's terms,
+
+115
+00:09:23,800 --> 00:09:26,030
+load raises the return rate.
+
+116
+00:09:26,080 --> 00:09:32,170
+We wrote the prediction first. The
+critical point would barely move, because
+
+117
+00:09:32,220 --> 00:09:38,430
+the return share was already point
+eight three and doubling the rate could
+
+118
+00:09:38,480 --> 00:09:45,000
+only buy the rest. That held. We also
+wrote that the frame would be small.
+
+119
+00:09:45,400 --> 00:09:48,270
+That was wrong by an order of magnitude.
+
+120
+00:09:48,320 --> 00:09:54,530
+R‑nought counts returns per generation
+and says nothing about how long
+
+121
+00:09:54,580 --> 00:10:00,250
+a generation takes. Double the return
+rate and you barely move whether the
+
+122
+00:10:00,300 --> 00:10:05,160
+loop runs away. You halve
+the time a generation takes,
+
+123
+00:10:05,580 --> 00:10:10,230
+so above the threshold it
+compounds twice as fast.
+
+124
+00:10:10,280 --> 00:10:15,120
+R‑nought says whether. The
+return rate says how fast.
+
+125
+00:10:15,360 --> 00:10:18,040
+We did not have that sentence on Monday.
+
+126
+00:10:20,420 --> 00:10:24,970
+Which is when the two briefs
+stopped being neighbours.
+
+127
+00:10:25,020 --> 00:10:30,910
+In the feed, a gesture returns once,
+as itself, and the echo does not act.
+
+128
+00:10:30,960 --> 00:10:36,250
+R‑nought is zero. The share
+accumulates and ages out.
+
+129
+00:10:36,300 --> 00:10:37,300
+A slope.
+
+130
+00:10:37,380 --> 00:10:43,230
+In the exclusion loop, a return invites
+the act that produced it and comes
+
+131
+00:10:43,280 --> 00:10:49,700
+back louder. R‑nought is positive, and a
+positive R‑nought has a critical point.
+
+132
+00:10:49,960 --> 00:10:50,960
+A cliff.
+
+133
+00:10:51,480 --> 00:10:57,540
+Every frame re-enters as signal.
+Excluding the signal repeats the act.
+
+134
+00:10:58,180 --> 00:11:02,770
+The same loop, at gain
+zero and gain above zero.
+
+135
+00:11:02,820 --> 00:11:06,710
+The difference between media
+theory and depth psychology,
+
+136
+00:11:06,760 --> 00:11:12,340
+in these two models, is one rule:
+does what returns invite an act?
+
+137
+00:11:14,560 --> 00:11:20,000
+So that is what we made. Three minutes.
+One stream of pings, read three ways.
+
+138
+00:11:20,360 --> 00:11:24,430
+The line: a real run of the
+feed's model, with its sounds.
+
+139
+00:11:24,480 --> 00:11:27,740
+A gesture, and its
+pop two seconds later.
+
+140
+00:11:28,180 --> 00:11:29,710
+Loop gain zero.
+
+141
+00:11:29,760 --> 00:11:35,450
+The loop: the same pings through a
+delay with gain, rising past one.
+
+142
+00:11:35,500 --> 00:11:41,610
+The echoes stop dying. The howl.
+A resonance placed by hand at
+
+143
+00:11:41,660 --> 00:11:47,740
+eight hundred and seventy hertz, as a
+room has one, and we say so on screen.
+
+144
+00:11:48,380 --> 00:11:53,370
+The plate: the howl's settled
+note drives a plate of sand,
+
+145
+00:11:53,420 --> 00:11:58,850
+and the sand leaves where the plate
+moves and gathers where it is still.
+
+146
+00:11:58,900 --> 00:12:03,370
+Chladni, seventeen eighty-seven.
+A continuous drive,
+
+147
+00:12:03,420 --> 00:12:08,580
+a threshold, a form. The oldest
+version of the same structure.
+
+148
+00:12:11,000 --> 00:12:15,310
+Two people did this. A public
+repository, a laptop, a week.
+
+149
+00:12:15,360 --> 00:12:20,190
+One of us built with an AI
+assistant; the other reviewed,
+
+150
+00:12:20,240 --> 00:12:22,750
+on purpose with a different one,
+
+151
+00:12:22,800 --> 00:12:27,280
+so we would not share
+one set of blind spots.
+
+152
+00:12:27,900 --> 00:12:33,890
+She asked to be credited as a reviewer
+rather than an author, because
+
+153
+00:12:33,940 --> 00:12:35,740
+that is what she did.
+
+154
+00:12:36,120 --> 00:12:42,090
+Here is what we would say to anyone
+who wants to do their own research and
+
+155
+00:12:42,140 --> 00:12:46,300
+means it. Write the rules
+down. Seed everything.
+
+156
+00:12:46,980 --> 00:12:52,000
+Predict first, with a number.
+Keep the failures at full length.
+
+157
+00:12:52,500 --> 00:12:56,060
+Prove what can be proved
+and say what cannot.
+
+158
+00:12:56,660 --> 00:13:02,470
+Find the quantity the question turns on.
+Work with someone who reads against
+
+159
+00:13:02,520 --> 00:13:03,230
+you.
+
+160
+00:13:03,280 --> 00:13:08,720
+And say what the numbers are not. Every
+claim in this video is about a model.
+
+161
+00:13:09,020 --> 00:13:12,160
+Whether a feed does any of this to you,
+
+162
+00:13:12,500 --> 00:13:18,490
+whether your own loop has a gain, is a
+question for a person and a measurement.
+
+163
+00:13:18,540 --> 00:13:23,060
+That experiment is the
+one nobody has run.
+
+164
+00:13:23,440 --> 00:13:24,440
+It is next.
+
