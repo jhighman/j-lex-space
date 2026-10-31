@@ -195,7 +195,7 @@ Whisper's, word by word, over the recorded track, aligned by
 `video/voiceover/captions.py`, which also writes `subtitles.json`. With
 `?subs=1` the film renders a burned-in cut at 1280×800: the picture
 unchanged above, an 80 px band below carrying the cue, so nothing is
-covered. `render.js … subs=1` makes that cut.
+covered. `render.js … subs=1` makes that cut. The renderer's fourth argument is the video bitrate in kb/s; 4000 is the default, and 380 brings the whole 13:54 with its voice track under 50 MB, with the drawn frames intact and only the smallest text in the recorded page softened.
 
 `video/reading-script.md` is the same narration with the film's clock: a
 timecode before each paragraph, the words each scene holds against the
