@@ -1,0 +1,20 @@
+{
+ "fps": 10,
+ "source": "kate-round-8-120s-bad-day.mp4",
+ "segments": {
+  "session": {
+   "start": 18.0,
+   "end": 40.0,
+   "frames": 220,
+   "width": 1152,
+   "height": 720
+  },
+  "report": {
+   "start": 135.5,
+   "end": 152.5,
+   "frames": 170,
+   "width": 1152,
+   "height": 720
+  }
+ }
+}

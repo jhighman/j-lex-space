@@ -9,11 +9,11 @@
 | 0:08 | 0:34 | [the loop, live] |
 | 0:34 | 0:48 | [title card] Loop Gain · one ping stream, three grammars · the credit line |
 | 0:48 | 1:07 | [the two briefs’ titles] The Unframeable Now · The Return of the Excluded |
-| 1:07 | 1:29 | The brief’s claim: every frame applied re-enters as signal. The model tests it. |
+| 1:07 | 1:29 | [cut-away · the real page, Kate round 8] her moves falling onto the line, the band rising · The brief’s claim: every frame applied re-enters as signal. The model tests it. |
 | 1:29 | 1:46 | The brief’s claim: excluding the signal repeats the act that produced it. |
 | 1:46 | 1:58 | [card] Two questions / The programme asked: what does sound look like? / We asked the models: as the drive is turned up, slope or cliff? |
 | 1:58 | 2:20 | Write the rules down plainly enough to run. The model is the piece’s rules re-stated without a screen. |
-| 2:20 | 2:37 | Four numbers wear down by stated rules: attention, calm, agency, the minutes. Every change has a named cause. |
+| 2:20 | 2:37 | [cut-away · the page’s decay report, replaying] Four numbers wear down by stated rules: attention, calm, agency, the minutes. Every change has a named cause. |
 | 2:37 | 2:59 | A seed fixes every random choice. Twenty seeds a point means twenty repeatable sessions. A model, not a person; three minutes, not hours. |
 | 2:59 | 3:10 | [card] None of this is a claim about a person. / It is a machine for finding out what the rules entail. |
 | 3:10 | 3:41 | The number the second brief never named. Written down before any run. |
@@ -36,13 +36,15 @@
 | 9:08 | 9:33 | Then we read Wegner. |
 | 9:33 | 9:57 | The fourth frame, predicted first: the critical point would barely move. It barely moved. We also predicted the frame would be small. It was eight times larger. |
 | 9:57 | 10:21 | [card] R0 says whether. / σ says how fast. / Doubling the return rate barely moves whether the loop runs away, and halves the time a generation takes. |
-| 10:21 | 10:45 | In the feed, the echo does not act: R0 = 0, a slope. In the exclusion loop, a return invites the act: R0 > 0, a cliff. |
+| 10:21 | 10:33 | [cut-away · the debrief, panned] In the feed, the echo does not act: every move came back as an item, 2.2 s later, no exceptions. |
+| 10:33 | 10:45 | In the feed, the echo does not act: R0 = 0, a slope. In the exclusion loop, a return invites the act: R0 > 0, a cliff. |
 | 10:45 | 11:03 | [card] Every frame applied re-enters as signal. / Excluding the signal repeats the act. / The same loop, at gain zero and gain above zero. One rule divides them: does  |
 | 11:03 | 11:15 | [card] One loop, two gains. |
 | 11:15 | 11:32 | The piece, movement I: a real run of the feed’s model, with its sounds. A gesture, and its return. Loop gain zero. |
 | 11:32 | 11:54 | Movement II: the same pings through a delay with gain, past one. The howl. The resonance at 870 Hz is placed by hand, as a room has one. |
 | 11:54 | 12:11 | Movement III: the howl’s settled note drives a plate of sand. Chladni, 1787. A continuous drive, a threshold, a form. |
-| 12:11 | 12:33 | Two people did this. She asked to be credited as a reviewer rather than an author, because that is what she did. |
+| 12:11 | 12:20 | [the playtest note, round 8] “The lie: agency went back to 100%… Fix that.” · the report’s agency line · the rule was changed the next day · Two people did this. A playtest, a note, a fix. |
+| 12:20 | 12:33 | Two people did this. She asked to be credited as a reviewer rather than an author, because that is what she did. |
 | 12:33 | 13:05 | [stacked list] If you want to do your own research and mean it: … |
 | 13:05 | 13:27 | [card] Every claim here is about a model. / None is about you. Whether a feed does any of this to a person, or a person’s loop has a gain, is a question for a person a |
 | 13:27 | 13:39 | [closing card] What the week found: R0 and its glosses, the critical point at 0.8, whether against how fast, six numbers, the closing line |

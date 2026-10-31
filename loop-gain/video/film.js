@@ -26,7 +26,7 @@
   const ease = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
 
   /* ---------- assets ---------- */
-  let DATA = null; const IMG = {};
+  let DATA = null, CUT = null; const IMG = {};
   const loadImage = (src) => new Promise((res) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; });
   async function loadAssets() {
     DATA = await (await fetch('film-data.json')).json();
@@ -35,6 +35,11 @@
     IMG.paceMs = await loadImage('../../the-unframeable-now/lab/sweep-paceMs.svg');
     IMG.propensity = await loadImage('../../the-return-of-the-excluded/lab/sweep-propensity.svg');
     IMG.decay = await loadImage('../../the-unframeable-now/playtests/2026-10-14-kate-day-2/round-4-120s-decay-report.png');
+    IMG.debrief8 = await loadImage('../../the-unframeable-now/playtests/2026-10-13-kate-round-8/debrief.png');
+    IMG.report8 = await loadImage('../../the-unframeable-now/playtests/2026-10-13-kate-round-8/decay-report.png');
+    /* cut-aways to the real page: frame sequences pulled from the round-8 recording by cutaways/extract.py; optional, ?cutaways=0 to leave them out */
+    CUT = null;
+    if (q.get('cutaways') !== '0') { try { const m = await (await fetch('cutaways/cutaways.json')).json(); CUT = { fps: m.fps, seg: {} }; for (const [name, sg] of Object.entries(m.segments)) { const frames = []; for (let i = 0; i < sg.frames; i++) frames.push(loadImage(`cutaways/${name}/f${String(i).padStart(4, '0')}.jpg`)); CUT.seg[name] = { ...sg, frames: await Promise.all(frames) }; } } catch (e) { CUT = null; } }
   }
 
   /* ---------- text helpers ---------- */
@@ -165,6 +170,20 @@
   }
   function stacked(lines, p) { const n = Math.floor(lines.length * clamp01(p * 1.1)); let y = 170; for (let i = 0; i < n; i++) { ctx.fillStyle = INK; ctx.font = font(30, i === 0 ? 600 : 400); ctx.fillText(lines[i], 160, y); y += 60; } }
 
+  /* ---------- cut-aways: the real page, in a dark window on the paper, with its provenance ---------- */
+  const PROVENANCE = 'The Unframeable Now · Kate, round 8, 13 October 2026 · a bad day, two minutes · the page as recorded';
+  function pageWindow(draw, cap, o) {
+    o = o || {}; const x = o.x == null ? 60 : o.x, y = o.y == null ? 50 : o.y, w = o.w || W - 120, h = o.h || H - 170;
+    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H);
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.18)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8; ctx.fillStyle = '#0b0d14'; ctx.beginPath(); ctx.roundRect(x, y, w, h, 10); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.roundRect(x, y, w, h, 10); ctx.clip(); draw(x, y, w, h); ctx.restore();
+    label(cap || PROVENANCE, x, y + h + 22);
+  }
+  function clipFrame(name, t) { const sg = CUT && CUT.seg[name]; if (!sg) return null; return sg.frames[Math.min(sg.frames.length - 1, Math.floor(t * CUT.fps))]; }
+  function cutaway(name, t, cap) { const im = clipFrame(name, t); pageWindow((x, y, w, h) => { if (im) fitImage(im, x, y, w, h); }, cap); }
+  /* a still, panned slowly down: the debrief is taller than one screen */
+  function panStill(im, p, cap) { pageWindow((x, y, w, h) => { if (!im) return; const sc = w / im.width, dh = im.height * sc, over = Math.max(0, dh - h); ctx.drawImage(im, x, y - over * ease(clamp01(p)), w, dh); }, cap); }
+
   /* ---------- the bookends: an opening infographic and a closing one ---------- */
   const OPEN = 5, CLOSE = 12; // seconds; the narration track is laid OPEN seconds late by voiceover/lay-scenes.py
   function arrow(x0, y0, x1, y1, c) { ctx.strokeStyle = c; ctx.fillStyle = c; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); const a = Math.atan2(y1 - y0, x1 - x0); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - 8 * Math.cos(a - 0.4), y1 - 8 * Math.sin(a - 0.4)); ctx.lineTo(x1 - 8 * Math.cos(a + 0.4), y1 - 8 * Math.sin(a + 0.4)); ctx.closePath(); ctx.fill(); }
@@ -256,11 +275,11 @@
   shot(2, 18, (t) => { if (!loopAReady) { advanceLoop(loopA, M1 + 58); loopAReady = true; } advanceLoop(loopA, M1 + 58 + t); ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); drawLoop(loopA, loopA.t); }, null);
   shot(20, 10, () => card(TITLE));
   shot(30, 15, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); ctx.fillStyle = INK; ctx.font = font(36, 600); ctx.fillText('The Unframeable Now', 120, 200); ctx.fillStyle = MUTE; ctx.font = font(20); textBlock('a feed, and a reader using it · media theory', 120, 240, 500, { px: 20, colour: MUTE }); ctx.globalAlpha = clamp01(t / 15 * 2 - 0.6); ctx.fillStyle = INK; ctx.font = font(36, 600); ctx.fillText('The Return of the Excluded', 120, 420); textBlock('pollution as a symptom, and the gesture that makes it · depth psychology', 120, 460, 600, { px: 20, colour: MUTE }); ctx.globalAlpha = 1; label('two concept briefs by Alexandra Krížová, in the repository', 120, 560); });
-  shot(45, 17, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); drawLine(20 + t); }, 'The brief’s claim: every frame applied re-enters as signal. The model tests it.');
+  shot(45, 17, (t, sh) => { if (CUT) cutaway('session', t * (sh.k || 1)); else { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); drawLine(20 + t); } }, 'The brief’s claim: every frame applied re-enters as signal. The model tests it.');
   shot(62, 13, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); textBlock(DATA.briefExcluded.replace(/^## .*\n/, ''), 120, 140, W - 240, { px: 20, lh: 32, reveal: t / 10 }); }, 'The brief’s claim: excluding the signal repeats the act that produced it.');
   shot(75, 10, () => card(['Two questions', 'The programme asked: what does sound look like?', 'We asked the models: as the drive is turned up, slope or cliff?'], { px: 34 }));
   shot(85, 20, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); label('the-unframeable-now/lab/model.js · the constants, from the page', 80, 90); codeScroll(DATA.constants, 80, 100, W - 160, H - 230, t / 20); }, 'Write the rules down plainly enough to run. The model is the piece’s rules re-stated without a screen.');
-  shot(105, 15, () => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); fitImage(IMG.decay, 80, 80, W - 160, H - 200); }, 'Four numbers wear down by stated rules: attention, calm, agency, the minutes. Every change has a named cause.');
+  shot(105, 15, (t, sh) => { if (CUT) cutaway('report', t * (sh.k || 1), PROVENANCE + ' · the report, replayed'); else { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); fitImage(IMG.decay, 80, 80, W - 160, H - 200); } }, 'Four numbers wear down by stated rules: attention, calm, agency, the minutes. Every change has a named cause.');
   shot(120, 20, (t) => { ctx.fillStyle = '#1b1b1b'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#9f9'; ctx.font = font(14, 400, true); ctx.fillText('$ node sample.js --seeds 10 --round 120', 60, 70); textBlock(DATA.sampleTable, 60, 100, W - 120, { px: 13, lh: 20, mono: true, colour: '#ddd', reveal: t / 12 }); }, 'A seed fixes every random choice. Twenty seeds a point means twenty repeatable sessions. A model, not a person; three minutes, not hours.', true);
   shot(140, 10, () => card(['None of this is a claim about a person.', 'It is a machine for finding out what the rules entail.'], { px: 36 }));
   shot(150, 25, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); formula(t / 25); }, 'The number the second brief never named. Written down before any run.');
@@ -268,7 +287,7 @@
   shot(195, 15, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); label('the-return-of-the-excluded/README.md · written before the runs', 80, 90); codeScroll(DATA.hypotheses.replace(/[*`]/g, ''), 80, 100, W - 160, H - 230, t / 15, /H1\.|falsify|nothing above/i); }, 'Five hypotheses, with numbers, and what would falsify each. The section was marked and not touched again.');
   shot(210, 5, () => card(['Predict first.', 'Write the number down. Ten minutes. The difference between a result and a story.'], { px: 40 }));
   shot(215, 25, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); fitImage(IMG.paceMs, 60, 80, W - 120, H - 200, ease(clamp01(t / 12))); }, 'The feed, swept: the interval between arrivals from 12 s down to 0.3 s, six personas, twenty seeds a point.');
-  shot(240, 10, () => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); const r = fitImage(IMG.paceMs, 60, 80, W - 120, H - 200); if (r) { ctx.strokeStyle = RED; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(r.dx + r.dw * 0.62, r.dy + r.dh * 0.45, 70, 0, 7); ctx.stroke(); } }, 'No cliff. Every curve flat or sliding. One knee, near 3.5 s between arrivals: the page’s normal day.');
+  shot(240, 10, () => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); const r = fitImage(IMG.paceMs, 60, 80, W - 120, H - 200); if (r) { ctx.strokeStyle = RED; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(r.dx + r.dw * 0.62, r.dy + r.dh * 0.45, 70, 0, 7); ctx.stroke(); } const f0 = clipFrame('session', 0); if (f0) { const sx = f0.width * 0.715, sy = f0.height * 0.935, sw = f0.width * 0.2, sh = f0.height * 0.05, dw = 340, dh = dw * sh / sw, dx = W - 60 - dw, dy = H - 112 - dh; ctx.fillStyle = '#0b0d14'; ctx.beginPath(); ctx.roundRect(dx - 8, dy - 8, dw + 16, dh + 16, 8); ctx.fill(); ctx.drawImage(f0, sx, sy, sw, sh, dx, dy, dw, dh); ctx.textAlign = 'right'; label('the page’s pace control · the sweep walks this axis', dx - 20, dy + dh / 2 + 5); ctx.textAlign = 'left'; } }, 'No cliff. Every curve flat or sliding. One knee, near 3.5 s between arrivals: the page’s normal day.');
   shot(250, 20, (t) => { ctx.fillStyle = '#1b1b1b'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#9f9'; ctx.font = font(14, 400, true); ctx.fillText('$ node knee.js sweep-paceMs.json', 60, 60); textBlock(DATA.kneeTable, 60, 88, W - 120, { px: 12, lh: 17.5, mono: true, colour: '#ddd', reveal: t / 14 }); }, 'The knee read off the rules: attention recovers only after 3 s of quiet, and the share of gaps that long is a continuous function of the interval. In the model.', true);
   shot(270, 20, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); fitImage(IMG.propensity, 60, 80, W - 120, H - 200, ease(clamp01(t / 12))); }, 'The exclusion loop, swept over the propensity to exclude. We had predicted a cliff at 0.8.');
   shot(290, 10, () => card(['slides', 'the pre-registered verdict on H1'], { px: 72 }));
@@ -283,13 +302,18 @@
   shot(450, 20, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); diagram(t / 20); }, 'Then we read Wegner.');
   shot(470, 20, () => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); fitImage(IMG.propensity, 60, 80, W - 120, H - 200); }, 'The fourth frame, predicted first: the critical point would barely move. It barely moved. We also predicted the frame would be small. It was eight times larger.');
   shot(490, 20, () => card(['R0 says whether.', 'σ says how fast.', 'Doubling the return rate barely moves whether the loop runs away, and halves the time a generation takes.'], { px: 48 }));
-  shot(510, 20, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W / 2 - 10, H - 110); ctx.clip(); drawLine(30 + t, { x0: 40, x1: W / 2 - 40, y0: 90 }); ctx.restore(); if (!loopBReady) { advanceLoop(loopB, M1 + 20); loopBReady = true; } advanceLoop(loopB, M1 + 20 + t * 2.5); loopB.bridson.draw(ctx, W * 0.75, 320, 190, regimeColour, regimeGround); ctx.textAlign = 'center'; label('Bridson · the exterior', W * 0.75, 540); label(`g = ${gainAt(loopB.t).toFixed(2)}`, W * 0.75, 560); ctx.textAlign = 'left'; }, 'In the feed, the echo does not act: R0 = 0, a slope. In the exclusion loop, a return invites the act: R0 > 0, a cliff.');
+  shot(510, 10, (t) => panStill(IMG.debrief8, t / 9, PROVENANCE + ' · the debrief, written as the player'), 'In the feed, the echo does not act: every move came back as an item, 2.2 s later, no exceptions.');
+  shot(520, 10, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W / 2 - 10, H - 110); ctx.clip(); drawLine(30 + t, { x0: 40, x1: W / 2 - 40, y0: 90 }); ctx.restore(); if (!loopBReady) { advanceLoop(loopB, M1 + 20); loopBReady = true; } advanceLoop(loopB, M1 + 20 + t * 2.5); loopB.bridson.draw(ctx, W * 0.75, 320, 190, regimeColour, regimeGround); ctx.textAlign = 'center'; label('Bridson · the exterior', W * 0.75, 540); label(`g = ${gainAt(loopB.t).toFixed(2)}`, W * 0.75, 560); ctx.textAlign = 'left'; }, 'In the feed, the echo does not act: R0 = 0, a slope. In the exclusion loop, a return invites the act: R0 > 0, a cliff.');
   shot(530, 15, () => card(['Every frame applied re-enters as signal.', 'Excluding the signal repeats the act.', 'The same loop, at gain zero and gain above zero. One rule divides them: does what returns invite an act?'], { px: 30 }));
   shot(545, 10, () => card(['One loop, two gains.'], { px: 48 }));
   shot(555, 15, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); drawLine(28 + t); label('I · The line', 60, 80); }, 'The piece, movement I: a real run of the feed’s model, with its sounds. A gesture, and its return. Loop gain zero.');
   shot(570, 20, (t) => { advanceLoop(loopB, Math.max(loopB.t, M1 + 70 + t * 1.2)); ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); drawLoop(loopB, loopB.t); label('II · The loop', 60, 80); }, 'Movement II: the same pings through a delay with gain, past one. The howl. The resonance at 870 Hz is placed by hand, as a room has one.');
   shot(590, 15, (t) => { if (!plateScattered) { plate.scatter(); plateScattered = true; } plate.frame(0.05); plate.frame(0.05); ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); drawPlate(RESONANCE_HZ); label('III · The plate', 60, 80); }, 'Movement III: the howl’s settled note drives a plate of sand. Chladni, 1787. A continuous drive, a threshold, a form.');
-  shot(605, 20, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); label('github.com/jhighman/j-lex-space · issue #10, 27 October 2026', 120, 110); textBlock(DATA.lexComment, 120, 150, W - 240, { px: 19, lh: 30, reveal: t / 14 }); }, 'Two people did this. She asked to be credited as a reviewer rather than an author, because that is what she did.');
+  shot(605, 8, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); const im = IMG.report8; if (im) { const sx = im.width * 0.555, sy = im.height * 0.385, sw = im.width * 0.31, sh = im.height * 0.31, dw = 520, dh = dw * sh / sw; ctx.fillStyle = '#0b0d14'; ctx.beginPath(); ctx.roundRect(W - 80 - dw - 10, 100, dw + 20, dh + 20, 8); ctx.fill(); ctx.drawImage(im, sx, sy, sw, sh, W - 80 - dw, 110, dw, dh); label('round 8’s report · agency, the green line, climbing while she did nothing', W - 80 - dw - 10, 130 + dh + 24); }
+    label('the-unframeable-now/playtests/2026-10-13-kate-round-8 · the playtest note, 13 October 2026', 80, 110);
+    textBlock('“The lie: agency went back to 100%. I stopped at 0:45, my echoes aged out, the share of the feed that was me fell to nothing, and the model read that as my agency returning. It isn’t. I didn’t get my agency back by being buried. Fix that.”', 80, 160, 560, { px: 21, lh: 32, reveal: t / 3.5 });
+    ctx.globalAlpha = clamp01(t - 3.5); textBlock('The rule was changed the next day: agency rises only when a like on something she wanted worked, or on the bin. The note was written as Kate by the same process that built the page; the fix is in the record.', 80, 420, 560, { px: 16, lh: 24, colour: MUTE }); ctx.globalAlpha = 1; }, 'Two people did this. A playtest, a note, a fix: that is the loop the work runs on.');
+  shot(613, 12, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); label('github.com/jhighman/j-lex-space · issue #10, 27 October 2026', 120, 110); textBlock(DATA.lexComment, 120, 150, W - 240, { px: 19, lh: 30, reveal: t / 8 }); }, 'Two people did this. She asked to be credited as a reviewer rather than an author, because that is what she did.');
   shot(625, 30, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); stacked(['If you want to do your own research and mean it:', 'write the rules down', 'seed everything', 'predict first, with a number', 'keep the failures at full length', 'prove what can be proved; say what cannot', 'find the quantity the question turns on', 'work with someone who reads against you'], t / 30); });
   shot(655, 20, () => card(['Every claim here is about a model.', 'None is about you. Whether a feed does any of this to a person, or a person’s loop has a gain, is a question for a person and a measurement.', 'That experiment is the one nobody has run. It is next.'], { px: 34 }));
   shot(675, 15, () => { card(TITLE); ctx.fillStyle = MUTE; ctx.font = font(16); ctx.textAlign = 'center'; ctx.fillText('Built with Claude working with Jeff Highman · github.com/jhighman/j-lex-space · Phase Transition, 2026', W / 2, H - 80); ctx.textAlign = 'left'; });
@@ -299,7 +323,7 @@
      animation that filled the shot still fills it. Without the file, or with ?timing=0, the script's clock. */
   function retime(tm) {
     const map = (t) => { for (const sc of tm.scenes) { const [o0, o1] = sc.orig, [n0, n1] = sc.new; if (t >= o0 && t < o1) return n0 + (t - o0) * (n1 - n0) / (o1 - o0); } return tm.credits[0] + (t - 675); };
-    for (const s of S) { const a0 = map(s.at), a1 = map(s.at + s.dur), k = (a1 - a0) / s.dur, draw = s.draw; s.at = a0; s.dur = a1 - a0; s.draw = (t, sh) => draw(t / k, sh); }
+    for (const s of S) { const a0 = map(s.at), a1 = map(s.at + s.dur), k = (a1 - a0) / s.dur, draw = s.draw; s.at = a0; s.dur = a1 - a0; s.k = k; s.draw = (t, sh) => draw(t / k, sh); }
     TOTAL = tm.total; if (window.__film) window.__film.TOTAL = TOTAL;
   }
   /* the opening card goes in front of everything and the closing card in front of the credits, which are the last shot */

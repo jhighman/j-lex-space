@@ -176,6 +176,18 @@ the number, the threshold, whether against how fast, six figures, before
 the credits. The film runs 13:54. `?timing=0` plays the script's own clock,
 with the cards.
 
+Four cut-aways show the real page instead of a drawing of it, from the
+round-8 recording in `../the-unframeable-now/playtests/2026-10-13-kate-round-8/`:
+Kate's moves falling onto the line under the first brief's claim, the
+decay report replaying under the four numbers, the debrief panned under
+"the echo does not act", and the knee shot carries the page's pace
+control as an inset. A fifth beat in the last scene shows the round-8
+note that called the report's agency line a lie, beside that line, and
+says the rule was changed. `video/cutaways/extract.py` pulls the frame
+sequences from the recording as JPEGs at ten a second; they stay out of
+the repository and are regenerated from the committed recording.
+`?cutaways=0` plays the drawn shots instead.
+
 `video/reading-script.md` is the same narration with the film's clock: a
 timecode before each paragraph, the words each scene holds against the
 seconds it has, and which two lines to trim where it runs over.
