@@ -85,6 +85,12 @@ No build step. From the repository root:
 then open `http://localhost:8000/loop-gain/`. Click **Start**. Sound
 begins on the click, because the browser requires a gesture before audio.
 
+The piece is also served live, for the judges' link, at
+<https://jhighman.github.io/j-lex-space/loop-gain/>. GitHub Pages builds
+from `docs/` on `main`, so the copy there is refreshed by `./publish.sh`
+from the repository root after any change here, and the `docs/` files are
+committed with it. The copy in `docs/` is not edited by hand.
+
 ## Record a take
 
 Open `http://localhost:8000/loop-gain/?record=1`, or press **Record a
@@ -158,3 +164,43 @@ work with someone who reads against you. `video/youtube-cut.md` is the
 earlier plan for cutting the Notebook's audio overview, kept for the
 shot list. `audio-overview/` holds that overview's transcript, a
 line-by-line review of it against the record, and a corrections source.
+
+`video/timing.json` re-times the film to the recorded narration. The
+eleven scene recordings, one WAV per scene of the script, are laid on the
+timeline by `video/voiceover/lay-scenes.py`, which writes the timing file
+and a levelled narration track; `film.js` reads the timing file and
+stretches each scene's shots, and their local clocks, to the recording's
+length, so the picture follows the voice. Two infographic cards bookend it: five seconds of the three grammars on
+a gain axis before the black, and twelve seconds of what the week found,
+the number, the threshold, whether against how fast, six figures, before
+the credits. The film runs 13:54. `?timing=0` plays the script's own clock,
+with the cards.
+
+Four cut-aways show the real page instead of a drawing of it, from the
+round-8 recording in `../the-unframeable-now/playtests/2026-10-13-kate-round-8/`:
+Kate's moves falling onto the line under the first brief's claim, the
+decay report replaying under the four numbers, the debrief panned under
+"the echo does not act", and the knee shot carries the page's pace
+control as an inset. A fifth beat in the last scene shows the round-8
+note that called the report's agency line a lie, beside that line, and
+says the rule was changed. `video/cutaways/extract.py` pulls the frame
+sequences from the recording as JPEGs at ten a second; they stay out of
+the repository and are regenerated from the committed recording.
+`?cutaways=0` plays the drawn shots instead.
+
+Captions: `video/narration.srt` and `narration.vtt` carry the narration
+as closed captions, 164 cues, for YouTube's caption upload or any player
+that toggles them. The words are the reading script's; the timing is
+Whisper's, word by word, over the recorded track, aligned by
+`video/voiceover/captions.py`, which also writes `subtitles.json`. With
+`?subs=1` the film renders a burned-in cut at 1280×800: the picture
+unchanged above, an 80 px band below carrying the cue, so nothing is
+covered. `render.js … subs=1` makes that cut. `?scale=2` draws the same layout at
+2560×1440, every mark at that size rather than upscaled, for the master
+that goes to YouTube; `video/youtube-upload.md` says how to post it so the
+host's re-encode keeps the lines and the text, and why resolution is the
+lever. The renderer's fourth argument is the video bitrate in kb/s; 4000 is the default, and 380 brings the whole 13:54 with its voice track under 50 MB, with the drawn frames intact and only the smallest text in the recorded page softened.
+
+`video/reading-script.md` is the same narration with the film's clock: a
+timecode before each paragraph, the words each scene holds against the
+seconds it has, and which two lines to trim where it runs over.

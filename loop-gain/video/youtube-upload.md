@@ -69,7 +69,33 @@ already does: the 480p it makes from a 1440p master is cleaner than the
 read at 720p; the recorded page in the cut-aways is the one place small
 text lives, and it is the page as it was.
 
-## 5. If the judges' link should be the file, not YouTube
+## 5. The pinned comment, for people curious about the research
+
+YouTube filters links in viewers' comments, but a comment from the
+channel itself carries them, and the channel can pin one comment to the
+top of the thread. Post this one from the channel account, then open its
+`⋮` menu and choose **Pin**. Do it after the video is live, since pinning
+needs the comment thread to exist.
+
+> **If you want the research behind this:**
+> The paper, with the models, the predictions written before the runs, the
+> failure kept at full length, and the proofs:
+> https://jhighman.github.io/j-lex-space/loop-gain/paper.pdf
+> The translation thesis, two pages:
+> https://jhighman.github.io/j-lex-space/loop-gain/thesis.pdf
+> The piece itself, three minutes, runs in your browser:
+> https://jhighman.github.io/j-lex-space/loop-gain/
+> Everything, including the code, the seeds and the Lean proofs:
+> https://github.com/jhighman/j-lex-space
+> Every claim in the video is about a model. None is about you.
+
+Put the same four links at the end of the description too, under a line
+that says *Research and code*, so they are there for anyone who never
+opens the comments. The PDFs are built from the repository's Markdown by
+`loop-gain/publish.sh` and served from `docs/` on `main`, so they update
+when the paper does; the links do not change.
+
+## 6. If the judges' link should be the file, not YouTube
 
 The thesis's link can point at the repository's served page for the
 piece itself; the film is the video. If a platform limit forces the
