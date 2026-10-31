@@ -30,7 +30,7 @@ For YouTube, use the master, which has no caption band, and upload
 with the CC button, it is searchable, and it reads at any size. The
 burned-in cut is for places that cannot carry a caption file.
 
-In YouTube Studio: open the video › **Subtitles** in the left column →
+In YouTube Studio: open the video › **Subtitles** in the left column ›
 the English row › **Add** › **Upload file** › *With timing* › choose the
 `.srt` › **Publish**. Set the video language to English under
 **Details › Show more** first, or the Subtitles page will ask for it.
