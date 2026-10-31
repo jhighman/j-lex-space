@@ -20,3 +20,6 @@ private/**
 # Python
 __pycache__/
 *.py[cod]
+
+# the paper and thesis served from Pages for the video’s links
+!docs/loop-gain/*.pdf
