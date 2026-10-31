@@ -21,10 +21,14 @@
      visible canvas grows to 1280x800 and the extra 80 px band at the bottom carries the narration's words from
      subtitles.json (voiceover/captions.py), so nothing in the picture is covered. */
   const SUBS = q.get('subs') === '1', BAND = 80;
-  const view = document.getElementById('c'); if (SUBS) { view.height = 800; view.style.aspectRatio = '16 / 10'; }
-  const canvas = SUBS ? Object.assign(document.createElement('canvas'), { width: 1280, height: 720 }) : view;
+  /* ?scale=2 renders the same 1280x720 layout at 2560x1440 (or x1600 with the caption band): every mark is drawn at
+     that size, not upscaled, for a master that keeps its edges through a host's re-encode. */
+  const SCALE = Math.max(1, Math.min(4, Number(q.get('scale') || 1)));
+  const W = 1280, H = 720;
+  const view = document.getElementById('c'); view.width = W * SCALE; view.height = (SUBS ? H + BAND : H) * SCALE; if (SUBS) view.style.aspectRatio = '16 / 10';
+  const canvas = SUBS ? Object.assign(document.createElement('canvas'), { width: W * SCALE, height: H * SCALE }) : view;
   const ctx = canvas.getContext('2d'), vctx = SUBS ? view.getContext('2d') : null;
-  const W = canvas.width, H = canvas.height;
+  ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0); if (vctx) vctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
   let SUBTITLES = [];
   const status = document.getElementById('status');
   const INK = '#1d1d1b', MUTE = '#777', VIOLET = '#7b3fa0', AMBER = '#c48a1a', GREEN = '#3a8f4a', RED = '#b23a3a', RULE = '#d9d4c7', PAPER = '#fcfcfa';
@@ -354,11 +358,11 @@
     if (SUBS) subtitleBand(now);
   }
   function subtitleBand(now) {
-    vctx.fillStyle = '#000'; vctx.fillRect(0, 0, view.width, view.height); vctx.drawImage(canvas, 0, 0);
+    vctx.fillStyle = '#000'; vctx.fillRect(0, 0, W, H + BAND); vctx.drawImage(canvas, 0, 0, W, H);
     const cue = SUBTITLES.find((c) => now >= c.s && now < c.e); if (!cue) return;
     const lines = cue.text.split('\n'); vctx.fillStyle = '#fff'; vctx.font = font(24, 500); vctx.textAlign = 'center'; vctx.textBaseline = 'middle';
     const y0 = H + BAND / 2 - (lines.length - 1) * 15;
-    lines.forEach((l, i) => vctx.fillText(l, view.width / 2, y0 + i * 30)); vctx.textAlign = 'left'; vctx.textBaseline = 'alphabetic';
+    lines.forEach((l, i) => vctx.fillText(l, W / 2, y0 + i * 30)); vctx.textAlign = 'left'; vctx.textBaseline = 'alphabetic';
   }
   function frame() {
     const now = Math.min(TOTAL, (performance.now() - t0) / 1000 * SPEED);

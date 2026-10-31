@@ -16,10 +16,11 @@ const out = process.argv[2] || 'loop-gain-film.mp4'; const seconds = Number(proc
     const F = window.__film; const total = seconds > 0 ? seconds : F.TOTAL; const n = Math.round(total * fps);
     const { Muxer, ArrayBufferTarget } = Mp4Muxer;
     const muxer = new Muxer({ target: new ArrayBufferTarget(), video: { codec: 'avc', width: F.canvas.width, height: F.canvas.height }, fastStart: 'in-memory', firstTimestampBehavior: 'offset' });
-    const support = await VideoEncoder.isConfigSupported({ codec: 'avc1.640028', width: F.canvas.width, height: F.canvas.height, bitrate: kbps * 1000, framerate: fps });
+    const codec = F.canvas.width > 1920 ? 'avc1.640033' : 'avc1.640028'; // High profile; level 5.1 above 1080p
+    const support = await VideoEncoder.isConfigSupported({ codec, width: F.canvas.width, height: F.canvas.height, bitrate: kbps * 1000, framerate: fps });
     if (!support.supported) return { error: 'H.264 encoding not supported here' };
     let encErr = null; const encoder = new VideoEncoder({ output: (chunk, meta) => muxer.addVideoChunk(chunk, meta), error: (e) => { encErr = String(e); } });
-    encoder.configure({ codec: 'avc1.640028', width: F.canvas.width, height: F.canvas.height, bitrate: kbps * 1000, framerate: fps, latencyMode: 'quality', avc: { format: 'avc' } });
+    encoder.configure({ codec, width: F.canvas.width, height: F.canvas.height, bitrate: kbps * 1000, framerate: fps, latencyMode: 'quality', avc: { format: 'avc' } });
     const t0 = performance.now();
     for (let i = 0; i < n; i++) {
       F.render(i / fps);
