@@ -30,6 +30,7 @@
   const loadImage = (src) => new Promise((res) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; });
   async function loadAssets() {
     DATA = await (await fetch('film-data.json')).json();
+    if (q.get('timing') !== '0') { try { const tm = await (await fetch('timing.json')).json(); if (tm && tm.scenes) retime(tm); } catch (e) { /* no timing.json: the script's own clock */ } }
     IMG.paceMs = await loadImage('../../the-unframeable-now/lab/sweep-paceMs.svg');
     IMG.propensity = await loadImage('../../the-return-of-the-excluded/lab/sweep-propensity.svg');
     IMG.decay = await loadImage('../../the-unframeable-now/playtests/2026-10-14-kate-day-2/round-4-120s-decay-report.png');
@@ -209,7 +210,15 @@
   shot(625, 30, (t) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); stacked(['If you want to do your own research and mean it:', 'write the rules down', 'seed everything', 'predict first, with a number', 'keep the failures at full length', 'prove what can be proved; say what cannot', 'find the quantity the question turns on', 'work with someone who reads against you'], t / 30); });
   shot(655, 20, () => card(['Every claim here is about a model.', 'None is about you. Whether a feed does any of this to a person, or a person’s loop has a gain, is a question for a person and a measurement.', 'That experiment is the one nobody has run. It is next.'], { px: 34 }));
   shot(675, 15, () => { card(TITLE); ctx.fillStyle = MUTE; ctx.font = font(16); ctx.textAlign = 'center'; ctx.fillText('Built with Claude working with Jeff Highman · github.com/jhighman/j-lex-space · Phase Transition, 2026', W / 2, H - 80); ctx.textAlign = 'left'; });
-  const TOTAL = 690;
+  let TOTAL = 690;
+  /* timing.json, written by voiceover/lay-scenes.py from the recorded scenes, stretches each scene's window
+     to its recording. Every shot in a scene moves and scales with it, and its local clock scales too, so an
+     animation that filled the shot still fills it. Without the file, or with ?timing=0, the script's clock. */
+  function retime(tm) {
+    const map = (t) => { for (const sc of tm.scenes) { const [o0, o1] = sc.orig, [n0, n1] = sc.new; if (t >= o0 && t < o1) return n0 + (t - o0) * (n1 - n0) / (o1 - o0); } return tm.credits[0] + (t - 675); };
+    for (const s of S) { const a0 = map(s.at), a1 = map(s.at + s.dur), k = (a1 - a0) / s.dur, draw = s.draw; s.at = a0; s.dur = a1 - a0; s.draw = (t, sh) => draw(t / k, sh); }
+    TOTAL = tm.total; if (window.__film) window.__film.TOTAL = TOTAL;
+  }
 
   /* ---------- run and record ---------- */
   let running = false, t0 = 0, raf = 0, take = null, recordWanted = q.get('record') === '1';

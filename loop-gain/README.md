@@ -165,6 +165,14 @@ earlier plan for cutting the Notebook's audio overview, kept for the
 shot list. `audio-overview/` holds that overview's transcript, a
 line-by-line review of it against the record, and a corrections source.
 
+`video/timing.json` re-times the film to the recorded narration. The
+eleven scene recordings, one WAV per scene of the script, are laid on the
+timeline by `video/voiceover/lay-scenes.py`, which writes the timing file
+and a levelled narration track; `film.js` reads the timing file and
+stretches each scene's shots, and their local clocks, to the recording's
+length, so the picture follows the voice. The re-timed film runs 13:37.
+`?timing=0` plays the script's own clock.
+
 `video/reading-script.md` is the same narration with the film's clock: a
 timecode before each paragraph, the words each scene holds against the
 seconds it has, and which two lines to trim where it runs over.

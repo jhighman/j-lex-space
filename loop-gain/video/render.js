@@ -11,7 +11,7 @@ const out = process.argv[2] || 'loop-gain-film.mp4'; const seconds = Number(proc
   await page.exposeFunction('__log', (s) => console.log(new Date().toISOString().slice(11, 19), s));
   await page.goto('http://127.0.0.1:8000/loop-gain/video/film.html', { waitUntil: 'load' });
   await page.waitForFunction(() => window.__film && window.__film.ready, { timeout: 60000 }); await page.evaluate(() => window.__film.ready);
-  await page.addScriptTag({ content: fs.readFileSync(path.join(__dirname, 'node_modules/mp4-muxer/build/mp4-muxer.js'), 'utf8') });
+  await page.addScriptTag({ content: fs.readFileSync(require.resolve('mp4-muxer/build/mp4-muxer.js'), 'utf8') }); // needs puppeteer-core and mp4-muxer on the module path: run from a folder that has them, or set NODE_PATH
   const result = await page.evaluate(async ({ seconds, fps, kbps }) => {
     const F = window.__film; const total = seconds > 0 ? seconds : F.TOTAL; const n = Math.round(total * fps);
     const { Muxer, ArrayBufferTarget } = Mp4Muxer;
