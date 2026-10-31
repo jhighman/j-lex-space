@@ -18,7 +18,8 @@ scenes, one 48 kHz mono WAV per scene of `script.md`, trims each lead-in
 to a sixth of a second, levels them to a common loudness under a peak
 ceiling, and writes `timing.json` (each scene's original window and its
 new one: the recording's length plus a breath) and `narration.wav` with
-every scene at its new start. Copy the timing file beside `film.js`,
+every scene at its new start. The narration starts five seconds
+late, after the film's opening card. Copy the timing file beside `film.js`,
 render, then mux. The levelling is the only processing; no compression,
 no noise reduction.
 

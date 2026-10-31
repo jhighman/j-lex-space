@@ -170,8 +170,11 @@ eleven scene recordings, one WAV per scene of the script, are laid on the
 timeline by `video/voiceover/lay-scenes.py`, which writes the timing file
 and a levelled narration track; `film.js` reads the timing file and
 stretches each scene's shots, and their local clocks, to the recording's
-length, so the picture follows the voice. The re-timed film runs 13:37.
-`?timing=0` plays the script's own clock.
+length, so the picture follows the voice. Two infographic cards bookend it: five seconds of the three grammars on
+a gain axis before the black, and twelve seconds of what the week found,
+the number, the threshold, whether against how fast, six figures, before
+the credits. The film runs 13:54. `?timing=0` plays the script's own clock,
+with the cards.
 
 `video/reading-script.md` is the same narration with the film's clock: a
 timecode before each paragraph, the words each scene holds against the

@@ -6,6 +6,7 @@ import sys, os, json, wave, array, math
 src, out = sys.argv[1], sys.argv[2]
 ORIG = [(0,30),(30,85),(85,150),(150,215),(215,270),(270,360),(360,430),(430,510),(510,555),(555,605),(605,675)]
 CREDITS = 15; LEAD_IN = 2.0; TAIL = 1.6; SR = 48000
+OPEN, CLOSE = 5, 12   # film.js's bookends: the opening card before the black, the closing card before the credits
 TARGET_RMS = 0.06; PEAK = 0.94
 def load(i):
     with wave.open(os.path.join(src, f'{i}.wav')) as w:
@@ -31,12 +32,13 @@ for i, (o0, o1) in enumerate(ORIG):
     scenes.append({'scene': i, 'orig': [o0, o1], 'new': [round(n0, 2), round(n1, 2)], 'speech_at': round(start, 2), 'speech_len': round(d, 2), 'gain_db': round(20*math.log10(g), 1)})
     clips.append((start, a)); cursor = n1
 total = cursor + CREDITS
-timing = {'scenes': scenes, 'credits': [round(cursor, 2), round(total, 2)], 'total': round(total, 2), 'orig_total': 690}
+timing = {'scenes': scenes, 'credits': [round(cursor, 2), round(total, 2)], 'total': round(total, 2), 'orig_total': 690, 'bookends': {'open': OPEN, 'close': CLOSE, 'note': 'scene and credit times above are before the bookends; film.js adds open to every shot and close to the credits'}}
 json.dump(timing, open(os.path.join(out, 'timing.json'), 'w'), indent=1)
-track = array.array('h', bytes(2 * int(math.ceil(total * SR))))
+track = array.array('h', bytes(2 * int(math.ceil((total + OPEN + CLOSE) * SR))))
 for start, a in clips:
-    o = int(start * SR); track[o:o+len(a)] = a
+    o = int((start + OPEN) * SR); track[o:o+len(a)] = a   # the narration starts after the opening card
 with wave.open(os.path.join(out, 'narration.wav'), 'wb') as w:
     w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes(track.tobytes())
 for s in scenes: print(f"scene {s['scene']:2d}  {s['orig'][0]:4d}-{s['orig'][1]:<4d} -> {s['new'][0]:6.1f}-{s['new'][1]:<6.1f}  speech {s['speech_len']:5.1f}s  gain {s['gain_db']:+5.1f} dB")
-print('credits', timing['credits'], 'total', total, f'({int(total//60)}:{int(total%60):02d})')
+T = total + OPEN + CLOSE
+print('credits', timing['credits'], 'film with bookends', round(T, 2), f'({int(T//60)}:{int(T%60):02d}); narration offset by', OPEN, 's')

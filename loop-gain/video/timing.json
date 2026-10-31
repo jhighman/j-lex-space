@@ -160,5 +160,10 @@
   816.86
  ],
  "total": 816.86,
- "orig_total": 690
+ "orig_total": 690,
+ "bookends": {
+  "open": 5,
+  "close": 12,
+  "note": "scene and credit times above are before the bookends; film.js adds open to every shot and close to the credits"
+ }
 }

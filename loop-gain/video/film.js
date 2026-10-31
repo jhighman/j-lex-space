@@ -31,6 +31,7 @@
   async function loadAssets() {
     DATA = await (await fetch('film-data.json')).json();
     if (q.get('timing') !== '0') { try { const tm = await (await fetch('timing.json')).json(); if (tm && tm.scenes) retime(tm); } catch (e) { /* no timing.json: the script's own clock */ } }
+    bookend();
     IMG.paceMs = await loadImage('../../the-unframeable-now/lab/sweep-paceMs.svg');
     IMG.propensity = await loadImage('../../the-return-of-the-excluded/lab/sweep-propensity.svg');
     IMG.decay = await loadImage('../../the-unframeable-now/playtests/2026-10-14-kate-day-2/round-4-120s-decay-report.png');
@@ -164,6 +165,88 @@
   }
   function stacked(lines, p) { const n = Math.floor(lines.length * clamp01(p * 1.1)); let y = 170; for (let i = 0; i < n; i++) { ctx.fillStyle = INK; ctx.font = font(30, i === 0 ? 600 : 400); ctx.fillText(lines[i], 160, y); y += 60; } }
 
+  /* ---------- the bookends: an opening infographic and a closing one ---------- */
+  const OPEN = 5, CLOSE = 12; // seconds; the narration track is laid OPEN seconds late by voiceover/lay-scenes.py
+  function arrow(x0, y0, x1, y1, c) { ctx.strokeStyle = c; ctx.fillStyle = c; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); const a = Math.atan2(y1 - y0, x1 - x0); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - 8 * Math.cos(a - 0.4), y1 - 8 * Math.sin(a - 0.4)); ctx.lineTo(x1 - 8 * Math.cos(a + 0.4), y1 - 8 * Math.sin(a + 0.4)); ctx.closePath(); ctx.fill(); }
+  function panelText(x, y, w, head, l1, l2, c) { ctx.fillStyle = c; ctx.font = font(15, 600); ctx.fillText(head, x, y); ctx.fillStyle = INK; ctx.font = font(17); ctx.fillText(l1, x, y + 28); ctx.fillStyle = MUTE; ctx.font = font(15); ctx.fillText(l2, x, y + 52); }
+  function openingCard(p) {
+    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H);
+    const f = (a, b) => clamp01((p - a) / (b - a));
+    ctx.globalAlpha = f(0, 0.12); ctx.fillStyle = INK; ctx.font = font(54, 600); ctx.fillText('Loop Gain', 80, 112);
+    ctx.fillStyle = MUTE; ctx.font = font(21); ctx.fillText('one ping stream, three grammars', 80, 148);
+    ctx.font = font(14); ctx.textAlign = 'right'; ctx.fillText('Highman–Krížová · Phase Transition, 2026', W - 80, 112); ctx.fillText('a translation of a finding into sound, a curve and sand', W - 80, 136); ctx.textAlign = 'left';
+    const panels = [80, 480, 880], pw = 320, top = 210, mid = 320;
+    // I · the line: a stream, one gesture, its single echo
+    ctx.globalAlpha = f(0.12, 0.3);
+    { const x = panels[0]; ctx.strokeStyle = RULE; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, mid + 60); ctx.lineTo(x + pw, mid + 60); ctx.stroke();
+      const pts = [[0.08, 0.5], [0.2, 0.2], [0.3, 0.7], [0.42, 0.35], [0.55, 0.6], [0.68, 0.25], [0.8, 0.55], [0.92, 0.4]];
+      for (const [u, v] of pts) { ctx.fillStyle = AMBER; ctx.globalAlpha = f(0.12, 0.3) * (0.45 + 0.55 * v); ctx.beginPath(); ctx.arc(x + u * pw, mid - 40 + v * 80, 4, 0, 7); ctx.fill(); }
+      ctx.globalAlpha = f(0.12, 0.3);
+      const gx = x + 0.3 * pw, ex = x + 0.5 * pw; ctx.fillStyle = VIOLET; ctx.fillRect(gx - 2, mid - 80, 4, 24);
+      ctx.strokeStyle = VIOLET; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(gx, mid - 56); ctx.quadraticCurveTo((gx + ex) / 2, mid - 10, ex, mid + 40); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ex, mid + 32); ctx.lineTo(ex + 8, mid + 40); ctx.lineTo(ex, mid + 48); ctx.lineTo(ex - 8, mid + 40); ctx.closePath(); ctx.fill();
+      label('a gesture', gx - 30, mid - 90); label('its echo, 2.2 s later', ex - 20, mid + 70);
+      panelText(x, 440, pw, 'I · THE LINE', 'a return comes back once, as itself', 'R0 = 0 · the end state slides', VIOLET); }
+    // II · the loop: delay and gain, and a level that runs away past one
+    ctx.globalAlpha = f(0.28, 0.46);
+    { const x = panels[1]; const bx = x + 20, by = mid - 70, bw = 120, bh = 34;
+      ctx.strokeStyle = INK; ctx.lineWidth = 1.2; ctx.strokeRect(bx, by, bw, bh); ctx.strokeRect(bx, by + 90, bw, bh);
+      ctx.fillStyle = INK; ctx.font = font(14); ctx.textAlign = 'center'; ctx.fillText('delay 0.45 s', bx + bw / 2, by + 22); ctx.fillText('gain × g', bx + bw / 2, by + 112); ctx.textAlign = 'left';
+      arrow(bx + bw / 2, by + bh, bx + bw / 2, by + 90, INK); ctx.strokeStyle = INK; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(bx + bw / 2, by + 124); ctx.lineTo(bx + bw / 2, by + 150); ctx.lineTo(bx + bw + 16, by + 150); ctx.lineTo(bx + bw + 16, by - 16); ctx.lineTo(bx + bw / 2, by - 16); ctx.stroke(); arrow(bx + bw / 2 + 1, by - 16, bx + bw / 2, by, INK); label('back round, louder', bx + 4, by + 172);
+      arrow(x - 20, by + 17, bx, by + 17, AMBER); label('pings', x - 20, by + 4);
+      const cx = x + 180, cy = mid + 60, cw = 130, ch = 130; ctx.strokeStyle = RULE; ctx.beginPath(); ctx.moveTo(cx, cy - ch); ctx.lineTo(cx, cy); ctx.lineTo(cx + cw, cy); ctx.stroke();
+      ctx.setLineDash([3, 3]); ctx.strokeStyle = MUTE; ctx.beginPath(); ctx.moveTo(cx + cw * 0.55, cy - ch); ctx.lineTo(cx + cw * 0.55, cy); ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle = RED; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i <= 60; i++) { const u = i / 60, lvl = u < 0.55 ? 0.18 + 0.1 * u : Math.min(0.95, 0.235 + Math.pow((u - 0.55) / 0.45, 2.2) * 0.75); ctx.lineTo(cx + u * cw, cy - lvl * ch); } ctx.stroke();
+      label('g = 1', cx + cw * 0.55 - 16, cy - ch - 8); label('level', cx - 4, cy + 18); label('gain →', cx + cw - 40, cy + 18);
+      panelText(x, 440, pw, 'II · THE LOOP', 'a return invites the act that made it', 'R0 > 0 · a threshold, at one', RED); }
+    // III · the plate: sand gathers on the nodal lines of the (2,5) figure
+    ctx.globalAlpha = f(0.44, 0.62);
+    { const x = panels[2], cx = x + pw / 2, cy = mid - 8, R = 88; ctx.strokeStyle = RULE; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.stroke();
+      ctx.fillStyle = AMBER; let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+      for (const rr of [0.36, 0.68]) for (let i = 0; i < 90; i++) { const a = rnd() * 6.283, j = (rnd() - 0.5) * 7; ctx.globalAlpha = f(0.44, 0.62) * 0.85; ctx.beginPath(); ctx.arc(cx + Math.cos(a) * (rr * R + j), cy + Math.sin(a) * (rr * R + j), 1.6, 0, 7); ctx.fill(); }
+      for (const a0 of [0.4, 0.4 + Math.PI / 2]) for (let i = 0; i < 70; i++) { const r = (rnd() - 0.5) * 2 * R * 0.95, j = (rnd() - 0.5) * 6; const a = a0 + Math.PI / 2; ctx.beginPath(); ctx.arc(cx + Math.cos(a0) * r + Math.cos(a) * j, cy + Math.sin(a0) * r + Math.sin(a) * j, 1.6, 0, 7); ctx.fill(); }
+      ctx.globalAlpha = f(0.44, 0.62); label('870 Hz · figure (2,5)', cx - 56, cy + R + 18);
+      panelText(x, 440, pw, 'III · THE PLATE', 'the howl’s note drives sand into a figure', 'Chladni, 1787 · form', AMBER); }
+    // the gain axis under all three: slope, threshold, form
+    ctx.globalAlpha = f(0.6, 0.8);
+    { const y = 590, x0 = 80, x1 = W - 80, xm = x0 + (x1 - x0) * 0.5; ctx.strokeStyle = INK; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke(); arrow(x1 - 10, y, x1, y, INK);
+      ctx.fillStyle = RED; ctx.fillRect(xm - 1.5, y - 14, 3, 28);
+      ctx.fillStyle = INK; ctx.font = font(15, 600); ctx.fillText('loop gain  0', x0, y - 14); ctx.textAlign = 'center'; ctx.fillStyle = RED; ctx.fillText('1', xm, y - 20); ctx.fillStyle = INK; ctx.textAlign = 'right'; ctx.fillText('→ turned up', x1, y - 14); ctx.textAlign = 'center';
+      ctx.fillStyle = MUTE; ctx.font = font(16); ctx.fillText('below one: an echo that dies away · a slope', (x0 + xm) / 2, y + 30); ctx.fillText('past one: a howl that settles on a note · a form', (xm + x1) / 2, y + 30); ctx.fillStyle = RED; ctx.font = font(15, 600); ctx.fillText('threshold', xm, y + 30); ctx.textAlign = 'left'; }
+    ctx.globalAlpha = f(0.78, 0.95); ctx.fillStyle = MUTE; ctx.font = font(15); ctx.textAlign = 'center'; ctx.fillText('a week of research on two models · 24 sweep points, 20 seeds a point, 21 theorems · then three minutes of sound and sand', W / 2, H - 40); ctx.textAlign = 'left';
+    ctx.globalAlpha = 1;
+  }
+  function closingCard(p) {
+    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H);
+    const f = (a, b) => clamp01((p - a) / (b - a));
+    ctx.globalAlpha = f(0, 0.08); ctx.fillStyle = INK; ctx.font = font(40, 600); ctx.fillText('What the week found', 80, 96);
+    ctx.fillStyle = MUTE; ctx.font = font(19); ctx.fillText('one loop, read at two gains · every number below is about a model', 80, 128);
+    // left: the number, and where it crosses one
+    ctx.globalAlpha = f(0.08, 0.22);
+    { const x = 80, y = 215; ctx.fillStyle = INK; ctx.font = font(44, 600); ctx.fillText('R0 = π · g · σ / (σ + δ)', x, y);
+      const gl = [['π', 'the propensity to exclude what returns', VIOLET], ['g', 'the gain: how much louder a return comes back', RED], ['σ / (σ + δ)', 'the share of what left that returns at all', AMBER]];
+      let yy = y + 44; for (const [sym, t, c] of gl) { ctx.fillStyle = c; ctx.font = font(17, 600); ctx.fillText(sym, x, yy); ctx.fillStyle = INK; ctx.font = font(16); ctx.fillText(t, x + 110, yy); yy += 28; }
+      ctx.globalAlpha = f(0.2, 0.34); const ax = x, bx = x + 500, ly = 400, xs = (v) => ax + v / 2 * (bx - ax); ctx.strokeStyle = INK; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(ax, ly); ctx.lineTo(bx, ly); ctx.stroke();
+      ctx.font = font(14); ctx.textAlign = 'center'; for (const v of [0, 1, 2]) { ctx.fillStyle = INK; ctx.fillRect(xs(v) - 1, ly - 6, 2, 12); ctx.fillText(String(v), xs(v), ly + 24); }
+      ctx.fillStyle = RED; ctx.fillRect(xs(1) - 1.5, ly - 36, 3, 30); ctx.font = font(15, 600); ctx.fillText('R0 = 1 · propensity 0.8, as predicted', xs(1), ly - 46);
+      ctx.fillStyle = MUTE; ctx.font = font(15); ctx.fillText('below: the exterior settles', xs(0.5), ly + 48); ctx.fillText('above: it multiplies, without bound', xs(1.5), ly + 48); ctx.textAlign = 'left'; }
+    // right: whether, and how fast
+    ctx.globalAlpha = f(0.32, 0.5);
+    { const x = 700, y = 170, w = 500, h = 230; ctx.fillStyle = INK; ctx.font = font(24, 600); ctx.fillText('R0 says whether.  σ says how fast.', x, y);
+      const ox = x + 10, oy = y + 40 + h, cw = w - 20; ctx.strokeStyle = RULE; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(ox, oy - h); ctx.lineTo(ox, oy); ctx.lineTo(ox + cw, oy); ctx.stroke();
+      const K = 3, grow = (u) => (Math.exp(K * u) - 1) / (Math.exp(K) - 1); const curves = [[1, RED], [0.5, AMBER]]; // the slow curve is the fast one with its clock halved
+      for (const [speed, c] of curves) { ctx.strokeStyle = c; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i <= 80; i++) { const u = i / 80; ctx.lineTo(ox + u * cw, oy - grow(u * speed) * h); } ctx.stroke(); }
+      ctx.fillStyle = INK; ctx.font = font(14, 600); ctx.fillText('σ = 0.10 · twice the return rate: the same R0, twice as fast', ox + cw * 0.08, oy - h + 6); ctx.fillText('σ = 0.05', ox + cw * 0.86, oy - grow(0.5 * 0.86) * h - 12); ctx.fillStyle = MUTE; ctx.font = font(13); ctx.fillText('half the rate · half as far by the same clock', ox + cw * 0.3, oy + 18);
+      label('exterior mass, same R0 above one', ox, oy - h - 14); label('time →', ox + cw - 44, oy + 18); }
+    // the week in six numbers
+    const stats = [['24', 'sweep points'], ['20', 'seeds a point'], ['5', 'hypotheses written first · one failed, kept'], ['21', 'theorems, Lean core only'], ['0.8', 'critical propensity, as written down first'], ['870 Hz', 'placed by hand, and said so']];
+    { const y = 560, cw = (W - 160) / 6; for (const [i, [n, t]] of stats.entries()) { ctx.globalAlpha = f(0.5 + i * 0.05, 0.56 + i * 0.05); const x = 80 + i * cw; ctx.fillStyle = INK; ctx.font = font(34, 600); ctx.fillText(n, x, y); ctx.fillStyle = MUTE; ctx.font = font(13); textBlock(t, x, y + 24, cw - 20, { px: 13, lh: 17, colour: MUTE }); } }
+    ctx.globalAlpha = f(0.84, 0.96); ctx.fillStyle = RULE; ctx.fillRect(80, H - 92, W - 160, 1);
+    ctx.fillStyle = INK; ctx.font = font(18); ctx.fillText('Every claim here is about a model. None is about you. The experiment with a person and a sensor is the one nobody has run.', 80, H - 58);
+    ctx.fillStyle = MUTE; ctx.font = font(15); ctx.fillText('github.com/jhighman/j-lex-space · Jeff Highman · Alexandra Krížová — critical reviewer and development reviewer', 80, H - 30);
+    ctx.globalAlpha = 1;
+  }
+
   /* ---------- the shots, on the script's timeline ---------- */
   const loopA = makeLoopState(), loopB = makeLoopState(); // A for the cold open, B for scene 9
   let loopAReady = false, loopBReady = false, plateScattered = false;
@@ -218,6 +301,14 @@
     const map = (t) => { for (const sc of tm.scenes) { const [o0, o1] = sc.orig, [n0, n1] = sc.new; if (t >= o0 && t < o1) return n0 + (t - o0) * (n1 - n0) / (o1 - o0); } return tm.credits[0] + (t - 675); };
     for (const s of S) { const a0 = map(s.at), a1 = map(s.at + s.dur), k = (a1 - a0) / s.dur, draw = s.draw; s.at = a0; s.dur = a1 - a0; s.draw = (t, sh) => draw(t / k, sh); }
     TOTAL = tm.total; if (window.__film) window.__film.TOTAL = TOTAL;
+  }
+  /* the opening card goes in front of everything and the closing card in front of the credits, which are the last shot */
+  function bookend() {
+    const credits = S[S.length - 1];
+    for (const s of S) s.at += OPEN; credits.at += CLOSE;
+    S.unshift({ at: 0, dur: OPEN, draw: (t) => openingCard(t / OPEN) });
+    S.splice(S.length - 1, 0, { at: credits.at - CLOSE, dur: CLOSE, draw: (t) => closingCard(t / CLOSE) });
+    TOTAL += OPEN + CLOSE; if (window.__film) window.__film.TOTAL = TOTAL;
   }
 
   /* ---------- run and record ---------- */
